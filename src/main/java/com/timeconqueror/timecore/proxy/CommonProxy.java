@@ -1,6 +1,6 @@
 package com.timeconqueror.timecore.proxy;
 
-import testworkspace.ModEntities;
+import example.ModEntities;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;

@@ -1,9 +1,9 @@
-package testworkspace;
+package example;
 
 import com.timeconqueror.timecore.TimeCore;
 import com.timeconqueror.timecore.client.objhandler.ObjModelLoader;
-import com.timeconqueror.timecore.client.objhandler.model.ObjModelBase;
 import com.timeconqueror.timecore.client.objhandler.ObjModelRenderer;
+import com.timeconqueror.timecore.client.objhandler.model.ObjModelBase;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.ResourceLocation;

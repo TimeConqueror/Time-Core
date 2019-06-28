@@ -1,4 +1,4 @@
-package testworkspace;
+package example;
 
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.*;

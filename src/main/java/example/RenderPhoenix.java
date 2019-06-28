@@ -1,4 +1,4 @@
-package testworkspace;
+package example;
 
 import com.timeconqueror.timecore.TimeCore;
 import net.minecraft.client.renderer.GlStateManager;

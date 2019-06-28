@@ -1,4 +1,4 @@
-package testworkspace;
+package example;
 
 import com.timeconqueror.timecore.TimeCore;
 import net.minecraft.client.renderer.entity.Render;
@@ -15,7 +15,7 @@ public class ModEntities {
     public static void register() {
         int id = 0;
 
-        registerEntity("lion", EntityPhoenix.class, id++, 80, 3, true, 0xe2bf0d, 0xed6c09);
+        registerEntity("phoenix", EntityPhoenix.class, id++, 80, 3, true, 0xe2bf0d, 0xed6c09);
     }
 
     /**

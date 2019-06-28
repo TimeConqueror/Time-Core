@@ -1,4 +1,4 @@
-package testworkspace;
+package example;
 
 import net.minecraft.entity.EntityAgeable;
 import net.minecraft.world.World;
