@@ -1,9 +1,9 @@
 package com.timeconqueror.timecore.client.objhandler.part;
 
-import com.sun.javafx.geom.Vec3f;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.util.Vec3;
 import org.lwjgl.opengl.GL11;
 
 public class Face {
@@ -43,13 +43,12 @@ public class Face {
     }
 
     public Vertex calculateFaceNormal() {
-        Vec3f v1 = new Vec3f(vertices[1].x - vertices[0].x, vertices[1].y - vertices[0].y, vertices[1].z - vertices[0].z);
-        Vec3f v2 = new Vec3f(vertices[2].x - vertices[0].x, vertices[2].y - vertices[0].y, vertices[2].z - vertices[0].z);
+        Vec3 v1 = Vec3.createVectorHelper(vertices[1].x - vertices[0].x, vertices[1].y - vertices[0].y, vertices[1].z - vertices[0].z);
+        Vec3 v2 = Vec3.createVectorHelper(vertices[2].x - vertices[0].x, vertices[2].y - vertices[0].y, vertices[2].z - vertices[0].z);
 
-        Vec3f normalVector = new Vec3f();
-        normalVector.cross(v1, v2);
+        Vec3 normalVector = v1.crossProduct(v2);
         normalVector.normalize();
 
-        return new Vertex(normalVector.x, normalVector.y, normalVector.z);
+        return new Vertex((float) normalVector.xCoord, (float) normalVector.yCoord, (float) normalVector.zCoord);
     }
 }
