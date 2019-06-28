@@ -277,9 +277,9 @@ public class ObjModelBuilder {
         } catch (FileNotFoundException e) {
             if (TimeCore.devEnv) {
                 String[] path = rpFileLocation.getPath().split("/");
-                Logger.printDevOnlyMessage("No Rp-file with the name " + path[path.length - 1] + " was found! All rotation points will be set to 0 by default.");
+                Logger.printDevOnlyMessage("No .rp file with the name " + path[path.length - 1] + " was found! All rotation points will be set to 0 by default.");
             }
-            throw new ModelFormatException("IO Exception reading model format", e);
+            return;
         } catch (IOException e) {
             throw new ModelFormatException("IO Exception reading model format", e);
         }

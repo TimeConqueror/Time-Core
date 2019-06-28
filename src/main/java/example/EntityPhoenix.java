@@ -9,7 +9,7 @@ public class EntityPhoenix extends EntityStupidAnimal {
 
     public EntityPhoenix(World worldIn) {
         super(worldIn);
-        this.setSize(1.2F, isFemale() ? 1.4F : 1.7F);
+        this.setSize(1.2F, 2F);
     }
 
     @Nullable
