@@ -1,13 +1,13 @@
 package com.timeconqueror.timecore;
 
+import com.mojang.realmsclient.gui.ChatFormatting;
 import com.timeconqueror.timecore.proxy.CommonProxy;
+import cpw.mods.fml.common.Mod;
+import cpw.mods.fml.common.SidedProxy;
+import cpw.mods.fml.common.event.FMLInitializationEvent;
+import cpw.mods.fml.common.event.FMLPostInitializationEvent;
+import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import net.minecraft.launchwrapper.Launch;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.SidedProxy;
-import net.minecraftforge.fml.common.event.FMLInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -33,7 +33,7 @@ public class TimeCore {
 
         if ((boolean) Launch.blackboard.get("fml.deobfuscatedEnvironment")){
             devEnv = true;
-            logger.info(TextFormatting.GREEN + "Dev enviroment was detected. Additional debug messages are launched.");
+            logger.info(ChatFormatting.GREEN + "Dev enviroment was detected. Additional debug messages are launched.");
         }
         proxy.preInit(event);
     }

@@ -4,10 +4,10 @@ import com.timeconqueror.timecore.TimeCore;
 import com.timeconqueror.timecore.client.objhandler.ObjModelLoader;
 import com.timeconqueror.timecore.client.objhandler.ObjModelRenderer;
 import com.timeconqueror.timecore.client.objhandler.model.ObjModelBase;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.Entity;
+import net.minecraft.util.MathHelper;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.MathHelper;
+import org.lwjgl.opengl.GL11;
 
 public class ModelPhoenix extends ObjModelBase {
     private ObjModelRenderer head;
@@ -56,28 +56,28 @@ public class ModelPhoenix extends ObjModelBase {
     public void render(Entity entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scale) {
 
         this.setRotationAngles(limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scale, entityIn);
-        GlStateManager.pushMatrix();
+        GL11.glPushMatrix();
 
         if (this.isChild) {
             float f = 2.0F;
-            GlStateManager.scale(0.75F, 0.75F, 0.75F);
-            GlStateManager.translate(0.0F, 16.0F * scale, 0.0F);
+            GL11.glScalef(0.75F, 0.75F, 0.75F);
+            GL11.glTranslatef(0.0F, 16.0F * scale, 0.0F);
             this.head.render(scale);
-            GlStateManager.popMatrix();
-            GlStateManager.pushMatrix();
-            GlStateManager.scale(0.5F, 0.5F, 0.5F);
-            GlStateManager.translate(0.0F, 24.0F * scale, 0.0F);
+            GL11.glPopMatrix();
+            GL11.glPushMatrix();
+            GL11.glScalef(0.5F, 0.5F, 0.5F);
+            GL11.glTranslatef(0.0F, 24.0F * scale, 0.0F);
 
             mainModel.renderAllExcept(scale, head);
         } else {
             if (entityIn.isSneaking()) {
-                GlStateManager.translate(0.0F, 0.2F, 0.0F);
+                GL11.glTranslatef(0.0F, 0.2F, 0.0F);
             }
 
             mainModel.renderAll(scale);
         }
 
-        GlStateManager.popMatrix();
+        GL11.glPopMatrix();
     }
 
     @Override

@@ -1,8 +1,8 @@
 package com.timeconqueror.timecore.client.objhandler.part;
 
-import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.client.renderer.Tessellator;
 
 import java.util.ArrayList;
 
@@ -25,10 +25,10 @@ public class ModelObject {
     }
 
     @SideOnly(Side.CLIENT)
-    public void render(BufferBuilder renderer, float scale) {
+    public void render(Tessellator tessellator, float scale) {
         if (faces.size() > 0) {
             for (Face face : faces) {
-                face.render(glDrawingMode, renderer, scale);
+                face.render(glDrawingMode, tessellator, scale);
             }
         }
     }

@@ -1,11 +1,9 @@
 package com.timeconqueror.timecore.client.objhandler.part;
 
 import com.sun.javafx.geom.Vec3f;
-import net.minecraft.client.renderer.BufferBuilder;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL11;
 
 public class Face {
@@ -15,7 +13,7 @@ public class Face {
     public TextureCoordinate[] textureCoordinates;
 
     @SideOnly(Side.CLIENT)
-    public void render(int glMode, BufferBuilder buffer, float scale) {
+    public void render(int glMode, Tessellator tessellator, float scale) {
         if (faceNormal == null) {
             faceNormal = this.calculateFaceNormal();
         }
@@ -26,25 +24,22 @@ public class Face {
             glMode = GL11.GL_TRIANGLES;
         }
 
-        if(hasTexture){
-            buffer.begin(glMode, DefaultVertexFormats.POSITION_TEX_NORMAL);
-        } else {
-            buffer.begin(glMode, DefaultVertexFormats.POSITION_NORMAL);
-        }
+        tessellator.startDrawing(glMode);
 
 
         for (int i = 0; i < vertices.length; ++i) {
 
             if (hasTexture) {
-                buffer.pos(vertices[i].x* (double)scale,  vertices[i].y* (double)scale, vertices[i].z* (double)scale)
-                        .tex(textureCoordinates[i].u,  textureCoordinates[i].v)
-                        .normal(faceNormal.x, faceNormal.y, faceNormal.z).endVertex();
+                tessellator.setNormal(faceNormal.x, faceNormal.y, faceNormal.z);
+                tessellator.addVertexWithUV(vertices[i].x * (double) scale, vertices[i].y * (double) scale, vertices[i].z * (double) scale,
+                        textureCoordinates[i].u, textureCoordinates[i].v);
             } else {
-                buffer.pos(vertices[i].x* (double)scale, vertices[i].y* (double)scale, vertices[i].z* (double)scale).normal(faceNormal.x, faceNormal.y, faceNormal.z).endVertex();
+                tessellator.setNormal(faceNormal.x, faceNormal.y, faceNormal.z);
+                tessellator.addVertex(vertices[i].x * (double) scale, vertices[i].y * (double) scale, vertices[i].z * (double) scale);
             }
         }
 
-        Tessellator.getInstance().draw();
+        tessellator.draw();
     }
 
     public Vertex calculateFaceNormal() {

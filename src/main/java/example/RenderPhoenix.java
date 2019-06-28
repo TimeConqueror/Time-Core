@@ -1,29 +1,17 @@
 package example;
 
 import com.timeconqueror.timecore.TimeCore;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.entity.RenderLiving;
-import net.minecraft.client.renderer.entity.RenderManager;
+import com.timeconqueror.timecore.client.objhandler.ObjRenderLiving;
+import net.minecraft.entity.Entity;
 import net.minecraft.util.ResourceLocation;
 
-import javax.annotation.Nullable;
-
-public class RenderPhoenix extends RenderLiving<EntityPhoenix> {
-    public RenderPhoenix(RenderManager rendermanagerIn) {
-        super(rendermanagerIn, new ModelPhoenix(), 0.5F);
+public class RenderPhoenix extends ObjRenderLiving {
+    public RenderPhoenix() {
+        super(new ModelPhoenix(), 0);
     }
 
-    @Nullable
     @Override
-    protected ResourceLocation getEntityTexture(EntityPhoenix entity) {
+    protected ResourceLocation getEntityTexture(Entity p_110775_1_) {
         return new ResourceLocation(TimeCore.MODID, "textures/entity/phoenix.png");
-    }
-
-    @Override
-    public float prepareScale(EntityPhoenix entitylivingbaseIn, float partialTicks) {
-        GlStateManager.enableRescaleNormal();
-        GlStateManager.rotate(180, 0,  (float)entitylivingbaseIn.posY, 0);
-        this.preRenderCallback(entitylivingbaseIn, partialTicks);
-        return 0.0625F;
     }
 }

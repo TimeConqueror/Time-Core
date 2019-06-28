@@ -15,7 +15,7 @@ public class EntityPhoenix extends EntityStupidAnimal {
     @Nullable
     @Override
     public EntityAgeable createChild(EntityAgeable ageable) {
-        return new EntityPhoenix(this.world);
+        return new EntityPhoenix(this.worldObj);
     }
 
     @Override

@@ -2,9 +2,9 @@ package com.timeconqueror.timecore.client.objhandler.model;
 
 import com.timeconqueror.timecore.client.objhandler.ObjModelRaw;
 import com.timeconqueror.timecore.client.objhandler.ObjModelRenderer;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.Entity;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.MathHelper;
+import org.lwjgl.opengl.GL11;
 
 public class ObjModelQuadruped extends ObjModelBase {
     public ObjModelRenderer head;
@@ -62,19 +62,19 @@ public class ObjModelQuadruped extends ObjModelBase {
 
         if (this.isChild) {
             float f = 2.0F;
-            GlStateManager.pushMatrix();
-            GlStateManager.translate(0.0F, this.childYOffset * scale, this.childZOffset * scale);
+            GL11.glPushMatrix();
+            GL11.glTranslatef(0.0F, this.childYOffset * scale, this.childZOffset * scale);
             this.head.render(scale);
-            GlStateManager.popMatrix();
-            GlStateManager.pushMatrix();
-            GlStateManager.scale(0.5F, 0.5F, 0.5F);
-            GlStateManager.translate(0.0F, 24.0F * scale, 0.0F);
+            GL11.glPopMatrix();
+            GL11.glPushMatrix();
+            GL11.glScalef(0.5F, 0.5F, 0.5F);
+            GL11.glTranslatef(0.0F, 24.0F * scale, 0.0F);
             this.body.render(scale);
             this.leg1.render(scale);
             this.leg2.render(scale);
             this.leg3.render(scale);
             this.leg4.render(scale);
-            GlStateManager.popMatrix();
+            GL11.glPopMatrix();
         } else {
             this.head.render(scale);
             this.body.render(scale);

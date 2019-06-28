@@ -177,62 +177,67 @@ public class ObjModelBuilder {
         int lineCount = 0;
         ObjModelRaw model = new ObjModelRaw();
 
-        try (IResource objFile = Minecraft.getMinecraft().getResourceManager().getResource(fileLocation)) {
-            try (BufferedReader reader = new BufferedReader(new InputStreamReader(objFile.getInputStream()))) {
-                String currentLine;
-
-                while ((currentLine = reader.readLine()) != null) {
-                    lineCount++;
-                    currentLine = currentLine.replaceAll("\\s+", " ").trim();
-
-                    if (currentLine.startsWith("#") || currentLine.length() == 0) {
-                        continue;
-                    } else if (currentLine.startsWith("v ")) {
-                        Vertex vertex = parseVertex(currentLine, lineCount);
-                        if (vertex != null) {
-                            vertices.add(vertex);
-                        }
-                    } else if (currentLine.startsWith("vn ")) {
-                        Vertex vertex = parseVertexNormal(currentLine, lineCount);
-                        if (vertex != null) {
-                            vertexNormals.add(vertex);
-                        }
-                    } else if (currentLine.startsWith("vt ")) {
-                        TextureCoordinate textureCoordinate = parseTextureCoordinate(currentLine, lineCount);
-                        if (textureCoordinate != null) {
-                            textureCoordinates.add(textureCoordinate);
-                        }
-                    } else if (currentLine.startsWith("f ")) {
-
-                        if (currentModelObject == null) {
-                            currentModelObject = new ModelObject("Default");
-                        }
-
-                        Face face = parseFace(currentLine, lineCount);
-
-                        if (face != null) {
-                            currentModelObject.faces.add(face);
-                        }
-                    } else if (currentLine.startsWith("g ") | currentLine.startsWith("o ")) {
-                        ModelObject group = parseGroupObject(currentLine, lineCount);
-
-                        if (group != null) {
-                            if (currentModelObject != null) {
-                                renderers.add(new ObjModelRenderer(model, currentModelObject));
-                            }
-                        }
-
-                        currentModelObject = group;
-                    }
-                }
-
-                renderers.add(new ObjModelRenderer(model, currentModelObject));
-            }
+        IResource objFile;
+        try {
+            objFile = Minecraft.getMinecraft().getResourceManager().getResource(fileLocation);
         } catch (IOException e) {
             throw new ModelFormatException("IO Exception reading model format", e);
         }
 
-        String[] path = fileLocation.getPath().split("/");
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(objFile.getInputStream()))) {
+            String currentLine;
+
+            while ((currentLine = reader.readLine()) != null) {
+                lineCount++;
+                currentLine = currentLine.replaceAll("\\s+", " ").trim();
+
+                if (currentLine.startsWith("#") || currentLine.length() == 0) {
+                    continue;
+                } else if (currentLine.startsWith("v ")) {
+                    Vertex vertex = parseVertex(currentLine, lineCount);
+                    if (vertex != null) {
+                        vertices.add(vertex);
+                    }
+                } else if (currentLine.startsWith("vn ")) {
+                    Vertex vertex = parseVertexNormal(currentLine, lineCount);
+                    if (vertex != null) {
+                        vertexNormals.add(vertex);
+                    }
+                } else if (currentLine.startsWith("vt ")) {
+                    TextureCoordinate textureCoordinate = parseTextureCoordinate(currentLine, lineCount);
+                    if (textureCoordinate != null) {
+                        textureCoordinates.add(textureCoordinate);
+                    }
+                } else if (currentLine.startsWith("f ")) {
+
+                    if (currentModelObject == null) {
+                        currentModelObject = new ModelObject("Default");
+                    }
+
+                    Face face = parseFace(currentLine, lineCount);
+
+                    if (face != null) {
+                        currentModelObject.faces.add(face);
+                    }
+                } else if (currentLine.startsWith("g ") | currentLine.startsWith("o ")) {
+                    ModelObject group = parseGroupObject(currentLine, lineCount);
+
+                    if (group != null) {
+                        if (currentModelObject != null) {
+                            renderers.add(new ObjModelRenderer(model, currentModelObject));
+                        }
+                    }
+
+                    currentModelObject = group;
+                }
+            }
+
+            renderers.add(new ObjModelRenderer(model, currentModelObject));
+        } catch (IOException e) {
+            throw new ModelFormatException("IO Exception reading model format", e);
+        }
+
+        String[] path = fileLocation.getResourcePath().split("/");
         String fileName = path[path.length - 1].split("\\.")[0];
         StringBuilder newPath = new StringBuilder();
         for (int i = 0; i < path.length - 1; i++) {
@@ -243,7 +248,7 @@ public class ObjModelBuilder {
             newPath.append(path[i]);
         }
 
-        rpFileLocation = new ResourceLocation(fileLocation.getNamespace(), newPath + "/" + fileName + ".rp");
+        rpFileLocation = new ResourceLocation(fileLocation.getResourceDomain(), newPath + "/" + fileName + ".rp");
 
         loadRPFile();
 
@@ -255,28 +260,33 @@ public class ObjModelBuilder {
     private void loadRPFile() {
         String type = null;
         int lineCount = 0;
-        try (IResource objFile = Minecraft.getMinecraft().getResourceManager().getResource(rpFileLocation)) {
-            try (BufferedReader reader = new BufferedReader(new InputStreamReader(objFile.getInputStream()))) {
-                String currentLine;
+        IResource objFile;
+        try {
+            objFile = Minecraft.getMinecraft().getResourceManager().getResource(rpFileLocation);
+        } catch (IOException e) {
+            throw new ModelFormatException("IO Exception reading model format", e);
+        }
 
-                while ((currentLine = reader.readLine()) != null) {
-                    lineCount++;
-                    currentLine = currentLine.replaceAll("\\s+", " ").trim();
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(objFile.getInputStream()))) {
+            String currentLine;
 
-                    if (currentLine.isEmpty()) {
-                        continue;
-                    } else if (currentLine.startsWith("#")) {
-                        continue;
-                    } else if (currentLine.startsWith("!type") && lineCount == 1) {
-                        type = currentLine.trim().split(" ")[1];
-                    } else {
-                        parseRPVertex(currentLine, lineCount);
-                    }
+            while ((currentLine = reader.readLine()) != null) {
+                lineCount++;
+                currentLine = currentLine.replaceAll("\\s+", " ").trim();
+
+                if (currentLine.isEmpty()) {
+                    continue;
+                } else if (currentLine.startsWith("#")) {
+                    continue;
+                } else if (currentLine.startsWith("!type") && lineCount == 1) {
+                    type = currentLine.trim().split(" ")[1];
+                } else {
+                    parseRPVertex(currentLine, lineCount);
                 }
             }
         } catch (FileNotFoundException e) {
             if (TimeCore.devEnv) {
-                String[] path = rpFileLocation.getPath().split("/");
+                String[] path = rpFileLocation.getResourcePath().split("/");
                 Logger.printDevOnlyMessage("No Rp-file with the name " + path[path.length - 1] + " was found! All rotation points will be set to 0 by default.");
             }
             throw new ModelFormatException("IO Exception reading model format", e);
@@ -284,9 +294,9 @@ public class ObjModelBuilder {
             throw new ModelFormatException("IO Exception reading model format", e);
         }
 
-        if(type != null && !type.isEmpty()){
-            if(type.equals("blender")){
-                for(RPVertex rpVertex : rpVertexes){
+        if (type != null && !type.isEmpty()) {
+            if (type.equals("blender")) {
+                for (RPVertex rpVertex : rpVertexes) {
                     float y = rpVertex.vertex.y;
 
                     rpVertex.vertex.y = rpVertex.vertex.z;
