@@ -2,7 +2,10 @@ package com.timeconqueror.timecore.client.objhandler;
 
 import com.timeconqueror.timecore.Logger;
 import com.timeconqueror.timecore.TimeCore;
-import com.timeconqueror.timecore.client.objhandler.part.*;
+import com.timeconqueror.timecore.client.objhandler.part.Face;
+import com.timeconqueror.timecore.client.objhandler.part.ModelObject;
+import com.timeconqueror.timecore.client.objhandler.part.TextureCoordinate;
+import com.timeconqueror.timecore.client.objhandler.part.Vertex;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.IResource;
 import net.minecraft.util.ResourceLocation;
@@ -260,9 +263,11 @@ public class ObjModelBuilder {
                     lineCount++;
                     currentLine = currentLine.replaceAll("\\s+", " ").trim();
 
-                    if (currentLine.startsWith("#")) {
+                    if (currentLine.isEmpty()) {
                         continue;
-                    } else if (currentLine.startsWith("!type")) {
+                    } else if (currentLine.startsWith("#")) {
+                        continue;
+                    } else if (currentLine.startsWith("!type") && lineCount == 1) {
                         type = currentLine.trim().split(" ")[1];
                     } else {
                         parseRPVertex(currentLine, lineCount);
