@@ -1,0 +1,16 @@
+!type blender
+ph_body=0.0/0.0/15.7
+ph_wing_L=-4.2/-2.3/21.5
+ph_wing_R=4.2/-2.3/21.5
+ph_head=0.0/0.0/23.0
+ph_beak_upper=0.0/-5.6/24.9
+ph_beak_bottom=0.0/-6.4/24.1
+ph_headfeather_bigL=-0.9/-0.9/27.6
+ph_headfeather_bigR=0.9/-0.9/27.6
+ph_headfeather_small_L=-1.7/-2.0/27.0
+ph_headfeather_small_R=1.7/-2.0/27.0
+ph_leg_L=-2.5/2.6/6.5
+ph_leg_R=2.5/2.6/6.5
+ph_tail_mid=0.0/6.9/9.0
+ph_tail_small_L=-2.7/6.9/9.0
+ph_tail_small_R=2.7/6.9/9.0
