@@ -1,9 +1,9 @@
 package com.timeconqueror.timecore.client.objhandler.part;
 
-import com.sun.javafx.geom.Vec3f;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL11;
@@ -48,13 +48,12 @@ public class Face {
     }
 
     public Vertex calculateFaceNormal() {
-        Vec3f v1 = new Vec3f(vertices[1].x - vertices[0].x, vertices[1].y - vertices[0].y, vertices[1].z - vertices[0].z);
-        Vec3f v2 = new Vec3f(vertices[2].x - vertices[0].x, vertices[2].y - vertices[0].y, vertices[2].z - vertices[0].z);
+        Vec3d v1 = new Vec3d(vertices[1].x - vertices[0].x, vertices[1].y - vertices[0].y, vertices[1].z - vertices[0].z);
+        Vec3d v2 = new Vec3d(vertices[2].x - vertices[0].x, vertices[2].y - vertices[0].y, vertices[2].z - vertices[0].z);
 
-        Vec3f normalVector = new Vec3f();
-        normalVector.cross(v1, v2);
+        Vec3d normalVector = v1.crossProduct(v2);
         normalVector.normalize();
 
-        return new Vertex(normalVector.x, normalVector.y, normalVector.z);
+        return new Vertex((float) normalVector.x, (float) normalVector.y, (float) normalVector.z);
     }
 }
