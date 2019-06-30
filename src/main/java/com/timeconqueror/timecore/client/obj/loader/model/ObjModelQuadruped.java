@@ -1,12 +1,12 @@
-package com.timeconqueror.timecore.client.objhandler.model;
+package com.timeconqueror.timecore.client.obj.loader.model;
 
-import com.timeconqueror.timecore.client.objhandler.ObjModelRaw;
-import com.timeconqueror.timecore.client.objhandler.ObjModelRenderer;
+import com.timeconqueror.timecore.client.obj.loader.ObjModelRaw;
+import com.timeconqueror.timecore.client.obj.loader.ObjModelRenderer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.MathHelper;
 
-public class ObjModelQuadruped extends ObjModelBase {
+public class ObjModelQuadruped extends com.timeconqueror.timecore.client.obj.loader.model.ObjModelBase {
     public ObjModelRenderer head;
     public ObjModelRenderer body;
     public ObjModelRenderer leg1;
@@ -18,12 +18,12 @@ public class ObjModelQuadruped extends ObjModelBase {
     protected float childZOffset = 4.0F;
 
     /**
-     * @param head - head object/group name in objhandler file
-     * @param body - body object/group name in objhandler file
-     * @param leg1 - leg1 object/group name in objhandler file
-     * @param leg2 - leg2 object/group name in objhandler file
-     * @param leg3 - leg3 object/group name in objhandler file
-     * @param leg4 - leg4 object/group name in objhandler file
+     * @param head - head object/group name in obj file
+     * @param body - body object/group name in obj file
+     * @param leg1 - leg1 object/group name in obj file
+     * @param leg2 - leg2 object/group name in obj file
+     * @param leg3 - leg3 object/group name in obj file
+     * @param leg4 - leg4 object/group name in obj file
      */
     public ObjModelQuadruped(ObjModelRaw modelIn, String head, String body, String leg1, String leg2, String leg3, String leg4) {
         super(modelIn);

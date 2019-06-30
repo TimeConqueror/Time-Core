@@ -1,4 +1,4 @@
-package com.timeconqueror.timecore.client.objhandler;
+package com.timeconqueror.timecore.client.obj.loader;
 
 import com.timeconqueror.timecore.Logger;
 import net.minecraftforge.fml.relauncher.Side;
@@ -21,7 +21,7 @@ public class ObjModelRaw {
     }
 
     public String getType() {
-        return "objhandler";
+        return "obj";
     }
 
     @SideOnly(Side.CLIENT)

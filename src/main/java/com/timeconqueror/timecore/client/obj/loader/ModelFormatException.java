@@ -1,4 +1,4 @@
-package com.timeconqueror.timecore.client.objhandler;
+package com.timeconqueror.timecore.client.obj.loader;
 
 public class ModelFormatException extends RuntimeException {
 

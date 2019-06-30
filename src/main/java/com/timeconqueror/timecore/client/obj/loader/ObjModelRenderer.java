@@ -1,7 +1,7 @@
-package com.timeconqueror.timecore.client.objhandler;
+package com.timeconqueror.timecore.client.obj.loader;
 
-import com.timeconqueror.timecore.client.objhandler.part.ModelObject;
-import com.timeconqueror.timecore.client.objhandler.part.Vertex;
+import com.timeconqueror.timecore.client.obj.loader.part.ModelObject;
+import com.timeconqueror.timecore.client.obj.loader.part.Vertex;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GLAllocation;
 import net.minecraft.client.renderer.GlStateManager;

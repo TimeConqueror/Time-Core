@@ -1,4 +1,4 @@
-package com.timeconqueror.timecore.client.objhandler;
+package com.timeconqueror.timecore.client.obj.loader;
 
 import net.minecraft.util.ResourceLocation;
 

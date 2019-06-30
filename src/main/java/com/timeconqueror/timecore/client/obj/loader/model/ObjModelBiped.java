@@ -1,7 +1,7 @@
-package com.timeconqueror.timecore.client.objhandler.model;
+package com.timeconqueror.timecore.client.obj.loader.model;
 
-import com.timeconqueror.timecore.client.objhandler.ObjModelRaw;
-import com.timeconqueror.timecore.client.objhandler.ObjModelRenderer;
+import com.timeconqueror.timecore.client.obj.loader.ObjModelRaw;
+import com.timeconqueror.timecore.client.obj.loader.ObjModelRenderer;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.renderer.GlStateManager;
@@ -11,7 +11,7 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.EnumHandSide;
 import net.minecraft.util.math.MathHelper;
 
-public class ObjModelBiped extends ObjModelBase {
+public class ObjModelBiped extends com.timeconqueror.timecore.client.obj.loader.model.ObjModelBase {
     public ObjModelRenderer head;
 
     public ObjModelRenderer body;

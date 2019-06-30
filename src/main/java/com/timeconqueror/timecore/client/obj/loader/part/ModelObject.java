@@ -1,4 +1,4 @@
-package com.timeconqueror.timecore.client.objhandler.part;
+package com.timeconqueror.timecore.client.obj.loader.part;
 
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraftforge.fml.relauncher.Side;

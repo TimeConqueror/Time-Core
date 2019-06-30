@@ -1,11 +1,11 @@
-package com.timeconqueror.timecore.client.objhandler;
+package com.timeconqueror.timecore.client.obj.loader;
 
 import com.timeconqueror.timecore.Logger;
 import com.timeconqueror.timecore.TimeCore;
-import com.timeconqueror.timecore.client.objhandler.part.Face;
-import com.timeconqueror.timecore.client.objhandler.part.ModelObject;
-import com.timeconqueror.timecore.client.objhandler.part.TextureCoordinate;
-import com.timeconqueror.timecore.client.objhandler.part.Vertex;
+import com.timeconqueror.timecore.client.obj.loader.part.Face;
+import com.timeconqueror.timecore.client.obj.loader.part.ModelObject;
+import com.timeconqueror.timecore.client.obj.loader.part.TextureCoordinate;
+import com.timeconqueror.timecore.client.obj.loader.part.Vertex;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.IResource;
 import net.minecraft.util.ResourceLocation;

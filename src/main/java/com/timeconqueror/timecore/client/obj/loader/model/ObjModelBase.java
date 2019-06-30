@@ -1,7 +1,7 @@
-package com.timeconqueror.timecore.client.objhandler.model;
+package com.timeconqueror.timecore.client.obj.loader.model;
 
-import com.timeconqueror.timecore.client.objhandler.ObjModelRaw;
-import com.timeconqueror.timecore.client.objhandler.ObjModelRenderer;
+import com.timeconqueror.timecore.client.obj.loader.ObjModelRaw;
+import com.timeconqueror.timecore.client.obj.loader.ObjModelRenderer;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.entity.Entity;

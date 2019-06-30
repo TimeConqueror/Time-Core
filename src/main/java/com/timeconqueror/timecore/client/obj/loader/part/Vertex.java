@@ -1,4 +1,4 @@
-package com.timeconqueror.timecore.client.objhandler.part;
+package com.timeconqueror.timecore.client.obj.loader.part;
 
 public class Vertex {
     public float x, y, z;
