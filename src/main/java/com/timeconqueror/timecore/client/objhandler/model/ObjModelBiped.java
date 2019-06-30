@@ -116,47 +116,6 @@ public class ObjModelBiped extends ObjModelBase {
 
         this.armRight.rotateAngleY = 0.0F;
         this.armLeft.rotateAngleY = 0.0F;
-        float f6;
-        float f7;
-
-        if (this.swingProgress > -9990.0F) {
-            f6 = this.swingProgress;
-            this.body.rotateAngleY = MathHelper.sin(MathHelper.sqrt_float(f6) * (float) Math.PI * 2.0F) * 0.2F;
-            this.armRight.rotationPointZ = MathHelper.sin(this.body.rotateAngleY) * 5.0F;
-            this.armRight.rotationPointX = -MathHelper.cos(this.body.rotateAngleY) * 5.0F;
-            this.armLeft.rotationPointZ = -MathHelper.sin(this.body.rotateAngleY) * 5.0F;
-            this.armLeft.rotationPointX = MathHelper.cos(this.body.rotateAngleY) * 5.0F;
-            this.armRight.rotateAngleY += this.body.rotateAngleY;
-            this.armLeft.rotateAngleY += this.body.rotateAngleY;
-            this.armLeft.rotateAngleX += this.body.rotateAngleY;
-            f6 = 1.0F - this.swingProgress;
-            f6 *= f6;
-            f6 *= f6;
-            f6 = 1.0F - f6;
-            f7 = MathHelper.sin(f6 * (float) Math.PI);
-            float f8 = MathHelper.sin(this.swingProgress * (float) Math.PI) * -(this.head.rotateAngleX - 0.7F) * 0.75F;
-            this.armRight.rotateAngleX = (float) ((double) this.armRight.rotateAngleX - ((double) f7 * 1.2D + (double) f8));
-            this.armRight.rotateAngleY += this.body.rotateAngleY * 2.0F;
-            this.armRight.rotateAngleZ = MathHelper.sin(this.swingProgress * (float) Math.PI) * -0.4F;
-        }
-
-        if (this.isSneak) {
-            this.body.rotateAngleX = 0.5F;
-            this.armRight.rotateAngleX += 0.4F;
-            this.armLeft.rotateAngleX += 0.4F;
-            this.legRight.rotationPointZ = 4.0F;
-            this.legLeft.rotationPointZ = 4.0F;
-            this.legRight.rotationPointY = 9.0F;
-            this.legLeft.rotationPointY = 9.0F;
-            this.head.rotationPointY = 1.0F;
-        } else {
-            this.body.rotateAngleX = 0.0F;
-            this.legRight.rotationPointZ = 0.1F;
-            this.legLeft.rotationPointZ = 0.1F;
-            this.legRight.rotationPointY = 12.0F;
-            this.legLeft.rotationPointY = 12.0F;
-            this.head.rotationPointY = 0.0F;
-        }
 
         this.armRight.rotateAngleZ += MathHelper.cos(ageInTicks * 0.09F) * 0.05F + 0.05F;
         this.armLeft.rotateAngleZ -= MathHelper.cos(ageInTicks * 0.09F) * 0.05F + 0.05F;
