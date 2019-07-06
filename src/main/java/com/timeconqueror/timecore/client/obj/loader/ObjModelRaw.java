@@ -1,12 +1,13 @@
 package com.timeconqueror.timecore.client.obj.loader;
 
-import com.timeconqueror.timecore.Logger;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.ArrayList;
 import java.util.ConcurrentModificationException;
 import java.util.List;
+
+import static com.timeconqueror.timecore.TimeCore.logger;
 
 public class ObjModelRaw {
     public List<ObjModelRenderer> parts;
@@ -144,15 +145,15 @@ public class ObjModelRaw {
 
     private void checkForNoDuplications(){
         if(hasDuplications()){
-            Logger.error("=============================================================");
-            Logger.error("Duplications were found! You must call method ObjModelRaw#clearDuplications() after adding children to renderers.");
-            Logger.error("Duplications:");
+            logger.error("=============================================================");
+            logger.error("Duplications were found! You must call method ObjModelRaw#clearDuplications() after adding children to renderers.");
+            logger.error("Duplications:");
 
             for(String str : formDuplicationList()){
-                Logger.error(str);
+                logger.error(str);
             }
 
-            Logger.error("=============================================================");
+            logger.error("=============================================================");
         }
     }
 }

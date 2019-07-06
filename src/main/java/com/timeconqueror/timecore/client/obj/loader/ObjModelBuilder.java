@@ -1,7 +1,5 @@
 package com.timeconqueror.timecore.client.obj.loader;
 
-import com.timeconqueror.timecore.Logger;
-import com.timeconqueror.timecore.TimeCore;
 import com.timeconqueror.timecore.client.obj.loader.part.Face;
 import com.timeconqueror.timecore.client.obj.loader.part.ModelObject;
 import com.timeconqueror.timecore.client.obj.loader.part.TextureCoordinate;
@@ -18,6 +16,8 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static com.timeconqueror.timecore.TimeCore.logger;
 
 /**
  * Wavefront ModelObject importer
@@ -275,9 +275,9 @@ public class ObjModelBuilder {
                 }
             }
         } catch (FileNotFoundException e) {
-            if (TimeCore.devEnv) {
+            if (logger.isInDev()) {
                 String[] path = rpFileLocation.getPath().split("/");
-                Logger.printDevOnlyMessage("No .rp file with the name " + path[path.length - 1] + " was found! All rotation points will be set to 0 by default.");
+                logger.printDevOnlyMessage("No .rp file with the name " + path[path.length - 1] + " was found! All rotation points will be set to 0 by default.");
             }
             return;
         } catch (IOException e) {
@@ -293,7 +293,7 @@ public class ObjModelBuilder {
                     rpVertex.vertex.z = -y;
                 }
             } else {
-                Logger.warn("Unknown type {} in .rp File with path {}", type, rpFileLocation);
+                logger.warn("Unknown type {} in .rp File with path {}", type, rpFileLocation);
             }
         }
 
@@ -307,8 +307,8 @@ public class ObjModelBuilder {
                 }
             }
 
-            if (!found && TimeCore.devEnv) {
-                Logger.printDevOnlyMessage("No rotation point vertex was found for renderer with name " + renderer.getName() + " in rp-file. They will be set to 0 by default.");
+            if (!found) {
+                logger.printDevOnlyMessage("No rotation point vertex was found for renderer with name " + renderer.getName() + " in rp-file. They will be set to 0 by default.");
             }
         }
     }
