@@ -11,9 +11,9 @@ apply plugin: 'net.minecraftforge.gradle.forge'
 //Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
 
 
-version = "1.12.2-1.0"
+version = "1.12.2-1.0.1"
 group = "com.timeconqueror.timecore" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
-archivesBaseName = "timecore"
+archivesBaseName = "TimeCore"
 
 sourceCompatibility = targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
 compileJava {
