@@ -1,10 +1,10 @@
 package example;
 
-import com.timeconqueror.timecore.TimeCore;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.entity.RenderLiving;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.util.ResourceLocation;
+import ru.timeconqueror.timecore.TimeCore;
 
 import javax.annotation.Nullable;
 

@@ -1,13 +1,13 @@
 package example;
 
-import com.timeconqueror.timecore.TimeCore;
-import com.timeconqueror.timecore.client.obj.loader.ObjModelLoader;
-import com.timeconqueror.timecore.client.obj.loader.ObjModelRenderer;
-import com.timeconqueror.timecore.client.obj.loader.model.ObjModelBase;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
+import ru.timeconqueror.timecore.TimeCore;
+import ru.timeconqueror.timecore.client.obj.loader.ObjModelLoader;
+import ru.timeconqueror.timecore.client.obj.loader.ObjModelRenderer;
+import ru.timeconqueror.timecore.client.obj.loader.model.ObjModelBase;
 
 public class ModelPhoenix extends ObjModelBase {
     private ObjModelRenderer head;

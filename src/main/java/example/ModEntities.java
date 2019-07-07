@@ -1,6 +1,5 @@
 package example;
 
-import com.timeconqueror.timecore.TimeCore;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.Entity;
@@ -9,6 +8,7 @@ import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import ru.timeconqueror.timecore.TimeCore;
 
 public class ModEntities {
 

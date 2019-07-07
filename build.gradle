@@ -10,9 +10,14 @@ buildscript {
 apply plugin: 'net.minecraftforge.gradle.forge'
 //Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
 
+file "build.properties" withReader {
+    def prop = new Properties()
+    prop.load(it)
+    ext.config = new ConfigSlurper().parse prop
+}
 
-version = "1.12.2-1.0.1"
-group = "com.timeconqueror.timecore" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
+version = "${config.minecraft.version}-${config.timecore.version}"
+group = "ru.timeconqueror" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "TimeCore"
 
 sourceCompatibility = targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
@@ -21,8 +26,13 @@ compileJava {
 }
 
 minecraft {
-    version = "1.12.2-14.23.5.2768"
+    version = "${config.forge.version}"
     runDir = "run"
+
+    replaceIn "src/main/java/ru/timeconqueror/timecore/TimeCore.java"
+
+    def versionArray = project.version.tokenize('-')
+    replace "GRADLETOKEN_VERSION", versionArray[1]
     
     // the mappings can be changed at any time, and must be in the following format.
     // snapshot_YYYYMMDD   snapshot are built nightly.
@@ -34,6 +44,8 @@ minecraft {
 }
 
 dependencies {
+//    compile fileTree("libs/")
+
     // you may put jars on which you depend on in ./libs
     // or you may define them like so..
     //compile "some.group:artifact:version:classifier"
