@@ -14,7 +14,7 @@ public class TimeCore {
     public static final String NAME = "Time Core";
     public static final String VERSION = "1.0";
 
-    public static LogHelper logger = new LogHelper(MODID);
+    public static LogHelper logHelper = new LogHelper(MODID);
 
     @SidedProxy(clientSide = "com.timeconqueror.timecore.proxy.ClientProxy", serverSide = "com.timeconqueror.timecore.proxy.ServerProxy")
     public static CommonProxy proxy;

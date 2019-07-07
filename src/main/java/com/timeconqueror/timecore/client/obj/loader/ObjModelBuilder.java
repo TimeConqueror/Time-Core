@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static com.timeconqueror.timecore.TimeCore.logger;
+import static com.timeconqueror.timecore.TimeCore.logHelper;
 
 /**
  * Wavefront ModelObject importer
@@ -275,9 +275,9 @@ public class ObjModelBuilder {
                 }
             }
         } catch (FileNotFoundException e) {
-            if (logger.isInDev()) {
+            if (logHelper.isInDev()) {
                 String[] path = rpFileLocation.getPath().split("/");
-                logger.printDevOnlyMessage("No .rp file with the name " + path[path.length - 1] + " was found! All rotation points will be set to 0 by default.");
+                logHelper.printDevOnlyMessage("No .rp file with the name " + path[path.length - 1] + " was found! All rotation points will be set to 0 by default.");
             }
             return;
         } catch (IOException e) {
@@ -293,7 +293,7 @@ public class ObjModelBuilder {
                     rpVertex.vertex.z = -y;
                 }
             } else {
-                logger.warn("Unknown type {} in .rp File with path {}", type, rpFileLocation);
+                logHelper.warn("Unknown type {} in .rp File with path {}", type, rpFileLocation);
             }
         }
 
@@ -308,7 +308,7 @@ public class ObjModelBuilder {
             }
 
             if (!found) {
-                logger.printDevOnlyMessage("No rotation point vertex was found for renderer with name " + renderer.getName() + " in rp-file. They will be set to 0 by default.");
+                logHelper.printDevOnlyMessage("No rotation point vertex was found for renderer with name " + renderer.getName() + " in rp-file. They will be set to 0 by default.");
             }
         }
     }

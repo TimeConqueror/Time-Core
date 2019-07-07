@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.ConcurrentModificationException;
 import java.util.List;
 
-import static com.timeconqueror.timecore.TimeCore.logger;
+import static com.timeconqueror.timecore.TimeCore.logHelper;
 
 public class ObjModelRaw {
     public List<ObjModelRenderer> parts;
@@ -145,15 +145,15 @@ public class ObjModelRaw {
 
     private void checkForNoDuplications(){
         if(hasDuplications()){
-            logger.error("=============================================================");
-            logger.error("Duplications were found! You must call method ObjModelRaw#clearDuplications() after adding children to renderers.");
-            logger.error("Duplications:");
+            logHelper.error("=============================================================");
+            logHelper.error("Duplications were found! You must call method ObjModelRaw#clearDuplications() after adding children to renderers.");
+            logHelper.error("Duplications:");
 
             for(String str : formDuplicationList()){
-                logger.error(str);
+                logHelper.error(str);
             }
 
-            logger.error("=============================================================");
+            logHelper.error("=============================================================");
         }
     }
 }

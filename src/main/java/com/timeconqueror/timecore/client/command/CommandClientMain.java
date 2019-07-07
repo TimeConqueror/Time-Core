@@ -41,7 +41,7 @@ public class CommandClientMain extends CommandBase implements IClientCommand {
 
     @Override
     public String getUsage(ICommandSender sender) {
-        return null;
+        return "command.timecore.usage";
     }
 
     @Override
