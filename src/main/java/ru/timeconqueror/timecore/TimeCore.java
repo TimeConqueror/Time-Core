@@ -6,6 +6,7 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import ru.timeconqueror.timecore.proxy.CommonProxy;
+import ru.timeconqueror.timecore.util.debug.LogHelper;
 
 @Mod(modid = TimeCore.MODID, name = TimeCore.NAME, version = TimeCore.VERSION)
 public class TimeCore {
