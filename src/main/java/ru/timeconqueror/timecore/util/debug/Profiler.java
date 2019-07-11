@@ -13,7 +13,7 @@ public class Profiler {
     }
 
     public String[] getIdentifiers() {
-        String[] tValues = null;
+        String[] tValues = new String[profilingMap.size()];
         profilingMap.keySet().toArray(tValues);
         return tValues;
     }
@@ -22,7 +22,7 @@ public class Profiler {
      * Add a new time to the list of identifiers.
      * Will be ignored if {@code totalTime} == 0
      */
-    public void addProfObjectToList(String identifier, long totalTime) {
+    public void addTimeToList(String identifier, long totalTime) {
         try {
             if (totalTime == 0) {
                 return;
@@ -45,7 +45,7 @@ public class Profiler {
     }
 
     /**
-     * Return the average time by indentifier.
+     * Return the average time by identifier.
      */
     public long getAverageTime(String identifier) {
         try {
