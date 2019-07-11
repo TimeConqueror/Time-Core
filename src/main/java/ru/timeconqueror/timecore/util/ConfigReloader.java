@@ -1,9 +1,11 @@
 package ru.timeconqueror.timecore.util;
 
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.*;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import ru.timeconqueror.timecore.TimeCore;
+import ru.timeconqueror.timecore.event.OnConfigReloadedEvent;
 
 import java.io.File;
 import java.lang.reflect.Field;
@@ -37,6 +39,8 @@ public class ConfigReloader {
     /**
      * Reloads config from file for mod with {@code modid}.
      * Works with Config created by annotations from {@link Config}.
+     *
+     * This method is also fires {@link OnConfigReloadedEvent}, so to reload or process some special things, you may handle this event.
      */
     public static void reloadConfigsFromFile(String modid, String fileName) {
         Map<String, Configuration> configs = null;
@@ -56,30 +60,32 @@ public class ConfigReloader {
                 file = new File(Loader.instance().getConfigDir(), fileName);
             }
 
+            Configuration tempConfig = configs.get(file.getAbsolutePath());
+            if (tempConfig == null) {
+                TimeCore.logHelper.error("There is no uploaded file with path: " + file.getAbsolutePath());
+                return;
+            }
+
             try {
-                Configuration tempConfig = configs.get(file.getAbsolutePath());
+                saveDefaultValues(tempConfig);
+
+                configs.remove(file.getAbsolutePath());
+
+                ConfigManager.sync(modid, Config.Type.INSTANCE);
 
                 try {
-                    saveDefaultValues(tempConfig);
-
-                    configs.remove(file.getAbsolutePath());
-
-                    ConfigManager.sync(modid, Config.Type.INSTANCE);
-
-                    try {
-                        configs = (Map<String, Configuration>) CONFIGS.get(null);
-                        restoreDefaultValues(configs.get(file.getAbsolutePath()));
-                    } catch (Throwable e) {
-                        configs.put(file.getAbsolutePath(), tempConfig);
-                        TimeCore.logHelper.error("Error while switching back default values! Last config data will be restored!");
-                        e.printStackTrace();
-                    }
-
-                } catch (IllegalAccessException e) {
+                    configs = (Map<String, Configuration>) CONFIGS.get(null);
+                    restoreDefaultValues(configs.get(file.getAbsolutePath()));
+                } catch (Throwable e) {
+                    configs.put(file.getAbsolutePath(), tempConfig);
+                    TimeCore.logHelper.error("Error while switching back default values! Last config data will be restored!");
                     e.printStackTrace();
+                    return;
                 }
-            } catch (NullPointerException e) {
-                TimeCore.logHelper.error("There is no uploaded file with path: " + file.getAbsolutePath());
+
+                MinecraftForge.EVENT_BUS.post(new OnConfigReloadedEvent(modid, fileName));
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
             }
         }
     }

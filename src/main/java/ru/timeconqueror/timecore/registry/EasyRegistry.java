@@ -21,7 +21,7 @@ public class EasyRegistry {
      * @param modid the part of registry object name, that will be added in places like translationKey.
      *              <p>Example: {@code prefix} == "timecore", blockName = "test_block",
      *              <p>Translation Key Sum: "tile.timecore:test_block.name"
-     * @param tabIn - CreativeTab, where items and blocks will be placed.
+     * @param tabIn CreativeTab, where items and blocks will be placed.
      *              <p>
      *              YOU MUST REGISTER BLOCKS AND ITEMS ONLY DURING {@link FMLPreInitializationEvent} event
      */
