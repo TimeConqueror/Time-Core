@@ -16,7 +16,7 @@ public class OnConfigReloadedEvent extends Event {
         this.fileName = fileName;
     }
 
-    public String getModid() {
+    public String getModID() {
         return modid;
     }
 

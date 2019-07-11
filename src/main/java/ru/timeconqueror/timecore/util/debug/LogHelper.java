@@ -7,9 +7,15 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 public class LogHelper {
+    public static final String CONSOLE_DEBUG_PREFIX = TextFormatting.BLUE + "[DEBUG] " + TextFormatting.RESET;
+
     public Logger logger;
     private boolean devEnv = false;
     private boolean debugMode = false;
+    /**
+     * If this is equal true, then Debug messages will be printed to console, not to debug.log
+     */
+    private boolean debugToConsole = false;
 
     /**
      * Must be called only in {@link FMLPreInitializationEvent} event.
@@ -60,16 +66,25 @@ public class LogHelper {
      */
     public void debug(String msg) {
         if (debugMode) {
-            logger.debug(msg);
+            if (debugToConsole) {
+                logger.info(CONSOLE_DEBUG_PREFIX + msg);
+            } else {
+                logger.debug(msg);
+            }
         }
     }
 
     /**
      * Only works when {@link #debugMode} is enabled.
+     * If {@link #debugToConsole} equals true, then it will print to console and not to log file.
      */
     public void debug(String msg, Object... params) {
         if (debugMode) {
-            logger.debug(msg, params);
+            if (debugToConsole) {
+                logger.info(CONSOLE_DEBUG_PREFIX + msg, params);
+            } else {
+                logger.debug(msg, params);
+            }
         }
     }
 
@@ -83,6 +98,17 @@ public class LogHelper {
 
         warn(msg);
         warn("This message appears only in dev enviroment.");
+    }
+
+    /**
+     * If this is equal true, then Debug messages will be printed to console, not to debug.log
+     */
+    public void setPrintDebugToConsole(boolean state) {
+        debugToConsole = state;
+    }
+
+    public boolean isDebugToConsoleOn() {
+        return debugToConsole;
     }
 
     public void setDebugMode(boolean state) {
