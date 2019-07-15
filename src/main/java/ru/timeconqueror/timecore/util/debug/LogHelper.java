@@ -7,18 +7,20 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 public class LogHelper {
-    public static final String CONSOLE_DEBUG_PREFIX = TextFormatting.BLUE + "[DEBUG] " + TextFormatting.RESET;
+    private static final String CONSOLE_DEBUG_PREFIX = TextFormatting.AQUA + "[DEBUG] " + TextFormatting.RESET;
+    private static final String CONSOLE_TRACE_PREFIX = TextFormatting.GOLD + "[TRACE] " + TextFormatting.RESET;
 
     public Logger logger;
     private boolean devEnv = false;
-    private boolean debugMode = false;
+    private boolean enableDebug = false;
+    private Level debugLevel = Level.DEBUG;
     /**
      * If this is equal true, then Debug messages will be printed to console, not to debug.log
      */
     private boolean debugToConsole = false;
 
     /**
-     * Must be called only in {@link FMLPreInitializationEvent} event.
+     * Must be called only in {@link FMLPreInitializationEvent} event or during first access to the mod class.
      */
     public LogHelper(String modid) {
         logger = LogManager.getLogger(modid);
@@ -30,7 +32,7 @@ public class LogHelper {
     }
 
     public void info(String msg) {
-        logger.info(msg);
+        info(msg, new Object[0]);
     }
 
     public void info(String msg, Object... params) {
@@ -38,7 +40,7 @@ public class LogHelper {
     }
 
     public void warn(String msg) {
-        logger.warn(msg);
+        warn(msg, new Object[0]);
     }
 
     public void warn(String msg, Object... params) {
@@ -46,15 +48,23 @@ public class LogHelper {
     }
 
     public void error(String msg) {
-        logger.error(msg);
+        error(msg, new Object[0]);
     }
 
     public void error(String msg, Object... params) {
         logger.error(msg, params);
     }
 
+    public void error(Throwable e) {
+        error("", e);
+    }
+
+    public void error(String msg, Throwable e) {
+        logger.error(msg, e);
+    }
+
     public void fatal(String msg) {
-        logger.fatal(msg);
+        fatal(msg, new Object[0]);
     }
 
     public void fatal(String msg, Object... params) {
@@ -62,26 +72,43 @@ public class LogHelper {
     }
 
     /**
-     * Only works when {@link #debugMode} is enabled.
+     * Only works when {@link #enableDebug} is enabled.
+     * If {@link #debugToConsole} equals true, then it will print to console and not to log file.
      */
     public void debug(String msg) {
-        if (debugMode) {
+        debug(msg, new Object[0]);
+    }
+
+    /**
+     * Only works when {@link #enableDebug} is enabled.
+     * If {@link #debugToConsole} equals true, then it will print to console and not to log file.
+     */
+    public void debug(String msg, Object... params) {
+        if (enableDebug && (debugLevel == Level.DEBUG || debugLevel == Level.TRACE)) {
             if (debugToConsole) {
-                logger.info(CONSOLE_DEBUG_PREFIX + msg);
+                logger.info(CONSOLE_DEBUG_PREFIX + msg, params);
             } else {
-                logger.debug(msg);
+                logger.debug(msg, params);
             }
         }
     }
 
     /**
-     * Only works when {@link #debugMode} is enabled.
+     * Only works when {@link #enableDebug} is enabled and {@link Level} is {@link Level#TRACE}.
      * If {@link #debugToConsole} equals true, then it will print to console and not to log file.
      */
-    public void debug(String msg, Object... params) {
-        if (debugMode) {
+    public void trace(String msg) {
+        trace(msg, new Object[0]);
+    }
+
+    /**
+     * Only works when {@link #enableDebug} is enabled and {@link Level} is {@link Level#TRACE}.
+     * If {@link #debugToConsole} equals true, then it will print to console and not to log file.
+     */
+    public void trace(String msg, Object... params) {
+        if (enableDebug && debugLevel == Level.TRACE) {
             if (debugToConsole) {
-                logger.info(CONSOLE_DEBUG_PREFIX + msg, params);
+                logger.info(CONSOLE_TRACE_PREFIX + msg, params);
             } else {
                 logger.debug(msg, params);
             }
@@ -107,19 +134,45 @@ public class LogHelper {
         debugToConsole = state;
     }
 
+    /**
+     * Returns true, if messages are printing to console and not to debug.log
+     */
     public boolean isDebugToConsoleOn() {
         return debugToConsole;
     }
 
-    public void setDebugMode(boolean state) {
-        debugMode = state;
+    /**
+     * Returns true, if debug messages are enabled.
+     */
+    public boolean isDebugEnabled() {
+        return enableDebug;
     }
 
+    /**
+     * Enables debug messages.
+     */
+    public void setDebugEnabled(boolean state) {
+        enableDebug = state;
+    }
+
+    /**
+     * Sets the debug level.
+     *
+     * @param debugLevel <p>{@link Level#DEBUG}: prints debug messages.
+     *                   <p>{@link Level#TRACE}: prints debug and trace messages.
+     */
+    public void setDebugLevel(Level debugLevel) {
+        this.debugLevel = debugLevel;
+    }
+
+    /**
+     * Returns true, if minecraft is runned in development workspace.
+     */
     public boolean isInDev() {
         return devEnv;
     }
 
-    public boolean isDebugModeEnabled() {
-        return debugMode;
+    public enum Level {
+        DEBUG, TRACE
     }
 }
