@@ -15,6 +15,7 @@ import net.minecraft.nbt.NBTException;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.client.IClientCommand;
 import net.minecraftforge.fml.relauncher.Side;
@@ -27,8 +28,6 @@ import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
 
-//TODO add lang for usages.
-//TODO add config reloading command for all mods
 public class CommandClientMain extends CommandBase implements IClientCommand {
 
     @Override
@@ -43,16 +42,21 @@ public class CommandClientMain extends CommandBase implements IClientCommand {
 
     @Override
     public String getUsage(ICommandSender sender) {
-        return "command.timecore.usage";
+        return "command." + TimeCore.MODID + ".main.usage";
     }
 
     @Override
     public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
         if (args.length == 0) {
-            throw new WrongUsageException(TimeCore.MODID + ".command.usage");
+            throw new WrongUsageException(getUsage(sender));
         } else {
             if (args[0].equals(Commands.GENERATE_OBJ.getName())) {
                 generateObj(server, sender, args);
+            } else if (args[0].equals(Commands.HELP.getName())) {
+                sender.sendMessage(new TextComponentTranslation("command." + TimeCore.MODID + ".help.msg"));
+                for (Commands value : Commands.values()) {
+                    sender.sendMessage(new TextComponentTranslation(value.getUsage()));
+                }
             }
         }
     }
@@ -76,21 +80,16 @@ public class CommandClientMain extends CommandBase implements IClientCommand {
             }
         }
         tagCompound.setString("id", entityName);
-        //Removing pos
-//        tagCompound.removeTag("Pos");
 
         Entity entity = createEntityFromNBT(tagCompound, Minecraft.getMinecraft().world);
-
-
-//                ResourceLocation entityRl = new ResourceLocation(entityName);
-
-//        EntityEntry entityEntry = ForgeRegistries.ENTITIES.getValue(entityRl);
+        if (entity == null) {
+            throw new CommandException(TimeCore.MODID + ".command." + Commands.GENERATE_OBJ + ".unknown");
+        }
 
         Render<Entity> renderSimple = Minecraft.getMinecraft().getRenderManager().getEntityClassRenderObject(entity.getClass());
-//        Render<Entity> renderSimple = Minecraft.getMinecraft().getRenderManager().getEntityClassRenderObject(entityEntry.getEntityClass());
         if (!(renderSimple instanceof RenderLivingBase)) {
             entity.setDead();
-            throw new CommandException(TimeCore.MODID + ".command." + Commands.GENERATE_OBJ + ".unknown");
+            throw new CommandException(TimeCore.MODID + ".command." + Commands.GENERATE_OBJ + ".not_living");
         } else {
             RenderLivingBase renderLiving = (RenderLivingBase) renderSimple;
             ModelBase model = renderLiving.getMainModel();
@@ -124,14 +123,15 @@ public class CommandClientMain extends CommandBase implements IClientCommand {
     }
 
     private enum Commands {
-        GENERATE_OBJ(0, "genobj");
+        GENERATE_OBJ("genobj"),
+        HELP("help");
 
-        private int index;
         private String name;
+        private String usage;
 
-        Commands(int index, String name) {
-            this.index = index;
+        Commands(String name) {
             this.name = name;
+            this.usage = "command." + TimeCore.MODID + "." + name + ".usage";
         }
 
         public static String[] getCommands() {
@@ -143,12 +143,12 @@ public class CommandClientMain extends CommandBase implements IClientCommand {
             return commands;
         }
 
-        public String getName() {
-            return name;
+        public String getUsage() {
+            return usage;
         }
 
-        public int getIndex() {
-            return index;
+        public String getName() {
+            return name;
         }
 
         @Override

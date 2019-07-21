@@ -8,8 +8,10 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
+import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.fml.common.registry.GameRegistry;
@@ -28,7 +30,9 @@ public class EasyRegistry {
      *              <p>Translation Key Sum: "tile.timecore:test_block.name"
      * @param tabIn CreativeTab, where items and blocks will be placed.
      *              <p>
-     *              YOU MUST REGISTER BLOCKS AND ITEMS ONLY DURING {@link FMLPreInitializationEvent} event
+     *              YOU MUST REGISTER BLOCKS ITEMS, TILEENTITIES AND TESRS ONLY DURING {@link FMLPreInitializationEvent} event
+     *              YOU MUST REGISTER SOUNDS ONLY DURING {@link FMLPostInitializationEvent} evenT
+     *              OR VIA SPECIAL REGISTRY EVENTS!
      */
     public EasyRegistry(String modid, @Nullable CreativeTabs tabIn) {
         this.modid = modid;
@@ -95,4 +99,10 @@ public class EasyRegistry {
     }
 
 
+    public SoundEvent registerSound(ResourceLocation rl) {
+        SoundEvent soundevent = new SoundEvent(rl);
+        soundevent.setRegistryName(rl);
+        ForgeRegistries.SOUND_EVENTS.register(soundevent);
+        return soundevent;
+    }
 }
