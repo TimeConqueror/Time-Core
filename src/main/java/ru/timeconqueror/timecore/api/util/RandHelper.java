@@ -1,4 +1,4 @@
-package ru.timeconqueror.timecore.util;
+package ru.timeconqueror.timecore.api.util;
 
 import ru.timeconqueror.timecore.TimeCore;
 
@@ -7,7 +7,7 @@ public class RandHelper {
      * Returns {@code a} with 50% chance otherwise return {@code b}
      */
     public static <T> T flipCoin(T a, T b) {
-        return chance(50, a, b);
+        return TimeCore.rand.nextBoolean() ? a : b;
     }
 
     /**

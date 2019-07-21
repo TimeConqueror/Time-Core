@@ -1,10 +1,11 @@
-package ru.timeconqueror.timecore.util.debug;
+package ru.timeconqueror.timecore.api.util.debug;
 
 import net.minecraft.launchwrapper.Launch;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import ru.timeconqueror.timecore.TimeCore;
 
 public class LogHelper {
     private static final String CONSOLE_DEBUG_PREFIX = TextFormatting.AQUA + "[DEBUG] " + TextFormatting.RESET;
@@ -27,7 +28,9 @@ public class LogHelper {
 
         if ((boolean) Launch.blackboard.get("fml.deobfuscatedEnvironment")) {
             devEnv = true;
-            info(TextFormatting.GREEN + "Dev enviroment was detected. Additional dev messages are enabled.");
+            if (logger.getName().equals(TimeCore.MODID)) {
+                info(TextFormatting.GREEN + "Dev enviroment was detected. Additional dev messages are enabled.");
+            }
         }
     }
 

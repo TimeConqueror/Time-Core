@@ -1,11 +1,11 @@
-package ru.timeconqueror.timecore.util;
+package ru.timeconqueror.timecore.api.util;
 
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.*;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import ru.timeconqueror.timecore.TimeCore;
-import ru.timeconqueror.timecore.event.OnConfigReloadedEvent;
+import ru.timeconqueror.timecore.api.event.OnConfigReloadedEvent;
 
 import java.io.File;
 import java.lang.reflect.Field;
@@ -38,7 +38,7 @@ public class ConfigReloader {
 
     /**
      * Reloads config from file for mod with {@code modid}.
-     * Works with Config created by annotations from {@link Config}.
+     * Works with Config created by annotations from {@link Config}. Not tested with old system. //TODO
      *
      * This method is also fires {@link OnConfigReloadedEvent}, so to reload or process some special things, you may handle this event.
      */
@@ -113,7 +113,7 @@ public class ConfigReloader {
             } else {
                 file = new File(Loader.instance().getConfigDir(), fileName);
             }
-            System.out.println(file.getAbsolutePath());
+
             return configs.get(file.getAbsolutePath()) != null;
         }
 
@@ -150,8 +150,7 @@ public class ConfigReloader {
         }
 
         private void writeData(ConfigCategory cat) throws IllegalAccessException {
-            ConfigCategory[] childCats = new ConfigCategory[cat.getChildren().size()];
-            CastHelper.cast(cat.getChildren().toArray(), childCats);
+            ConfigCategory[] childCats = cat.getChildren().toArray(new ConfigCategory[]{});
 
             for (int i = 0; i < childCats.length; i++) {
                 children.get(i).writeData(childCats[i]);

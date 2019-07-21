@@ -1,7 +1,7 @@
-package ru.timeconqueror.timecore.event;
+package ru.timeconqueror.timecore.api.event;
 
 import net.minecraftforge.fml.common.eventhandler.Event;
-import ru.timeconqueror.timecore.util.ConfigReloader;
+import ru.timeconqueror.timecore.api.util.ConfigReloader;
 
 /**
  * This event is fired by {@link ConfigReloader#reloadConfigsFromFile(String, String)}

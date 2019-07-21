@@ -6,8 +6,8 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
+import ru.timeconqueror.timecore.api.util.debug.LogHelper;
 import ru.timeconqueror.timecore.proxy.CommonProxy;
-import ru.timeconqueror.timecore.util.debug.LogHelper;
 
 import java.util.Random;
 
