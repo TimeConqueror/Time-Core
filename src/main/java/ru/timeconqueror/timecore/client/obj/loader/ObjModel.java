@@ -3,27 +3,30 @@ package ru.timeconqueror.timecore.client.obj.loader;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import ru.timeconqueror.timecore.TimeCore;
+import ru.timeconqueror.timecore.api.client.obj.model.AbstractObjModel;
+import ru.timeconqueror.timecore.api.client.obj.model.ObjModelRenderer;
 
 import java.util.ArrayList;
 import java.util.ConcurrentModificationException;
 import java.util.List;
 
-public class ObjModelRaw {
+public class ObjModel extends AbstractObjModel {
     public List<ObjModelRenderer> parts;
     private List<ObjModelRenderer> duplications = new ArrayList<>();
-    private String name;
 
-    ObjModelRaw(List<ObjModelRenderer> parts) {
+    ObjModel(List<ObjModelRenderer> parts) {
         this.parts = parts;
     }
 
-    ObjModelRaw() {
+    ObjModel() {
     }
 
-    public String getType() {
-        return "obj";
+    @Override
+    public List<ObjModelRenderer> getParts() {
+        return parts;
     }
 
+    @Override
     @SideOnly(Side.CLIENT)
     public void renderAll(float scale) {
         checkForNoDuplications();
@@ -33,9 +36,16 @@ public class ObjModelRaw {
     }
 
     /**
-     * Removes all generated duplicates, which appeared after adding children to other {@link ObjModelRenderer}s.
-     * MUST NOT be called while passing {@link #parts}, because it will throw {@link ConcurrentModificationException};
+     * Removes all generated duplications, which will appear if you add children to other {@link ObjModelRenderer}s.
+     * You may separate model parts and add children during for example constructing model.
+     * Example can be seen here: {@link example.ModelPhoenix}
+     *
+     * If you forget to clear duplications, error messages will be printed to console every render frame.
+     *
+     * MUST be called AFTER adding children to other {@link ObjModelRenderer}s.
+     * MUST NOT be called while passing {@link #getParts()}, because it will throw {@link ConcurrentModificationException};
      */
+    @Override
     public void clearDuplications() throws ConcurrentModificationException {
         try {
             for (ObjModelRenderer renderer : duplications) {
@@ -48,6 +58,7 @@ public class ObjModelRaw {
         duplications.clear();
     }
 
+    @Override
     public boolean hasDuplications(){
         return !duplications.isEmpty();
     }
@@ -61,6 +72,7 @@ public class ObjModelRaw {
         return list;
     }
 
+    @Override
     @SideOnly(Side.CLIENT)
     public void renderOnly(float scale, String... groupNames) {
         checkForNoDuplications();
@@ -73,6 +85,7 @@ public class ObjModelRaw {
         }
     }
 
+    @Override
     @SideOnly(Side.CLIENT)
     public void renderOnly(float scale, ObjModelRenderer... partsIn) {
         checkForNoDuplications();
@@ -85,6 +98,7 @@ public class ObjModelRaw {
         }
     }
 
+    @Override
     @SideOnly(Side.CLIENT)
     public void renderPart(float scale, String partName) {
         checkForNoDuplications();
@@ -95,11 +109,12 @@ public class ObjModelRaw {
         }
     }
 
+    @Override
     @SideOnly(Side.CLIENT)
-    public void renderPart(float scale, ObjModelRenderer partsIn) {
+    public void renderPart(float scale, ObjModelRenderer partIn) {
         checkForNoDuplications();
         for (ObjModelRenderer part : parts) {
-            if (part.equals(partsIn)) {
+            if (part.equals(partIn)) {
                 part.render(scale);
             }
         }
@@ -108,6 +123,7 @@ public class ObjModelRaw {
     /**
      * Renders all parts except given. If excluded part has children, they will be counted as excluded (but it won't work if you hadn't cleared duplications through {@link #clearDuplications()}).
      */
+    @Override
     @SideOnly(Side.CLIENT)
     public void renderAllExcept(float scale, ObjModelRenderer... excludedPartsIn) {
         checkForNoDuplications();
@@ -134,12 +150,9 @@ public class ObjModelRaw {
         parts = renderers;
     }
 
-    void addDuplication(ObjModelRenderer renderer){
+    @Override
+    protected void addDuplication(ObjModelRenderer renderer) {
         duplications.add(renderer);
-    }
-
-    void setName(String name) {
-        this.name = name;
     }
 
     private void checkForNoDuplications(){

@@ -1,4 +1,4 @@
-package ru.timeconqueror.timecore.client.obj.loader;
+package ru.timeconqueror.timecore.api.client.obj.model;
 
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GLAllocation;
@@ -7,6 +7,7 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL11;
+import ru.timeconqueror.timecore.client.obj.loader.ObjModel;
 import ru.timeconqueror.timecore.client.obj.loader.part.ModelObject;
 import ru.timeconqueror.timecore.client.obj.loader.part.Vertex;
 
@@ -25,7 +26,7 @@ public class ObjModelRenderer {
     private ModelObject model;
 
     public List<ObjModelRenderer> childModels = new ArrayList<>();
-    private ObjModelRaw parent;
+    private AbstractObjModel parent;
 
 
     private boolean compiled;
@@ -35,7 +36,7 @@ public class ObjModelRenderer {
     private int displayList;
 
 
-    public ObjModelRenderer(ObjModelRaw parent, ModelObject modelForRender) {
+    public ObjModelRenderer(ObjModel parent, ModelObject modelForRender) {
         this.model = modelForRender;
         this.parent = parent;
     }
@@ -58,13 +59,19 @@ public class ObjModelRenderer {
 
     /**
      * Adds child to Renderer.
-     * After using this method you must call {@link ObjModelRaw#clearDuplications()} method to delete all generated duplicates in {@link #parent}. You may do this after adding all children to the renderer.
+     * After using this method you must call {@link ObjModel#clearDuplications()} method to delete all generated duplicates in {@link #parent}.
+     * You MUST do this after adding all children to the renderer.
      */
     public void addChild(ObjModelRenderer child) {
         childModels.add(child);
         parent.addDuplication(child);
     }
 
+    /**
+     * Renders part with given {@code scale}.
+     *
+     * @param scale scaleFactor, that determines your part size.
+     */
     @SideOnly(Side.CLIENT)
     public void render(float scale) {
         if (!this.isHidden) {
@@ -113,6 +120,11 @@ public class ObjModelRenderer {
         }
     }
 
+    /**
+     * Renders part with given {@code scale} and rotation.
+     *
+     * @param scale scaleFactor, that determines your part size.
+     */
     @SideOnly(Side.CLIENT)
     public void renderWithRotation(float scale) {
         if (!this.isHidden) {
@@ -149,7 +161,9 @@ public class ObjModelRenderer {
     }
 
     /**
-     * Allows the changing of Angles after a box has been rendered
+     * Allows the changing of Angles after a box has been rendered.
+     *
+     * @param scale     scaleFactor, that determines your part size.
      */
     @SideOnly(Side.CLIENT)
     public void postRender(float scale) {

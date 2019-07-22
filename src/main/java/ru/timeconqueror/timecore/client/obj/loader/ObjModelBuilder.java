@@ -5,6 +5,7 @@ import net.minecraft.client.resources.IResource;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 import ru.timeconqueror.timecore.TimeCore;
+import ru.timeconqueror.timecore.api.client.obj.model.ObjModelRenderer;
 import ru.timeconqueror.timecore.client.obj.loader.part.Face;
 import ru.timeconqueror.timecore.client.obj.loader.part.ModelObject;
 import ru.timeconqueror.timecore.client.obj.loader.part.TextureCoordinate;
@@ -46,7 +47,7 @@ public class ObjModelBuilder {
     private ArrayList<ObjModelRenderer> renderers = new ArrayList<>();
     private ArrayList<RPVertex> rpVertexes = new ArrayList<>();
 
-    ObjModelBuilder(ResourceLocation rl) throws ModelFormatException {
+    public ObjModelBuilder(ResourceLocation rl) throws ModelFormatException {
         this.fileLocation = rl;
     }
 
@@ -171,10 +172,10 @@ public class ObjModelBuilder {
         return groupObjectMatcher.matches();
     }
 
-    public ObjModelRaw loadModel() throws ModelFormatException {
+    public ObjModel loadModel() throws ModelFormatException {
 
         int lineCount = 0;
-        ObjModelRaw model = new ObjModelRaw();
+        ObjModel model = new ObjModel();
 
         try (IResource objFile = Minecraft.getMinecraft().getResourceManager().getResource(fileLocation)) {
             try (BufferedReader reader = new BufferedReader(new InputStreamReader(objFile.getInputStream()))) {
@@ -247,7 +248,6 @@ public class ObjModelBuilder {
         loadRPFile();
 
         model.setParts(renderers);
-        model.setName(fileName);
         return model;
     }
 

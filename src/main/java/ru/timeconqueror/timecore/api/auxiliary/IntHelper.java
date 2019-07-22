@@ -1,4 +1,4 @@
-package ru.timeconqueror.timecore.api.util;
+package ru.timeconqueror.timecore.api.auxiliary;
 
 public class IntHelper {
     public static boolean isInt(String s) {

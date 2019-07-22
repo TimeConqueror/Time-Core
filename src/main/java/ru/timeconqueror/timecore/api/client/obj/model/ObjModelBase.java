@@ -1,24 +1,22 @@
-package ru.timeconqueror.timecore.client.obj.loader.model;
+package ru.timeconqueror.timecore.api.client.obj.model;
 
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.entity.Entity;
-import ru.timeconqueror.timecore.client.obj.loader.ObjModelRaw;
-import ru.timeconqueror.timecore.client.obj.loader.ObjModelRenderer;
 
 public class ObjModelBase extends ModelBase {
-    protected ObjModelRaw mainModel;
+    /**
+     * Main obj model used for rendering.
+     */
+    protected AbstractObjModel model;
 
-    public ObjModelBase(ObjModelRaw modelIn){
-        mainModel = modelIn;
-        init();
+    public ObjModelBase(AbstractObjModel modelIn) {
+        model = modelIn;
     }
-
-    private void init(){}
 
     @Override
     public void render(Entity entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scale) {
-        mainModel.renderAll(scale);
+        model.renderAll(scale);
         super.render(entityIn, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scale);
     }
 
@@ -63,6 +61,4 @@ public class ObjModelBase extends ModelBase {
         dest.rotationPointY = source.rotationPointY;
         dest.rotationPointZ = source.rotationPointZ;
     }
-
-    //TODO Do ArrowLayer Integration getRandomModelBox()
 }

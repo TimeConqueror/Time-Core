@@ -1,4 +1,4 @@
-package ru.timeconqueror.timecore.api.util;
+package ru.timeconqueror.timecore.api.auxiliary;
 
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.*;

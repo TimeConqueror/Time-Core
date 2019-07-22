@@ -1,4 +1,4 @@
-package ru.timeconqueror.timecore.api.util;
+package ru.timeconqueror.timecore.api.auxiliary;
 
 import ru.timeconqueror.timecore.TimeCore;
 

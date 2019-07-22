@@ -8,9 +8,11 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.EnumHandSide;
 import net.minecraft.util.math.MathHelper;
-import ru.timeconqueror.timecore.client.obj.loader.ObjModelRaw;
-import ru.timeconqueror.timecore.client.obj.loader.ObjModelRenderer;
+import ru.timeconqueror.timecore.api.client.obj.model.ObjModelBase;
+import ru.timeconqueror.timecore.api.client.obj.model.ObjModelRenderer;
+import ru.timeconqueror.timecore.client.obj.loader.ObjModel;
 
+//TODO rework
 public class ObjModelBiped extends ObjModelBase {
     public ObjModelRenderer head;
 
@@ -33,7 +35,7 @@ public class ObjModelBiped extends ObjModelBase {
     public ObjModelRenderer legLeft;
     public boolean isSneak;
 
-    public ObjModelBiped(ObjModelRaw modelIn, String head, String body, String armLeft, String armRight, String legLeft, String legRight) {
+    public ObjModelBiped(ObjModel modelIn, String head, String body, String armLeft, String armRight, String legLeft, String legRight) {
         super(modelIn);
         initParts(head, body, armLeft, armRight, legLeft, legRight);
     }
@@ -42,7 +44,7 @@ public class ObjModelBiped extends ObjModelBase {
      * Searches in array of model objects and determines main objects.
      */
     public void initParts(String head, String body, String armLeft, String armRight, String legLeft, String legRight) {
-        for (ObjModelRenderer renderer : mainModel.parts) {
+        for (ObjModelRenderer renderer : model.getParts()) {
             if (renderer.getName().equals(head)) {
                 this.head = renderer;
             } else if (renderer.getName().equals(body)) {

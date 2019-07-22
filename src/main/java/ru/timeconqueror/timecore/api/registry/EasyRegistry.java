@@ -1,4 +1,4 @@
-package ru.timeconqueror.timecore.registry;
+package ru.timeconqueror.timecore.api.registry;
 
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;

@@ -3,9 +3,11 @@ package ru.timeconqueror.timecore.client.obj.loader.model;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.MathHelper;
-import ru.timeconqueror.timecore.client.obj.loader.ObjModelRaw;
-import ru.timeconqueror.timecore.client.obj.loader.ObjModelRenderer;
+import ru.timeconqueror.timecore.api.client.obj.model.ObjModelBase;
+import ru.timeconqueror.timecore.api.client.obj.model.ObjModelRenderer;
+import ru.timeconqueror.timecore.client.obj.loader.ObjModel;
 
+//TODO rework
 public class ObjModelQuadruped extends ObjModelBase {
     public ObjModelRenderer head;
     public ObjModelRenderer body;
@@ -25,7 +27,7 @@ public class ObjModelQuadruped extends ObjModelBase {
      * @param leg3 - leg3 object/group name in obj file
      * @param leg4 - leg4 object/group name in obj file
      */
-    public ObjModelQuadruped(ObjModelRaw modelIn, String head, String body, String leg1, String leg2, String leg3, String leg4) {
+    public ObjModelQuadruped(ObjModel modelIn, String head, String body, String leg1, String leg2, String leg3, String leg4) {
         super(modelIn);
 
         initParts(head, body, leg1, leg2, leg3, leg4);
@@ -36,7 +38,7 @@ public class ObjModelQuadruped extends ObjModelBase {
      */
     public void initParts(String head, String body, String leg1, String leg2, String leg3, String leg4){
 
-        for(ObjModelRenderer renderer : mainModel.parts){
+        for (ObjModelRenderer renderer : model.getParts()) {
             if(renderer.getName().equals(head)){
                 this.head = renderer;
             } else if(renderer.getName().equals(body)){
