@@ -43,6 +43,14 @@ minecraft {
     // makeObfSourceJar = false // an Srg named sources jar is made by default. uncomment this to disable.
 }
 
+jar {
+
+    manifest {
+
+        attributes 'FMLAT': 'timecore_at.cfg'
+    }
+}
+
 dependencies {
 //    compile fileTree("libs/")
 
@@ -86,4 +94,23 @@ processResources {
     from(sourceSets.main.resources.srcDirs) {
         exclude 'mcmod.info'
     }
+
+    rename("timecore_at.cfg", "META-INF/timecore_at.cfg")
+}
+
+// Create deobf dev jars
+task deobfJar(type: Jar) {
+    from sourceSets.main.output
+    classifier = 'deobf'
+}
+
+// Create source attachment for dev jar
+task sourcesJar(type: Jar) {
+    from sourceSets.main.allJava
+    classifier = 'sources'
+}
+
+artifacts {
+    archives deobfJar
+    archives sourcesJar
 }
