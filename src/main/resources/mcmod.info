@@ -1,13 +1,15 @@
 [
 {
   "modid": "timecore",
-  "name": "TimeCore",
-  "description": "",
+  "name": "Time Core",
+  "description": "Simplifies modding, adds efficient model obj loader for entities and more",
   "version": "${version}",
   "mcversion": "${mcversion}",
   "url": "",
   "updateUrl": "",
-  "authorList": ["TimeConqueror"],
+  "authorList": [
+    "Time_Conqueror"
+  ],
   "logoFile": "",
   "screenshots": [],
   "dependencies": []

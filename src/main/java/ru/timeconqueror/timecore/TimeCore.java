@@ -15,7 +15,7 @@ import java.util.Random;
 public class TimeCore {
 
     public static final String MODID = "timecore";
-    public static final String NAME = "TimeCore";
+    public static final String NAME = "Time Core";
     public static final String VERSION = "GRADLETOKEN_VERSION";
 
     public static LogHelper logHelper = new LogHelper(MODID);
