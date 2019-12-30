@@ -2,13 +2,23 @@ buildscript {
     repositories {
         jcenter()
         maven { url = "http://files.minecraftforge.net/maven" }
+        maven {
+            name = 'sponge'
+            url = 'https://repo.spongepowered.org/maven'
+        }
     }
     dependencies {
         classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
+        classpath 'org.spongepowered:mixingradle:0.6-SNAPSHOT'
     }
 }
 apply plugin: 'net.minecraftforge.gradle.forge'
 //Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
+apply plugin: 'org.spongepowered.mixin'
+
+wrapper {
+    gradleVersion = "4.10.3"
+}
 
 file "build.properties" withReader {
     def prop = new Properties()
@@ -25,6 +35,12 @@ compileJava {
     sourceCompatibility = targetCompatibility = '1.8'
 }
 
+sourceSets {
+    main {
+        ext.refMap = "mixins.timecore.refmap.json"
+    }
+}
+
 minecraft {
     version = "${config.forge.version}"
     runDir = "run"
@@ -32,7 +48,7 @@ minecraft {
     replaceIn "src/main/java/ru/timeconqueror/timecore/TimeCore.java"
 
     def versionArray = project.version.tokenize('-')
-    replace "GRADLETOKEN_VERSION", versionArray[1]
+    replace "GRADLETOKEN_VERSION", versionArray.get(1)
     
     // the mappings can be changed at any time, and must be in the following format.
     // snapshot_YYYYMMDD   snapshot are built nightly.
@@ -43,17 +59,19 @@ minecraft {
     // makeObfSourceJar = false // an Srg named sources jar is made by default. uncomment this to disable.
 }
 
-jar {
-
-    manifest {
-
-        attributes 'FMLAT': 'timecore_at.cfg'
+repositories {
+    maven {
+        name = 'sponge'
+        url = 'https://repo.spongepowered.org/maven'
     }
+    mavenCentral()
+}
+
+configurations {
+    extraLibs
 }
 
 dependencies {
-//    compile fileTree("libs/")
-
     // you may put jars on which you depend on in ./libs
     // or you may define them like so..
     //compile "some.group:artifact:version:classifier"
@@ -75,6 +93,15 @@ dependencies {
     // http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html
     // http://www.gradle.org/docs/current/userguide/dependency_management.html
 
+    //noinspection GroovyAssignabilityCheck
+    extraLibs compile('org.spongepowered:mixin:0.7.11-SNAPSHOT') {
+        // Mixin includes a lot of dependencies that are too up-to-date
+        exclude module: 'launchwrapper'
+        exclude module: 'guava'
+        exclude module: 'gson'
+        exclude module: 'commons-io'
+        exclude module: 'log4j-core'
+    }
 }
 
 processResources {
@@ -96,6 +123,23 @@ processResources {
     }
 
     rename("timecore_at.cfg", "META-INF/timecore_at.cfg")
+}
+
+jar {
+    from {
+        configurations.extraLibs.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+
+    exclude "example"
+    exclude "LICENSE.txt"
+
+    manifest.attributes(
+            "TweakClass": "org.spongepowered.asm.launch.MixinTweaker",
+            "MixinConfigs": "mixins.primality.json",
+            "ForceLoadAsMod": true,
+            "FMLCorePluginContainsFMLMod": "true",
+            "FMLAT": "timecore_at.cfg"
+    )
 }
 
 // Create deobf dev jars

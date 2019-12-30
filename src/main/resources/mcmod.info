@@ -2,7 +2,7 @@
 {
   "modid": "timecore",
   "name": "Time Core",
-  "description": "Simplifies modding, adds efficient model obj loader for entities and more",
+  "description": "Simplifies modding, adds efficient obj model loader for entities and more",
   "version": "${version}",
   "mcversion": "${mcversion}",
   "url": "",
