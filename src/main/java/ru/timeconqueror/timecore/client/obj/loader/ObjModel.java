@@ -26,6 +26,10 @@ public class ObjModel extends AbstractObjModel {
         return parts;
     }
 
+    void setParts(List<ObjModelRenderer> renderers) {
+        parts = renderers;
+    }
+
     @Override
     @SideOnly(Side.CLIENT)
     public void renderAll(float scale) {
@@ -39,9 +43,9 @@ public class ObjModel extends AbstractObjModel {
      * Removes all generated duplications, which will appear if you add children to other {@link ObjModelRenderer}s.
      * You may separate model parts and add children during for example constructing model.
      * Example can be seen here: {@link example.ModelPhoenix}
-     *
+     * <p>
      * If you forget to clear duplications, error messages will be printed to console every render frame.
-     *
+     * <p>
      * MUST be called AFTER adding children to other {@link ObjModelRenderer}s.
      * MUST NOT be called while passing {@link #getParts()}, because it will throw {@link ConcurrentModificationException};
      */
@@ -51,7 +55,7 @@ public class ObjModel extends AbstractObjModel {
             for (ObjModelRenderer renderer : duplications) {
                 parts.remove(renderer);
             }
-        } catch (ConcurrentModificationException e){
+        } catch (ConcurrentModificationException e) {
             throw new ConcurrentModificationException("You must clear duplications ONLY AFTER passing ObjModelRaw#parts!!!\n" + e.getMessage());
         }
 
@@ -59,11 +63,11 @@ public class ObjModel extends AbstractObjModel {
     }
 
     @Override
-    public boolean hasDuplications(){
+    public boolean hasDuplications() {
         return !duplications.isEmpty();
     }
 
-    private String[] formDuplicationList(){
+    private String[] formDuplicationList() {
         String[] list = new String[duplications.size()];
         for (int i = 0; i < duplications.size(); i++) {
             list[i] = duplications.get(i).getName();
@@ -136,7 +140,7 @@ public class ObjModel extends AbstractObjModel {
         }
     }
 
-    private boolean isExcepted(ObjModelRenderer part, ObjModelRenderer[] excludedList){
+    private boolean isExcepted(ObjModelRenderer part, ObjModelRenderer[] excludedList) {
         for (ObjModelRenderer excludedPart : excludedList) {
             if (part.equals(excludedPart)) {
                 return true;
@@ -146,22 +150,18 @@ public class ObjModel extends AbstractObjModel {
         return false;
     }
 
-    void setParts(List<ObjModelRenderer> renderers){
-        parts = renderers;
-    }
-
     @Override
     protected void addDuplication(ObjModelRenderer renderer) {
         duplications.add(renderer);
     }
 
-    private void checkForNoDuplications(){
-        if(hasDuplications()){
+    private void checkForNoDuplications() {
+        if (hasDuplications()) {
             TimeCore.logHelper.error("=============================================================");
             TimeCore.logHelper.error("Duplications were found! You must call method ObjModelRaw#clearDuplications() after adding children to renderers.");
             TimeCore.logHelper.error("Duplications:");
 
-            for(String str : formDuplicationList()){
+            for (String str : formDuplicationList()) {
                 TimeCore.logHelper.error(str);
             }
 

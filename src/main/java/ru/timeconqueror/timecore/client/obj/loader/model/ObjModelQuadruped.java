@@ -36,20 +36,20 @@ public class ObjModelQuadruped extends ObjModelBase {
     /**
      * Searches in array of model objects and determines main objects.
      */
-    public void initParts(String head, String body, String leg1, String leg2, String leg3, String leg4){
+    public void initParts(String head, String body, String leg1, String leg2, String leg3, String leg4) {
 
         for (ObjModelRenderer renderer : model.getParts()) {
-            if(renderer.getName().equals(head)){
+            if (renderer.getName().equals(head)) {
                 this.head = renderer;
-            } else if(renderer.getName().equals(body)){
+            } else if (renderer.getName().equals(body)) {
                 this.body = renderer;
-            }else if(renderer.getName().equals(leg1)){
+            } else if (renderer.getName().equals(leg1)) {
                 this.leg1 = renderer;
-            }else if(renderer.getName().equals(leg2)){
+            } else if (renderer.getName().equals(leg2)) {
                 this.leg2 = renderer;
-            }else if(renderer.getName().equals(leg3)){
+            } else if (renderer.getName().equals(leg3)) {
                 this.leg3 = renderer;
-            }else if(renderer.getName().equals(leg4)){
+            } else if (renderer.getName().equals(leg4)) {
                 this.leg4 = renderer;
             }
         }

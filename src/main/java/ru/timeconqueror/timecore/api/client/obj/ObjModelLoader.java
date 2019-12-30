@@ -16,7 +16,6 @@ public class ObjModelLoader {
      *
      * @param resourceLocation resourceLocation of obj file.
      * @return built Obj Model which you can use in Entity Models or TESRs.
-     *
      * @see <a href="https://github.com/TimeConqueror/Time-Core/wiki/.rp-File-Creation">https://github.com/TimeConqueror/Time-Core/wiki/.rp-File-Creation</a>
      */
     public static AbstractObjModel load(ResourceLocation resourceLocation) {

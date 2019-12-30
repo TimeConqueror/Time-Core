@@ -22,7 +22,7 @@ public class RenderPhoenix extends RenderLiving<EntityPhoenix> {
     @Override
     public float prepareScale(EntityPhoenix entitylivingbaseIn, float partialTicks) {
         GlStateManager.enableRescaleNormal();
-        GlStateManager.rotate(180, 0,  (float)entitylivingbaseIn.posY, 0);
+        GlStateManager.rotate(180, 0, (float) entitylivingbaseIn.posY, 0);
         this.preRenderCallback(entitylivingbaseIn, partialTicks);
         return 0.0625F;
     }

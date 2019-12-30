@@ -22,21 +22,21 @@ public class ModEntities {
      * Register Render Class for this Entity
      */
     @SideOnly(Side.CLIENT)
-    public static void registerRenders(){
+    public static void registerRenders() {
         RenderingRegistry.registerEntityRenderingHandler(EntityPhoenix.class, ModEntities::createRenderFor);
     }
 
     /**
      * Register entity without spawn egg.
      */
-    public static void registerEntity(String name, Class<? extends Entity> entityClass, int id, int trackingRange, int updateFrequency, boolean sendVelocityUpdates){
+    public static void registerEntity(String name, Class<? extends Entity> entityClass, int id, int trackingRange, int updateFrequency, boolean sendVelocityUpdates) {
         EntityRegistry.registerModEntity(new ResourceLocation(TimeCore.MODID + ":" + name), entityClass, name, id, TimeCore.instance, trackingRange, updateFrequency, sendVelocityUpdates);
     }
 
     /**
      * Register entity with spawn egg.
      */
-    public static void registerEntity(String name, Class<? extends Entity> entityClass, int id, int trackingRange, int updateFrequency, boolean sendVelocityUpdates, int primaryEggColor, int secondaryEggColor){
+    public static void registerEntity(String name, Class<? extends Entity> entityClass, int id, int trackingRange, int updateFrequency, boolean sendVelocityUpdates, int primaryEggColor, int secondaryEggColor) {
         EntityRegistry.registerModEntity(new ResourceLocation(TimeCore.MODID + ":" + name), entityClass, name, id, TimeCore.instance, trackingRange, updateFrequency, sendVelocityUpdates, primaryEggColor, secondaryEggColor);
     }
 

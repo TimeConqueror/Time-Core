@@ -22,11 +22,11 @@ public class Face {
 
         boolean hasTexture = (textureCoordinates != null) && (textureCoordinates.length > 0);
 
-        if(glMode < 0){
+        if (glMode < 0) {
             glMode = GL11.GL_TRIANGLES;
         }
 
-        if(hasTexture){
+        if (hasTexture) {
             buffer.begin(glMode, DefaultVertexFormats.POSITION_TEX_NORMAL);
         } else {
             buffer.begin(glMode, DefaultVertexFormats.POSITION_NORMAL);
@@ -36,11 +36,11 @@ public class Face {
         for (int i = 0; i < vertices.length; ++i) {
 
             if (hasTexture) {
-                buffer.pos(vertices[i].x* (double)scale,  vertices[i].y* (double)scale, vertices[i].z* (double)scale)
-                        .tex(textureCoordinates[i].u,  textureCoordinates[i].v)
+                buffer.pos(vertices[i].x * (double) scale, vertices[i].y * (double) scale, vertices[i].z * (double) scale)
+                        .tex(textureCoordinates[i].u, textureCoordinates[i].v)
                         .normal(faceNormal.x, faceNormal.y, faceNormal.z).endVertex();
             } else {
-                buffer.pos(vertices[i].x* (double)scale, vertices[i].y* (double)scale, vertices[i].z* (double)scale).normal(faceNormal.x, faceNormal.y, faceNormal.z).endVertex();
+                buffer.pos(vertices[i].x * (double) scale, vertices[i].y * (double) scale, vertices[i].z * (double) scale).normal(faceNormal.x, faceNormal.y, faceNormal.z).endVertex();
             }
         }
 

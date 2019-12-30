@@ -283,9 +283,9 @@ public class ObjModelBuilder {
             throw new ModelFormatException("IO Exception reading model format", e);
         }
 
-        if(type != null && !type.isEmpty()){
-            if(type.equals("blender")){
-                for(RPVertex rpVertex : rpVertexes){
+        if (type != null && !type.isEmpty()) {
+            if (type.equals("blender")) {
+                for (RPVertex rpVertex : rpVertexes) {
                     float y = rpVertex.vertex.y;
 
                     rpVertex.vertex.y = rpVertex.vertex.z;

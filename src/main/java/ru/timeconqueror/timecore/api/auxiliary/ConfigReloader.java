@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.TreeMap;
 
+@Deprecated //todo remove and realize custom config system
 public class ConfigReloader {
     private static final Field CONFIGS;
 
@@ -39,8 +40,8 @@ public class ConfigReloader {
     /**
      * Reloads config from file for mod with {@code modid}.
      * Works with Config created by annotations from {@link Config}. Not tested with old system. //TODO
-     *
-     * This method is also fires {@link OnConfigReloadedEvent}, so to reload or process some special things, you may handle this event.
+     * <p>
+     * This method also fires {@link OnConfigReloadedEvent}, so to reload or process some special things, you may handle this event.
      */
     public static void reloadConfigsFromFile(String modid, String fileName) {
         Map<String, Configuration> configs = null;
@@ -66,27 +67,33 @@ public class ConfigReloader {
                 return;
             }
 
-            try {
-                saveDefaultValues(tempConfig);
+            configs.remove(file.getAbsolutePath());
 
-                configs.remove(file.getAbsolutePath());
+            ConfigManager.sync(modid, Config.Type.INSTANCE);
 
-                ConfigManager.sync(modid, Config.Type.INSTANCE);
+            MinecraftForge.EVENT_BUS.post(new OnConfigReloadedEvent(modid, fileName));
 
-                try {
-                    configs = (Map<String, Configuration>) CONFIGS.get(null);
-                    restoreDefaultValues(configs.get(file.getAbsolutePath()));
-                } catch (Throwable e) {
-                    configs.put(file.getAbsolutePath(), tempConfig);
-                    TimeCore.logHelper.error("Error while switching back default values! Last config data will be restored!");
-                    e.printStackTrace();
-                    return;
-                }
-
-                MinecraftForge.EVENT_BUS.post(new OnConfigReloadedEvent(modid, fileName));
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            }
+//            try {
+////                saveDefaultValues(tempConfig);
+//
+////                configs.remove(file.getAbsolutePath());
+////
+////                ConfigManager.sync(modid, Config.Type.INSTANCE);
+//
+////                try {
+////                    configs = (Map<String, Configuration>) CONFIGS.get(null);
+////                    restoreDefaultValues(configs.get(file.getAbsolutePath()));
+////                } catch (Throwable e) {
+////                    configs.put(file.getAbsolutePath(), tempConfig);
+////                    TimeCore.logHelper.error("Error while switching back default values! Last config data will be restored!");
+////                    e.printStackTrace();
+////                    return;
+////                }
+//
+//                MinecraftForge.EVENT_BUS.post(new OnConfigReloadedEvent(modid, fileName));
+//            } catch (IllegalAccessException e) {
+//                e.printStackTrace();
+//            }
         }
     }
 

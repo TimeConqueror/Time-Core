@@ -22,10 +22,8 @@ public class ObjModelRenderer {
     public float rotateAngleY;
     public float rotateAngleZ;
     public boolean isHidden;
-
-    private ModelObject model;
-
     public List<ObjModelRenderer> childModels = new ArrayList<>();
+    private ModelObject model;
     private AbstractObjModel parent;
 
 
@@ -163,7 +161,7 @@ public class ObjModelRenderer {
     /**
      * Allows the changing of Angles after a box has been rendered.
      *
-     * @param scale     scaleFactor, that determines your part size.
+     * @param scale scaleFactor, that determines your part size.
      */
     @SideOnly(Side.CLIENT)
     public void postRender(float scale) {

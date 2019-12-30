@@ -23,7 +23,7 @@ public class EntityPhoenix extends EntityStupidAnimal {
         return 0.37D;
     }
 
-    public boolean isFemale(){
+    public boolean isFemale() {
         return false;
     }
 }

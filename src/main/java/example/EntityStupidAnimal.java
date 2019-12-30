@@ -23,7 +23,7 @@ public abstract class EntityStupidAnimal extends EntityAnimal {
         this.tasks.addTask(8, new EntityAILookIdle(this));
     }
 
-    public double getSpeed(){
+    public double getSpeed() {
         return 0.3D;
     }
 

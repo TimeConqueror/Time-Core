@@ -7,7 +7,6 @@ public class IntHelper {
         }
 
         int result = 0;
-        boolean negative = false;
         int i = 0, len = s.length();
         int limit = -Integer.MAX_VALUE;
         int multmin;
@@ -17,7 +16,6 @@ public class IntHelper {
             char firstChar = s.charAt(0);
             if (firstChar < '0') { // Possible leading "+" or "-"
                 if (firstChar == '-') {
-                    negative = true;
                     limit = Integer.MIN_VALUE;
                 } else if (firstChar != '+')
                     return false;
