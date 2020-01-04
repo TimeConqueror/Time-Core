@@ -42,7 +42,7 @@ public class CommandClientMain extends CommandBase implements IClientCommand {
 
     @Override
     public String getUsage(ICommandSender sender) {
-        return "command." + TimeCore.MODID + ".main.usage";
+        return "command.timecore.main.usage";
     }
 
     @Override
@@ -53,7 +53,7 @@ public class CommandClientMain extends CommandBase implements IClientCommand {
             if (args[0].equals(Commands.GENERATE_OBJ.getName())) {
                 generateObj(server, sender, args);
             } else if (args[0].equals(Commands.HELP.getName())) {
-                sender.sendMessage(new TextComponentTranslation("command." + TimeCore.MODID + ".help.msg"));
+                sender.sendMessage(new TextComponentTranslation("command.timecore.help.msg"));
                 for (Commands value : Commands.values()) {
                     sender.sendMessage(new TextComponentTranslation(value.getUsage()));
                 }
