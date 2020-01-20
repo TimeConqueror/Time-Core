@@ -10,7 +10,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.function.Supplier;
 
-public abstract class TimeJSONResource implements TimeResource {
+public abstract class JSONTimeResource implements TimeResource {
     @Override
     public InputStream getInputStream() {
         return new ByteArrayInputStream(buildJSONString().getBytes(StandardCharsets.UTF_8));
@@ -26,6 +26,7 @@ public abstract class TimeJSONResource implements TimeResource {
 
         str.append("{").append(listOf(children)).append("}");
 
+        System.out.println(str.toString());
         return str.toString();
     }
 

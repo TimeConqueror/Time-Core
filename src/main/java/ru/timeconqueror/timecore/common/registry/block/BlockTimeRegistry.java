@@ -4,11 +4,11 @@ import net.minecraft.block.Block;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import ru.timeconqueror.timecore.api.ITimeMod;
-import ru.timeconqueror.timecore.common.registry.TimeForgeRegistry;
+import ru.timeconqueror.timecore.common.registry.ForgeTimeRegistry;
 
-public abstract class TimeBlockRegistry extends TimeForgeRegistry<Block> {
+public abstract class BlockTimeRegistry extends ForgeTimeRegistry<Block> {
 
-    public TimeBlockRegistry(ITimeMod mod) {
+    public BlockTimeRegistry(ITimeMod mod) {
         super(mod);
     }
 

@@ -6,10 +6,10 @@ import net.minecraft.util.ResourceLocation;
 import ru.timeconqueror.timecore.TimeCore;
 import ru.timeconqueror.timecore.common.registry.TimeAutoRegistry;
 import ru.timeconqueror.timecore.common.registry.item.ItemPropertiesFactory;
-import ru.timeconqueror.timecore.common.registry.item.TimeItemRegistry;
+import ru.timeconqueror.timecore.common.registry.item.ItemTimeRegistry;
 
 @TimeAutoRegistry
-public class TItems extends TimeItemRegistry {
+public class TItems extends ItemTimeRegistry {
     public static ItemPropertiesFactory miscGrouped = new ItemPropertiesFactory(ItemGroup.MISC);
 
     public static Item mcDiamond = new Item(miscGrouped.createProps());

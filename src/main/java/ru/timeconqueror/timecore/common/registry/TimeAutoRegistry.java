@@ -7,7 +7,12 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-//TODO get rid of it
+/**
+ * Should be used on your registry class which inherits {@link ForgeTimeRegistry}
+ * to make it visible for auto-registry system.
+ * <p>
+ * <b><font color="yellow">WARNING: Annotated registry class must contain constructor without params or exception will be thrown.</b>
+ */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface TimeAutoRegistry {

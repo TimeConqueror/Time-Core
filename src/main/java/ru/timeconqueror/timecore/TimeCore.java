@@ -13,8 +13,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import ru.timeconqueror.timecore.api.ITimeMod;
 import ru.timeconqueror.timecore.client.resource.TimePackFinder;
+import ru.timeconqueror.timecore.common.registry.ForgeTimeRegistry;
 import ru.timeconqueror.timecore.common.registry.TimeAutoRegistry;
-import ru.timeconqueror.timecore.common.registry.TimeForgeRegistry;
 
 import java.util.Collection;
 
@@ -48,10 +48,10 @@ public class TimeCore implements ITimeMod {
 
                         Object obj = regClass.newInstance();
 
-                        if (obj instanceof TimeForgeRegistry<?>) {
+                        if (obj instanceof ForgeTimeRegistry<?>) {
                             FMLJavaModLoadingContext.get().getModEventBus().register(obj);
                         } else
-                            LOGGER.error("Annotated class with AutoRegistry annotation " + obj.getClass() + " doesn't extend " + TimeForgeRegistry.class.getSimpleName());
+                            LOGGER.error("Annotated class with AutoRegistry annotation " + obj.getClass() + " doesn't extend " + ForgeTimeRegistry.class.getSimpleName());
                     } catch (InstantiationException e) {
                         if (e.getCause() instanceof NoSuchMethodException) {
                             LOGGER.error("TimeCore AutoRegistry can't find constructor with no parameters for " + regClass, e);
@@ -63,22 +63,9 @@ public class TimeCore implements ITimeMod {
     }
 
     private void setup(final FMLCommonSetupEvent event) {
-//        for (ModInfo mod : ModList.get().getMods()) {
-//            System.out.println(mod.getModId());
-//        }
     }
 
     private void doClientStuff(final FMLClientSetupEvent event) {
-//        System.out.println("doClientStuff");
-//        TimeClient.RESOURCE_HOLDER.addDomain(getModID());
-//        for (ClientResourcePackInfo allPack : Minecraft.getInstance().getResourcePackList().getAllPacks()) {
-//            System.out.println(TextFormatting.AQUA + "Name:" + allPack.getName());
-//            System.out.println("Priority:" + allPack.getPriority());
-//            System.out.println("Compatibility:" + allPack.getCompatibility());
-//            System.out.println("Order Locked:" + allPack.isOrderLocked());
-//            System.out.println("Hidden:" + allPack.isHidden());
-//            System.out.println("Always enabled:" + allPack.isAlwaysEnabled());
-//        }
     }
 
     @Override
