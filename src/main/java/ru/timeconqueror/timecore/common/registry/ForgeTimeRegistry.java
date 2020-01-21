@@ -44,17 +44,23 @@ public abstract class ForgeTimeRegistry<T extends IForgeRegistryEntry<T>> {
         return mod;
     }
 
+    public String getModID() {
+        return getMod().getModID();
+    }
+
     public class EntryWrapper {
         private T entry;
 
         public EntryWrapper(T entry, String name) {
+            name = name.toLowerCase();
+
             this.entry = entry;
             entry.setRegistryName(new ResourceLocation(getMod().getModID(), name));
 
             regList.add(this);
         }
 
-        public T get() {
+        public T getEntry() {
             return entry;
         }
     }

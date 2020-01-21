@@ -1,7 +1,6 @@
 package ru.timeconqueror.timecore.api.client.resource;
 
 import com.google.common.base.Joiner;
-import com.google.common.base.Strings;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.ByteArrayInputStream;
@@ -18,21 +17,20 @@ public abstract class JSONTimeResource implements TimeResource {
 
     public abstract String buildJSONString();
 
-    public String object(@Nullable String key, String... children) {
+    public static String object(@Nullable String key, String... children) {
         StringBuilder str = new StringBuilder();
-        if (!Strings.isNullOrEmpty(key)) {
+        if (key != null) {
             str.append("\"").append(key).append("\":");
         }
 
         str.append("{").append(listOf(children)).append("}");
 
-        System.out.println(str.toString());
         return str.toString();
     }
 
-    public String array(@Nullable String key, String... children) {
+    public static String array(@Nullable String key, String... children) {
         StringBuilder str = new StringBuilder();
-        if (!Strings.isNullOrEmpty(key)) {
+        if (key != null) {
             str.append("\"").append(key).append("\":");
         }
 
@@ -41,27 +39,27 @@ public abstract class JSONTimeResource implements TimeResource {
         return str.toString();
     }
 
-    public String value(String key, String value) {
+    public static String value(String key, String value) {
         return "\"" + key + "\":" + "\"" + value + "\"";
     }
 
-    public String value(String key, int value) {
+    public static String value(String key, int value) {
         return "\"" + key + "\":" + value;
     }
 
-    public String value(String key, float value) {
+    public static String value(String key, float value) {
         return "\"" + key + "\":" + value;
     }
 
-    public String listOf(String... objects) {
+    public static String listOf(String... objects) {
         return Joiner.on(',').join(objects);
     }
 
-    public String listOf(Supplier<String[]> objectSupplier) {
+    public static String listOf(Supplier<String[]> objectSupplier) {
         return listOf(objectSupplier.get());
     }
 
-    public String listOf(ArrayList<String> objects) {
+    public static String listOf(ArrayList<String> objects) {
         return Joiner.on(',').join(objects);
     }
 }

@@ -4,7 +4,14 @@ import net.minecraft.block.Block;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import ru.timeconqueror.timecore.api.ITimeMod;
+import ru.timeconqueror.timecore.api.client.TimeClient;
+import ru.timeconqueror.timecore.api.client.resource.BlockStateResource;
+import ru.timeconqueror.timecore.api.client.resource.ModelBlock;
+import ru.timeconqueror.timecore.api.client.resource.location.ModelBlockLocation;
+import ru.timeconqueror.timecore.api.client.resource.location.TextureLocation;
 import ru.timeconqueror.timecore.common.registry.ForgeTimeRegistry;
+
+import java.util.Objects;
 
 public abstract class BlockTimeRegistry extends ForgeTimeRegistry<Block> {
 
@@ -13,7 +20,7 @@ public abstract class BlockTimeRegistry extends ForgeTimeRegistry<Block> {
     }
 
     @SubscribeEvent
-    public void regBlocks(RegistryEvent.Register<Block> event) {
+    public final void onRegBlocksEvent(RegistryEvent.Register<Block> event) {
         onFireRegistryEvent(event);
     }
 
@@ -30,6 +37,36 @@ public abstract class BlockTimeRegistry extends ForgeTimeRegistry<Block> {
     public class BlockWrapper extends EntryWrapper {
         public BlockWrapper(Block block, String name) {
             super(block, name);
+        }
+
+        public BlockWrapper regModel(ModelBlock model) {
+            TimeClient.RESOURCE_HOLDER.addBlockModel(getEntry(), model);
+            return this;
+        }
+
+        public BlockWrapper regModel(ModelBlockLocation path, ModelBlock model) {
+            TimeClient.RESOURCE_HOLDER.addBlockModel(path, model);
+            return this;
+        }
+
+        public BlockWrapper regDefaultBlockState(ModelBlockLocation blockModel) {
+            regBlockState(new BlockStateResource().addDefaultVariant(blockModel));
+            return this;
+        }
+
+        public BlockWrapper regDefaultBlockStateAndModel(TextureLocation blockTexture) {
+            regModel(ModelBlock.createCubeAllModel(blockTexture));
+
+            ModelBlockLocation modelLocation = new ModelBlockLocation(getMod().getModID(), Objects.requireNonNull(getEntry().getRegistryName()).getPath());
+            regDefaultBlockState(modelLocation);
+
+            return this;
+        }
+
+        public BlockWrapper regBlockState(BlockStateResource blockState) {
+            TimeClient.RESOURCE_HOLDER.addBlockStateResource(getEntry(), blockState);
+
+            return this;
         }
     }
 }

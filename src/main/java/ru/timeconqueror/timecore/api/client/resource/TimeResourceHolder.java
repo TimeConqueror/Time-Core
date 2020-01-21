@@ -1,9 +1,12 @@
 package ru.timeconqueror.timecore.api.client.resource;
 
+import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
-import ru.timeconqueror.timecore.TimeCore;
+import ru.timeconqueror.timecore.api.client.resource.location.ModelBlockLocation;
+import ru.timeconqueror.timecore.api.util.ObjectUtils;
+import ru.timeconqueror.timecore.api.util.ResourceHelper;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -14,19 +17,68 @@ public class TimeResourceHolder {
     private HashMap<ResourceLocation, TimeResource> resources = new HashMap<>();
     private HashSet<String> domains = new HashSet<>();
 
+    /**
+     * Adds {@code resource} to the internal resourcepack. It will be available on given location.
+     *
+     * @param location location to put given resource.
+     */
     public void addResource(ResourceLocation location, TimeResource resource) {
         resources.put(location, resource);
     }
 
-    public void addItemModel(Item item, ItemModel model) {
+    /**
+     * Adds item model that will be available on path:
+     * itemNameSpace:models/item/itemName.json
+     *
+     * @param item  used to provide path to model.
+     * @param model resource that will be available on created path.
+     */
+    public void addItemModel(Item item, ModelItem model) {
         ResourceLocation registryName = item.getRegistryName();
 
-        if (registryName == null) {
-            TimeCore.LOGGER.error("Can't register model location for the item without a registry name.", new RuntimeException());
+        if (!ObjectUtils.checkIfNotNull(registryName, "Can't register model location for the item without a registry name.")) {
             return;
         }
 
-        resources.put(new ResourceLocation(registryName.getNamespace(), "models/item/" + registryName.getPath() + ".json"), model);
+        resources.put(ResourceHelper.toItemModelLocation(registryName), model);
+    }
+
+    /**
+     * Adds item model that will be available on path:
+     * blockNameSpace:blockstates/blockName.json
+     *
+     * @param block              used to provide path to model.
+     * @param blockStateResource resource that will be available on created path.
+     */
+    public void addBlockStateResource(Block block, BlockStateResource blockStateResource) {
+        ResourceLocation registryName = block.getRegistryName();
+
+        if (!ObjectUtils.checkIfNotNull(registryName, "Can't register blockstate location for the block without a registry name.")) {
+            return;
+        }
+
+        resources.put(ResourceHelper.toBlockStateLocation(registryName), blockStateResource);
+    }
+
+    /**
+     * Adds item model that will be available on path:
+     * blockNameSpace:models/block/.json
+     *
+     * @param block used to provide path to model.
+     * @param model resource that will be available on created path.
+     */
+    public void addBlockModel(Block block, ModelBlock model) {
+        ResourceLocation registryName = block.getRegistryName();
+
+        if (!ObjectUtils.checkIfNotNull(registryName, "Can't register model location for the block without a registry name.")) {
+            return;
+        }
+
+        addBlockModel(new ModelBlockLocation(registryName.getNamespace(), registryName.getPath()), model);
+    }
+
+    public void addBlockModel(ModelBlockLocation location, ModelBlock model) {
+        resources.put(location.fullLocation(), model);
     }
 
     @Nullable

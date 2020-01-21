@@ -20,7 +20,6 @@
 ////            )
 ////    )
 ////    public void initHook(GameConfiguration gameConfig, CallbackInfo ci) {
-////        System.out.println("ha ha benis");
 ////    }
 //
 //    @Inject(method = "func_198993_a",
@@ -33,7 +32,7 @@
 //
 //            int afterIndex = -1;
 //            for (int i = 0; i < resourcePackInfoList.size(); i++) {
-//                T t = resourcePackInfoList.get(i);
+//                T t = resourcePackInfoList.getEntry(i);
 //                ResourcePackInfo resourcePackInfo = ((ResourcePackInfo) t);
 //                if (resourcePackInfo.getName().equals(afterModId)) {
 //                    afterIndex = i;
@@ -58,7 +57,7 @@
 ////
 ////            int afterIndex = -1;
 ////            for (int i = 0; i < resourcePackInfoList.size(); i++) {
-////                T t = resourcePackInfoList.get(i);
+////                T t = resourcePackInfoList.getEntry(i);
 ////                ResourcePackInfo resourcePackInfo = ((ResourcePackInfo) t);
 ////                if (resourcePackInfo.getName().equals(afterModId)) {
 ////                    afterIndex = i;

@@ -1,25 +1,23 @@
 package ru.timeconqueror.timecore.api.client.resource;
 
-import net.minecraft.util.ResourceLocation;
+import ru.timeconqueror.timecore.api.client.resource.location.ModelLocation;
+import ru.timeconqueror.timecore.api.client.resource.location.TextureLocation;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class ItemModel extends JSONTimeResource {
+public class ModelItem extends JSONTimeResource {
     /**
      * Represents the location of the model parent.
-     * You should provide it in the constructor without <b>{@code 'models/'}</b> part and <b>file extension</b> in {@code path} param.<p>
-     * Example: given parent resource location - {@code new ResourceLocation("minecraft", "item/handheld_rod");}<p>
-     * Real location from given: {@code minecraft:models/item/handheld_rod.json}
      */
-    private ResourceLocation parent;
-    private ArrayList<ResourceLocation> layers = new ArrayList<>(1);
+    private ModelLocation parent;
+    private ArrayList<TextureLocation> layers = new ArrayList<>(1);
 
-    public ItemModel(StandardItemModelParents parent) {
-        this(parent.getResourceLocation());
+    public ModelItem(StandardItemModelParents parent) {
+        this(parent.getModelLocation());
     }
 
-    public ItemModel(ResourceLocation parent) {
+    public ModelItem(ModelLocation parent) {
         this.parent = parent;
     }
 
@@ -45,7 +43,7 @@ public class ItemModel extends JSONTimeResource {
      * but sometimes you will need to set model to use combination of several textures.
      * Vanilla uses it in, for example, spawn egg model where the layers are represented by base texture and overlay (spots).
      */
-    public ItemModel addTextureLayer(ResourceLocation textureLocation) {
+    public ModelItem addTextureLayer(TextureLocation textureLocation) {
         layers.add(textureLocation);
 
         return this;
@@ -58,7 +56,7 @@ public class ItemModel extends JSONTimeResource {
      * but sometimes you will need to set model to use combination of several textures.
      * Vanilla uses it in, for example, spawn egg model where the layers are represented by base texture and overlay (spots).
      */
-    public ItemModel addTextureLayers(ResourceLocation... textureLocations) {
+    public ModelItem addTextureLayers(TextureLocation... textureLocations) {
         layers.addAll(Arrays.asList(textureLocations));
 
         return this;
