@@ -1,11 +1,11 @@
 package ru.timeconqueror.timecore.api.client.resource;
 
-import ru.timeconqueror.timecore.api.client.resource.location.ModelItemLocation;
+import ru.timeconqueror.timecore.api.client.resource.location.ItemModelLocation;
 import ru.timeconqueror.timecore.api.client.resource.location.ModelLocation;
 
 public enum StandardItemModelParents {
-    DEFAULT(new ModelItemLocation("minecraft", "item/generated")),
-    HANDHELD(new ModelItemLocation("minecraft", "item/handheld"));
+    DEFAULT(new ItemModelLocation("minecraft", "item/generated")),
+    HANDHELD(new ItemModelLocation("minecraft", "item/handheld"));
 
     private ModelLocation location;
 

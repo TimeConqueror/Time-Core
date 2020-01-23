@@ -1,6 +1,6 @@
 package ru.timeconqueror.timecore.api.client.resource;
 
-import ru.timeconqueror.timecore.api.client.resource.location.ModelBlockLocation;
+import ru.timeconqueror.timecore.api.client.resource.location.BlockModelLocation;
 
 import java.util.ArrayList;
 
@@ -27,7 +27,7 @@ public class BlockStateResource extends JSONTimeResource {
         ));
     }
 
-    public BlockStateResource addDefaultVariant(ModelBlockLocation model) {
+    public BlockStateResource addDefaultVariant(BlockModelLocation model) {
         boolean added = false;
         for (Variant variant : variants) {
             if (variant.name.equals("")) {
@@ -52,9 +52,9 @@ public class BlockStateResource extends JSONTimeResource {
 
     public static class Variant {
         private String name;
-        private ModelBlockLocation model;
+        private BlockModelLocation model;
 
-        public Variant(String name, ModelBlockLocation model) {
+        public Variant(String name, BlockModelLocation model) {
             this.name = name;
             this.model = model;
         }

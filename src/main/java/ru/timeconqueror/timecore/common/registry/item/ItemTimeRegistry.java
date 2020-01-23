@@ -5,12 +5,18 @@ import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import ru.timeconqueror.timecore.api.ITimeMod;
 import ru.timeconqueror.timecore.api.client.TimeClient;
-import ru.timeconqueror.timecore.api.client.resource.ModelItem;
+import ru.timeconqueror.timecore.api.client.resource.ItemModel;
 import ru.timeconqueror.timecore.api.client.resource.StandardItemModelParents;
 import ru.timeconqueror.timecore.api.client.resource.location.ModelLocation;
 import ru.timeconqueror.timecore.api.client.resource.location.TextureLocation;
 import ru.timeconqueror.timecore.common.registry.ForgeTimeRegistry;
 
+/**
+ * Registry that should be extended and annotated with {@link ru.timeconqueror.timecore.common.registry.TimeAutoRegistry},
+ * if you want to register items.
+ * <p>
+ * Examples can be seen here: {@link ru.timeconqueror.timecore.test.registry.TItems}
+ */
 public abstract class ItemTimeRegistry extends ForgeTimeRegistry<Item> {
 
     public ItemTimeRegistry(ITimeMod mod) {
@@ -26,7 +32,7 @@ public abstract class ItemTimeRegistry extends ForgeTimeRegistry<Item> {
      * Method to automatically register provided item.
      *
      * @param item item to register
-     * @param name item name. Will be used as a part of registry and translation keys. Should NOT contain mod ID, because it will be bound internally.
+     * @param name item name. Will be used as a part of registry and translation keys. Should NOT contain mod ID, because it will be bound automatically.
      * @return {@link ItemWrapper} to provide extra register options.
      */
     public ItemWrapper regItem(Item item, String name) {
@@ -34,9 +40,7 @@ public abstract class ItemTimeRegistry extends ForgeTimeRegistry<Item> {
     }
 
     /**
-     * Used to set extra options for given item.
-     * <p>
-     * All methods represented here are optional.
+     * Wrapper class to register extra options, like models, blockstates and item blocks without need of json-files!
      */
     public class ItemWrapper extends EntryWrapper {
         public ItemWrapper(Item entry, String name) {
@@ -78,7 +82,7 @@ public abstract class ItemTimeRegistry extends ForgeTimeRegistry<Item> {
          *                      Vanilla uses it in, for example, spawn egg model where the layers are represented by base texture and overlay (spots).
          */
         public ItemWrapper regModel(ModelLocation parent, TextureLocation... textureLayers) {
-            ModelItem model = new ModelItem(parent);
+            ItemModel model = new ItemModel(parent);
             model.addTextureLayers(textureLayers);
 
             return regModel(model);
@@ -87,7 +91,7 @@ public abstract class ItemTimeRegistry extends ForgeTimeRegistry<Item> {
         /**
          * Registers simple item model without the need of json file (via code) for bound item.
          */
-        public ItemWrapper regModel(ModelItem model) {
+        public ItemWrapper regModel(ItemModel model) {
             TimeClient.RESOURCE_HOLDER.addItemModel(getEntry(), model);
             return this;
         }

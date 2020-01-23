@@ -5,8 +5,8 @@ import net.minecraft.util.ResourceLocation;
 /**
  * Represents the location of the model.
  *
- * @see ModelBlockLocation - model location for block.
- * @see ModelItemLocation - model location for item.
+ * @see BlockModelLocation - model location for block.
+ * @see ItemModelLocation - model location for item.
  */
 public abstract class ModelLocation extends AdaptiveLocation {
     public ModelLocation(String modid, String path) {

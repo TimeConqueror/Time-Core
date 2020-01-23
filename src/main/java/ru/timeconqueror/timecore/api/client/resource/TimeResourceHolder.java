@@ -4,7 +4,7 @@ import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
-import ru.timeconqueror.timecore.api.client.resource.location.ModelBlockLocation;
+import ru.timeconqueror.timecore.api.client.resource.location.BlockModelLocation;
 import ru.timeconqueror.timecore.api.util.ObjectUtils;
 import ru.timeconqueror.timecore.api.util.ResourceHelper;
 
@@ -27,13 +27,13 @@ public class TimeResourceHolder {
     }
 
     /**
-     * Adds item model that will be available on path:
+     * Adds item model that will be available with path:
      * itemNameSpace:models/item/itemName.json
      *
      * @param item  used to provide path to model.
      * @param model resource that will be available on created path.
      */
-    public void addItemModel(Item item, ModelItem model) {
+    public void addItemModel(Item item, ItemModel model) {
         ResourceLocation registryName = item.getRegistryName();
 
         if (!ObjectUtils.checkIfNotNull(registryName, "Can't register model location for the item without a registry name.")) {
@@ -44,7 +44,7 @@ public class TimeResourceHolder {
     }
 
     /**
-     * Adds item model that will be available on path:
+     * Adds item model that will be available with path:
      * blockNameSpace:blockstates/blockName.json
      *
      * @param block              used to provide path to model.
@@ -61,23 +61,23 @@ public class TimeResourceHolder {
     }
 
     /**
-     * Adds item model that will be available on path:
+     * Adds item model that will be available with path:
      * blockNameSpace:models/block/.json
      *
      * @param block used to provide path to model.
      * @param model resource that will be available on created path.
      */
-    public void addBlockModel(Block block, ModelBlock model) {
+    public void addBlockModel(Block block, BlockModel model) {
         ResourceLocation registryName = block.getRegistryName();
 
         if (!ObjectUtils.checkIfNotNull(registryName, "Can't register model location for the block without a registry name.")) {
             return;
         }
 
-        addBlockModel(new ModelBlockLocation(registryName.getNamespace(), registryName.getPath()), model);
+        addBlockModel(new BlockModelLocation(registryName.getNamespace(), registryName.getPath()), model);
     }
 
-    public void addBlockModel(ModelBlockLocation location, ModelBlock model) {
+    public void addBlockModel(BlockModelLocation location, BlockModel model) {
         resources.put(location.fullLocation(), model);
     }
 

@@ -2,24 +2,24 @@ package ru.timeconqueror.timecore.api.client.resource;
 
 import ru.timeconqueror.timecore.api.client.resource.location.TextureLocation;
 
-public class ModelBlock extends JSONTimeResource {
+public class BlockModel extends JSONTimeResource {
     private String jsonString;
 
-    private ModelBlock(String jsonString) {
+    private BlockModel(String jsonString) {
         this.jsonString = jsonString;
     }
 
-    public static ModelBlock createCubeAllModel(TextureLocation texture) {
+    public static BlockModel createCubeAllModel(TextureLocation texture) {
         String json = object(null, listOf(
                 value("parent", "block/cube_all"),
                 object("textures", listOf(
                         value("all", texture.toString())
                 ))
         ));
-        return new ModelBlock(json);
+        return new BlockModel(json);
     }
 
-    public static ModelBlock createCubeBottomTopModel(TextureLocation textureTop, TextureLocation textureSide, TextureLocation textureBottom) {
+    public static BlockModel createCubeBottomTopModel(TextureLocation textureTop, TextureLocation textureSide, TextureLocation textureBottom) {
         String json = object(null, listOf(
                 value("parent", "block/cube_bottom_top"),
                 object("textures", listOf(
@@ -28,10 +28,10 @@ public class ModelBlock extends JSONTimeResource {
                         value("bottom", textureBottom.toString())
                 ))
         ));
-        return new ModelBlock(json);
+        return new BlockModel(json);
     }
 
-    public static ModelBlock createCubeTopModel(TextureLocation textureTop, TextureLocation textureSideAndBottom) {
+    public static BlockModel createCubeTopModel(TextureLocation textureTop, TextureLocation textureSideAndBottom) {
         String json = object(null, listOf(
                 value("parent", "block/cube_top"),
                 object("textures", listOf(
@@ -39,10 +39,10 @@ public class ModelBlock extends JSONTimeResource {
                         value("side", textureSideAndBottom.toString())
                 ))
         ));
-        return new ModelBlock(json);
+        return new BlockModel(json);
     }
 
-    public static ModelBlock createCubeColumnModel(TextureLocation textureTopAndBottom, TextureLocation textureSide) {
+    public static BlockModel createCubeColumnModel(TextureLocation textureTopAndBottom, TextureLocation textureSide) {
         String json = object(null, listOf(
                 value("parent", "block/cube_column"),
                 object("textures", listOf(
@@ -50,17 +50,17 @@ public class ModelBlock extends JSONTimeResource {
                         value("side", textureSide.toString())
                 ))
         ));
-        return new ModelBlock(json);
+        return new BlockModel(json);
     }
 
-    public static ModelBlock createCrossModel(TextureLocation textureCross) {
+    public static BlockModel createCrossModel(TextureLocation textureCross) {
         String json = object(null, listOf(
                 value("parent", "block/cross"),
                 object("textures", listOf(
                         value("cross", textureCross.toString())
                 ))
         ));
-        return new ModelBlock(json);
+        return new BlockModel(json);
     }
 
     @Override

@@ -6,18 +6,18 @@ import ru.timeconqueror.timecore.api.client.resource.location.TextureLocation;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class ModelItem extends JSONTimeResource {
+public class ItemModel extends JSONTimeResource {
     /**
      * Represents the location of the model parent.
      */
     private ModelLocation parent;
     private ArrayList<TextureLocation> layers = new ArrayList<>(1);
 
-    public ModelItem(StandardItemModelParents parent) {
+    public ItemModel(StandardItemModelParents parent) {
         this(parent.getModelLocation());
     }
 
-    public ModelItem(ModelLocation parent) {
+    public ItemModel(ModelLocation parent) {
         this.parent = parent;
     }
 
@@ -43,7 +43,7 @@ public class ModelItem extends JSONTimeResource {
      * but sometimes you will need to set model to use combination of several textures.
      * Vanilla uses it in, for example, spawn egg model where the layers are represented by base texture and overlay (spots).
      */
-    public ModelItem addTextureLayer(TextureLocation textureLocation) {
+    public ItemModel addTextureLayer(TextureLocation textureLocation) {
         layers.add(textureLocation);
 
         return this;
@@ -56,7 +56,7 @@ public class ModelItem extends JSONTimeResource {
      * but sometimes you will need to set model to use combination of several textures.
      * Vanilla uses it in, for example, spawn egg model where the layers are represented by base texture and overlay (spots).
      */
-    public ModelItem addTextureLayers(TextureLocation... textureLocations) {
+    public ItemModel addTextureLayers(TextureLocation... textureLocations) {
         layers.addAll(Arrays.asList(textureLocations));
 
         return this;
