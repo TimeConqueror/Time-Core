@@ -1,4 +1,4 @@
-package ru.timeconqueror.timecore.common.registry.block;
+package ru.timeconqueror.timecore.api.common.registry.block;
 
 import net.minecraft.block.Block;
 import net.minecraft.item.BlockItem;
@@ -15,14 +15,14 @@ import ru.timeconqueror.timecore.api.client.resource.BlockStateResource;
 import ru.timeconqueror.timecore.api.client.resource.ItemModel;
 import ru.timeconqueror.timecore.api.client.resource.location.BlockModelLocation;
 import ru.timeconqueror.timecore.api.client.resource.location.TextureLocation;
-import ru.timeconqueror.timecore.common.registry.ForgeTimeRegistry;
-import ru.timeconqueror.timecore.common.registry.item.ItemPropertiesFactory;
+import ru.timeconqueror.timecore.api.common.registry.ForgeTimeRegistry;
+import ru.timeconqueror.timecore.api.common.registry.item.ItemPropertiesFactory;
 
 import java.util.ArrayList;
 import java.util.Objects;
 
 /**
- * Registry that should be extended and annotated with {@link ru.timeconqueror.timecore.common.registry.TimeAutoRegistry},
+ * Registry that should be extended and annotated with {@link ru.timeconqueror.timecore.api.common.registry.TimeAutoRegistry},
  * if you want to register blocks.
  * <p>
  * Examples can be seen here: {@link ru.timeconqueror.timecore.test.registry.TBlocks}

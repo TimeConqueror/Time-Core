@@ -1,4 +1,4 @@
-package ru.timeconqueror.timecore.common.registry;
+package ru.timeconqueror.timecore.api.common.registry;
 
 import org.objectweb.asm.Type;
 

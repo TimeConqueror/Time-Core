@@ -1,4 +1,4 @@
-package ru.timeconqueror.timecore.common.registry.item;
+package ru.timeconqueror.timecore.api.common.registry.item;
 
 import net.minecraft.item.Item;
 import net.minecraftforge.event.RegistryEvent;
@@ -9,10 +9,10 @@ import ru.timeconqueror.timecore.api.client.resource.ItemModel;
 import ru.timeconqueror.timecore.api.client.resource.StandardItemModelParents;
 import ru.timeconqueror.timecore.api.client.resource.location.ModelLocation;
 import ru.timeconqueror.timecore.api.client.resource.location.TextureLocation;
-import ru.timeconqueror.timecore.common.registry.ForgeTimeRegistry;
+import ru.timeconqueror.timecore.api.common.registry.ForgeTimeRegistry;
 
 /**
- * Registry that should be extended and annotated with {@link ru.timeconqueror.timecore.common.registry.TimeAutoRegistry},
+ * Registry that should be extended and annotated with {@link ru.timeconqueror.timecore.api.common.registry.TimeAutoRegistry},
  * if you want to register items.
  * <p>
  * Examples can be seen here: {@link ru.timeconqueror.timecore.test.registry.TItems}

@@ -12,9 +12,9 @@ import net.minecraftforge.forgespi.language.ModFileScanData;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import ru.timeconqueror.timecore.api.ITimeMod;
+import ru.timeconqueror.timecore.api.common.registry.ForgeTimeRegistry;
+import ru.timeconqueror.timecore.api.common.registry.TimeAutoRegistry;
 import ru.timeconqueror.timecore.client.resource.TimePackFinder;
-import ru.timeconqueror.timecore.common.registry.ForgeTimeRegistry;
-import ru.timeconqueror.timecore.common.registry.TimeAutoRegistry;
 
 import java.util.Collection;
 

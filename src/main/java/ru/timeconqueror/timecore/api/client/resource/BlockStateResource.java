@@ -27,6 +27,11 @@ public class BlockStateResource extends JSONTimeResource {
         ));
     }
 
+    /**
+     * Adds provided model to the default variant.
+     *
+     * @return this resource.
+     */
     public BlockStateResource addDefaultVariant(BlockModelLocation model) {
         boolean added = false;
         for (Variant variant : variants) {
@@ -45,12 +50,21 @@ public class BlockStateResource extends JSONTimeResource {
         return this;
     }
 
+    /**
+     * Adds special variant to the resource
+     *
+     * @return this resource.
+     */
     public BlockStateResource addVariant(Variant variant) {
         variants.add(variant);
         return this;
     }
 
     public static class Variant {
+        /**
+         * variant's name
+         * Examples: "north=true"
+         */
         private String name;
         private BlockModelLocation model;
 

@@ -1,4 +1,4 @@
-package ru.timeconqueror.timecore.common.registry.item;
+package ru.timeconqueror.timecore.api.common.registry.item;
 
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
