@@ -57,6 +57,7 @@ minecraft {
             mods {
                 timecore {
                     source sourceSets.main
+                    source sourceSets.test
                 }
             }
         }
@@ -73,6 +74,7 @@ minecraft {
             mods {
                 timecore {
                     source sourceSets.main
+                    source sourceSets.test
                 }
             }
         }
@@ -91,6 +93,7 @@ minecraft {
             mods {
                 timecore {
                     source sourceSets.main
+                    source sourceSets.test
                 }
             }
         }
@@ -174,7 +177,7 @@ jar {
         }
     }
 
-    rename 'LICENSE.txt', 'LICENSE-mixin.txt'
+    rename 'LICENSE.txt', 'LICENSE-MIXINS.txt'
     from ('LICENSE.md')
 
     manifest {

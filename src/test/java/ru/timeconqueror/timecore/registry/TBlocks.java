@@ -1,4 +1,4 @@
-package ru.timeconqueror.timecore.test.registry;
+package ru.timeconqueror.timecore.registry;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -33,6 +33,6 @@ public class TBlocks extends BlockTimeRegistry {
                 .regDefaultStateAndModel(new TextureLocation("minecraft", "block/dirt"))
                 .regItemBlock(ItemGroup.MISC);
 
-        regBlock(mcEmeraldOre, "test_emerald_ore").regDefaults(new TextureLocation("minecraft", "emerald_ore"), ItemGroup.MISC);
+        regBlock(mcEmeraldOre, "test_emerald_ore").regDefaults(new TextureLocation("minecraft", "block/emerald_ore"), ItemGroup.MISC);
     }
 }
