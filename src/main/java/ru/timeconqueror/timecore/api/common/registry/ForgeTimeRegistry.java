@@ -14,8 +14,6 @@ import java.util.ArrayList;
 /**
  * Registry that should be extended and annotated with {@link ru.timeconqueror.timecore.api.common.registry.TimeAutoRegistry},
  * if you want to register any object that extends {@link IForgeRegistryEntry}.
- * <p>
- * Examples can be seen here: {@link ru.timeconqueror.timecore.test.registry.TItems}
  */
 public abstract class ForgeTimeRegistry<T extends IForgeRegistryEntry<T>> {
     protected ArrayList<EntryWrapper> regList = new ArrayList<>();

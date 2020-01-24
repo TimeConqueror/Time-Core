@@ -10,12 +10,13 @@ import ru.timeconqueror.timecore.api.client.resource.StandardItemModelParents;
 import ru.timeconqueror.timecore.api.client.resource.location.ModelLocation;
 import ru.timeconqueror.timecore.api.client.resource.location.TextureLocation;
 import ru.timeconqueror.timecore.api.common.registry.ForgeTimeRegistry;
+//FIXME add the same mechanics for items as for blocks.
 
 /**
  * Registry that should be extended and annotated with {@link ru.timeconqueror.timecore.api.common.registry.TimeAutoRegistry},
  * if you want to register items.
  * <p>
- * Examples can be seen here: {@link ru.timeconqueror.timecore.test.registry.TItems}
+ * Examples can be seen at test module.
  */
 public abstract class ItemTimeRegistry extends ForgeTimeRegistry<Item> {
 
@@ -92,8 +93,12 @@ public abstract class ItemTimeRegistry extends ForgeTimeRegistry<Item> {
          * Registers simple item model without the need of json file (via code) for bound item.
          */
         public ItemWrapper regModel(ItemModel model) {
-            TimeClient.RESOURCE_HOLDER.addItemModel(getEntry(), model);
+            TimeClient.RESOURCE_HOLDER.addItemModel(getItem(), model);
             return this;
+        }
+
+        public Item getItem() {
+            return getEntry();
         }
     }
 }

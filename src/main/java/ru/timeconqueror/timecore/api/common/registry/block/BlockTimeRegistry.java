@@ -5,8 +5,10 @@ import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.loading.FMLEnvironment;
 import org.jetbrains.annotations.Nullable;
 import ru.timeconqueror.timecore.api.ITimeMod;
 import ru.timeconqueror.timecore.api.client.TimeClient;
@@ -20,12 +22,14 @@ import ru.timeconqueror.timecore.api.common.registry.item.ItemPropertiesFactory;
 
 import java.util.ArrayList;
 import java.util.Objects;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 /**
  * Registry that should be extended and annotated with {@link ru.timeconqueror.timecore.api.common.registry.TimeAutoRegistry},
  * if you want to register blocks.
  * <p>
- * Examples can be seen here: {@link ru.timeconqueror.timecore.test.registry.TBlocks}
+ * Examples can be seen at test module.
  */
 public abstract class BlockTimeRegistry extends ForgeTimeRegistry<Block> {
     private ArrayList<BlockItem> regItems = new ArrayList<>();
@@ -64,8 +68,20 @@ public abstract class BlockTimeRegistry extends ForgeTimeRegistry<Block> {
      * Wrapper class to register extra options, like models, blockstates and item blocks without need of json-files!
      */
     public class BlockWrapper extends EntryWrapper {
+        private ClientWrapper clientWrapper;
+
         public BlockWrapper(Block block, String name) {
             super(block, name);
+
+            clientWrapper = new ClientWrapper(getBlock());
+        }
+
+        public BlockWrapper regOnClient(Consumer<ClientWrapper> clientStuff) {
+            if (FMLEnvironment.dist == Dist.CLIENT) {
+                clientStuff.accept(clientWrapper);
+            }
+
+            return this;
         }
 
         /**
@@ -78,7 +94,7 @@ public abstract class BlockTimeRegistry extends ForgeTimeRegistry<Block> {
          *                     if null, itemblock won't be found from Creative GUI.
          */
         public void regDefaults(TextureLocation blockTexture, @Nullable ItemGroup group) {
-            regDefaultStateAndModel(blockTexture);
+            regOnClient(clientWrapper -> clientWrapper.regDefaultStateAndModel(blockTexture));
 
             ItemPropertiesFactory propsFactory = group != null ? new ItemPropertiesFactory(group) : new ItemPropertiesFactory(properties -> {
             });
@@ -90,100 +106,16 @@ public abstract class BlockTimeRegistry extends ForgeTimeRegistry<Block> {
          * block model from given one (it also binds this model to single blockstate variant),
          * and itemblock (item, that represents block).
          *
-         * @param blockModel model, that will be used in blockstate. For details see {@link BlockModel}.
-         * @param group      if not null, then generated itemblock will be added to this Item Group (Creative Tabs).
-         *                   if null, itemblock won't be found from Creative GUI.
+         * @param blockModelSupplier supplier that returns model to be used in blockstate. For details see {@link BlockModel}.
+         * @param group              if not null, then generated itemblock will be added to this Item Group (Creative Tabs).
+         *                           if null, itemblock won't be found from Creative GUI.
          */
-        public void regDefaults(BlockModel blockModel, @Nullable ItemGroup group) {
-            regDefaultStateAndModel(blockModel);
+        public void regDefaults(Supplier<BlockModel> blockModelSupplier, @Nullable ItemGroup group) {
+            regOnClient(clientWrapper -> clientWrapper.regDefaultStateAndModel(blockModelSupplier.get()));
 
             ItemPropertiesFactory propsFactory = group != null ? new ItemPropertiesFactory(group) : new ItemPropertiesFactory(properties -> {
             });
             regItemBlock(propsFactory.createProps());
-        }
-
-        /**
-         * Registers model with standard block model location ("modid:block/block_name", full path: "modid:models/block/block_name")
-         *
-         * @param blockModel block model you want to register. For details see {@link BlockModel}.
-         * @return {@link BlockWrapper} to provide extra register options, like blockstate, another model and itemblock registering.
-         */
-        public BlockWrapper regDefaultModel(BlockModel blockModel) {
-            TimeClient.RESOURCE_HOLDER.addBlockModel(getEntry(), blockModel);
-            return this;
-        }
-
-        /**
-         * Registers model with given location.
-         *
-         * @param blockModelLocation location, where you want to register block model. For details see {@link BlockModelLocation}.
-         * @param blockModel         block model you want to register. For details see {@link BlockModel}.
-         * @return {@link BlockWrapper} to provide extra register options, like blockstate, another model and itemblock registering.
-         */
-        public BlockWrapper regModel(BlockModelLocation blockModelLocation, BlockModel blockModel) {
-            TimeClient.RESOURCE_HOLDER.addBlockModel(blockModelLocation, blockModel);
-            return this;
-        }
-
-        /**
-         * Registers blockstate with single default variant
-         * and given model (with standard block model location ("modid:block/block_name", full path: "modid:models/block/block_name")),
-         * also binds model to the single blockstate variant.
-         *
-         * @param blockModel block model you want to register. For details see {@link BlockModel}.
-         * @return {@link BlockWrapper} to provide extra register options, like itemblock registering.
-         */
-        public BlockWrapper regDefaultStateAndModel(BlockModel blockModel) {
-            ResourceLocation location = Objects.requireNonNull(getEntry().getRegistryName());
-
-            regDefaultModel(blockModel);
-
-            regDefaultState(new BlockModelLocation(location.getNamespace(), location.getPath()));
-
-            return this;
-        }
-
-        /**
-         * Registers blockstate with single default variant
-         * and block model with one given {@code blockTexture} for all sides (it also binds this model to single blockstate variant).
-         * <p>
-         * Block model will be available later with path "modid:models/block/block_name", or "modid:block/block_name" if used in blockstates.
-         *
-         * @param blockTexture texture that will be used for all sides of the block. For details see {@link TextureLocation}.
-         * @return {@link BlockWrapper} to provide extra register options, like itemblock registering.
-         */
-        public BlockWrapper regDefaultStateAndModel(TextureLocation blockTexture) {
-            regDefaultModel(BlockModel.createCubeAllModel(blockTexture));
-
-            ResourceLocation registryName = Objects.requireNonNull(getEntry().getRegistryName());
-            BlockModelLocation modelLocation = new BlockModelLocation(getMod().getModID(), registryName.getPath());
-            regDefaultState(modelLocation);
-
-            return this;
-        }
-
-        /**
-         * Registers blockstate with single default variant
-         * and binds model from given {@code blockModelLocation} to single blockstate variant.
-         *
-         * @param blockModelLocation location, where you want to register block model. For details see {@link BlockModelLocation}.
-         * @return {@link BlockWrapper} to provide extra register options, like block model and itemblock registering.
-         */
-        public BlockWrapper regDefaultState(BlockModelLocation blockModelLocation) {
-            return regState(new BlockStateResource().addDefaultVariant(blockModelLocation));
-        }
-
-        /**
-         * Registers blockstate with given blockstate resource.
-         * Blockstate will be available later with path "modid:blockstates/block_name".
-         *
-         * @param stateResource blockstate resource (the alternative to json file you made in assets/modid/blockstates/...). For details see {@link BlockStateResource}.
-         * @return {@link BlockWrapper} to provide extra register options, like block model and itemblock registering.
-         */
-        public BlockWrapper regState(BlockStateResource stateResource) {
-            TimeClient.RESOURCE_HOLDER.addBlockStateResource(getEntry(), stateResource);
-
-            return this;
         }
 
         /**
@@ -212,7 +144,7 @@ public abstract class BlockTimeRegistry extends ForgeTimeRegistry<Block> {
          * @see ItemPropertiesFactory
          */
         public BlockWrapper regItemBlock(Item.Properties props) {
-            ResourceLocation registryName = Objects.requireNonNull(getEntry().getRegistryName());
+            ResourceLocation registryName = Objects.requireNonNull(getBlock().getRegistryName());
 
             return regItemBlock(props, new BlockModelLocation(getModID(), registryName.getPath()));
         }
@@ -228,7 +160,7 @@ public abstract class BlockTimeRegistry extends ForgeTimeRegistry<Block> {
          * @see ItemPropertiesFactory
          */
         public BlockWrapper regItemBlock(Item.Properties props, BlockModelLocation blockModelLocation) {
-            return regItemBlock(props, new ItemModel(blockModelLocation));
+            return regItemBlock(props, () -> new ItemModel(blockModelLocation));
         }
 
         /**
@@ -237,20 +169,122 @@ public abstract class BlockTimeRegistry extends ForgeTimeRegistry<Block> {
          * <p>
          * Item model will be available later with path "modid:models/item/block_name".
          *
-         * @param props     properties that will be applied to the item block. Can be created via {@link ItemPropertiesFactory}
-         * @param itemModel model that will be used for itemblock. For details see {@link ItemModel}
+         * @param props             properties that will be applied to the item block. Can be created via {@link ItemPropertiesFactory}
+         * @param itemModelSupplier supplier that returns model to be used for itemblock. For details see {@link ItemModel}
          * @return {@link BlockWrapper} to provide extra register options, like block state and models registering.
          * @see ItemPropertiesFactory
          */
-        public BlockWrapper regItemBlock(Item.Properties props, ItemModel itemModel) {
-            BlockItem item = new BlockItem(getEntry(), props);
+        public BlockWrapper regItemBlock(Item.Properties props, Supplier<ItemModel> itemModelSupplier) {
+            BlockItem item = new BlockItem(getBlock(), props);
 
-            ResourceLocation registryName = Objects.requireNonNull(getEntry().getRegistryName());
+            ResourceLocation registryName = Objects.requireNonNull(getBlock().getRegistryName());
             item.setRegistryName(registryName);
 
             regItems.add(item);
-            TimeClient.RESOURCE_HOLDER.addItemModel(item, itemModel);
+
+            regOnClient(clientWrapper -> TimeClient.RESOURCE_HOLDER.addItemModel(item, itemModelSupplier.get()));
+
             return this;
+        }
+
+        public Block getBlock() {
+            return getEntry();
+        }
+    }
+
+    public class ClientWrapper {
+        private Block block;
+
+        private ClientWrapper(Block block) {
+            this.block = block;
+        }
+
+        /**
+         * Registers model with standard block model location ("modid:block/block_name", full path: "modid:models/block/block_name")
+         *
+         * @param blockModel block model you want to register. For details see {@link BlockModel}.
+         * @return {@link BlockWrapper} to provide extra register options, like blockstate, another model and itemblock registering.
+         */
+        public ClientWrapper regDefaultModel(BlockModel blockModel) {
+            TimeClient.RESOURCE_HOLDER.addBlockModel(getBlock(), blockModel);
+            return this;
+        }
+
+        /**
+         * Registers model with given location.
+         *
+         * @param blockModelLocation location, where you want to register block model. For details see {@link BlockModelLocation}.
+         * @param blockModel         block model you want to register. For details see {@link BlockModel}.
+         * @return {@link BlockWrapper} to provide extra register options, like blockstate, another model and itemblock registering.
+         */
+        public ClientWrapper regModel(BlockModelLocation blockModelLocation, BlockModel blockModel) {
+            TimeClient.RESOURCE_HOLDER.addBlockModel(blockModelLocation, blockModel);
+            return this;
+        }
+
+        /**
+         * Registers blockstate with single default variant
+         * and given model (with standard block model location ("modid:block/block_name", full path: "modid:models/block/block_name")),
+         * also binds model to the single blockstate variant.
+         *
+         * @param blockModel block model you want to register. For details see {@link BlockModel}.
+         * @return {@link BlockWrapper} to provide extra register options, like itemblock registering.
+         */
+        public ClientWrapper regDefaultStateAndModel(BlockModel blockModel) {
+            ResourceLocation location = Objects.requireNonNull(getBlock().getRegistryName());
+
+            regDefaultModel(blockModel);
+
+            regDefaultState(new BlockModelLocation(location.getNamespace(), location.getPath()));
+
+            return this;
+        }
+
+        /**
+         * Registers blockstate with single default variant
+         * and block model with one given {@code blockTexture} for all sides (it also binds this model to single blockstate variant).
+         * <p>
+         * Block model will be available later with path "modid:models/block/block_name", or "modid:block/block_name" if used in blockstates.
+         *
+         * @param blockTexture texture that will be used for all sides of the block. For details see {@link TextureLocation}.
+         * @return {@link BlockWrapper} to provide extra register options, like itemblock registering.
+         */
+        public ClientWrapper regDefaultStateAndModel(TextureLocation blockTexture) {
+            regDefaultModel(BlockModel.createCubeAllModel(blockTexture));
+
+            ResourceLocation registryName = Objects.requireNonNull(getBlock().getRegistryName());
+            BlockModelLocation modelLocation = new BlockModelLocation(getMod().getModID(), registryName.getPath());
+            regDefaultState(modelLocation);
+
+            return this;
+        }
+
+        /**
+         * Registers blockstate with single default variant
+         * and binds model from given {@code blockModelLocation} to single blockstate variant.
+         *
+         * @param blockModelLocation location, where you want to register block model. For details see {@link BlockModelLocation}.
+         * @return {@link BlockWrapper} to provide extra register options, like block model and itemblock registering.
+         */
+        public ClientWrapper regDefaultState(BlockModelLocation blockModelLocation) {
+            return regState(new BlockStateResource().addDefaultVariant(blockModelLocation));
+        }
+
+        /**
+         * Registers blockstate with given blockstate resource.
+         * Blockstate will be available later with path "modid:blockstates/block_name".
+         *
+         * @param stateResource blockstate resource (the alternative to json file you made in assets/modid/blockstates/...). For details see {@link BlockStateResource}.
+         * @return {@link BlockWrapper} to provide extra register options, like block model and itemblock registering.
+         */
+        public ClientWrapper regState(BlockStateResource stateResource) {
+            TimeClient.RESOURCE_HOLDER.addBlockStateResource(getBlock(), stateResource);
+
+            return this;
+        }
+
+        public Block getBlock() {
+            return block;
         }
     }
 }
