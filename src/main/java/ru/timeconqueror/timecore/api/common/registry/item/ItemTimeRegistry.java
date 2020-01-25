@@ -10,7 +10,8 @@ import ru.timeconqueror.timecore.api.client.resource.StandardItemModelParents;
 import ru.timeconqueror.timecore.api.client.resource.location.ModelLocation;
 import ru.timeconqueror.timecore.api.client.resource.location.TextureLocation;
 import ru.timeconqueror.timecore.api.common.registry.ForgeTimeRegistry;
-//FIXME add the same mechanics for items as for blocks.
+
+import java.util.function.Supplier;
 
 /**
  * Registry that should be extended and annotated with {@link ru.timeconqueror.timecore.api.common.registry.TimeAutoRegistry},
@@ -83,20 +84,30 @@ public abstract class ItemTimeRegistry extends ForgeTimeRegistry<Item> {
          *                      Vanilla uses it in, for example, spawn egg model where the layers are represented by base texture and overlay (spots).
          */
         public ItemWrapper regModel(ModelLocation parent, TextureLocation... textureLayers) {
-            ItemModel model = new ItemModel(parent);
-            model.addTextureLayers(textureLayers);
-
-            return regModel(model);
+            return regModel(() -> {
+                ItemModel model = new ItemModel(parent);
+                model.addTextureLayers(textureLayers);
+                return model;
+            });
         }
 
         /**
          * Registers simple item model without the need of json file (via code) for bound item.
+         *
+         * @param itemModelSupplier supplier for item model you want to register.
+         *                          Supplier is used here to call its content only for client side, so all stuff that is returned by it
+         *                          likely should not be created outside lambda (except locations).
+         *                          For details see {@link ItemModel}.
          */
-        public ItemWrapper regModel(ItemModel model) {
-            TimeClient.RESOURCE_HOLDER.addItemModel(getItem(), model);
+        public ItemWrapper regModel(Supplier<ItemModel> itemModelSupplier) {
+            runForClient(() -> TimeClient.RESOURCE_HOLDER.addItemModel(getItem(), itemModelSupplier.get()));
             return this;
         }
 
+        /**
+         * Returns item bound to wrapper.
+         * Method duplicates {@link #getEntry()}, so it exists only for easier understanding.
+         */
         public Item getItem() {
             return getEntry();
         }

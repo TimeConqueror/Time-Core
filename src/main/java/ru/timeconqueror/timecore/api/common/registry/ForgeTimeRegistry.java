@@ -1,12 +1,13 @@
 package ru.timeconqueror.timecore.api.common.registry;
 
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.ModContainer;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.ModLoadingContext;
+import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.registries.IForgeRegistryEntry;
-import org.jetbrains.annotations.Contract;
 import ru.timeconqueror.timecore.api.ITimeMod;
 
 import java.util.ArrayList;
@@ -68,18 +69,30 @@ public abstract class ForgeTimeRegistry<T extends IForgeRegistryEntry<T>> {
     public class EntryWrapper {
         private T entry;
 
-        @Contract()
         public EntryWrapper(T entry, String name) {
             name = name.toLowerCase();
 
             this.entry = entry;
-            entry.setRegistryName(new ResourceLocation(getMod().getModID(), name));
+            entry.setRegistryName(new ResourceLocation(getModID(), name));
 
             regList.add(this);
         }
 
+        /**
+         * Returns entry bound to wrapper.
+         */
         public T getEntry() {
             return entry;
+        }
+
+        /**
+         * Runs code in {@code clientStuff} only for physical client side.
+         * Used to register models, blockstates, etc.
+         */
+        protected void runForClient(Runnable clientStuff) {
+            if (FMLEnvironment.dist == Dist.CLIENT) {
+                clientStuff.run();
+            }
         }
     }
 }

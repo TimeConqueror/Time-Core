@@ -27,12 +27,11 @@ public class TBlocks extends BlockTimeRegistry {
         BlockModelLocation modelLocation = new BlockModelLocation(getModID(), "block/test_sand");
         regBlock(mcSand, "test_sand")
                 .regItemBlock(ItemGroup.MISC)
-                .regOnClient(client ->
-                        client.regModel(modelLocation, BlockModel.createCubeAllModel(new TextureLocation("minecraft", "block/sand")))
-                                .regDefaultState(modelLocation));
+                .regModel(modelLocation, () -> BlockModel.createCubeAllModel(new TextureLocation("minecraft", "block/sand")))
+                .regDefaultState(modelLocation);
         regBlock(mcDirt, "test_dirt")
                 .regItemBlock(ItemGroup.MISC)
-                .regOnClient(client -> client.regDefaultStateAndModel(new TextureLocation("minecraft", "block/dirt")));
+                .regDefaultStateAndModel(new TextureLocation("minecraft", "block/dirt"));
 
         regBlock(mcEmeraldOre, "test_emerald_ore")
                 .regDefaults(new TextureLocation("minecraft", "block/emerald_ore"), ItemGroup.MISC);
