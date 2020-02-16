@@ -120,7 +120,7 @@ dependencies {
     // Specify the version of Minecraft to use, If this is any group other then 'net.minecraft' it is assumed
     // that the dep is a ForgeGradle 'patcher' dependency. And it's patches will be applied.
     // The userdev artifact is a special name and will get all sorts of transformations applied to it.
-    minecraft 'net.minecraftforge:forge:1.14.4-28.1.116'
+    minecraft 'net.minecraftforge:forge:1.14.4-28.2.1'
 
 //    implementation fg.deobf("mcp.mobius.waila:Hwyla:forge-1.10.6-B67_1.14.4")
 
