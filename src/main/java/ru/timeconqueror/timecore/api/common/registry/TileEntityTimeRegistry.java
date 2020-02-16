@@ -7,14 +7,11 @@ import net.minecraft.tileentity.TileEntityType;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.ModContainer;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
-import net.minecraftforge.fml.event.lifecycle.ModLifecycleEvent;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 import ru.timeconqueror.timecore.api.TimeMod;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.function.Supplier;
 
@@ -32,20 +29,9 @@ public abstract class TileEntityTimeRegistry extends ForgeTimeRegistry<TileEntit
 
     @SubscribeEvent
     public final void onClientSetupEvent(FMLClientSetupEvent event) {
-        try {
-            Field f = ModLifecycleEvent.class.getDeclaredField("container");
-            f.setAccessible(true);
-            ModContainer container = (ModContainer) f.get(event);
-            System.out.println(container.getModId());
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            e.printStackTrace();
+        for (Supplier<Runnable> runnable : rendererRegisterRunnables) {
+            runnable.get().run();
         }
-
-        forceBoundModLoading(() -> {
-            for (Supplier<Runnable> runnable : rendererRegisterRunnables) {
-                runnable.get().run();
-            }
-        });
     }
 
     /**

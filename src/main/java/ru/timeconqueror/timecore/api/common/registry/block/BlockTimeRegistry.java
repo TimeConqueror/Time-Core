@@ -42,11 +42,9 @@ public abstract class BlockTimeRegistry extends ForgeTimeRegistry<Block> {
 
     @SubscribeEvent
     public final void onRegItemsEvent(RegistryEvent.Register<Item> event) {
-        forceBoundModLoading(() -> {
-            for (BlockItem itemBlock : regItems) {
-                event.getRegistry().register(itemBlock);
-            }
-        });
+        for (BlockItem itemBlock : regItems) {
+            event.getRegistry().register(itemBlock);
+        }
     }
 
     /**
