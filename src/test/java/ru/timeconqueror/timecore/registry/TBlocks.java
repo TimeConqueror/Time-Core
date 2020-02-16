@@ -14,9 +14,11 @@ import ru.timeconqueror.timecore.api.common.registry.block.BlockTimeRegistry;
 @TimeAutoRegistry
 public class TBlocks extends BlockTimeRegistry {
     private static BlockPropertiesFactory propsCreator = new BlockPropertiesFactory(() -> Block.Properties.create(Material.ROCK));
-    public static Block mcSand = new Block(propsCreator.createProps());
-    public static Block mcDirt = new Block(propsCreator.createProps());
-    public static Block mcEmeraldOre = new Block(propsCreator.createProps());
+    public static Block MC_SAND = new Block(propsCreator.createProps());
+    public static Block MC_DIRT = new Block(propsCreator.createProps());
+    public static Block MC_EMERALD_ORE = new Block(propsCreator.createProps());
+
+    public static Block TEST_BLOCK_WITH_TILE = new Block(propsCreator.createProps());
 
     public TBlocks() {
         super(TimeCore.INSTANCE);
@@ -25,15 +27,16 @@ public class TBlocks extends BlockTimeRegistry {
     @Override
     public void register() {
         BlockModelLocation modelLocation = new BlockModelLocation(getModID(), "block/test_sand");
-        regBlock(mcSand, "test_sand")
+        regBlock(MC_SAND, "test_sand")
                 .regItemBlock(ItemGroup.MISC)
                 .regModel(modelLocation, () -> BlockModel.createCubeAllModel(new TextureLocation("minecraft", "block/sand")))
                 .regDefaultState(modelLocation);
-        regBlock(mcDirt, "test_dirt")
+        regBlock(MC_DIRT, "test_dirt")
                 .regItemBlock(ItemGroup.MISC)
                 .regDefaultStateAndModel(new TextureLocation("minecraft", "block/dirt"));
 
-        regBlock(mcEmeraldOre, "test_emerald_ore")
+        regBlock(MC_EMERALD_ORE, "test_emerald_ore")
                 .regDefaults(new TextureLocation("minecraft", "block/emerald_ore"), ItemGroup.MISC);
+        regBlock(TEST_BLOCK_WITH_TILE, "test_block_with_tile").regDefaults(new TextureLocation("minecraft", "block/furnace"), ItemGroup.MISC);
     }
 }

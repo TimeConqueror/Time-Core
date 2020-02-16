@@ -8,7 +8,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import org.jetbrains.annotations.Nullable;
-import ru.timeconqueror.timecore.api.ITimeMod;
+import ru.timeconqueror.timecore.api.TimeMod;
 import ru.timeconqueror.timecore.api.client.TimeClient;
 import ru.timeconqueror.timecore.api.client.resource.BlockModel;
 import ru.timeconqueror.timecore.api.client.resource.BlockStateResource;
@@ -31,7 +31,7 @@ import java.util.function.Supplier;
 public abstract class BlockTimeRegistry extends ForgeTimeRegistry<Block> {
     private ArrayList<BlockItem> regItems = new ArrayList<>();
 
-    public BlockTimeRegistry(ITimeMod mod) {
+    public BlockTimeRegistry(TimeMod mod) {
         super(mod);
     }
 

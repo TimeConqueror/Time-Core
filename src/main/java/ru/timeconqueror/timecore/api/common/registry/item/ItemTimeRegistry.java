@@ -3,7 +3,7 @@ package ru.timeconqueror.timecore.api.common.registry.item;
 import net.minecraft.item.Item;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import ru.timeconqueror.timecore.api.ITimeMod;
+import ru.timeconqueror.timecore.api.TimeMod;
 import ru.timeconqueror.timecore.api.client.TimeClient;
 import ru.timeconqueror.timecore.api.client.resource.ItemModel;
 import ru.timeconqueror.timecore.api.client.resource.StandardItemModelParents;
@@ -21,7 +21,7 @@ import java.util.function.Supplier;
  */
 public abstract class ItemTimeRegistry extends ForgeTimeRegistry<Item> {
 
-    public ItemTimeRegistry(ITimeMod mod) {
+    public ItemTimeRegistry(TimeMod mod) {
         super(mod);
     }
 
@@ -31,7 +31,7 @@ public abstract class ItemTimeRegistry extends ForgeTimeRegistry<Item> {
     }
 
     /**
-     * Method to automatically register provided item.
+     * Method to register provided item automatically.
      *
      * @param item item to register
      * @param name item name. Will be used as a part of registry and translation keys. Should NOT contain mod ID, because it will be bound automatically.

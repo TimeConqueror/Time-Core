@@ -1,7 +1,7 @@
 package ru.timeconqueror.timecore.api.client;
 
 import net.minecraftforge.fml.ModList;
-import ru.timeconqueror.timecore.api.ITimeMod;
+import ru.timeconqueror.timecore.api.TimeMod;
 import ru.timeconqueror.timecore.api.client.resource.TimeResourceHolder;
 
 public class TimeClient {
@@ -13,7 +13,7 @@ public class TimeClient {
 
     public static void setup() {
         ModList.get().forEachModContainer((s, modContainer) -> {
-            if (modContainer.getMod() instanceof ITimeMod) {
+            if (modContainer.getMod() instanceof TimeMod) {
                 RESOURCE_HOLDER.addDomain(s);
             }
         });

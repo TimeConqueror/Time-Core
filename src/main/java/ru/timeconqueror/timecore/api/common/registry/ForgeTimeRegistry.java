@@ -8,19 +8,20 @@ import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.registries.IForgeRegistryEntry;
-import ru.timeconqueror.timecore.api.ITimeMod;
+import ru.timeconqueror.timecore.api.TimeMod;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Registry that should be extended and annotated with {@link ru.timeconqueror.timecore.api.common.registry.TimeAutoRegistry},
  * if you want to register any object that extends {@link IForgeRegistryEntry}.
  */
 public abstract class ForgeTimeRegistry<T extends IForgeRegistryEntry<T>> {
-    protected ArrayList<EntryWrapper> regList = new ArrayList<>();
-    private ITimeMod mod;
+    private ArrayList<EntryWrapper> regList = new ArrayList<>();
+    private TimeMod mod;
 
-    public ForgeTimeRegistry(ITimeMod mod) {
+    public ForgeTimeRegistry(TimeMod mod) {
         this.mod = mod;
     }
 
@@ -39,7 +40,7 @@ public abstract class ForgeTimeRegistry<T extends IForgeRegistryEntry<T>> {
      */
     public abstract void register();
 
-    public ITimeMod getMod() {
+    public TimeMod getMod() {
         return mod;
     }
 
@@ -64,6 +65,10 @@ public abstract class ForgeTimeRegistry<T extends IForgeRegistryEntry<T>> {
 
             context.setActiveContainer(oldModContainer, context.extension());
         });
+    }
+
+    public List<EntryWrapper> getRegList() {
+        return regList;
     }
 
     public class EntryWrapper {
