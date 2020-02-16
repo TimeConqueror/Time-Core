@@ -54,6 +54,8 @@ minecraft {
             // Recommended logging level for the console
             //property 'forge.logging.console.level', 'debug'
 
+            args "--mixin mixins.timecore.json"
+
             mods {
                 timecore {
                     source sourceSets.main
@@ -70,6 +72,8 @@ minecraft {
 
             // Recommended logging level for the console
             //property 'forge.logging.console.level', 'debug'
+
+            args "--mixin mixins.timecore.json"
 
             mods {
                 timecore {
