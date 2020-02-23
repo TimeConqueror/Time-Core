@@ -8,6 +8,7 @@ import ru.timeconqueror.timecore.TimeCore;
 import ru.timeconqueror.timecore.api.common.event.FMLModConstructedEvent;
 import ru.timeconqueror.timecore.api.common.registry.ForgeTimeRegistry;
 import ru.timeconqueror.timecore.api.common.registry.TimeAutoRegistry;
+import ru.timeconqueror.timecore.api.util.Wrapper;
 
 /**
  * Base mod class needed for TimeCore features.
@@ -24,6 +25,7 @@ public abstract class TimeMod {
             if (modInfo.getModId().equals(getModID())) {
                 ModFileScanData scanData = modInfo.getOwningFile().getFile().getScanResult();
 
+                Wrapper<Boolean> loaded = new Wrapper<>(false);
                 scanData.getAnnotations().stream()
                         .filter(annotationData -> annotationData.getAnnotationType().equals(TimeAutoRegistry.ASM_TYPE))
                         .forEach(annotationData -> {
@@ -35,6 +37,7 @@ public abstract class TimeMod {
 
                                 if (obj instanceof ForgeTimeRegistry<?>) {
                                     FMLJavaModLoadingContext.get().getModEventBus().register(obj);
+                                    loaded.set(true);
                                 } else
                                     throw new RuntimeException("Annotated class with AutoRegistry annotation " + obj.getClass() + " doesn't extend " + ForgeTimeRegistry.class.getSimpleName());
 
@@ -47,7 +50,9 @@ public abstract class TimeMod {
                             }
                         });
 
-                TimeCore.LOGGER.debug("Loaded Auto-Registries for {} ({})", modInfo.getDisplayName(), modInfo.getModId());
+                if (loaded.get()) {
+                    TimeCore.LOGGER.info("Loaded Auto-Registries for {} ({})", modInfo.getDisplayName(), modInfo.getModId());
+                }
 
                 break;
             }
