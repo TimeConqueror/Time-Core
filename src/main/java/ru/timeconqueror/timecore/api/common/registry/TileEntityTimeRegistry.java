@@ -32,6 +32,9 @@ public abstract class TileEntityTimeRegistry extends ForgeTimeRegistry<TileEntit
         for (Supplier<Runnable> runnable : rendererRegisterRunnables) {
             runnable.get().run();
         }
+
+        rendererRegisterRunnables.clear();
+        rendererRegisterRunnables = null;
     }
 
     /**

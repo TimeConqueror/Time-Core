@@ -7,6 +7,7 @@ import net.minecraft.item.ItemGroup;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.registries.IForgeRegistry;
 import org.jetbrains.annotations.Nullable;
 import ru.timeconqueror.timecore.api.TimeMod;
 import ru.timeconqueror.timecore.api.client.TimeClient;
@@ -29,6 +30,10 @@ import java.util.function.Supplier;
  * Examples can be seen at test module.
  */
 public abstract class BlockTimeRegistry extends ForgeTimeRegistry<Block> {
+    /**
+     * Should be used only before calling {@link #onRegItemsEvent(RegistryEvent.Register)}.
+     * After calling that method it won't do anything and will become null.
+     */
     private ArrayList<BlockItem> regItems = new ArrayList<>();
 
     public BlockTimeRegistry(TimeMod mod) {
@@ -42,9 +47,13 @@ public abstract class BlockTimeRegistry extends ForgeTimeRegistry<Block> {
 
     @SubscribeEvent
     public final void onRegItemsEvent(RegistryEvent.Register<Item> event) {
-        for (BlockItem itemBlock : regItems) {
-            event.getRegistry().register(itemBlock);
+        IForgeRegistry<Item> registry = event.getRegistry();
+        for (BlockItem regItem : regItems) {
+            registry.register(regItem);
         }
+
+        regItems.clear();
+        regItems = null;
     }
 
     /**

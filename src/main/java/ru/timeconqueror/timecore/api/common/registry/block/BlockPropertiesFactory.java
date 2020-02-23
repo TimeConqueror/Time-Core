@@ -24,6 +24,4 @@ public class BlockPropertiesFactory {
     public Block.Properties createProps() {
         return creator.get();
     }
-
-
 }

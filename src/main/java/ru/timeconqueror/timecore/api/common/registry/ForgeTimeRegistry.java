@@ -4,18 +4,22 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.loading.FMLEnvironment;
+import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 import ru.timeconqueror.timecore.api.TimeMod;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Registry that should be extended and annotated with {@link ru.timeconqueror.timecore.api.common.registry.TimeAutoRegistry},
  * if you want to register any object that extends {@link IForgeRegistryEntry}.
  */
 public abstract class ForgeTimeRegistry<T extends IForgeRegistryEntry<T>> {
-    private ArrayList<EntryWrapper> regList = new ArrayList<>();//TODO clear after reg
+    /**
+     * Should be used only before calling {@link #onFireRegistryEvent(RegistryEvent.Register)}.
+     * After calling that method it won't do anything and will become null.
+     */
+    private ArrayList<EntryWrapper> regList = new ArrayList<>();
     private TimeMod mod;
 
     public ForgeTimeRegistry(TimeMod mod) {
@@ -25,9 +29,13 @@ public abstract class ForgeTimeRegistry<T extends IForgeRegistryEntry<T>> {
     public void onFireRegistryEvent(RegistryEvent.Register<T> event) {
         register();
 
+        IForgeRegistry<T> registry = event.getRegistry();
         for (EntryWrapper t : regList) {
-            event.getRegistry().register(t.entry);
+            registry.register(t.entry);
         }
+
+        regList.clear();
+        regList = null;
     }
 
     /**
@@ -41,10 +49,6 @@ public abstract class ForgeTimeRegistry<T extends IForgeRegistryEntry<T>> {
 
     public String getModID() {
         return getMod().getModID();
-    }
-
-    public List<EntryWrapper> getRegList() {
-        return regList;
     }
 
     public class EntryWrapper {
