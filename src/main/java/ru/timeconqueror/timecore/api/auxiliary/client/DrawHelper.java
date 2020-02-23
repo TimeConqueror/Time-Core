@@ -1,4 +1,4 @@
-package ru.timeconqueror.timecore.api.auxiliary;
+package ru.timeconqueror.timecore.api.auxiliary.client;
 
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.BufferBuilder;
@@ -6,7 +6,7 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import org.lwjgl.opengl.GL11;
 
-public class RenderHelper {
+public class DrawHelper {
     public static Tessellator tessellator = Tessellator.getInstance();
     public static BufferBuilder bufferBuilder = tessellator.getBuffer();
 
@@ -124,8 +124,8 @@ public class RenderHelper {
         float minWidth = startWidth + endWidth;
 
         if (requiredWidth <= minWidth) {
-            RenderHelper.drawTexturedRect(x0, y0, startWidth, startElement.height, zLevel, startElement.textureX, startElement.textureY, startElement.textureWidth, startElement.textureHeight, pointNumber);
-            RenderHelper.drawTexturedRect(x0 + startWidth, y0, endWidth, endElement.height, zLevel, endElement.textureX, endElement.textureY, endElement.textureWidth, endElement.textureHeight, pointNumber);
+            DrawHelper.drawTexturedRect(x0, y0, startWidth, startElement.height, zLevel, startElement.textureX, startElement.textureY, startElement.textureWidth, startElement.textureHeight, pointNumber);
+            DrawHelper.drawTexturedRect(x0 + startWidth, y0, endWidth, endElement.height, zLevel, endElement.textureX, endElement.textureY, endElement.textureWidth, endElement.textureHeight, pointNumber);
         } else {
             float remainingWidth = requiredWidth - minWidth;
             float repeatWidth = repeatElement.width;
@@ -134,18 +134,18 @@ public class RenderHelper {
             int fullTimes = (int) repeatTimes;
             float fracPart = repeatTimes - (int) repeatTimes;
 
-            RenderHelper.drawTexturedRect(x0, y0, startWidth, startElement.height, zLevel, startElement.textureX, startElement.textureY, startElement.textureWidth, startElement.textureHeight, pointNumber);
+            DrawHelper.drawTexturedRect(x0, y0, startWidth, startElement.height, zLevel, startElement.textureX, startElement.textureY, startElement.textureWidth, startElement.textureHeight, pointNumber);
 
             float extraX = startWidth;
             for (int i = 0; i < fullTimes; i++) {
-                RenderHelper.drawTexturedRect(x0 + extraX, y0, repeatElement.width, repeatElement.height, zLevel, repeatElement.textureX, repeatElement.textureY, repeatElement.textureWidth, repeatElement.textureHeight, pointNumber);
+                DrawHelper.drawTexturedRect(x0 + extraX, y0, repeatElement.width, repeatElement.height, zLevel, repeatElement.textureX, repeatElement.textureY, repeatElement.textureWidth, repeatElement.textureHeight, pointNumber);
                 extraX += repeatElement.width;
             }
 
-            RenderHelper.drawTexturedRect(x0 + extraX, y0, repeatWidth * fracPart, repeatElement.height, zLevel, repeatElement.textureX, repeatElement.textureY, repeatElement.textureWidth * fracPart, repeatElement.textureHeight, pointNumber);
+            DrawHelper.drawTexturedRect(x0 + extraX, y0, repeatWidth * fracPart, repeatElement.height, zLevel, repeatElement.textureX, repeatElement.textureY, repeatElement.textureWidth * fracPart, repeatElement.textureHeight, pointNumber);
             extraX += repeatWidth * fracPart;
 
-            RenderHelper.drawTexturedRect(x0 + extraX, y0, endWidth, endElement.height, zLevel, endElement.textureX, endElement.textureY, endElement.textureWidth, endElement.textureHeight, pointNumber);
+            DrawHelper.drawTexturedRect(x0 + extraX, y0, endWidth, endElement.height, zLevel, endElement.textureX, endElement.textureY, endElement.textureWidth, endElement.textureHeight, pointNumber);
         }
     }
 

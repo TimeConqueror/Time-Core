@@ -1,6 +1,6 @@
 package ru.timeconqueror.timecore.api.auxiliary;
 
-public class IntHelper {
+public class ParseUtils {
     public static boolean isInt(String s) {
         if (s == null) {
             return false;

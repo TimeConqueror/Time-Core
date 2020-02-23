@@ -23,24 +23,20 @@ public class Profiler {
      * Will be ignored if {@code totalTime} == 0
      */
     public void addTimeToList(String identifier, long totalTime) {
-        try {
-            if (totalTime == 0) {
-                return;
-            }
+        if (totalTime == 0) {
+            return;
+        }
 
-            if (!profilingMap.containsKey(identifier)) {
-                profilingMap.put(identifier, new LinkedList<>());
-            }
+        if (!profilingMap.containsKey(identifier)) {
+            profilingMap.put(identifier, new LinkedList<>());
+        }
 
-            LinkedList<Long> list = (LinkedList<Long>) profilingMap.get(identifier);
+        LinkedList<Long> list = (LinkedList<Long>) profilingMap.get(identifier);
 
-            list.addLast(totalTime);
+        list.addLast(totalTime);
 
-            while (list.size() > 50) {
-                list.removeFirst();
-            }
-        } catch (Exception e) {
-            // Just do nothing. Profiling is for debug purposes only anyways...
+        while (list.size() > 50) {
+            list.removeFirst();
         }
     }
 

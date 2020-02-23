@@ -1,4 +1,4 @@
-package ru.timeconqueror.timecore.common;
+package ru.timeconqueror.timecore.api.auxiliary;
 
 import com.google.common.base.Charsets;
 import com.google.common.io.CharSource;
@@ -10,8 +10,8 @@ import java.net.URL;
 import java.nio.charset.Charset;
 
 @SuppressWarnings("UnstableApiUsage")
-public class ResourceManager {
-    private static final String PARENT_PATH = "assets/";
+public class ResourceHelper {
+    private static final String ASSETS_PATH = "assets/";
 
     /**
      * Returns the URL to resource with given {@code resourceLocation}.
@@ -21,7 +21,7 @@ public class ResourceManager {
      * Returns null, if there is no resource with given {@code resourceLocation}.
      */
     public static URL getResourceURL(ResourceLocation resourceLocation) {
-        return ResourceManager.class.getClassLoader().getResource(toPathString(resourceLocation));
+        return ResourceHelper.class.getClassLoader().getResource(toPathString(resourceLocation));
     }
 
     /**
@@ -32,7 +32,7 @@ public class ResourceManager {
      * Returns null, if there is no resource with given {@code resourceLocation}.
      */
     public static InputStream getResourceStream(ResourceLocation resourceLocation) {
-        return ResourceManager.class.getClassLoader().getResourceAsStream(toPathString(resourceLocation));
+        return ResourceHelper.class.getClassLoader().getResourceAsStream(toPathString(resourceLocation));
     }
 
     /**
@@ -59,6 +59,6 @@ public class ResourceManager {
     }
 
     private static String toPathString(ResourceLocation resourceLocation) {
-        return PARENT_PATH + resourceLocation.getNamespace() + "/" + resourceLocation.getPath();
+        return ASSETS_PATH + resourceLocation.getNamespace() + "/" + resourceLocation.getPath();
     }
 }

@@ -9,8 +9,6 @@ import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import ru.timeconqueror.timecore.api.auxiliary.debug.LogHelper;
 import ru.timeconqueror.timecore.proxy.CommonProxy;
 
-import java.util.Random;
-
 @Mod(modid = TimeCore.MODID, name = TimeCore.NAME, version = TimeCore.VERSION)
 public class TimeCore {
 
@@ -23,8 +21,6 @@ public class TimeCore {
     public static CommonProxy proxy;
     @Mod.Instance
     public static TimeCore instance;
-
-    public static Random rand = new Random();
 
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event) {

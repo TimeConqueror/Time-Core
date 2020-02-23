@@ -7,7 +7,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
-public class ClientUtils {
+public class RenderHelper {
     public static final TextureManager textureManager = Minecraft.getMinecraft().getTextureManager();
 
     /**
