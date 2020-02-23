@@ -6,13 +6,32 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import org.lwjgl.opengl.GL11;
 
-@SuppressWarnings("DuplicatedCode")
 public class RenderHelper {
     public static Tessellator tessellator = Tessellator.getInstance();
     public static BufferBuilder bufferBuilder = tessellator.getBuffer();
 
     /**
-     * Renders textured rectangle.
+     * Draws textured rectangle.
+     * <p>
+     * Terms, used in parameters:
+     * Point number represents in how much points texture must be divided.
+     * Point is a relative texture coordinate. It is used in {@code textureX, textureY, width, height} to determine its sizes and coordinates relative to the entire texture.
+     *
+     * @param x0          start x-coordinate. (x of left-top corner)
+     * @param y0          start y-coordinate. (y of left-top corner)
+     * @param width       represents both coordinate and texture width along the axis X. For texture it means texture points. Point description is mentioned above.
+     * @param height      represents both coordinate and texture height along the axis Y.  For texture it means texture points. Point description is mentioned above.
+     * @param zLevel      z-coordinate.
+     * @param textureX    start texture x-point (x of left-top texture corner). Point description is mentioned above.
+     * @param textureY    start texture y-point (y of left-top texture corner). Point description is mentioned above.
+     * @param pointNumber in how much points texture must be divided. Point description is mentioned above.
+     */
+    public static void drawTexturedRect(double x0, double y0, double width, double height, double zLevel, double textureX, double textureY, double pointNumber) {
+        drawTexturedRect(x0, y0, width, height, zLevel, textureX, textureY, width, height, pointNumber);
+    }
+
+    /**
+     * Draws textured rectangle.
      * <p>
      * Term, used in parameters:
      * Point is a relative texture coordinate. It is used in {@code textureX, textureY, textureWidth, textureHeight} to determine its sizes and coordinates relative to the entire texture.
@@ -30,42 +49,11 @@ public class RenderHelper {
      */
     public static void drawTexturedRect(double x0, double y0, double width, double height, double zLevel, double textureX, double textureY, double textureWidth, double textureHeight, double pointNumber) {
         double portionFactor = 1 / pointNumber;
-        bufferBuilder.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
-        bufferBuilder.pos(x0, y0, zLevel).tex(textureX * portionFactor, textureY * portionFactor).endVertex();
-        bufferBuilder.pos(x0, y0 + height, zLevel).tex(textureX * portionFactor, (textureY + textureHeight) * portionFactor).endVertex();
-        bufferBuilder.pos(x0 + width, y0 + height, zLevel).tex((textureX + textureWidth) * portionFactor, (textureY + textureHeight) * portionFactor).endVertex();
-        bufferBuilder.pos(x0 + width, y0, zLevel).tex((textureX + textureWidth) * portionFactor, textureY * portionFactor).endVertex();
-        tessellator.draw();
+        drawTexturedRectP(x0, y0, width, height, zLevel, textureX, textureY, textureWidth, textureHeight, portionFactor);
     }
 
     /**
-     * Renders textured rectangle.
-     * <p>
-     * Terms, used in parameters:
-     * Point number represents in how much points texture must be divided.
-     * Point is a relative texture coordinate. It is used in {@code textureX, textureY, width, height} to determine its sizes and coordinates relative to the entire texture.
-     *
-     * @param x0          start x-coordinate. (x of left-top corner)
-     * @param y0          start y-coordinate. (y of left-top corner)
-     * @param width       represents both coordinate and texture width along the axis X. For texture it means texture points. Point description is mentioned above.
-     * @param height      represents both coordinate and texture height along the axis Y.  For texture it means texture points. Point description is mentioned above.
-     * @param zLevel      z-coordinate.
-     * @param textureX    start texture x-point (x of left-top texture corner). Point description is mentioned above.
-     * @param textureY    start texture y-point (y of left-top texture corner). Point description is mentioned above.
-     * @param pointNumber in how much points texture must be divided. Point description is mentioned above.
-     */
-    public static void drawTexturedRect(double x0, double y0, double width, double height, double zLevel, double textureX, double textureY, double pointNumber) {
-        double portionFactor = 1 / pointNumber;
-        bufferBuilder.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
-        bufferBuilder.pos(x0, y0, zLevel).tex(textureX * portionFactor, textureY * portionFactor).endVertex();
-        bufferBuilder.pos(x0, y0 + height, zLevel).tex(textureX * portionFactor, (textureY + height) * portionFactor).endVertex();
-        bufferBuilder.pos(x0 + width, y0 + height, zLevel).tex((textureX + width) * portionFactor, (textureY + height) * portionFactor).endVertex();
-        bufferBuilder.pos(x0 + width, y0, zLevel).tex((textureX + width) * portionFactor, textureY * portionFactor).endVertex();
-        tessellator.draw();
-    }
-
-    /**
-     * Renders textured rectangle.
+     * Draws textured rectangle.
      * <p>
      * Terms, used in parameters:
      * Point number represents in how much points texture must be divided.
@@ -92,7 +80,7 @@ public class RenderHelper {
     }
 
     /**
-     * Renders textured rectangle.
+     * Draws textured rectangle.
      * <p>
      * Terms, used in parameters:
      * Point number represents in how much points texture must be divided.
@@ -108,16 +96,11 @@ public class RenderHelper {
      * @param texturePointPortion represents the percentage point to whole texture. Equals to 1 / point number.
      */
     public static void drawTexturedRectP(double x0, double y0, double width, double height, double zLevel, double textureX, double textureY, double texturePointPortion) {
-        bufferBuilder.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
-        bufferBuilder.pos(x0, y0, zLevel).tex(textureX * texturePointPortion, textureY * texturePointPortion).endVertex();
-        bufferBuilder.pos(x0, y0 + height, zLevel).tex(textureX * texturePointPortion, (textureY + height) * texturePointPortion).endVertex();
-        bufferBuilder.pos(x0 + width, y0 + height, zLevel).tex((textureX + width) * texturePointPortion, (textureY + height) * texturePointPortion).endVertex();
-        bufferBuilder.pos(x0 + width, y0, zLevel).tex((textureX + width) * texturePointPortion, textureY * texturePointPortion).endVertex();
-        tessellator.draw();
+        drawTexturedRectP(x0, y0, width, height, zLevel, textureX, textureY, width, height, texturePointPortion);
     }
 
     /**
-     * Renders textured rectangle цшер autoexpandable width. So if you have texture width, for example, in 30 pixels, while your rectangle have a larger width.
+     * Draws textured rectangle цшер autoexpandable width. So if you have texture width, for example, in 30 pixels, while your rectangle have a larger width.
      * How it works: this method renders left and right part of rectangle, depending on given {@code requiredWidth}, and then repeats center element until it fill all remaining width.
      * <p>
      * If {@code requiredWidth} is less than the sum of {@code startElement, endElement} width, it will be expanded to this sum.
@@ -167,7 +150,7 @@ public class RenderHelper {
     }
 
     /**
-     * Renders textured rectangle with full bound texture.
+     * Draws textured rectangle with full bound texture.
      *
      * @param x0     start x-coordinate. (x of left-top corner)
      * @param y0     start y-coordinate. (y of left-top corner)
@@ -185,7 +168,7 @@ public class RenderHelper {
     }
 
     /**
-     * Renders string.
+     * Draws string.
      *
      * @param text  text to be displayed.
      * @param x     start x-coordinate (left)
@@ -197,7 +180,7 @@ public class RenderHelper {
     }
 
     /**
-     * Renders string with shadow.
+     * Draws string with shadow.
      *
      * @param text  text to be displayed.
      * @param x     start x-coordinate (left)
@@ -209,7 +192,7 @@ public class RenderHelper {
     }
 
     /**
-     * Renders x-centered string.
+     * Draws x-centered string.
      *
      * @param text  text to be displayed.
      * @param x     center x-coordinate
@@ -221,7 +204,7 @@ public class RenderHelper {
     }
 
     /**
-     * Renders x-centered string with shadow.
+     * Draws x-centered string with shadow.
      *
      * @param text  text to be displayed.
      * @param x     center x-coordinate
@@ -233,7 +216,7 @@ public class RenderHelper {
     }
 
     /**
-     * Renders y-centered string.
+     * Draws y-centered string.
      *
      * @param text  text to be displayed.
      * @param x     start x-coordinate (left)
@@ -245,7 +228,7 @@ public class RenderHelper {
     }
 
     /**
-     * Renders y-centered string with shadow.
+     * Draws y-centered string with shadow.
      *
      * @param text  text to be displayed.
      * @param x     start x-coordinate (left)
@@ -257,7 +240,7 @@ public class RenderHelper {
     }
 
     /**
-     * Renders xy-centered string.
+     * Draws xy-centered string.
      *
      * @param text  text to be displayed.
      * @param x     center x-coordinate
@@ -269,7 +252,7 @@ public class RenderHelper {
     }
 
     /**
-     * Renders xy-centered string with shadow.
+     * Draws xy-centered string with shadow.
      *
      * @param text  text to be displayed.
      * @param x     center x-coordinate
