@@ -54,6 +54,9 @@ public abstract class ForgeTimeRegistry<T extends IForgeRegistryEntry<T>> {
     public class EntryWrapper {
         private T entry;
 
+        /**
+         * Calling this constructor you will also add it to {@link #regList}.
+         */
         public EntryWrapper(T entry, String name) {
             name = name.toLowerCase();
 

@@ -15,6 +15,12 @@ import ru.timeconqueror.timecore.api.TimeMod;
 import java.util.ArrayList;
 import java.util.function.Supplier;
 
+/**
+ * Used for easy tile entity registering.
+ * Any class that extends this, should be extended and annotated with {@link TimeAutoRegistry}.
+ * <p>
+ * Examples can be seen at test module.
+ */
 public abstract class TileEntityTimeRegistry extends ForgeTimeRegistry<TileEntityType<?>> {
     private ArrayList<Supplier<Runnable>> rendererRegisterRunnables;
 

@@ -17,6 +17,7 @@ import ru.timeconqueror.timecore.api.client.resource.ItemModel;
 import ru.timeconqueror.timecore.api.client.resource.location.BlockModelLocation;
 import ru.timeconqueror.timecore.api.client.resource.location.TextureLocation;
 import ru.timeconqueror.timecore.api.common.registry.ForgeTimeRegistry;
+import ru.timeconqueror.timecore.api.common.registry.TimeAutoRegistry;
 import ru.timeconqueror.timecore.api.common.registry.item.ItemPropertiesFactory;
 
 import java.util.ArrayList;
@@ -24,8 +25,8 @@ import java.util.Objects;
 import java.util.function.Supplier;
 
 /**
- * Registry that should be extended and annotated with {@link ru.timeconqueror.timecore.api.common.registry.TimeAutoRegistry},
- * if you want to register blocks.
+ * Used for easy block registering.
+ * Any class that extends this, should be extended and annotated with {@link TimeAutoRegistry}.
  * <p>
  * Examples can be seen at test module.
  */
@@ -65,7 +66,6 @@ public abstract class BlockTimeRegistry extends ForgeTimeRegistry<Block> {
      * @return {@link BlockWrapper} to provide extra register options, like blockstate, model and itemblock registering.
      */
     public BlockWrapper regBlock(Block block, String name) {
-        name = name.toLowerCase();
         return new BlockWrapper(block, name);
     }
 

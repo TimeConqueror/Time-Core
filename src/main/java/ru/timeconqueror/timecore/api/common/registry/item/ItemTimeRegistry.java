@@ -10,12 +10,13 @@ import ru.timeconqueror.timecore.api.client.resource.StandardItemModelParents;
 import ru.timeconqueror.timecore.api.client.resource.location.ModelLocation;
 import ru.timeconqueror.timecore.api.client.resource.location.TextureLocation;
 import ru.timeconqueror.timecore.api.common.registry.ForgeTimeRegistry;
+import ru.timeconqueror.timecore.api.common.registry.TimeAutoRegistry;
 
 import java.util.function.Supplier;
 
 /**
- * Registry that should be extended and annotated with {@link ru.timeconqueror.timecore.api.common.registry.TimeAutoRegistry},
- * if you want to register items.
+ * Used for easy item registering.
+ * Any class that extends this, should be extended and annotated with {@link TimeAutoRegistry}.
  * <p>
  * Examples can be seen at test module.
  */
