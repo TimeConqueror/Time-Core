@@ -6,7 +6,6 @@ import net.minecraft.util.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
 import ru.timeconqueror.timecore.api.client.resource.location.BlockModelLocation;
 import ru.timeconqueror.timecore.api.util.ObjectUtils;
-import ru.timeconqueror.timecore.api.util.ResourceHelper;
 
 import java.util.Collections;
 import java.util.HashMap;

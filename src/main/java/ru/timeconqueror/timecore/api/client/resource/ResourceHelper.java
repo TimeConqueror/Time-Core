@@ -1,4 +1,4 @@
-package ru.timeconqueror.timecore.api.util;
+package ru.timeconqueror.timecore.api.client.resource;
 
 import net.minecraft.util.ResourceLocation;
 
