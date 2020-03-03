@@ -1,4 +1,4 @@
-package ru.timeconqueror.timecore.api.common.registry.item;
+package ru.timeconqueror.timecore.api.registry.item;
 
 import net.minecraft.item.Item;
 import net.minecraftforge.event.RegistryEvent;
@@ -9,8 +9,8 @@ import ru.timeconqueror.timecore.api.client.resource.ItemModel;
 import ru.timeconqueror.timecore.api.client.resource.StandardItemModelParents;
 import ru.timeconqueror.timecore.api.client.resource.location.ModelLocation;
 import ru.timeconqueror.timecore.api.client.resource.location.TextureLocation;
-import ru.timeconqueror.timecore.api.common.registry.ForgeTimeRegistry;
-import ru.timeconqueror.timecore.api.common.registry.TimeAutoRegistry;
+import ru.timeconqueror.timecore.api.registry.ForgeTimeRegistry;
+import ru.timeconqueror.timecore.api.registry.TimeAutoRegistry;
 
 import java.util.function.Supplier;
 

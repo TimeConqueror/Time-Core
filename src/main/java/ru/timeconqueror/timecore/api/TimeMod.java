@@ -6,8 +6,8 @@ import net.minecraftforge.fml.loading.moddiscovery.ModInfo;
 import net.minecraftforge.forgespi.language.ModFileScanData;
 import ru.timeconqueror.timecore.TimeCore;
 import ru.timeconqueror.timecore.api.common.event.FMLModConstructedEvent;
-import ru.timeconqueror.timecore.api.common.registry.ForgeTimeRegistry;
-import ru.timeconqueror.timecore.api.common.registry.TimeAutoRegistry;
+import ru.timeconqueror.timecore.api.registry.ForgeTimeRegistry;
+import ru.timeconqueror.timecore.api.registry.TimeAutoRegistry;
 import ru.timeconqueror.timecore.api.util.Wrapper;
 
 /**

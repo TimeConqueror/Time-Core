@@ -7,9 +7,9 @@ import ru.timeconqueror.timecore.TimeCore;
 import ru.timeconqueror.timecore.api.client.resource.BlockModel;
 import ru.timeconqueror.timecore.api.client.resource.location.BlockModelLocation;
 import ru.timeconqueror.timecore.api.client.resource.location.TextureLocation;
-import ru.timeconqueror.timecore.api.common.registry.TimeAutoRegistry;
-import ru.timeconqueror.timecore.api.common.registry.block.BlockPropertiesFactory;
-import ru.timeconqueror.timecore.api.common.registry.block.BlockTimeRegistry;
+import ru.timeconqueror.timecore.api.registry.TimeAutoRegistry;
+import ru.timeconqueror.timecore.api.registry.block.BlockPropertiesFactory;
+import ru.timeconqueror.timecore.api.registry.block.BlockTimeRegistry;
 
 @TimeAutoRegistry
 public class TBlocks extends BlockTimeRegistry {

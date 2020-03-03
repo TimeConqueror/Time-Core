@@ -1,4 +1,4 @@
-package ru.timeconqueror.timecore.api.common.registry.block;
+package ru.timeconqueror.timecore.api.registry.block;
 
 import net.minecraft.block.Block;
 import net.minecraft.item.BlockItem;
@@ -16,9 +16,9 @@ import ru.timeconqueror.timecore.api.client.resource.BlockStateResource;
 import ru.timeconqueror.timecore.api.client.resource.ItemModel;
 import ru.timeconqueror.timecore.api.client.resource.location.BlockModelLocation;
 import ru.timeconqueror.timecore.api.client.resource.location.TextureLocation;
-import ru.timeconqueror.timecore.api.common.registry.ForgeTimeRegistry;
-import ru.timeconqueror.timecore.api.common.registry.TimeAutoRegistry;
-import ru.timeconqueror.timecore.api.common.registry.item.ItemPropertiesFactory;
+import ru.timeconqueror.timecore.api.registry.ForgeTimeRegistry;
+import ru.timeconqueror.timecore.api.registry.TimeAutoRegistry;
+import ru.timeconqueror.timecore.api.registry.item.ItemPropertiesFactory;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -76,6 +76,18 @@ public abstract class BlockTimeRegistry extends ForgeTimeRegistry<Block> {
 
         public BlockWrapper(Block block, String name) {
             super(block, name);
+        }
+
+        /**
+         * Registers blockstate with single default variant,
+         * block model with standard block texture path for all sides (it also binds this model to single blockstate variant),
+         * and itemblock (item, that represents block).
+         *
+         * @param group if not null, then generated itemblock will be added to this Item Group (Creative Tabs).
+         *              if null, itemblock won't be found from Creative GUI.
+         */
+        public void regDefaults(@Nullable ItemGroup group) {
+            regDefaults(new TextureLocation(getModID(), "block/" + getBlock().getRegistryName().getPath()), group);
         }
 
         /**

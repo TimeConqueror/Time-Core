@@ -1,4 +1,4 @@
-package ru.timeconqueror.timecore.api.common.registry;
+package ru.timeconqueror.timecore.api.registry;
 
 import net.minecraft.util.SoundEvent;
 import net.minecraftforge.event.RegistryEvent;

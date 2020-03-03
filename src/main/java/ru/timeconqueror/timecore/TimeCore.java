@@ -13,7 +13,7 @@ import ru.timeconqueror.timecore.api.TimeMod;
 import ru.timeconqueror.timecore.client.resource.TimePackFinder;
 
 @Mod(TimeCore.MODID)
-public class TimeCore extends TimeMod {
+public final class TimeCore extends TimeMod {
     public static final String MODID = "timecore";
     public static final Logger LOGGER = LogManager.getLogger(MODID);
     public static TimeCore INSTANCE = null;
@@ -21,7 +21,13 @@ public class TimeCore extends TimeMod {
     public TimeCore() {
         INSTANCE = this;
 
-        DistExecutor.runWhenOn(Dist.CLIENT, () -> () -> Minecraft.getInstance().getResourcePackList().addPackFinder(new TimePackFinder()));
+        DistExecutor.runWhenOn(Dist.CLIENT, () -> () -> {
+            Minecraft mc = Minecraft.getInstance();
+
+            if (mc != null) {//it's null in runData
+                mc.getResourcePackList().addPackFinder(new TimePackFinder());
+            }
+        });
 
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::doClientStuff);

@@ -1,4 +1,4 @@
-package ru.timeconqueror.timecore.api.common.registry;
+package ru.timeconqueror.timecore.api.registry;
 
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
@@ -11,7 +11,7 @@ import ru.timeconqueror.timecore.api.TimeMod;
 import java.util.ArrayList;
 
 /**
- * Registry that should be extended and annotated with {@link ru.timeconqueror.timecore.api.common.registry.TimeAutoRegistry},
+ * Registry that should be extended and annotated with {@link ru.timeconqueror.timecore.api.registry.TimeAutoRegistry},
  * if you want to register any object that extends {@link IForgeRegistryEntry}.
  */
 public abstract class ForgeTimeRegistry<T extends IForgeRegistryEntry<T>> {

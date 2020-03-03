@@ -29,7 +29,7 @@ displayURL="https://www.curseforge.com/minecraft/mc-mods/time-core" #optional
 authors="Time_Conqueror" #optional
 # The description text for the mod (multi line!) (#mandatory)
 description='''
-Simplifies modding, adds efficient obj model loader for entities and more
+Simplifies modding, adds efficient obj model loader for entities and more!
 '''
 # A dependency - use the . to indicate dependency for a specific modid. Dependencies are optional.
 [[dependencies.timecore]] #optional

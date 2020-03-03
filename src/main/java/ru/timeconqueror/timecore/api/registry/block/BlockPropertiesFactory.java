@@ -1,4 +1,4 @@
-package ru.timeconqueror.timecore.api.common.registry.block;
+package ru.timeconqueror.timecore.api.registry.block;
 
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
@@ -16,6 +16,16 @@ public class BlockPropertiesFactory {
 
     public BlockPropertiesFactory(Supplier<Block.Properties> creator) {
         this.creator = creator;
+    }
+
+    public static Block.Properties setHardness(Block.Properties props, float hardness) {
+        props.hardness = hardness;
+        return props;
+    }
+
+    public static Block.Properties setResistance(Block.Properties props, float resistance) {
+        props.resistance = resistance;
+        return props;
     }
 
     /**

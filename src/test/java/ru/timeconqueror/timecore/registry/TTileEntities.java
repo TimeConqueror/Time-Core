@@ -2,8 +2,8 @@ package ru.timeconqueror.timecore.registry;
 
 import net.minecraft.tileentity.TileEntityType;
 import ru.timeconqueror.timecore.TimeCore;
-import ru.timeconqueror.timecore.api.common.registry.TileEntityTimeRegistry;
-import ru.timeconqueror.timecore.api.common.registry.TimeAutoRegistry;
+import ru.timeconqueror.timecore.api.registry.TileEntityTimeRegistry;
+import ru.timeconqueror.timecore.api.registry.TimeAutoRegistry;
 import ru.timeconqueror.timecore.block.TestTileEntity;
 import ru.timeconqueror.timecore.client.TestTileEntityRenderer;
 
