@@ -5,12 +5,12 @@ import net.minecraft.item.ItemGroup;
 import ru.timeconqueror.timecore.TimeCore;
 import ru.timeconqueror.timecore.api.client.resource.location.TextureLocation;
 import ru.timeconqueror.timecore.api.registry.TimeAutoRegistry;
-import ru.timeconqueror.timecore.api.registry.item.ItemPropertiesFactory;
+import ru.timeconqueror.timecore.api.registry.item.ItemPropsFactory;
 import ru.timeconqueror.timecore.api.registry.item.ItemTimeRegistry;
 
 @TimeAutoRegistry
 public class TItems extends ItemTimeRegistry {
-    public static ItemPropertiesFactory miscGrouped = new ItemPropertiesFactory(ItemGroup.MISC);
+    public static ItemPropsFactory miscGrouped = new ItemPropsFactory(ItemGroup.MISC);
 
     public static Item mcDiamond = new Item(miscGrouped.createProps());
 

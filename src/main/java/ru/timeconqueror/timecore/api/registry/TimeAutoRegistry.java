@@ -17,4 +17,5 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface TimeAutoRegistry {
     Type ASM_TYPE = Type.getType(TimeAutoRegistry.class);
+    Class<?>[] compatibleClasses = new Class[]{ForgeTimeRegistry.class, Initable.class};
 }

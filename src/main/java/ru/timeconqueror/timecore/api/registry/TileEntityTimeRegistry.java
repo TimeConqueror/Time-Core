@@ -21,8 +21,8 @@ import java.util.function.Supplier;
  * <p>
  * Examples can be seen at test module.
  */
-public abstract class TileEntityTimeRegistry extends ForgeTimeRegistry<TileEntityType<?>> {
-    private ArrayList<Supplier<Runnable>> rendererRegisterRunnables;
+public abstract class TileEntityTimeRegistry extends WrappedForgeTimeRegistry<TileEntityType<?>> {
+    private ArrayList<Supplier<Runnable>> rendererRegisterRunnables = new ArrayList<>();
 
     public TileEntityTimeRegistry(TimeMod mod) {
         super(mod);
@@ -69,7 +69,6 @@ public abstract class TileEntityTimeRegistry extends ForgeTimeRegistry<TileEntit
      */
     public <T extends TileEntity> void regTileEntityRenderer(Class<T> tileEntityClass, Supplier<Supplier<TileEntityRenderer<T>>> rendererSupplier) {
         if (FMLEnvironment.dist == Dist.CLIENT) {
-            if (rendererRegisterRunnables == null) rendererRegisterRunnables = new ArrayList<>();
             Supplier<Runnable> runnable = () -> () -> ClientRegistry.bindTileEntitySpecialRenderer(tileEntityClass, rendererSupplier.get().get());
             rendererRegisterRunnables.add(runnable);
         }
@@ -88,7 +87,7 @@ public abstract class TileEntityTimeRegistry extends ForgeTimeRegistry<TileEntit
          * Method duplicates {@link #getEntry()}, so it exists only for easier understanding.
          */
         @SuppressWarnings("unchecked")
-        public TileEntityType<T> getTileEntityType() {
+        public TileEntityType<T> retrieveTileEntityType() {
             return (TileEntityType<T>) getEntry();
         }
 

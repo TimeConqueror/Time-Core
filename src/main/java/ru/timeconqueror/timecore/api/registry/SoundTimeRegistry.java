@@ -1,5 +1,6 @@
 package ru.timeconqueror.timecore.api.registry;
 
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -20,28 +21,19 @@ public abstract class SoundTimeRegistry extends ForgeTimeRegistry<SoundEvent> {
     }
 
     /**
-     * Method to register sounds automatically.
+     * Method to create sound and register it automatically.
      *
-     * @param sound sound to be registered.
-     * @param name  sound name.
-     *              It will be used as a part of registry key. Should NOT contain mod ID, because it will be bound automatically.
-     * @return {@link SoundWrapper} to provide extra register options.
+     * @param name sound name.
+     *             It will be used as a part of registry key. Should NOT contain mod ID, because it will be bound automatically.
      */
-    public SoundWrapper regSound(SoundEvent sound, String name) {
-        return new SoundWrapper(sound, name);
-    }
+    public SoundEvent createAndRegSound(String name) {
+        name = name.toLowerCase();
 
-    public class SoundWrapper extends EntryWrapper {
-        public SoundWrapper(SoundEvent entry, String name) {
-            super(entry, name);
-        }
+        ResourceLocation location = new ResourceLocation(getModID(), name);
+        SoundEvent soundEvent = new SoundEvent(location);
 
-        /**
-         * Returns sound bound to wrapper.
-         * Method duplicates {@link #getEntry()}, so it exists only for easier understanding.
-         */
-        public SoundEvent getSound() {
-            return getEntry();
-        }
+        regEntry(soundEvent, name);
+
+        return soundEvent;
     }
 }

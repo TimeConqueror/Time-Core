@@ -9,8 +9,8 @@ import ru.timeconqueror.timecore.api.client.resource.ItemModel;
 import ru.timeconqueror.timecore.api.client.resource.StandardItemModelParents;
 import ru.timeconqueror.timecore.api.client.resource.location.ModelLocation;
 import ru.timeconqueror.timecore.api.client.resource.location.TextureLocation;
-import ru.timeconqueror.timecore.api.registry.ForgeTimeRegistry;
 import ru.timeconqueror.timecore.api.registry.TimeAutoRegistry;
+import ru.timeconqueror.timecore.api.registry.WrappedForgeTimeRegistry;
 
 import java.util.function.Supplier;
 
@@ -20,7 +20,7 @@ import java.util.function.Supplier;
  * <p>
  * Examples can be seen at test module.
  */
-public abstract class ItemTimeRegistry extends ForgeTimeRegistry<Item> {
+public abstract class ItemTimeRegistry extends WrappedForgeTimeRegistry<Item> {
 
     public ItemTimeRegistry(TimeMod mod) {
         super(mod);

@@ -8,20 +8,20 @@ import java.util.function.Consumer;
 /**
  * Factory for creating properties with applied configurations, represented in {@link #processor}.
  */
-public class ItemPropertiesFactory {
+public class ItemPropsFactory {
     private Consumer<Item.Properties> processor;
 
     /**
      * @param group Item Group that will be applied for every properties object, created via {{@link #createProps()}}.
      */
-    public ItemPropertiesFactory(ItemGroup group) {
+    public ItemPropsFactory(ItemGroup group) {
         this(props -> props.group(group));
     }
 
     /**
      * @param processor used to apply your options, like adding max damage for every properties object, created via {{@link #createProps()}}.
      */
-    public ItemPropertiesFactory(Consumer<Item.Properties> processor) {
+    public ItemPropsFactory(Consumer<Item.Properties> processor) {
         this.processor = processor;
     }
 

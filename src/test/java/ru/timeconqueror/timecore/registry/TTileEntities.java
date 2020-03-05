@@ -19,6 +19,6 @@ public class TTileEntities extends TileEntityTimeRegistry {
     public void register() {
         TEST_TE_TYPE = regTileEntity(TestTileEntity::new, "test_tile", TBlocks.TEST_BLOCK_WITH_TILE)
                 .regCustomRenderer(() -> TestTileEntityRenderer::new)
-                .getTileEntityType();
+                .retrieveTileEntityType();
     }
 }

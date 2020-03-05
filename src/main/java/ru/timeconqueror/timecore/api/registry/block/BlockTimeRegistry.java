@@ -16,9 +16,9 @@ import ru.timeconqueror.timecore.api.client.resource.BlockStateResource;
 import ru.timeconqueror.timecore.api.client.resource.ItemModel;
 import ru.timeconqueror.timecore.api.client.resource.location.BlockModelLocation;
 import ru.timeconqueror.timecore.api.client.resource.location.TextureLocation;
-import ru.timeconqueror.timecore.api.registry.ForgeTimeRegistry;
 import ru.timeconqueror.timecore.api.registry.TimeAutoRegistry;
-import ru.timeconqueror.timecore.api.registry.item.ItemPropertiesFactory;
+import ru.timeconqueror.timecore.api.registry.WrappedForgeTimeRegistry;
+import ru.timeconqueror.timecore.api.registry.item.ItemPropsFactory;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -30,7 +30,7 @@ import java.util.function.Supplier;
  * <p>
  * Examples can be seen at test module.
  */
-public abstract class BlockTimeRegistry extends ForgeTimeRegistry<Block> {
+public abstract class BlockTimeRegistry extends WrappedForgeTimeRegistry<Block> {
     /**
      * Should be used only before calling {@link #onRegItemsEvent(RegistryEvent.Register)}.
      * After calling that method it won't do anything and will become null.
@@ -102,7 +102,7 @@ public abstract class BlockTimeRegistry extends ForgeTimeRegistry<Block> {
         public void regDefaults(TextureLocation blockTexture, @Nullable ItemGroup group) {
             regDefaultStateAndModel(blockTexture);
 
-            ItemPropertiesFactory propsFactory = group != null ? new ItemPropertiesFactory(group) : new ItemPropertiesFactory(properties -> {
+            ItemPropsFactory propsFactory = group != null ? new ItemPropsFactory(group) : new ItemPropsFactory(properties -> {
             });
             regItemBlock(propsFactory.createProps());
         }
@@ -119,7 +119,7 @@ public abstract class BlockTimeRegistry extends ForgeTimeRegistry<Block> {
         public void regDefaults(Supplier<BlockModel> blockModelSupplier, @Nullable ItemGroup group) {
             regDefaultStateAndModel(blockModelSupplier);
 
-            ItemPropertiesFactory propsFactory = group != null ? new ItemPropertiesFactory(group) : new ItemPropertiesFactory(properties -> {
+            ItemPropsFactory propsFactory = group != null ? new ItemPropsFactory(group) : new ItemPropsFactory(properties -> {
             });
             regItemBlock(propsFactory.createProps());
         }
@@ -230,7 +230,7 @@ public abstract class BlockTimeRegistry extends ForgeTimeRegistry<Block> {
          * @return {@link BlockWrapper} to provide extra register options, like block state and models registering.
          */
         public BlockWrapper regItemBlock(ItemGroup group) {
-            Item.Properties props = new ItemPropertiesFactory(group).createProps();
+            Item.Properties props = new ItemPropsFactory(group).createProps();
 
             return regItemBlock(props);
         }
@@ -241,9 +241,9 @@ public abstract class BlockTimeRegistry extends ForgeTimeRegistry<Block> {
          * <p>
          * Item model will be available later with path "modid:models/item/block_name".
          *
-         * @param props properties that will be applied to the item block. Can be created via {@link ItemPropertiesFactory}
+         * @param props properties that will be applied to the item block. Can be created via {@link ItemPropsFactory}
          * @return {@link BlockWrapper} to provide extra register options, like block state and models registering.
-         * @see ItemPropertiesFactory
+         * @see ItemPropsFactory
          */
         public BlockWrapper regItemBlock(Item.Properties props) {
             ResourceLocation registryName = Objects.requireNonNull(getBlock().getRegistryName());
@@ -256,10 +256,10 @@ public abstract class BlockTimeRegistry extends ForgeTimeRegistry<Block> {
          * <p>
          * Item model will be available later with path "modid:models/item/block_name".
          *
-         * @param props              properties that will be applied to the item block. Can be created via {@link ItemPropertiesFactory}
+         * @param props              properties that will be applied to the item block. Can be created via {@link ItemPropsFactory}
          * @param blockModelLocation location that will be used during item model creation as its parent. For details see {@link BlockModelLocation}
          * @return {@link BlockWrapper} to provide extra register options, like block state and models registering.
-         * @see ItemPropertiesFactory
+         * @see ItemPropsFactory
          */
         public BlockWrapper regItemBlock(Item.Properties props, BlockModelLocation blockModelLocation) {
             return regItemBlock(props, () -> new ItemModel(blockModelLocation));
@@ -271,13 +271,13 @@ public abstract class BlockTimeRegistry extends ForgeTimeRegistry<Block> {
          * <p>
          * Item model will be available later with path "modid:models/item/block_name".
          *
-         * @param props             properties that will be applied to the item block. Can be created via {@link ItemPropertiesFactory}
+         * @param props             properties that will be applied to the item block. Can be created via {@link ItemPropsFactory}
          * @param itemModelSupplier supplier that returns model to be used for itemblock.
          *                          Supplier is used here to call its content only for client side, so all stuff that is returned by it,
          *                          likely should not be created outside lambda (except locations).
          *                          For details see {@link ItemModel}
          * @return {@link BlockWrapper} to provide extra register options, like block state and models registering.
-         * @see ItemPropertiesFactory
+         * @see ItemPropsFactory
          */
         public BlockWrapper regItemBlock(Item.Properties props, Supplier<ItemModel> itemModelSupplier) {
             BlockItem item = new BlockItem(getBlock(), props);

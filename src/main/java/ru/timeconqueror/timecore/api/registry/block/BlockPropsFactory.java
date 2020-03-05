@@ -8,13 +8,10 @@ import java.util.function.Supplier;
 /**
  * Factory for creating properties with applied configurations, represented in {@link #creator}.
  */
-public class BlockPropertiesFactory {
-    /**
-     * Used to create <b>NEW AND ONLY NEW</b> instances of {@link Block.Properties}.
-     */
+public class BlockPropsFactory {
     private Supplier<Block.Properties> creator;
 
-    public BlockPropertiesFactory(Supplier<Block.Properties> creator) {
+    public BlockPropsFactory(Supplier<Block.Properties> creator) {
         this.creator = creator;
     }
 
@@ -28,10 +25,22 @@ public class BlockPropertiesFactory {
         return props;
     }
 
+    public static Block.Properties setUnbreakable(Block.Properties props) {
+        return setHardness(props, -1);
+    }
+
+    public static Block.Properties setInexplosive(Block.Properties props) {
+        return setResistance(props, 3600000F);
+    }
+
+    public static Block.Properties setUnbreakableAndInexplosive(Block.Properties props) {
+        return setInexplosive(setUnbreakable(props));
+    }
+
     /**
      * Creates new {@link Item.Properties} object, that must be provided by {@link #creator}.
      */
-    public Block.Properties createProps() {
+    public Block.Properties create() {
         return creator.get();
     }
 }

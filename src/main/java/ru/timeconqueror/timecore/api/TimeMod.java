@@ -7,8 +7,12 @@ import net.minecraftforge.forgespi.language.ModFileScanData;
 import ru.timeconqueror.timecore.TimeCore;
 import ru.timeconqueror.timecore.api.common.event.FMLModConstructedEvent;
 import ru.timeconqueror.timecore.api.registry.ForgeTimeRegistry;
+import ru.timeconqueror.timecore.api.registry.Initable;
 import ru.timeconqueror.timecore.api.registry.TimeAutoRegistry;
 import ru.timeconqueror.timecore.api.util.Wrapper;
+
+import java.util.Arrays;
+import java.util.stream.Collectors;
 
 /**
  * Base mod class needed for TimeCore features.
@@ -35,11 +39,14 @@ public abstract class TimeMod {
 
                                 Object obj = regClass.newInstance();
 
+
                                 if (obj instanceof ForgeTimeRegistry<?>) {
                                     FMLJavaModLoadingContext.get().getModEventBus().register(obj);
                                     loaded.set(true);
+                                } else if (obj instanceof Initable) {
+                                    FMLJavaModLoadingContext.get().getModEventBus().addListener(((Initable) obj)::onInit);
                                 } else
-                                    throw new RuntimeException("Annotated class with AutoRegistry annotation " + obj.getClass() + " doesn't extend " + ForgeTimeRegistry.class.getSimpleName());
+                                    throw new RuntimeException("Annotated class with AutoRegistry annotation " + obj.getClass() + " doesn't extend any of " + Arrays.stream(TimeAutoRegistry.compatibleClasses).map(Class::getSimpleName).collect(Collectors.toList()));
 
                             } catch (ReflectiveOperationException e) {
                                 if (e.getCause() instanceof NoSuchMethodException) {

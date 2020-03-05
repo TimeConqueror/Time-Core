@@ -8,17 +8,17 @@ import ru.timeconqueror.timecore.api.client.resource.BlockModel;
 import ru.timeconqueror.timecore.api.client.resource.location.BlockModelLocation;
 import ru.timeconqueror.timecore.api.client.resource.location.TextureLocation;
 import ru.timeconqueror.timecore.api.registry.TimeAutoRegistry;
-import ru.timeconqueror.timecore.api.registry.block.BlockPropertiesFactory;
+import ru.timeconqueror.timecore.api.registry.block.BlockPropsFactory;
 import ru.timeconqueror.timecore.api.registry.block.BlockTimeRegistry;
 
 @TimeAutoRegistry
 public class TBlocks extends BlockTimeRegistry {
-    private static BlockPropertiesFactory propsCreator = new BlockPropertiesFactory(() -> Block.Properties.create(Material.ROCK));
-    public static Block MC_SAND = new Block(propsCreator.createProps());
-    public static Block MC_DIRT = new Block(propsCreator.createProps());
-    public static Block MC_EMERALD_ORE = new Block(propsCreator.createProps());
+    private static BlockPropsFactory propsCreator = new BlockPropsFactory(() -> Block.Properties.create(Material.ROCK));
+    public static Block MC_SAND = new Block(propsCreator.create());
+    public static Block MC_DIRT = new Block(propsCreator.create());
+    public static Block MC_EMERALD_ORE = new Block(propsCreator.create());
 
-    public static Block TEST_BLOCK_WITH_TILE = new Block(propsCreator.createProps());
+    public static Block TEST_BLOCK_WITH_TILE = new Block(propsCreator.create());
 
     public TBlocks() {
         super(TimeCore.INSTANCE);
