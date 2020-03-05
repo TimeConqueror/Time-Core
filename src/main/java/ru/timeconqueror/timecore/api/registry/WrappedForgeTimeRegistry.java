@@ -3,13 +3,17 @@ package ru.timeconqueror.timecore.api.registry;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.registries.IForgeRegistryEntry;
-import ru.timeconqueror.timecore.api.TimeMod;
 
+/**
+ * Used for simplifying adding such stuff, that can be registered by Forge way (these objects implement {@link IForgeRegistryEntry}).<br>
+ * Provides forge registry with Wrapper classes to provide extra features for every entry.<br>
+ * <p>
+ * Any your registry class that extends it should be annotated with {@link TimeAutoRegistry}
+ * to create its instance automatically and provide register features.<br>
+ *
+ * <b><font color="yellow">WARNING: Any annotated registry class must contain constructor without params or exception will be thrown.</b><br>
+ */
 public abstract class WrappedForgeTimeRegistry<T extends IForgeRegistryEntry<T>> extends ForgeTimeRegistry<T> {
-    public WrappedForgeTimeRegistry(TimeMod mod) {
-        super(mod);
-    }
-
     public class EntryWrapper {
         private T entry;
 

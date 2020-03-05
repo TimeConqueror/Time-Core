@@ -1,7 +1,6 @@
 package ru.timeconqueror.timecore.registry;
 
 import net.minecraft.tileentity.TileEntityType;
-import ru.timeconqueror.timecore.TimeCore;
 import ru.timeconqueror.timecore.api.registry.TileEntityTimeRegistry;
 import ru.timeconqueror.timecore.api.registry.TimeAutoRegistry;
 import ru.timeconqueror.timecore.block.TestTileEntity;
@@ -10,10 +9,6 @@ import ru.timeconqueror.timecore.client.TestTileEntityRenderer;
 @TimeAutoRegistry
 public class TTileEntities extends TileEntityTimeRegistry {
     public static TileEntityType<TestTileEntity> TEST_TE_TYPE;
-
-    public TTileEntities() {
-        super(TimeCore.INSTANCE);
-    }
 
     @Override
     public void register() {

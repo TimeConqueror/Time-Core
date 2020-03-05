@@ -9,14 +9,12 @@ import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.registries.IForgeRegistry;
 import org.jetbrains.annotations.Nullable;
-import ru.timeconqueror.timecore.api.TimeMod;
 import ru.timeconqueror.timecore.api.client.TimeClient;
 import ru.timeconqueror.timecore.api.client.resource.BlockModel;
 import ru.timeconqueror.timecore.api.client.resource.BlockStateResource;
 import ru.timeconqueror.timecore.api.client.resource.ItemModel;
 import ru.timeconqueror.timecore.api.client.resource.location.BlockModelLocation;
 import ru.timeconqueror.timecore.api.client.resource.location.TextureLocation;
-import ru.timeconqueror.timecore.api.registry.TimeAutoRegistry;
 import ru.timeconqueror.timecore.api.registry.WrappedForgeTimeRegistry;
 import ru.timeconqueror.timecore.api.registry.item.ItemPropsFactory;
 
@@ -25,9 +23,12 @@ import java.util.Objects;
 import java.util.function.Supplier;
 
 /**
- * Used for easy block registering.
- * Any class that extends this, should be extended and annotated with {@link TimeAutoRegistry}.
+ * Used for simplifying block adding.<br>
  * <p>
+ * Any your registry that extends it should be annotated with {@link ru.timeconqueror.timecore.api.registry.TimeAutoRegistry}
+ * to create its instance automatically and provide register features.<br>
+ *
+ * <b><font color="yellow">WARNING: Any annotated registry class must contain constructor without params or exception will be thrown.</b><br>
  * Examples can be seen at test module.
  */
 public abstract class BlockTimeRegistry extends WrappedForgeTimeRegistry<Block> {
@@ -36,10 +37,6 @@ public abstract class BlockTimeRegistry extends WrappedForgeTimeRegistry<Block> 
      * After calling that method it won't do anything and will become null.
      */
     private ArrayList<BlockItem> regItems = new ArrayList<>();
-
-    public BlockTimeRegistry(TimeMod mod) {
-        super(mod);
-    }
 
     @SubscribeEvent
     public final void onRegBlocksEvent(RegistryEvent.Register<Block> event) {

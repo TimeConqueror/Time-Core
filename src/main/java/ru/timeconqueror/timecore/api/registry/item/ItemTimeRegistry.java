@@ -3,28 +3,25 @@ package ru.timeconqueror.timecore.api.registry.item;
 import net.minecraft.item.Item;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import ru.timeconqueror.timecore.api.TimeMod;
 import ru.timeconqueror.timecore.api.client.TimeClient;
 import ru.timeconqueror.timecore.api.client.resource.ItemModel;
 import ru.timeconqueror.timecore.api.client.resource.StandardItemModelParents;
 import ru.timeconqueror.timecore.api.client.resource.location.ModelLocation;
 import ru.timeconqueror.timecore.api.client.resource.location.TextureLocation;
-import ru.timeconqueror.timecore.api.registry.TimeAutoRegistry;
 import ru.timeconqueror.timecore.api.registry.WrappedForgeTimeRegistry;
 
 import java.util.function.Supplier;
 
 /**
- * Used for easy item registering.
- * Any class that extends this, should be extended and annotated with {@link TimeAutoRegistry}.
+ * Used for simplifying item adding.<br>
  * <p>
+ * Any your registry that extends it should be annotated with {@link ru.timeconqueror.timecore.api.registry.TimeAutoRegistry}
+ * to create its instance automatically and provide register features.<br>
+ *
+ * <b><font color="yellow">WARNING: Any annotated registry class must contain constructor without params or exception will be thrown.</b><br>
  * Examples can be seen at test module.
  */
 public abstract class ItemTimeRegistry extends WrappedForgeTimeRegistry<Item> {
-
-    public ItemTimeRegistry(TimeMod mod) {
-        super(mod);
-    }
 
     @SubscribeEvent
     public final void onRegItemsEvent(RegistryEvent.Register<Item> event) {

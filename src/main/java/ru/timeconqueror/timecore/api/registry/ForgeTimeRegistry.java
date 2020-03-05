@@ -4,25 +4,23 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.IForgeRegistryEntry;
-import ru.timeconqueror.timecore.api.TimeMod;
 
 import java.util.ArrayList;
 
 /**
- * Registry that should be extended and annotated with {@link ru.timeconqueror.timecore.api.registry.TimeAutoRegistry},
- * if you want to register any object that extends {@link IForgeRegistryEntry}.
+ * Used for simplifying adding such stuff, that can be registered by Forge way (these objects implement {@link IForgeRegistryEntry}).<br>
+ * <p>
+ * Any your registry class that extends it should be annotated with {@link TimeAutoRegistry}
+ * to create its instance automatically and provide register features.<br>
+ *
+ * <b><font color="yellow">WARNING: Any annotated registry class must contain constructor without params or exception will be thrown.</b>
  */
-public abstract class ForgeTimeRegistry<T extends IForgeRegistryEntry<T>> implements TimeRegistry {
+public abstract class ForgeTimeRegistry<T extends IForgeRegistryEntry<T>> extends TimeRegistry {
     /**
      * Should be used only before calling {@link #onFireRegistryEvent(RegistryEvent.Register)}.
      * After calling that method it won't do anything and will become null.
      */
     private ArrayList<T> regList = new ArrayList<>();
-    private TimeMod mod;
-
-    public ForgeTimeRegistry(TimeMod mod) {
-        this.mod = mod;
-    }
 
     protected void onFireRegistryEvent(RegistryEvent.Register<T> event) {
         register();
@@ -41,13 +39,5 @@ public abstract class ForgeTimeRegistry<T extends IForgeRegistryEntry<T>> implem
 
         entry.setRegistryName(new ResourceLocation(getModID(), name));
         regList.add(entry);
-    }
-
-    public TimeMod getMod() {
-        return mod;
-    }
-
-    public String getModID() {
-        return getMod().getModID();
     }
 }

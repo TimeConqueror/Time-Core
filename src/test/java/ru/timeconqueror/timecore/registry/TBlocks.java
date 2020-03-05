@@ -3,7 +3,6 @@ package ru.timeconqueror.timecore.registry;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.item.ItemGroup;
-import ru.timeconqueror.timecore.TimeCore;
 import ru.timeconqueror.timecore.api.client.resource.BlockModel;
 import ru.timeconqueror.timecore.api.client.resource.location.BlockModelLocation;
 import ru.timeconqueror.timecore.api.client.resource.location.TextureLocation;
@@ -19,10 +18,6 @@ public class TBlocks extends BlockTimeRegistry {
     public static Block MC_EMERALD_ORE = new Block(propsCreator.create());
 
     public static Block TEST_BLOCK_WITH_TILE = new Block(propsCreator.create());
-
-    public TBlocks() {
-        super(TimeCore.INSTANCE);
-    }
 
     @Override
     public void register() {

@@ -10,23 +10,21 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.loading.FMLEnvironment;
-import ru.timeconqueror.timecore.api.TimeMod;
 
 import java.util.ArrayList;
 import java.util.function.Supplier;
 
 /**
- * Used for easy tile entity registering.
- * Any class that extends this, should be extended and annotated with {@link TimeAutoRegistry}.
+ * Used for simplifying tile entity adding.<br>
  * <p>
+ * Any your registry that extends it should be annotated with {@link TimeAutoRegistry}
+ * to create its instance automatically and provide register features.<br>
+ *
+ * <b><font color="yellow">WARNING: Any annotated registry class must contain constructor without params or exception will be thrown.</b><br>
  * Examples can be seen at test module.
  */
 public abstract class TileEntityTimeRegistry extends WrappedForgeTimeRegistry<TileEntityType<?>> {
     private ArrayList<Supplier<Runnable>> rendererRegisterRunnables = new ArrayList<>();
-
-    public TileEntityTimeRegistry(TimeMod mod) {
-        super(mod);
-    }
 
     @SubscribeEvent
     public final void onRegTileEntitiesEvent(RegistryEvent.Register<TileEntityType<?>> event) {
