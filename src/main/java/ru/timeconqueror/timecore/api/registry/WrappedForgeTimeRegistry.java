@@ -8,7 +8,7 @@ import net.minecraftforge.registries.IForgeRegistryEntry;
  * Used for simplifying adding such stuff, that can be registered by Forge way (these objects implement {@link IForgeRegistryEntry}).<br>
  * Provides forge registry with Wrapper classes to provide extra features for every entry.<br>
  * <p>
- * Any your registry class that extends it should be annotated with {@link TimeAutoRegistry}
+ * Any your registry class that extends it should be annotated with {@link TimeAutoRegistrable}
  * to create its instance automatically and provide register features.<br>
  *
  * <b><font color="yellow">WARNING: Any annotated registry class must contain constructor without params or exception will be thrown.</b><br>

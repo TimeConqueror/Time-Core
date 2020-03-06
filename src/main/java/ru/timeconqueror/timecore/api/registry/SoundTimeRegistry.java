@@ -1,17 +1,16 @@
-package ru.timeconqueror.timecore.api.registry.sound;
+package ru.timeconqueror.timecore.api.registry;
 
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModLoadingContext;
-import ru.timeconqueror.timecore.api.registry.ForgeTimeRegistry;
-import ru.timeconqueror.timecore.api.registry.TimeAutoRegistry;
+import ru.timeconqueror.timecore.api.common.sound.TimeSound;
 
 /**
  * Used for simplifying sound adding.<br>
  * <p>
- * Any your registry that extends it should be annotated with {@link TimeAutoRegistry}
+ * Any your registry that extends it should be annotated with {@link TimeAutoRegistrable}
  * to create its instance automatically and provide register features.<br>
  *
  * <b><font color="yellow">WARNING: Any annotated registry class must contain constructor without params or exception will be thrown.</b><br>
@@ -20,7 +19,7 @@ import ru.timeconqueror.timecore.api.registry.TimeAutoRegistry;
 public abstract class SoundTimeRegistry extends ForgeTimeRegistry<SoundEvent> {
 
     /**
-     * Method to create sound and register it automatically.
+     * Method to create sound from name.
      *
      * @param name sound name.
      *             It will be used as a part of registry key. Should NOT contain mod ID, because it will be bound automatically.
@@ -36,6 +35,11 @@ public abstract class SoundTimeRegistry extends ForgeTimeRegistry<SoundEvent> {
         onFireRegistryEvent(event);
     }
 
+    /**
+     * Registers provided sound.
+     * <p>
+     * Should be called in {@link #register()} method.
+     */
     public void regSound(TimeSound sound) {
         regEntry(sound, sound.name().getPath());
     }

@@ -21,7 +21,7 @@ public class AssetsHelper {
      * Returns null, if there is no resource with given {@code resourceLocation}.
      */
     public static URL getResourceURL(ResourceLocation resourceLocation) {
-        return AssetsHelper.class.getClassLoader().getResource(toPathString(resourceLocation));
+        return AssetsHelper.class.getClassLoader().getResource(toPath(resourceLocation));
     }
 
     /**
@@ -32,7 +32,7 @@ public class AssetsHelper {
      * Returns null, if there is no resource with given {@code resourceLocation}.
      */
     public static InputStream getResourceStream(ResourceLocation resourceLocation) {
-        return AssetsHelper.class.getClassLoader().getResourceAsStream(toPathString(resourceLocation));
+        return AssetsHelper.class.getClassLoader().getResourceAsStream(toPath(resourceLocation));
     }
 
     /**
@@ -58,7 +58,7 @@ public class AssetsHelper {
         return resourceURL != null ? Resources.asCharSource(resourceURL, charset) : null;
     }
 
-    private static String toPathString(ResourceLocation resourceLocation) {
+    private static String toPath(ResourceLocation resourceLocation) {
         return ASSETS_PATH + resourceLocation.getNamespace() + "/" + resourceLocation.getPath();
     }
 }

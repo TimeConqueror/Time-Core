@@ -38,9 +38,4 @@ public final class TimeCore extends TimeMod {
 
     private void doClientStuff(final FMLClientSetupEvent event) {
     }
-
-    @Override
-    public String getModID() {
-        return MODID;
-    }
 }

@@ -1,4 +1,4 @@
-package ru.timeconqueror.timecore.api.util;
+package ru.timeconqueror.timecore.util;
 
 import org.jetbrains.annotations.Contract;
 import ru.timeconqueror.timecore.TimeCore;

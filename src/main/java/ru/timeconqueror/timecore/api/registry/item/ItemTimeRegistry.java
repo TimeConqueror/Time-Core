@@ -8,6 +8,7 @@ import ru.timeconqueror.timecore.api.client.resource.ItemModel;
 import ru.timeconqueror.timecore.api.client.resource.StandardItemModelParents;
 import ru.timeconqueror.timecore.api.client.resource.location.ModelLocation;
 import ru.timeconqueror.timecore.api.client.resource.location.TextureLocation;
+import ru.timeconqueror.timecore.api.registry.TimeAutoRegistrable;
 import ru.timeconqueror.timecore.api.registry.WrappedForgeTimeRegistry;
 
 import java.util.function.Supplier;
@@ -15,7 +16,7 @@ import java.util.function.Supplier;
 /**
  * Used for simplifying item adding.<br>
  * <p>
- * Any your registry that extends it should be annotated with {@link ru.timeconqueror.timecore.api.registry.TimeAutoRegistry}
+ * Any your registry that extends it should be annotated with {@link TimeAutoRegistrable}
  * to create its instance automatically and provide register features.<br>
  *
  * <b><font color="yellow">WARNING: Any annotated registry class must contain constructor without params or exception will be thrown.</b><br>

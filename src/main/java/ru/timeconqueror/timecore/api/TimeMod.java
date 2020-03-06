@@ -1,6 +1,7 @@
 package ru.timeconqueror.timecore.api;
 
 import net.minecraftforge.fml.ModList;
+import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.moddiscovery.ModInfo;
 import net.minecraftforge.forgespi.language.ModFileScanData;
@@ -8,7 +9,7 @@ import ru.timeconqueror.timecore.TimeCore;
 import ru.timeconqueror.timecore.api.common.event.FMLModConstructedEvent;
 import ru.timeconqueror.timecore.api.registry.ForgeTimeRegistry;
 import ru.timeconqueror.timecore.api.registry.Initable;
-import ru.timeconqueror.timecore.api.registry.TimeAutoRegistry;
+import ru.timeconqueror.timecore.api.registry.TimeAutoRegistrable;
 import ru.timeconqueror.timecore.api.util.Wrapper;
 
 import java.util.Arrays;
@@ -26,12 +27,12 @@ public abstract class TimeMod {
 
     private void setupAutoRegistries() {
         for (ModInfo modInfo : ModList.get().getMods()) {
-            if (modInfo.getModId().equals(getModID())) {
+            if (modInfo.getModId().equals(ModLoadingContext.get().getActiveNamespace())) {
                 ModFileScanData scanData = modInfo.getOwningFile().getFile().getScanResult();
 
                 Wrapper<Boolean> loaded = new Wrapper<>(false);
                 scanData.getAnnotations().stream()
-                        .filter(annotationData -> annotationData.getAnnotationType().equals(TimeAutoRegistry.ASM_TYPE))
+                        .filter(annotationData -> annotationData.getAnnotationType().equals(TimeAutoRegistrable.ASM_TYPE))
                         .forEach(annotationData -> {
                             Class<?> regClass = null;
                             try {
@@ -46,7 +47,7 @@ public abstract class TimeMod {
                                 } else if (obj instanceof Initable) {
                                     FMLJavaModLoadingContext.get().getModEventBus().addListener(((Initable) obj)::onInit);
                                 } else
-                                    throw new RuntimeException("Annotated class with AutoRegistry annotation " + obj.getClass() + " doesn't extend any of " + Arrays.stream(TimeAutoRegistry.compatibleClasses).map(Class::getSimpleName).collect(Collectors.toList()));
+                                    throw new RuntimeException("Annotated class with AutoRegistry annotation " + obj.getClass() + " doesn't extend any of " + Arrays.stream(TimeAutoRegistrable.compatibleClasses).map(Class::getSimpleName).collect(Collectors.toList()));
 
                             } catch (ReflectiveOperationException e) {
                                 if (e.getCause() instanceof NoSuchMethodException) {
@@ -69,6 +70,4 @@ public abstract class TimeMod {
     private void onModConstructed(FMLModConstructedEvent event) {
         setupAutoRegistries();
     }
-
-    public abstract String getModID();
 }

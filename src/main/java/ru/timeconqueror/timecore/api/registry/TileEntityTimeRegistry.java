@@ -17,7 +17,7 @@ import java.util.function.Supplier;
 /**
  * Used for simplifying tile entity adding.<br>
  * <p>
- * Any your registry that extends it should be annotated with {@link TimeAutoRegistry}
+ * Any your registry that extends it should be annotated with {@link TimeAutoRegistrable}
  * to create its instance automatically and provide register features.<br>
  *
  * <b><font color="yellow">WARNING: Any annotated registry class must contain constructor without params or exception will be thrown.</b><br>

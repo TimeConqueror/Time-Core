@@ -3,11 +3,11 @@ package ru.timeconqueror.timecore.registry;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import ru.timeconqueror.timecore.api.client.resource.location.TextureLocation;
-import ru.timeconqueror.timecore.api.registry.TimeAutoRegistry;
+import ru.timeconqueror.timecore.api.registry.TimeAutoRegistrable;
 import ru.timeconqueror.timecore.api.registry.item.ItemPropsFactory;
 import ru.timeconqueror.timecore.api.registry.item.ItemTimeRegistry;
 
-@TimeAutoRegistry
+@TimeAutoRegistrable
 public class TItems extends ItemTimeRegistry {
     public static ItemPropsFactory miscGrouped = new ItemPropsFactory(ItemGroup.MISC);
 

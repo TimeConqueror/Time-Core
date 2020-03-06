@@ -1,4 +1,4 @@
-package ru.timeconqueror.timecore.api.registry.sound;
+package ru.timeconqueror.timecore.api.common.sound;
 
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;

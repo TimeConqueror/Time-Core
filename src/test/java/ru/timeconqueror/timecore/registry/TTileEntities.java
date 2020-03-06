@@ -2,11 +2,11 @@ package ru.timeconqueror.timecore.registry;
 
 import net.minecraft.tileentity.TileEntityType;
 import ru.timeconqueror.timecore.api.registry.TileEntityTimeRegistry;
-import ru.timeconqueror.timecore.api.registry.TimeAutoRegistry;
+import ru.timeconqueror.timecore.api.registry.TimeAutoRegistrable;
 import ru.timeconqueror.timecore.block.TestTileEntity;
 import ru.timeconqueror.timecore.client.TestTileEntityRenderer;
 
-@TimeAutoRegistry
+@TimeAutoRegistrable
 public class TTileEntities extends TileEntityTimeRegistry {
     public static TileEntityType<TestTileEntity> TEST_TE_TYPE;
 
