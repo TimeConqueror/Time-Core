@@ -5,7 +5,8 @@ import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 
 /**
- * Used for simplifying adding such stuff, that can be registered by Forge way (these objects implement {@link IForgeRegistryEntry}).<br>
+ * Used for simplifying adding such stuff, that can be registered by Forge way (these objects implement {@link IForgeRegistryEntry}).
+ * You need to extend it and do your stuff in {@link #register()} method<br>
  * Provides forge registry with Wrapper classes to provide extra features for every entry.<br>
  * <p>
  * Any your registry class that extends it should be annotated with {@link TimeAutoRegistrable}

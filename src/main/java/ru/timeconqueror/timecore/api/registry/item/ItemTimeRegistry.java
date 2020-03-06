@@ -14,7 +14,7 @@ import ru.timeconqueror.timecore.api.registry.WrappedForgeTimeRegistry;
 import java.util.function.Supplier;
 
 /**
- * Used for simplifying item adding.<br>
+ * Used for simplifying item adding. You need to extend it and do your stuff in {@link #register()} method<br>
  * <p>
  * Any your registry that extends it should be annotated with {@link TimeAutoRegistrable}
  * to create its instance automatically and provide register features.<br>

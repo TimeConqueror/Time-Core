@@ -12,7 +12,7 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 /**
- * Used for simplifying packet adding.<br>
+ * Used for simplifying packet adding. You need to extend it and do your stuff in {@link #register()} method<br>
  * <p>
  * Any your registry that extends it should be annotated with {@link TimeAutoRegistrable}
  * to create its instance automatically and provide register features.<br>

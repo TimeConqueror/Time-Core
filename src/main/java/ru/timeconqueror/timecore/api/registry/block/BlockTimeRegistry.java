@@ -24,7 +24,7 @@ import java.util.Objects;
 import java.util.function.Supplier;
 
 /**
- * Used for simplifying block adding.<br>
+ * Used for simplifying block adding. You need to extend it and do your stuff in {@link #register()} method<br>
  * <p>
  * Any your registry that extends it should be annotated with {@link TimeAutoRegistrable}
  * to create its instance automatically and provide register features.<br>

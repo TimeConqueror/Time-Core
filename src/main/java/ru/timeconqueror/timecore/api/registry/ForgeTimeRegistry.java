@@ -8,7 +8,8 @@ import net.minecraftforge.registries.IForgeRegistryEntry;
 import java.util.ArrayList;
 
 /**
- * Used for simplifying adding such stuff, that can be registered by Forge way (these objects implement {@link IForgeRegistryEntry}).<br>
+ * Used for simplifying adding such stuff, that can be registered by Forge way (these objects implement {@link IForgeRegistryEntry}).
+ * You need to extend it and do your stuff in {@link #register()} method<br>
  * <p>
  * Any your registry class that extends it should be annotated with {@link TimeAutoRegistrable}
  * to create its instance automatically and provide register features.<br>
