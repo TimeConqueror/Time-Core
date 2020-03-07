@@ -1,5 +1,6 @@
 package ru.timeconqueror.timecore.api;
 
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -21,8 +22,11 @@ import java.util.stream.Collectors;
  * Your main mod class should extend this if you want to apply such features as auto-registry.
  */
 public abstract class TimeMod {
+    private final String modID;
+
     public TimeMod() {
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::onModConstructed);
+        modID = ModLoadingContext.get().getActiveNamespace();
     }
 
     private void setupAutoRegistries() {
@@ -69,5 +73,19 @@ public abstract class TimeMod {
 
     private void onModConstructed(FMLModConstructedEvent event) {
         setupAutoRegistries();
+    }
+
+    /**
+     * Returns mod id of this mod instance.
+     */
+    public String getModID() {
+        return modID;
+    }
+
+    /**
+     * Creates ResourceLocation with bound mod id.
+     */
+    public ResourceLocation createRl(String path) {
+        return new ResourceLocation(modID, path);
     }
 }
