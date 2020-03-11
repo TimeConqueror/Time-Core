@@ -1,6 +1,7 @@
 package ru.timeconqueror.timecore.api.registry;
 
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.network.NetworkRegistry;
@@ -20,7 +21,7 @@ import java.util.function.Supplier;
  * <b><font color="yellow">WARNING: Any annotated registry class must contain constructor without params or exception will be thrown.</b><br>
  * Examples can be seen at test module.//TODO add examples :)
  */
-public abstract class PacketTimeRegistry extends TimeRegistry implements Initable {
+public abstract class PacketTimeRegistry extends TimeRegistry {
     private static HashMap<SimpleChannel, Integer> lastIndexes = new HashMap<>();
 
     /**
@@ -49,7 +50,7 @@ public abstract class PacketTimeRegistry extends TimeRegistry implements Initabl
         }
     }
 
-    @Override
+    @SubscribeEvent
     public final void onInit(FMLCommonSetupEvent event) {
         register();
 

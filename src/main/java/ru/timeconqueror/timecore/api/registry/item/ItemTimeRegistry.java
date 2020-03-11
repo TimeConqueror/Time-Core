@@ -16,7 +16,7 @@ import java.util.function.Supplier;
 /**
  * Used for simplifying item adding. You need to extend it and do your stuff in {@link #register()} method<br>
  * <p>
- * Any your registry that extends it should be annotated with {@link TimeAutoRegistrable}
+ * Any your registry that extends it should be annotated with {@link TimeAutoRegistrable} with INSTANCE Target
  * to create its instance automatically and provide register features.<br>
  *
  * <b><font color="yellow">WARNING: Any annotated registry class must contain constructor without params or exception will be thrown.</b><br>

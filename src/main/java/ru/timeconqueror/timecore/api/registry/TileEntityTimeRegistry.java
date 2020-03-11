@@ -50,10 +50,9 @@ public abstract class TileEntityTimeRegistry extends WrappedForgeTimeRegistry<Ti
      * @param validBlocks        blocks, that can contain provided tile entity.
      * @return {@link TileEntityWrapper} to provide extra register options.
      */
-    @SuppressWarnings("unchecked")
-    public <T extends TileEntity> TileEntityWrapper<T> regTileEntity(Supplier<T> tileEntitySupplier, String name, Block... validBlocks) {
+    public <T extends TileEntity> TileEntityWrapper<T> regTileEntity(Class<T> tileEntityClass, Supplier<T> tileEntitySupplier, String name, Block... validBlocks) {
         TileEntityType<T> type = TileEntityType.Builder.create(tileEntitySupplier, validBlocks).build(null);
-        return new TileEntityWrapper<>((Class<T>) tileEntitySupplier.get().getClass(), type, name);
+        return new TileEntityWrapper<>(tileEntityClass, type, name);
     }
 
     /**

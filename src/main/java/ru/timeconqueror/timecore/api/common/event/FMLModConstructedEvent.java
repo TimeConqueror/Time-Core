@@ -12,6 +12,8 @@ import net.minecraftforge.fml.event.lifecycle.ModLifecycleEvent;
  * Called before {@link RegistryEvent.NewRegistry} and {@link RegistryEvent.Register} events.
  * <p>
  * This is a parallel dispatch event.
+ * <p>
+ * Posted by {@link Mod.EventBusSubscriber.Bus#MOD} event bus.
  */
 public class FMLModConstructedEvent extends ModLifecycleEvent {
     public FMLModConstructedEvent(ModContainer container) {

@@ -9,6 +9,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import ru.timeconqueror.timecore.api.TimeMod;
 import ru.timeconqueror.timecore.api.common.event.FMLModConstructedEvent;
+import ru.timeconqueror.timecore.misc.ModInitializer;
 
 @Mixin(value = FMLModContainer.class, remap = false)
 public class MixinFMLModContainer {
@@ -20,7 +21,7 @@ public class MixinFMLModContainer {
         FMLModContainer modContainer = (FMLModContainer) (Object) this;
         Object mod = modContainer.getMod();
         if (mod instanceof TimeMod) {
-//            mod.//FIXME
+            ModInitializer.setupAutoRegistries();
         }
 
         FMLJavaModLoadingContext.get().getModEventBus().post(new FMLModConstructedEvent(modContainer));
