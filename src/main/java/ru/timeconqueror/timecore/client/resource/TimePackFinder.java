@@ -6,7 +6,6 @@ import net.minecraft.resources.PackCompatibility;
 import net.minecraft.resources.ResourcePackInfo;
 import net.minecraft.util.text.StringTextComponent;
 import org.jetbrains.annotations.NotNull;
-import ru.timeconqueror.timecore.api.client.resource.TimeSpecialResourcePack;
 
 import java.util.Map;
 

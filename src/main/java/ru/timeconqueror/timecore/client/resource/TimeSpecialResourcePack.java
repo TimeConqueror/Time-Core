@@ -1,4 +1,4 @@
-package ru.timeconqueror.timecore.api.client.resource;
+package ru.timeconqueror.timecore.client.resource;
 
 import net.minecraft.resources.IResourcePack;
 import net.minecraft.resources.ResourcePackType;
@@ -6,6 +6,8 @@ import net.minecraft.resources.data.IMetadataSectionSerializer;
 import net.minecraft.util.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 import ru.timeconqueror.timecore.api.client.TimeClient;
+import ru.timeconqueror.timecore.api.client.resource.TimeResource;
+import ru.timeconqueror.timecore.api.client.resource.TimeResourceHolder;
 
 import javax.annotation.Nullable;
 import java.io.FileNotFoundException;

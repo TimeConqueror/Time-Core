@@ -101,7 +101,7 @@ public class TimeResourceHolder {
         return Collections.unmodifiableSet(domains);
     }
 
-    HashMap<ResourceLocation, TimeResource> getResources() {
+    public HashMap<ResourceLocation, TimeResource> getResources() {
         return resources;
     }
 }
