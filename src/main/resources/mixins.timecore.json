@@ -1,13 +1,14 @@
 {
   "required": true,
   "minVersion": "0.7.11",
-  "package": "ru.timeconqueror.timecore.mixins",
+  "package": "ru.timeconqueror.timecore.mixins.injectors",
   "refmap": "mixins.timecore.refmap.json",
   "target": "@env(DEFAULT)",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
     "MixinDirectoryCache",
-    "MixinFMLModContainer"
+    "MixinFMLModContainer",
+    "config.MixinConfigValue"
   ],
   "client": [
   ]

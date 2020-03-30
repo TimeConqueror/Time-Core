@@ -45,4 +45,18 @@ public @interface TimeAutoRegistrable {
         INSTANCE,
         CLASS
     }
+
+    /**
+     * If field is annotated with it, its value will be registered.
+     * Field should be public static final and shouldn't contain null value, otherwise an exception will be thrown.
+     * Also you should annotate only one field in the specified class.
+     * <br>
+     * Applying this annotation to field also means that the system will register only this field value
+     * and won't register neither class itself nor new instance,
+     * that could be created by annotating class with {@code TimeAutoRegistrable(target = Target.INSTANCE)}
+     */
+    @java.lang.annotation.Target(ElementType.FIELD)
+    @Retention(RetentionPolicy.RUNTIME)
+    @interface Instance {
+    }
 }

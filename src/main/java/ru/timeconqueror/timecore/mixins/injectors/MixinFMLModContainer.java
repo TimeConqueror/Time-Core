@@ -1,4 +1,4 @@
-package ru.timeconqueror.timecore.mixins;
+package ru.timeconqueror.timecore.mixins.injectors;
 
 import net.minecraftforge.fml.LifecycleEventProvider;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -12,7 +12,7 @@ import ru.timeconqueror.timecore.api.common.event.FMLModConstructedEvent;
 import ru.timeconqueror.timecore.misc.ModInitializer;
 
 @Mixin(value = FMLModContainer.class, remap = false)
-public class MixinFMLModContainer {
+public abstract class MixinFMLModContainer {
 
     @Inject(method = "constructMod",
             at = @At(value = "TAIL")
