@@ -44,6 +44,7 @@ minecraft {
 
     // Default run configurations.
     // These can be tweaked, removed, or duplicated as needed.
+    def extraArgs = '--mixin mixins.timecore.json'.split(' ')
     runs {
         client {
             workingDirectory project.file('run')
@@ -54,7 +55,10 @@ minecraft {
             // Recommended logging level for the console
             //property 'forge.logging.console.level', 'debug'
 
-            args "--mixin mixins.timecore.json"
+            def newArgs = new ArrayList()
+            newArgs.addAll(args)
+            newArgs.addAll(extraArgs)
+            setArgs(newArgs)
 
             mods {
                 timecore {
@@ -73,7 +77,10 @@ minecraft {
             // Recommended logging level for the console
             //property 'forge.logging.console.level', 'debug'
 
-            args "--mixin mixins.timecore.json"
+            def newArgs = new ArrayList()
+            newArgs.addAll(args)
+            newArgs.addAll(extraArgs)
+            setArgs(newArgs)
 
             mods {
                 timecore {
@@ -92,7 +99,11 @@ minecraft {
             // Recommended logging level for the console
 //            property 'forge.logging.console.level', 'debug'
 
-            args "--mixin mixins.timecore.json", '--mod', 'timecore', '--all', '--output', file('src/generated/resources/')
+            args '--mod', 'timecore', '--all', '--output', file('src/generated/resources/')
+            def newArgs = new ArrayList()
+            newArgs.addAll(args)
+            newArgs.addAll(extraArgs)
+            setArgs(newArgs)
 
             mods {
                 timecore {
