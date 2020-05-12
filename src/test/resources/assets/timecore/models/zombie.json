@@ -1,0 +1,358 @@
+{
+  "format_version": "1.12.0",
+  "minecraft:geometry": [
+    {
+      "description": {
+        "identifier": "geometry.unknown",
+        "texture_width": "64",
+        "texture_height": "64",
+        "visible_bounds_width": 2,
+        "visible_bounds_height": 2,
+        "visible_bounds_offset": [
+          0,
+          1,
+          0
+        ]
+      },
+      "bones": [
+        {
+          "name": "zombie",
+          "pivot": [
+            0,
+            12,
+            0
+          ]
+        },
+        {
+          "name": "right_leg",
+          "parent": "zombie",
+          "pivot": [
+            -2,
+            12,
+            0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -4,
+                6,
+                -2
+              ],
+              "size": [
+                4,
+                6,
+                4
+              ],
+              "uv": [
+                0,
+                16
+              ]
+            }
+          ]
+        },
+        {
+          "name": "right_leg_shin",
+          "parent": "right_leg",
+          "pivot": [
+            -2,
+            6,
+            0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -4,
+                0,
+                -2
+              ],
+              "size": [
+                4,
+                2,
+                4
+              ],
+              "uv": [
+                0,
+                34
+              ]
+            },
+            {
+              "origin": [
+                -3.75,
+                2,
+                -1.75
+              ],
+              "size": [
+                3.5,
+                5,
+                3.5
+              ],
+              "uv": [
+                0,
+                26
+              ]
+            }
+          ]
+        },
+        {
+          "name": "left_leg",
+          "parent": "zombie",
+          "pivot": [
+            2,
+            12,
+            0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                0,
+                6,
+                -2
+              ],
+              "size": [
+                4,
+                6,
+                4
+              ],
+              "uv": [
+                0,
+                16
+              ]
+            }
+          ]
+        },
+        {
+          "name": "left_leg_shin",
+          "parent": "left_leg",
+          "pivot": [
+            2,
+            6,
+            0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                0.25,
+                2,
+                -1.75
+              ],
+              "size": [
+                3.5,
+                5,
+                3.5
+              ],
+              "uv": [
+                0,
+                26
+              ]
+            },
+            {
+              "origin": [
+                0,
+                0,
+                -2
+              ],
+              "size": [
+                4,
+                2,
+                4
+              ],
+              "uv": [
+                0,
+                34
+              ]
+            }
+          ]
+        },
+        {
+          "name": "body",
+          "parent": "zombie",
+          "pivot": [
+            0,
+            13,
+            0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -4,
+                12,
+                -2
+              ],
+              "size": [
+                8,
+                12,
+                4
+              ],
+              "uv": [
+                16,
+                16
+              ]
+            }
+          ]
+        },
+        {
+          "name": "right_arm",
+          "parent": "body",
+          "pivot": [
+            -6,
+            22,
+            0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -8,
+                18,
+                -2
+              ],
+              "size": [
+                4,
+                6,
+                4
+              ],
+              "uv": [
+                40,
+                16
+              ]
+            }
+          ]
+        },
+        {
+          "name": "right_arm_wrist",
+          "parent": "right_arm",
+          "pivot": [
+            -6,
+            18,
+            0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -7.75,
+                12,
+                -1.75
+              ],
+              "size": [
+                3.5,
+                7,
+                3.5
+              ],
+              "uv": [
+                40,
+                26
+              ]
+            }
+          ]
+        },
+        {
+          "name": "right_tool",
+          "parent": "right_arm_wrist",
+          "pivot": [
+            -6,
+            14,
+            0
+          ]
+        },
+        {
+          "name": "left_arm",
+          "parent": "body",
+          "pivot": [
+            6,
+            22,
+            0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                4,
+                18,
+                -2
+              ],
+              "size": [
+                4,
+                6,
+                4
+              ],
+              "uv": [
+                40,
+                16
+              ]
+            }
+          ]
+        },
+        {
+          "name": "left_arm_wrist",
+          "parent": "left_arm",
+          "pivot": [
+            6,
+            18,
+            0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                4.25,
+                12,
+                -1.75
+              ],
+              "size": [
+                3.5,
+                7,
+                3.5
+              ],
+              "uv": [
+                40,
+                26
+              ]
+            }
+          ]
+        },
+        {
+          "name": "left_tool",
+          "parent": "left_arm_wrist",
+          "pivot": [
+            6,
+            14,
+            0
+          ]
+        },
+        {
+          "name": "head",
+          "parent": "body",
+          "pivot": [
+            0,
+            24,
+            0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -4,
+                24,
+                -4
+              ],
+              "size": [
+                8,
+                8,
+                8
+              ],
+              "uv": [
+                0,
+                0
+              ]
+            }
+          ]
+        },
+        {
+          "name": "hat",
+          "parent": "head",
+          "pivot": [
+            0,
+            29,
+            0
+          ]
+        }
+      ]
+    }
+  ]
+}
