@@ -26,19 +26,19 @@ public class TimeModelBox {
         float y = origin.getY();
         float z = origin.getZ();
 
-        float dx = size.getX();
-        float dy = size.getX();
-        float dz = size.getX();
+        int dx = (int) size.getX();
+        int dy = (int) size.getY();
+        int dz = (int) size.getZ();
 
-        float texU = uv.getX();
-        float texV = uv.getY();
+        int texU = (int) uv.getX();
+        int texV = (int) uv.getY();
 
         this.posX1 = x;
         this.posY1 = y;
         this.posZ1 = z;
-        this.posX2 = x + dx;
-        this.posY2 = y + dy;
-        this.posZ2 = z + dz;
+        this.posX2 = x + size.getX();
+        this.posY2 = y + size.getY();
+        this.posZ2 = z + size.getZ();
         this.quads = new TimeTexturedQuad[6];
         float f = posX2;
         float f1 = posY2;

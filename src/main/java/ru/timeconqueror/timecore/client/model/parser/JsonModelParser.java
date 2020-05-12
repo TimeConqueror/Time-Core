@@ -21,11 +21,13 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class JsonModelParser {
     private static final String[] ACCEPTABLE_FORMAT_VERSIONS = new String[]{"1.12.0"};
 
     private ResourceLocation fileLocation;
+    private HashMap<String, TimeModelRenderer> pieces;
 
     public JsonModelParser(@NotNull ResourceLocation fileLocation) {
         this.fileLocation = fileLocation;
@@ -68,35 +70,40 @@ public class JsonModelParser {
         int textureWidth = JsonUtils.getInt("texture_width", description);
         int textureHeight = JsonUtils.getInt("texture_height", description);
 
-        TimeModel.Builder modelBuilder = new TimeModel.Builder(name, textureWidth, textureHeight);
-        TimeModel model = modelBuilder.retrieve();
-
-        TreeMap<String, TimeModelRenderer> pieces = new TreeMap<>();
+        HashMap<String, RawModelBone> pieces = new HashMap<>();
         for (JsonElement bone : bones) {
-            TimeModelRenderer piece = parseBone(bone, model);
-            pieces.put(piece.boxName, piece);
+            RawModelBone piece = parseBone(bone);
+            pieces.put(piece.name, piece);
         }
 
-        List<TimeModelRenderer> rootPieces = new ArrayList<>();
-        for (TimeModelRenderer value : pieces.values()) {
-            if (value.getParentName() != null) {
-                TimeModelRenderer parent = pieces.get(value.getParentName());
+        List<RawModelBone> rootPieces = new ArrayList<>();
+        for (RawModelBone value : pieces.values()) {
+            if (value.parentName != null) {
+                RawModelBone parent = pieces.get(value.parentName);
                 if (parent != null) {
-                    parent.addChild(value);
+                    if (parent.children == null) parent.children = new ArrayList<>();
+
+                    parent.children.add(value);
                 } else {
-                    throw new JsonModelParsingException("Can't find parent node " + value.getParentName() + " for node " + value.boxName);
+                    throw new JsonModelParsingException("Can't find parent node " + value.parentName + " for node " + value.name);
                 }
             } else {
                 rootPieces.add(value);
             }
         }
 
-        modelBuilder.setRootPieces(rootPieces);
+        return create(name, textureWidth, textureHeight, rootPieces);
+    }
+
+    private TimeModel create(String name, int textureWidth, int textureHeight, List<RawModelBone> rootPieces) {
+        TimeModel model = new TimeModel(name, textureWidth, textureHeight);
+
+        model.setPieces(rootPieces.stream().map(rawModelBone -> rawModelBone.bake(model, null)).collect(Collectors.toList()));
 
         return model;
     }
 
-    private TimeModelRenderer parseBone(JsonElement bone, TimeModel model) {
+    private RawModelBone parseBone(JsonElement bone) {
         Vector3f pivot = JsonUtils.getVec3f("pivot", bone);
         Vector3f rotationAngles = JsonUtils.getVec3f("rotation", bone, new Vector3f(0, 0, 0));
         boolean mirror = JsonUtils.getBoolean("mirror", bone, false);
@@ -105,18 +112,18 @@ public class JsonModelParser {
         String name = JsonUtils.getString("name", bone);
         String parentName = JsonUtils.getString("parent", bone, null);
 
-        List<TimeModelBox> cubes = new ArrayList<>();
+        List<RawModelCube> cubes = new ArrayList<>();
         if (bone.getAsJsonObject().has("cubes")) {
             for (JsonElement cube : bone.getAsJsonObject().get("cubes").getAsJsonArray()) {
                 Vector3f origin = JsonUtils.getVec3f("origin", cube);
                 Vector3f size = JsonUtils.getVec3f("size", cube);
                 Vector2f uv = JsonUtils.getVec2f("uv", cube);
 
-                cubes.add(new TimeModelBox(origin, size, uv, inflate, mirror, model.textureWidth, model.textureHeight));
+                cubes.add(new RawModelCube(origin, size, uv));
             }
         }
 
-        return new TimeModelRenderer(model, pivot, rotationAngles, name, parentName, cubes, mirror, neverRender);
+        return new RawModelBone(cubes, pivot, rotationAngles, mirror, neverRender, inflate, name, parentName);
     }
 
     private void checkFormatVersion(String version) throws JsonModelParsingException {
@@ -125,7 +132,73 @@ public class JsonModelParser {
         }
     }
 
-    private static class JsonModelParsingException extends IOException {
+    public static class RawModelBone {
+        private List<RawModelCube> cubes;
+        private Vector3f pivot;
+        private Vector3f rotationAngles;
+        private boolean mirror;
+        private boolean neverRender;
+        private float inflate;
+        private String name;
+        private String parentName;
+
+        private List<RawModelBone> children;
+
+        private RawModelBone(List<RawModelCube> cubes, Vector3f pivot, Vector3f rotationAngles, boolean mirror, boolean neverRender, float inflate, String name, String parentName) {
+            this.cubes = cubes;
+            this.pivot = pivot;
+            this.rotationAngles = rotationAngles;
+            this.mirror = mirror;
+            this.neverRender = neverRender;
+            this.inflate = inflate;
+            this.name = name;
+            this.parentName = parentName;
+        }
+
+        private TimeModelRenderer bake(TimeModel model, RawModelBone parent) {
+            List<TimeModelBox> boxesOut = new ArrayList<>(cubes.size());
+            for (RawModelCube cube : cubes) {
+                boxesOut.add(cube.bake(model, this));
+            }
+//
+//            if (parent != null) {
+//                pivot.sub(parent.pivot);
+//            }
+
+            TimeModelRenderer renderer = new TimeModelRenderer(model, rotationAngles, parentName, boxesOut, neverRender);
+            if (parent != null) {
+                renderer.setRotationPoint(pivot.getX() - parent.pivot.getX(), -(pivot.getY() - parent.pivot.getY()), pivot.getZ() - parent.pivot.getZ());
+            } else renderer.setRotationPoint(pivot.getX(), -pivot.getY(), pivot.getZ());
+
+            if (children != null) {
+                renderer.childModels = new ArrayList<>(children.size());
+                for (RawModelBone child : children) {
+                    renderer.childModels.add(child.bake(model, this));
+                }
+            }
+
+            return renderer;
+        }
+    }
+
+    public static class RawModelCube {
+        private Vector3f origin;
+        private Vector3f size;
+        private Vector2f uv;
+
+        private RawModelCube(Vector3f origin, Vector3f size, Vector2f uv) {
+            this.origin = origin;
+            this.size = size;
+            this.uv = uv;
+        }
+
+        private TimeModelBox bake(TimeModel model, RawModelBone bone) {
+            origin.set(origin.getX() - bone.pivot.getX(), -(origin.getY() + size.getY() - bone.pivot.getY()), origin.getZ() - bone.pivot.getZ());
+            return new TimeModelBox(origin, size, uv, bone.inflate, bone.mirror, model.textureWidth, model.textureHeight);
+        }
+    }
+
+    public static class JsonModelParsingException extends IOException {
         /**
          * Constructs an {@code JsonModelException} with {@code null}
          * as its error detail message.
