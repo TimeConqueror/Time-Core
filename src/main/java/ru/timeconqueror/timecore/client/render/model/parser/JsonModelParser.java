@@ -1,4 +1,4 @@
-package ru.timeconqueror.timecore.client.model.parser;
+package ru.timeconqueror.timecore.client.render.model.parser;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -9,12 +9,11 @@ import net.minecraft.resources.IResource;
 import net.minecraft.util.JSONUtils;
 import net.minecraft.util.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
+import ru.timeconqueror.timecore.api.client.render.model.TimeModel;
 import ru.timeconqueror.timecore.api.util.CollectionUtils;
 import ru.timeconqueror.timecore.api.util.JsonUtils;
-import ru.timeconqueror.timecore.client.model.JsonModelContainer;
-import ru.timeconqueror.timecore.client.model.TimeModel;
-import ru.timeconqueror.timecore.client.model.TimeModelBox;
-import ru.timeconqueror.timecore.client.model.TimeModelRenderer;
+import ru.timeconqueror.timecore.client.render.model.TimeModelBox;
+import ru.timeconqueror.timecore.client.render.model.TimeModelRenderer;
 
 import javax.vecmath.Vector2f;
 import java.io.BufferedReader;
@@ -26,14 +25,7 @@ import java.util.stream.Collectors;
 public class JsonModelParser {
     private static final String[] ACCEPTABLE_FORMAT_VERSIONS = new String[]{"1.12.0"};
 
-    private ResourceLocation fileLocation;
-    private HashMap<String, TimeModelRenderer> pieces;
-
-    public JsonModelParser(@NotNull ResourceLocation fileLocation) {
-        this.fileLocation = fileLocation;
-    }
-
-    public JsonModelContainer parseJsonModel() {
+    public List<TimeModel> parseJsonModel(@NotNull ResourceLocation fileLocation) throws JsonModelParsingException {
         try (final IResource resource = Minecraft.getInstance().getResourceManager().getResource(fileLocation)) {
             BufferedReader reader = new BufferedReader(new InputStreamReader(resource.getInputStream()));
 
@@ -41,25 +33,23 @@ public class JsonModelParser {
             return parseJsonModel(json);
 
         } catch (Throwable e) {
-            e.printStackTrace();
+            throw new JsonModelParsingException(e);
         }
-
-        return null;
     }
 
-    private JsonModelContainer parseJsonModel(JsonObject object) throws IOException {
-        TreeMap<String, TimeModel> models = new TreeMap<>();
+    private List<TimeModel> parseJsonModel(JsonObject object) throws IOException {
+        List<TimeModel> models = new ArrayList<>();
         for (Map.Entry<String, JsonElement> entry : object.entrySet()) {
             if (entry.getKey().equals("format_version")) {
                 String formatVersion = entry.getValue().getAsString();
                 checkFormatVersion(formatVersion);
             } else {
                 TimeModel model = parseSubModel(entry.getKey(), entry.getValue().getAsJsonArray());
-                models.put(model.getName(), model);
+                models.add(model);
             }
         }
 
-        return new JsonModelContainer(models);
+        return models;
     }
 
     private TimeModel parseSubModel(String name, JsonArray subModelArr) throws JsonModelParsingException {

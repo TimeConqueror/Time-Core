@@ -1,4 +1,4 @@
-package ru.timeconqueror.timecore.client.model;
+package ru.timeconqueror.timecore.client.render.model;
 
 import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.renderer.BufferBuilder;
@@ -8,6 +8,7 @@ import net.minecraft.client.renderer.Vector3f;
 import net.minecraft.client.renderer.entity.model.RendererModel;
 import net.minecraft.client.renderer.model.ModelBox;
 import org.jetbrains.annotations.NotNull;
+import ru.timeconqueror.timecore.api.client.render.model.TimeModel;
 
 import java.util.List;
 

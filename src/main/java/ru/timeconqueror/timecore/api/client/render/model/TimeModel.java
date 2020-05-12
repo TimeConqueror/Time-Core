@@ -1,12 +1,12 @@
-package ru.timeconqueror.timecore.client.model;
+package ru.timeconqueror.timecore.api.client.render.model;
 
 import net.minecraft.client.renderer.model.Model;
+import ru.timeconqueror.timecore.client.render.model.TimeModelRenderer;
 
 import java.util.List;
 
 public class TimeModel extends Model {
     private String name;
-
     private List<TimeModelRenderer> pieces;
 
     public TimeModel(String name, int textureWidth, int textureHeight) {
@@ -20,9 +20,15 @@ public class TimeModel extends Model {
     }
 
     public void render(float scale) {
-        for (TimeModelRenderer piece : pieces) {
-            piece.render(scale);
+        if (pieces != null) {
+            for (TimeModelRenderer piece : pieces) {
+                piece.render(scale);
+            }
         }
+    }
+
+    public List<TimeModelRenderer> getPieces() {
+        return pieces;
     }
 
     public void setPieces(List<TimeModelRenderer> pieces) {

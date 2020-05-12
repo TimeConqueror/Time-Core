@@ -14,9 +14,9 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import ru.timeconqueror.timecore.TimeCore;
+import ru.timeconqueror.timecore.api.client.render.model.TimeEntityModel;
+import ru.timeconqueror.timecore.api.client.render.model.TimeModelLoader;
 import ru.timeconqueror.timecore.api.registry.TimeAutoRegistrable;
-import ru.timeconqueror.timecore.client.model.TimeModel;
-import ru.timeconqueror.timecore.client.model.parser.JsonModelParser;
 import ru.timeconqueror.timecore.entity.EntityZombie;
 import ru.timeconqueror.timecore.entity.RenderZombie;
 
@@ -27,7 +27,7 @@ public class ModEntities {
             .setShouldReceiveVelocityUpdates(true)
             .size(1, 2)
             .build(TimeCore.MODID + ":zombie");
-    public static TimeModel zombieModel;
+    public static TimeEntityModel<EntityZombie> zombieModel;
 
     @SubscribeEvent
     public static void register(RegistryEvent.Register<EntityType<?>> event) {
@@ -47,7 +47,7 @@ public class ModEntities {
      */
     @SubscribeEvent
     public static void registerRenders(FMLClientSetupEvent event) {
-        zombieModel = new JsonModelParser(new ResourceLocation(TimeCore.MODID, "models/zombie.json")).parseJsonModel().asSingleModel();
+        zombieModel = TimeModelLoader.loadJsonEntityModel(new ResourceLocation(TimeCore.MODID, "models/zombie.json"));
         RenderingRegistry.registerEntityRenderingHandler(EntityZombie.class, ModEntities::createRenderFor);
     }
 
