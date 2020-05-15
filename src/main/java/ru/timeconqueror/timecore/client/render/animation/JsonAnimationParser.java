@@ -79,23 +79,28 @@ public class JsonAnimationParser {
 
     @Nullable
     private List<KeyFrame> parseKeyFrameArr(String optionName, JsonObject boneJson) throws JsonParsingException {
-        JsonObject rotationJson = boneJson.has(optionName) ? boneJson.get(optionName).getAsJsonObject() : null;
-
         List<KeyFrame> keyFrames = new ArrayList<>();
 
-        float prevTime = -1;
-        if (rotationJson != null) {
-            for (Map.Entry<String, JsonElement> keyEntry : rotationJson.entrySet()) {
-                float time = Float.parseFloat(keyEntry.getKey());
+        if (boneJson.has(optionName)) {
+            JsonElement frameContainerJson = boneJson.get(optionName);
+            if (frameContainerJson.isJsonArray()) {
+                Vector3f vec = JsonUtils.toVec3f(frameContainerJson);
+                keyFrames.add(new KeyFrame(0, vec));
 
-                if (prevTime == -1) {
-                    prevTime = time;
-                } else if (time <= prevTime) {
-                    throw new JsonParsingException("Keyframe with name " + keyEntry.getKey() + " (" + keyEntry.getValue() + ") should have time marker that is bigger than previous. Provided: " + time + ", previous: " + prevTime);
+            } else if (frameContainerJson.isJsonObject()) {
+                float prevTime = -1;
+                for (Map.Entry<String, JsonElement> keyEntry : frameContainerJson.getAsJsonObject().entrySet()) {
+                    float time = Float.parseFloat(keyEntry.getKey());
+
+                    if (prevTime == -1) {
+                        prevTime = time;
+                    } else if (time <= prevTime) {
+                        throw new JsonParsingException("Keyframe with name " + keyEntry.getKey() + " (" + keyEntry.getValue() + ") should have time marker that is bigger than previous. Provided: " + time + ", previous: " + prevTime);
+                    }
+
+                    Vector3f vec = JsonUtils.toVec3f(keyEntry.getValue());
+                    keyFrames.add(new KeyFrame((int) time * 1000, vec));
                 }
-
-                Vector3f vec = JsonUtils.toVec3f(keyEntry.getValue());
-                keyFrames.add(new KeyFrame((int) time * 1000, vec));
             }
         }
 

@@ -17,6 +17,7 @@ import ru.timeconqueror.timecore.TimeCore;
 import ru.timeconqueror.timecore.api.client.render.TimeClientLoader;
 import ru.timeconqueror.timecore.api.client.render.TimeEntityModel;
 import ru.timeconqueror.timecore.api.registry.TimeAutoRegistrable;
+import ru.timeconqueror.timecore.client.render.animation.Animation;
 import ru.timeconqueror.timecore.entity.EntityZombie;
 import ru.timeconqueror.timecore.entity.RenderZombie;
 
@@ -28,6 +29,7 @@ public class ModEntities {
             .size(1, 2)
             .build(TimeCore.MODID + ":zombie");
     public static TimeEntityModel<EntityZombie> zombieModel;
+    public static Animation ZOMBIE_HIT_ANIMATION;
 
     @SubscribeEvent
     public static void register(RegistryEvent.Register<EntityType<?>> event) {
@@ -48,6 +50,7 @@ public class ModEntities {
     @SubscribeEvent
     public static void registerRenders(FMLClientSetupEvent event) {
         zombieModel = TimeClientLoader.loadJsonEntityModel(new ResourceLocation(TimeCore.MODID, "models/zombie.json"));
+        ZOMBIE_HIT_ANIMATION = TimeClientLoader.loadAnimation(new ResourceLocation(TimeCore.MODID, "animations/zombie_hit.json")).get(0);
         RenderingRegistry.registerEntityRenderingHandler(EntityZombie.class, ModEntities::createRenderFor);
     }
 

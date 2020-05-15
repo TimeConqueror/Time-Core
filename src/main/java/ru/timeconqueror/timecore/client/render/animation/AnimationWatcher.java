@@ -6,11 +6,15 @@ public class AnimationWatcher {
 
     public AnimationWatcher(Animation animation) {
         this.animation = animation;
-        startTime = System.currentTimeMillis();
+        resetTimer();
     }
 
     public boolean isAnimationEnded() {
-        return !animation.isLooped() && System.currentTimeMillis() > startTime + animation.getLength();
+        return System.currentTimeMillis() > startTime + animation.getLength();
+    }
+
+    public void resetTimer() {
+        startTime = System.currentTimeMillis();
     }
 
     public Animation getAnimation() {

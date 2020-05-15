@@ -1,5 +1,5 @@
 package ru.timeconqueror.timecore.api.client.render;
 
-public enum AnimationInsertType {
+public enum InsertType {
     OVERWRITE, IGNORE, CLEAR
 }

@@ -1,7 +1,7 @@
 package ru.timeconqueror.timecore.client.render.animation;
 
 import net.minecraft.entity.LivingEntity;
-import ru.timeconqueror.timecore.api.client.render.AnimationInsertType;
+import ru.timeconqueror.timecore.api.client.render.InsertType;
 import ru.timeconqueror.timecore.api.client.render.TimeEntityModel;
 
 import java.util.ArrayList;
@@ -11,17 +11,17 @@ import java.util.List;
 public class AnimationManager {
     private List<AnimationWatcher> animations = new ArrayList<>();
 
-    public void startAnimation(Animation animation, AnimationInsertType insertType) {
-        if (insertType == AnimationInsertType.CLEAR) {
+    public void startAnimation(Animation animation, InsertType insertType) {
+        if (insertType == InsertType.CLEAR) {
             animations.clear();
         } else {
             for (Iterator<AnimationWatcher> iterator = animations.iterator(); iterator.hasNext(); ) {
                 AnimationWatcher animationWatcher = iterator.next();
                 Animation loopAnimation = animationWatcher.getAnimation();
                 if (loopAnimation == animation) {
-                    if (insertType == AnimationInsertType.IGNORE) {
+                    if (insertType == InsertType.IGNORE) {
                         return;
-                    } else if (insertType == AnimationInsertType.OVERWRITE) {
+                    } else if (insertType == InsertType.OVERWRITE) {
                         iterator.remove();
                     }
                 }
@@ -38,12 +38,17 @@ public class AnimationManager {
     public <T extends LivingEntity> void processAnimations(TimeEntityModel<T> model) {
         for (Iterator<AnimationWatcher> iterator = animations.iterator(); iterator.hasNext(); ) {
             AnimationWatcher watcher = iterator.next();
+            Animation animation = watcher.getAnimation();
+
             if (watcher.isAnimationEnded()) {
-                iterator.remove();
-                continue;
+                if (watcher.getAnimation().isLooped()) {
+                    watcher.resetTimer();
+                } else {
+                    iterator.remove();
+                    continue;
+                }
             }
 
-            Animation animation = watcher.getAnimation();
             animation.apply(model, watcher.getExistingTime());
         }
     }

@@ -153,7 +153,7 @@ public class JsonModelParser {
 //                pivot.sub(parent.pivot);
 //            }
 
-            TimeModelRenderer renderer = new TimeModelRenderer(model, rotationAngles, parentName, boxesOut, neverRender);
+            TimeModelRenderer renderer = new TimeModelRenderer(model, rotationAngles, name, boxesOut, neverRender);
             if (parent != null) {
                 renderer.setRotationPoint(pivot.getX() - parent.pivot.getX(), -(pivot.getY() - parent.pivot.getY()), pivot.getZ() - parent.pivot.getZ());
             } else renderer.setRotationPoint(pivot.getX(), -pivot.getY(), pivot.getZ());

@@ -15,7 +15,7 @@ import java.util.List;
 public class TimeModelRenderer extends RendererModel {
     public List<TimeModelBox> cubes;
     public Vector3f startRotationAngles;
-    public Vector3f scaleFactor;
+    private Vector3f scaleFactor = new Vector3f(1, 1, 1);
 
     public TimeModelRenderer(TimeModel model, Vector3f rotationAngles, String name, @NotNull List<TimeModelBox> cubes, boolean neverRender) {
         super(model, name);
@@ -160,5 +160,13 @@ public class TimeModelRenderer extends RendererModel {
 
         GlStateManager.endList();
         this.compiled = true;
+    }
+
+    public void setScaleFactor(float scaleX, float scaleY, float scaleZ) {
+        this.scaleFactor.set(scaleX, scaleY, scaleZ);
+    }
+
+    public Vector3f getScaleFactor() {
+        return scaleFactor;
     }
 }

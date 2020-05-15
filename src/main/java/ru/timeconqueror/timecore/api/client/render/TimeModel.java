@@ -1,12 +1,13 @@
 package ru.timeconqueror.timecore.api.client.render;
 
+import net.minecraft.client.renderer.entity.model.RendererModel;
 import net.minecraft.client.renderer.model.Model;
 import org.jetbrains.annotations.Nullable;
 import ru.timeconqueror.timecore.client.render.model.TimeModelRenderer;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 public class TimeModel extends Model {
     private String name;
@@ -37,7 +38,24 @@ public class TimeModel extends Model {
 
     public void setPieces(List<TimeModelRenderer> pieces) {
         this.pieces = pieces;
-        pieceMap = pieces.stream().collect(Collectors.toMap(o -> o.boxName, o -> o));
+        this.pieceMap = new HashMap<>();
+
+        for (TimeModelRenderer piece : pieces) {
+            addRendererToMap(piece);
+        }
+    }
+
+    private void addRendererToMap(TimeModelRenderer renderer) {
+        pieceMap.put(renderer.boxName, renderer);
+
+        List<RendererModel> children = renderer.childModels;
+        if (children != null) {
+            for (RendererModel child : children) {
+                if (child instanceof TimeModelRenderer) {
+                    addRendererToMap(((TimeModelRenderer) child));
+                }
+            }
+        }
     }
 
     @Nullable

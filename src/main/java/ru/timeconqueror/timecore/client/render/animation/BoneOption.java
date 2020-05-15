@@ -102,10 +102,11 @@ public class BoneOption {
 
             keyPair = findKeyFrames(scales, existingTime);
             if (keyPair != null) {
-                piece.scaleFactor = calcChangeVectorFor(animation, keyPair, piece.scaleFactor.getX(), piece.scaleFactor.getY(), piece.scaleFactor.getZ(), existingTime);
+                Vector3f vec = calcChangeVectorFor(animation, keyPair, piece.getScaleFactor().getX(), piece.getScaleFactor().getY(), piece.getScaleFactor().getZ(), existingTime);
+                piece.setScaleFactor(vec.getX(), vec.getY(), vec.getZ());
             }
         } else {
-            TimeCore.LOGGER.error("Can't find bone with name " + boneName + " in animation" + animation.getName());
+            TimeCore.LOGGER.error("Can't find bone with name " + boneName + " in animation " + animation.getName() + " applied for model " + model.getName());
         }
     }
 }
