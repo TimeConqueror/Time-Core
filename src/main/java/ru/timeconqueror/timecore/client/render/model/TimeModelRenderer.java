@@ -29,6 +29,9 @@ public class TimeModelRenderer extends RendererModel {
 
     @Override
     public void render(float scale) {
+//        if(boxName.equals("body")){
+//            rotateAngleX = 130;
+//        }
         if (!this.isHidden) {
             if (this.showModel) {
                 if (!this.compiled) {
@@ -117,15 +120,15 @@ public class TimeModelRenderer extends RendererModel {
     private void applyRotations(float scale) {
         GlStateManager.translatef(this.rotationPointX * scale * scaleFactor.getX(), this.rotationPointY * scale * scaleFactor.getY(), this.rotationPointZ * scale * scaleFactor.getZ());
         if (this.rotateAngleZ != 0.0F) {
-            GlStateManager.rotatef(this.rotateAngleZ * (180F / (float) Math.PI), 0.0F, 0.0F, 1.0F);
+            GlStateManager.rotatef(this.rotateAngleZ, 0.0F, 0.0F, 1.0F);
         }
 
         if (this.rotateAngleY != 0.0F) {
-            GlStateManager.rotatef(this.rotateAngleY * (180F / (float) Math.PI), 0.0F, 1.0F, 0.0F);
+            GlStateManager.rotatef(this.rotateAngleY, 0.0F, 1.0F, 0.0F);
         }
 
         if (this.rotateAngleX != 0.0F) {
-            GlStateManager.rotatef(this.rotateAngleX * (180F / (float) Math.PI), 1.0F, 0.0F, 0.0F);
+            GlStateManager.rotatef(this.rotateAngleX, 1.0F, 0.0F, 0.0F);
         }
     }
 

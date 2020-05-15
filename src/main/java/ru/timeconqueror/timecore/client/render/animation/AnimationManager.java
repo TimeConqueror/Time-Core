@@ -40,7 +40,9 @@ public class AnimationManager {
             AnimationWatcher watcher = iterator.next();
             Animation animation = watcher.getAnimation();
 
-            if (watcher.isAnimationEnded()) {
+            long time = System.currentTimeMillis();
+
+            if (watcher.isAnimationEnded(time)) {
                 if (watcher.getAnimation().isLooped()) {
                     watcher.resetTimer();
                 } else {
@@ -49,7 +51,7 @@ public class AnimationManager {
                 }
             }
 
-            animation.apply(model, watcher.getExistingTime());
+            animation.apply(model, watcher.getExistingTime(time));
         }
     }
 }

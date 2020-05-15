@@ -99,7 +99,8 @@ public class JsonAnimationParser {
                     }
 
                     Vector3f vec = JsonUtils.toVec3f(keyEntry.getValue());
-                    keyFrames.add(new KeyFrame((int) time * 1000, vec));
+
+                    keyFrames.add(new KeyFrame((int) (time * 1000), vec));
                 }
             }
         }

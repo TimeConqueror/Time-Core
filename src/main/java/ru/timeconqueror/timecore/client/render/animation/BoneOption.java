@@ -72,7 +72,7 @@ public class BoneOption {
             endTime = end.getStartTime();
         }
 
-        long factor = (existingTime - startTime) / endTime;
+        float factor = (existingTime - startTime) / (float) endTime;
 
         float outX = MathHelper.lerp(factor, startVec.getX(), endVec.getX());
         float outY = MathHelper.lerp(factor, startVec.getY(), endVec.getY());

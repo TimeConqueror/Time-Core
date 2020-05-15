@@ -47,5 +47,7 @@ public class EntityZombie extends EntityStupidAnimal implements IAnimationProvid
             System.out.println("Applied animation");
             animationManager.startAnimation(ModEntities.ZOMBIE_HIT_ANIMATION, InsertType.IGNORE);
         }
+
+//        animationManager.removeAnimation(ModEntities.ZOMBIE_HIT_ANIMATION);
     }
 }
