@@ -4,12 +4,15 @@ import net.minecraft.entity.AgeableEntity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.world.World;
+import ru.timeconqueror.timecore.api.client.render.IAnimationProvider;
+import ru.timeconqueror.timecore.client.render.animation.AnimationManager;
 import ru.timeconqueror.timecore.registry.ModEntities;
 
 import javax.annotation.Nullable;
 
 @SuppressWarnings("EntityConstructor")
-public class EntityZombie extends EntityStupidAnimal {
+public class EntityZombie extends EntityStupidAnimal implements IAnimationProvider {
+    private AnimationManager animationManager;
 
     public EntityZombie(EntityType<? extends AnimalEntity> type, World worldIn) {
         super(ModEntities.ZOMBIE_TYPE, worldIn);
@@ -28,5 +31,10 @@ public class EntityZombie extends EntityStupidAnimal {
 
     public boolean isFemale() {
         return false;
+    }
+
+    @Override
+    public AnimationManager getAnimationManager() {
+        return animationManager;
     }
 }

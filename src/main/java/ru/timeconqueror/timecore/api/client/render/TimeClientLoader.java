@@ -1,30 +1,33 @@
-package ru.timeconqueror.timecore.api.client.render.model;
+package ru.timeconqueror.timecore.api.client.render;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.util.ResourceLocation;
 import ru.timeconqueror.timecore.TimeCore;
-import ru.timeconqueror.timecore.client.render.model.parser.JsonModelParser;
+import ru.timeconqueror.timecore.client.render.animation.Animation;
+import ru.timeconqueror.timecore.client.render.animation.JsonAnimationParser;
+import ru.timeconqueror.timecore.client.render.model.JsonModelParser;
 
 import java.util.List;
 
-public class TimeModelLoader {
-    private static List<TimeModel> BROKEN = loadJsonModels(new ResourceLocation(TimeCore.MODID, "models/entity/broken.json"));
+public class TimeClientLoader {
+    private static List<TimeModel> BROKEN_MODEL = loadJsonModels(new ResourceLocation(TimeCore.MODID, "models/entity/broken.json"));
+    private static List<Animation> BROKEN_ANIMATION;//toDO
 
     public static List<TimeModel> loadJsonModels(ResourceLocation location) {
         try {
             return new JsonModelParser().parseJsonModel(location);
-        } catch (JsonModelParser.JsonModelParsingException e) {
+        } catch (Throwable e) {
             TimeCore.LOGGER.error("Can't load model " + location.toString(), e);
         }
 
-        return BROKEN;
+        return BROKEN_MODEL;
     }
 
     public static TimeModel loadJsonModel(ResourceLocation location) {
         List<TimeModel> timeModels = loadJsonModels(location);
         if (timeModels.size() != 1) {
             TimeCore.LOGGER.error("Can't load model " + location.toString() + " due to the file contains more than one model. Use TimeModelLoader#loadJsonModels method instead.");
-            return BROKEN.get(0);
+            return BROKEN_MODEL.get(0);
         }
 
         return timeModels.get(0);
@@ -32,5 +35,15 @@ public class TimeModelLoader {
 
     public static <T extends Entity> TimeEntityModel<T> loadJsonEntityModel(ResourceLocation location) {
         return new TimeEntityModel<>(loadJsonModel(location));
+    }
+
+    public static List<Animation> loadAnimation(ResourceLocation location) {
+        try {
+            return new JsonAnimationParser().parseAnimations(location);
+        } catch (Throwable e) {
+            TimeCore.LOGGER.error("Can't load animation " + location.toString(), e);
+        }
+
+        return BROKEN_ANIMATION;
     }
 }

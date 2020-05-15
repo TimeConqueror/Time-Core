@@ -8,15 +8,18 @@ import net.minecraft.client.renderer.Vector3f;
 import net.minecraft.client.renderer.entity.model.RendererModel;
 import net.minecraft.client.renderer.model.ModelBox;
 import org.jetbrains.annotations.NotNull;
-import ru.timeconqueror.timecore.api.client.render.model.TimeModel;
+import ru.timeconqueror.timecore.api.client.render.TimeModel;
 
 import java.util.List;
 
 public class TimeModelRenderer extends RendererModel {
     public List<TimeModelBox> cubes;
+    public Vector3f startRotationAngles;
+    public Vector3f scaleFactor;
 
     public TimeModelRenderer(TimeModel model, Vector3f rotationAngles, String name, @NotNull List<TimeModelBox> cubes, boolean neverRender) {
         super(model, name);
+        startRotationAngles = rotationAngles;
         this.rotateAngleX = rotationAngles.getX();
         this.rotateAngleY = rotationAngles.getY();
         this.rotateAngleZ = rotationAngles.getZ();
@@ -26,7 +29,116 @@ public class TimeModelRenderer extends RendererModel {
 
     @Override
     public void render(float scale) {
-        super.render(scale);
+        if (!this.isHidden) {
+            if (this.showModel) {
+                if (!this.compiled) {
+                    this.compileDisplayList(scale);
+                }
+
+                GlStateManager.pushMatrix();
+                GlStateManager.translatef(this.offsetX, this.offsetY, this.offsetZ);
+                if (this.rotateAngleX == 0.0F && this.rotateAngleY == 0.0F && this.rotateAngleZ == 0.0F) {
+                    if (this.rotationPointX == 0.0F && this.rotationPointY == 0.0F && this.rotationPointZ == 0.0F) {
+                        GlStateManager.callList(this.displayList);
+                        if (this.childModels != null) {
+                            for (RendererModel childModel : this.childModels) {
+                                childModel.render(scale);
+                            }
+                        }
+                    } else {
+                        GlStateManager.pushMatrix();
+                        GlStateManager.translatef(this.rotationPointX * scale * scaleFactor.getX(), this.rotationPointY * scale * scaleFactor.getY(), this.rotationPointZ * scale * scaleFactor.getZ());
+                        GlStateManager.callList(this.displayList);
+                        if (this.childModels != null) {
+                            for (RendererModel childModel : this.childModels) {
+                                childModel.render(scale);
+                            }
+                        }
+
+                        GlStateManager.popMatrix();
+                    }
+                } else {
+                    GlStateManager.pushMatrix();
+                    applyRotations(scale);
+
+                    GlStateManager.callList(this.displayList);
+                    if (this.childModels != null) {
+                        for (RendererModel childModel : this.childModels) {
+                            childModel.render(scale);
+                        }
+                    }
+
+                    GlStateManager.popMatrix();
+                }
+
+                GlStateManager.popMatrix();
+            }
+        }
+
+        resetData();
+    }
+
+    @Override
+    public void renderWithRotation(float scale) {
+        if (!this.isHidden) {
+            if (this.showModel) {
+                if (!this.compiled) {
+                    this.compileDisplayList(scale);
+                }
+
+                GlStateManager.pushMatrix();
+                applyRotations(scale);
+
+                GlStateManager.callList(this.displayList);
+                GlStateManager.popMatrix();
+            }
+        }
+    }
+
+    @Override
+    public void postRender(float scale) {
+        if (!this.isHidden) {
+            if (this.showModel) {
+                if (!this.compiled) {
+                    this.compileDisplayList(scale);
+                }
+
+                if (this.rotateAngleX == 0.0F && this.rotateAngleY == 0.0F && this.rotateAngleZ == 0.0F) {
+                    if (this.rotationPointX != 0.0F || this.rotationPointY != 0.0F || this.rotationPointZ != 0.0F) {
+                        GlStateManager.translatef(this.rotationPointX * scale * scaleFactor.getX(), this.rotationPointY * scale * scaleFactor.getY(), this.rotationPointZ * scale * scaleFactor.getZ());
+                    }
+                } else {
+                    applyRotations(scale);
+                }
+            }
+        }
+    }
+
+    private void applyRotations(float scale) {
+        GlStateManager.translatef(this.rotationPointX * scale * scaleFactor.getX(), this.rotationPointY * scale * scaleFactor.getY(), this.rotationPointZ * scale * scaleFactor.getZ());
+        if (this.rotateAngleZ != 0.0F) {
+            GlStateManager.rotatef(this.rotateAngleZ * (180F / (float) Math.PI), 0.0F, 0.0F, 1.0F);
+        }
+
+        if (this.rotateAngleY != 0.0F) {
+            GlStateManager.rotatef(this.rotateAngleY * (180F / (float) Math.PI), 0.0F, 1.0F, 0.0F);
+        }
+
+        if (this.rotateAngleX != 0.0F) {
+            GlStateManager.rotatef(this.rotateAngleX * (180F / (float) Math.PI), 1.0F, 0.0F, 0.0F);
+        }
+    }
+
+    private void resetData() {
+        rotateAngleX = startRotationAngles.getX();
+        rotateAngleY = startRotationAngles.getY();
+        rotateAngleZ = startRotationAngles.getZ();
+
+        offsetX = 0;
+        offsetY = 0;
+        offsetZ = 0;
+
+        scaleFactor.set(1, 1, 1);
     }
 
     /**

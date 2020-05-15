@@ -1,4 +1,4 @@
-package ru.timeconqueror.timecore.api.client.render.model;
+package ru.timeconqueror.timecore.api.client.render;
 
 import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.renderer.entity.model.EntityModel;
@@ -10,6 +10,7 @@ public class TimeEntityModel<T extends Entity> extends EntityModel<T> {
     public TimeEntityModel(TimeModel model) {
         this.model = model;
         boxList.addAll(model.boxList);
+        model.boxList.clear();
     }
 
     @Override
@@ -17,5 +18,9 @@ public class TimeEntityModel<T extends Entity> extends EntityModel<T> {
         GlStateManager.translatef(0, 1.501F, 0);//Mojang, WHY???
         model.render(scale);
         GlStateManager.translatef(0, -1.501F, 0);
+    }
+
+    public TimeModel getBaseModel() {
+        return model;
     }
 }

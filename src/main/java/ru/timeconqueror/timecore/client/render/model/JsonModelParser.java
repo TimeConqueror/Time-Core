@@ -1,4 +1,4 @@
-package ru.timeconqueror.timecore.client.render.model.parser;
+package ru.timeconqueror.timecore.client.render.model;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -9,15 +9,13 @@ import net.minecraft.resources.IResource;
 import net.minecraft.util.JSONUtils;
 import net.minecraft.util.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
-import ru.timeconqueror.timecore.api.client.render.model.TimeModel;
+import ru.timeconqueror.timecore.api.client.render.TimeModel;
 import ru.timeconqueror.timecore.api.util.CollectionUtils;
-import ru.timeconqueror.timecore.api.util.JsonUtils;
-import ru.timeconqueror.timecore.client.render.model.TimeModelBox;
-import ru.timeconqueror.timecore.client.render.model.TimeModelRenderer;
+import ru.timeconqueror.timecore.client.JsonParsingException;
+import ru.timeconqueror.timecore.util.JsonUtils;
 
 import javax.vecmath.Vector2f;
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -25,7 +23,7 @@ import java.util.stream.Collectors;
 public class JsonModelParser {
     private static final String[] ACCEPTABLE_FORMAT_VERSIONS = new String[]{"1.12.0"};
 
-    public List<TimeModel> parseJsonModel(@NotNull ResourceLocation fileLocation) throws JsonModelParsingException {
+    public List<TimeModel> parseJsonModel(@NotNull ResourceLocation fileLocation) throws JsonParsingException {
         try (final IResource resource = Minecraft.getInstance().getResourceManager().getResource(fileLocation)) {
             BufferedReader reader = new BufferedReader(new InputStreamReader(resource.getInputStream()));
 
@@ -33,11 +31,11 @@ public class JsonModelParser {
             return parseJsonModel(json);
 
         } catch (Throwable e) {
-            throw new JsonModelParsingException(e);
+            throw new JsonParsingException(e);
         }
     }
 
-    private List<TimeModel> parseJsonModel(JsonObject object) throws IOException {
+    private List<TimeModel> parseJsonModel(JsonObject object) throws JsonParsingException {
         List<TimeModel> models = new ArrayList<>();
         for (Map.Entry<String, JsonElement> entry : object.entrySet()) {
             if (entry.getKey().equals("format_version")) {
@@ -52,7 +50,7 @@ public class JsonModelParser {
         return models;
     }
 
-    private TimeModel parseSubModel(String name, JsonArray subModelArr) throws JsonModelParsingException {
+    private TimeModel parseSubModel(String name, JsonArray subModelArr) throws JsonParsingException {
         JsonObject subModel = subModelArr.get(0).getAsJsonObject();
         JsonArray bones = subModel.get("bones").getAsJsonArray();
 
@@ -75,7 +73,7 @@ public class JsonModelParser {
 
                     parent.children.add(value);
                 } else {
-                    throw new JsonModelParsingException("Can't find parent node " + value.parentName + " for node " + value.name);
+                    throw new JsonParsingException("Can't find parent node " + value.parentName + " for node " + value.name);
                 }
             } else {
                 rootPieces.add(value);
@@ -93,7 +91,7 @@ public class JsonModelParser {
         return model;
     }
 
-    private RawModelBone parseBone(JsonElement bone) {
+    private RawModelBone parseBone(JsonElement bone) throws JsonParsingException {
         Vector3f pivot = JsonUtils.getVec3f("pivot", bone);
         Vector3f rotationAngles = JsonUtils.getVec3f("rotation", bone, new Vector3f(0, 0, 0));
         boolean mirror = JsonUtils.getBoolean("mirror", bone, false);
@@ -116,9 +114,9 @@ public class JsonModelParser {
         return new RawModelBone(cubes, pivot, rotationAngles, mirror, neverRender, inflate, name, parentName);
     }
 
-    private void checkFormatVersion(String version) throws JsonModelParsingException {
+    private void checkFormatVersion(String version) throws JsonParsingException {
         if (!CollectionUtils.contains(ACCEPTABLE_FORMAT_VERSIONS, version)) {
-            throw new JsonModelParsingException("The format version " + version + " is not supported. Supported versions: " + Arrays.toString(ACCEPTABLE_FORMAT_VERSIONS));
+            throw new JsonParsingException("The format version " + version + " is not supported. Supported versions: " + Arrays.toString(ACCEPTABLE_FORMAT_VERSIONS));
         }
     }
 
@@ -185,61 +183,6 @@ public class JsonModelParser {
         private TimeModelBox bake(TimeModel model, RawModelBone bone) {
             origin.set(origin.getX() - bone.pivot.getX(), -(origin.getY() + size.getY() - bone.pivot.getY()), origin.getZ() - bone.pivot.getZ());
             return new TimeModelBox(origin, size, uv, bone.inflate, bone.mirror, model.textureWidth, model.textureHeight);
-        }
-    }
-
-    public static class JsonModelParsingException extends IOException {
-        /**
-         * Constructs an {@code JsonModelException} with {@code null}
-         * as its error detail message.
-         */
-        public JsonModelParsingException() {
-            super();
-        }
-
-        /**
-         * Constructs an {@code JsonModelException} with the specified detail message.
-         *
-         * @param message The detail message (which is saved for later retrieval
-         *                by the {@link #getMessage()} method)
-         */
-        public JsonModelParsingException(String message) {
-            super(message);
-        }
-
-        /**
-         * Constructs an {@code JsonModelException} with the specified detail message
-         * and cause.
-         *
-         * <p> Note that the detail message associated with {@code cause} is
-         * <i>not</i> automatically incorporated into this exception's detail
-         * message.
-         *
-         * @param message The detail message (which is saved for later retrieval
-         *                by the {@link #getMessage()} method)
-         * @param cause   The cause (which is saved for later retrieval by the
-         *                {@link #getCause()} method).  (A null value is permitted,
-         *                and indicates that the cause is nonexistent or unknown.)
-         * @since 1.6
-         */
-        public JsonModelParsingException(String message, Throwable cause) {
-            super(message, cause);
-        }
-
-        /**
-         * Constructs an {@code JsonModelException} with the specified cause and a
-         * detail message of {@code (cause==null ? null : cause.toString())}
-         * (which typically contains the class and detail message of {@code cause}).
-         * This constructor is useful for IO exceptions that are little more
-         * than wrappers for other throwables.
-         *
-         * @param cause The cause (which is saved for later retrieval by the
-         *              {@link #getCause()} method).  (A null value is permitted,
-         *              and indicates that the cause is nonexistent or unknown.)
-         * @since 1.6
-         */
-        public JsonModelParsingException(Throwable cause) {
-            super(cause);
         }
     }
 }
