@@ -29,9 +29,6 @@ public class TimeModelRenderer extends RendererModel {
 
     @Override
     public void render(float scale) {
-//        if(boxName.equals("body")){
-//            rotateAngleX = 130;
-//        }
         if (!this.isHidden) {
             if (this.showModel) {
                 if (!this.compiled) {

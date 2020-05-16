@@ -72,7 +72,7 @@ public class BoneOption {
             endTime = end.getStartTime();
         }
 
-        float factor = (existingTime - startTime) / (float) endTime;
+        float factor = endTime - startTime == 0 ? 1 : (existingTime - startTime) / (float) (endTime - startTime);
 
         float outX = MathHelper.lerp(factor, startVec.getX(), endVec.getX());
         float outY = MathHelper.lerp(factor, startVec.getY(), endVec.getY());
@@ -83,6 +83,7 @@ public class BoneOption {
 
     public void apply(Animation animation, TimeModel model, int existingTime) {
         TimeModelRenderer piece = model.getPiece(boneName);
+
         if (piece != null) {
             Pair<KeyFrame, KeyFrame> keyPair = findKeyFrames(rotations, existingTime);
             if (keyPair != null) {
