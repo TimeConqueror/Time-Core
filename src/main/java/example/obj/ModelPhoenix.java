@@ -1,4 +1,4 @@
-package example;
+package example.obj;
 
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.Entity;

@@ -1,5 +1,6 @@
 package ru.timeconqueror.timecore.client.obj.loader;
 
+import example.obj.ModelPhoenix;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import ru.timeconqueror.timecore.TimeCore;
@@ -42,7 +43,7 @@ public class ObjModel extends AbstractObjModel {
     /**
      * Removes all generated duplications, which will appear if you add children to other {@link ObjModelRenderer}s.
      * You may separate model parts and add children during for example constructing model.
-     * Example can be seen here: {@link example.ModelPhoenix}
+     * Example can be seen here: {@link ModelPhoenix}
      * <p>
      * If you forget to clear duplications, error messages will be printed to console every render frame.
      * <p>

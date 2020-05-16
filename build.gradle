@@ -9,7 +9,7 @@ buildscript {
     }
     dependencies {
         classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
-        classpath 'org.spongepowered:mixingradle:0.6-SNAPSHOT'
+        classpath 'org.spongepowered:mixingradle:0.6+'
     }
 }
 
@@ -20,11 +20,6 @@ plugins {
 apply plugin: 'net.minecraftforge.gradle.forge'
 //Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
 apply plugin: 'org.spongepowered.mixin'
-
-
-wrapper {
-    gradleVersion = "4.10.3"
-}
 
 file "build.properties" withReader {
     def prop = new Properties()
@@ -73,14 +68,16 @@ minecraft {
 
 repositories {
     maven {
-        name = 'sponge'
+        name="sponge"
         url = 'https://repo.spongepowered.org/maven'
     }
     mavenCentral()
 }
 
 configurations {
-    extraLibs
+    shade
+
+    compile.extendsFrom shade
 }
 
 dependencies {
@@ -106,8 +103,7 @@ dependencies {
     // http://www.gradle.org/docs/current/userguide/dependency_management.html
 
 //    noinspection GroovyAssignabilityCheck
-    extraLibs('org.spongepowered:mixin:0.7.11-SNAPSHOT') {
-        // Mixin includes a lot of dependencies that are too up-to-date
+    shade('org.spongepowered:mixin:0.7.11-SNAPSHOT') {
         exclude module: 'launchwrapper'
         exclude module: 'guava'
         exclude module: 'gson'
@@ -115,13 +111,14 @@ dependencies {
         exclude module: 'log4j-core'
     }
 
-    extraLibs group: "org.jetbrains.kotlin", name: "kotlin-stdlib-jdk8"
-    extraLibs group: "org.jetbrains.kotlin", name: "kotlin-reflect"
-    extraLibs group: "org.jetbrains.kotlinx", name: "kotlinx-coroutines-jdk8", version: "1.3.3"
+    shade (group: "org.jetbrains.kotlin", name: "kotlin-stdlib-jdk8"){
+        exclude module: 'annotations'
+    }
 
-    configurations.compile.extendsFrom(configurations.extraLibs)
+    shade group: "org.jetbrains.kotlin", name: "kotlin-reflect"
+    shade group: "org.jetbrains.kotlinx", name: "kotlinx-coroutines-jdk8", version: "1.3.3"
 
-    implementation 'org.jetbrains:annotations:18.0.0'
+    shade 'org.jetbrains:annotations:18.0.0'
 }
 
 processResources {
@@ -146,17 +143,21 @@ processResources {
 }
 
 jar {
-    from {
-        configurations.extraLibs.collect { it.isDirectory() ? it : zipTree(it) }
-    }
 
-    exclude "example"
-    exclude "LICENSE.txt"
-    exclude "test"
+        configurations.shade.each { dep ->
+            from(project.zipTree(dep)) {
+                exclude 'META-INF/*.RSA'
+            }
+        }
+
+        rename 'LICENSE.txt', 'LICENSE-mixin.txt'
+        from ('LICENSE.md')
+    
+    exclude "example", "test"
 
     manifest.attributes(
             "TweakClass": "org.spongepowered.asm.launch.MixinTweaker",
-            "MixinConfigs": "mixins.timecore.json",
+//            "MixinConfigs": "mixins.timecore.json",
             "ForceLoadAsMod": true,
             "FMLCorePluginContainsFMLMod": "true",
             "FMLAT": "timecore_at.cfg"
@@ -168,13 +169,16 @@ task deobfJar(type: Jar) {
     from sourceSets.main.output
     classifier = 'deobf'
 
-    from {
-        configurations.extraLibs.collect { it.isDirectory() ? it : zipTree(it) }
+    configurations.shade.each { dep ->
+        from(project.zipTree(dep)) {
+            exclude 'META-INF', 'META-INF/**'
+        }
     }
 
-    exclude "example"
-    exclude "LICENSE.txt"
-    exclude "test"
+    rename 'LICENSE.txt', 'LICENSE-mixin.txt'
+    from ('LICENSE.md')
+
+    exclude "example", "test"
 
     manifest.attributes(
             "TweakClass": "org.spongepowered.asm.launch.MixinTweaker"

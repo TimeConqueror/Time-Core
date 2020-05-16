@@ -1,5 +1,6 @@
 package ru.timeconqueror.timecore.proxy;
 
+import example.ModEntities;
 import net.minecraftforge.client.ClientCommandHandler;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
@@ -11,6 +12,7 @@ public class ClientProxy extends CommonProxy {
     @Override
     public void preInit(FMLPreInitializationEvent event) {
         super.preInit(event);
+
     }
 
     @Override
@@ -21,6 +23,7 @@ public class ClientProxy extends CommonProxy {
     @Override
     public void postInit(FMLPostInitializationEvent event) {
         super.postInit(event);
+        ModEntities.registerRenders();
         ClientCommandHandler.instance.registerCommand(new CommandClientMain());
     }
 }

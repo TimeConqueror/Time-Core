@@ -1,5 +1,6 @@
-package example;
+package example.obj;
 
+import example.EntityStupidAnimal;
 import net.minecraft.entity.EntityAgeable;
 import net.minecraft.world.World;
 
