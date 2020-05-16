@@ -30,6 +30,8 @@ public class BoneOption {
     private static Pair<KeyFrame, KeyFrame> findKeyFrames(List<KeyFrame> frames, long existingTime) {
         if (frames == null) return null;
 
+//        if(frames.size() == 1) return new Pair<>(frames.get(0), null);
+
         for (int i = 0; i < frames.size(); i++) {
             KeyFrame keyFrame = frames.get(i);
 

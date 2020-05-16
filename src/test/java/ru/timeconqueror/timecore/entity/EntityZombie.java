@@ -16,7 +16,7 @@ public class EntityZombie extends EntityStupidAnimal implements IAnimationProvid
     private AnimationManager animationManager = new AnimationManager();
 
     public EntityZombie(EntityType<? extends AnimalEntity> type, World worldIn) {
-        super(ModEntities.ZOMBIE_TYPE, worldIn);
+        super(type, worldIn);
     }
 
     @Nullable
@@ -43,11 +43,10 @@ public class EntityZombie extends EntityStupidAnimal implements IAnimationProvid
     public void livingTick() {
         super.livingTick();
 
-        if ((System.currentTimeMillis() / 1000) % 10 == 0) {
-            System.out.println("Applied animation");
-            animationManager.startAnimation(ModEntities.ZOMBIE_HIT_ANIMATION, InsertType.IGNORE);
+        if ((System.currentTimeMillis() / 1000) % 5 == 0) {
+            animationManager.startAnimation(ModEntities.HIT_ANIMATION, InsertType.IGNORE);
+            animationManager.startAnimation(ModEntities.SCALING_ANIMATION, InsertType.IGNORE);
+            animationManager.startAnimation(ModEntities.OFFSETTING_ANIMATION, InsertType.IGNORE);
         }
-
-//        animationManager.removeAnimation(ModEntities.ZOMBIE_HIT_ANIMATION);
     }
 }

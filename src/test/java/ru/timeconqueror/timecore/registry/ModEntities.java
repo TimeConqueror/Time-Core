@@ -29,7 +29,9 @@ public class ModEntities {
             .size(1, 2)
             .build(TimeCore.MODID + ":zombie");
     public static TimeEntityModel<EntityZombie> zombieModel;
-    public static Animation ZOMBIE_HIT_ANIMATION;
+    public static Animation HIT_ANIMATION;
+    public static Animation SCALING_ANIMATION;
+    public static Animation OFFSETTING_ANIMATION;
 
     @SubscribeEvent
     public static void register(RegistryEvent.Register<EntityType<?>> event) {
@@ -50,7 +52,9 @@ public class ModEntities {
     @SubscribeEvent
     public static void registerRenders(FMLClientSetupEvent event) {
         zombieModel = TimeClientLoader.loadJsonEntityModel(new ResourceLocation(TimeCore.MODID, "models/zombie.json"));
-        ZOMBIE_HIT_ANIMATION = TimeClientLoader.loadAnimation(new ResourceLocation(TimeCore.MODID, "animations/zombie_hit.json")).get(0);
+        HIT_ANIMATION = TimeClientLoader.loadAnimation(new ResourceLocation(TimeCore.MODID, "animations/zombie_hit.json")).get(0);
+        SCALING_ANIMATION = TimeClientLoader.loadAnimation(new ResourceLocation(TimeCore.MODID, "animations/scaling.json")).get(0);
+        OFFSETTING_ANIMATION = TimeClientLoader.loadAnimation(new ResourceLocation(TimeCore.MODID, "animations/offsetting.json")).get(0);
         RenderingRegistry.registerEntityRenderingHandler(EntityZombie.class, ModEntities::createRenderFor);
     }
 

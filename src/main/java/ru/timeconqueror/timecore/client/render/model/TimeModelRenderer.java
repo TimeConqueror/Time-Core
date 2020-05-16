@@ -28,48 +28,19 @@ public class TimeModelRenderer extends RendererModel {
     }
 
     @Override
-    public void render(float scale) {
+    public void render(float initialScale) {
         if (!this.isHidden) {
             if (this.showModel) {
                 if (!this.compiled) {
-                    this.compileDisplayList(scale);
+                    this.compileDisplayList(initialScale);
                 }
 
                 GlStateManager.pushMatrix();
-                GlStateManager.translatef(this.offsetX, this.offsetY, this.offsetZ);
-                if (this.rotateAngleX == 0.0F && this.rotateAngleY == 0.0F && this.rotateAngleZ == 0.0F) {
-                    if (this.rotationPointX == 0.0F && this.rotationPointY == 0.0F && this.rotationPointZ == 0.0F) {
-                        GlStateManager.callList(this.displayList);
-                        if (this.childModels != null) {
-                            for (RendererModel childModel : this.childModels) {
-                                childModel.render(scale);
-                            }
-                        }
-                    } else {
-                        GlStateManager.pushMatrix();
-                        GlStateManager.translatef(this.rotationPointX * scale * scaleFactor.getX(), this.rotationPointY * scale * scaleFactor.getY(), this.rotationPointZ * scale * scaleFactor.getZ());
-                        GlStateManager.callList(this.displayList);
-                        if (this.childModels != null) {
-                            for (RendererModel childModel : this.childModels) {
-                                childModel.render(scale);
-                            }
-                        }
 
-                        GlStateManager.popMatrix();
-                    }
-                } else {
-                    GlStateManager.pushMatrix();
-                    applyRotations(scale);
+                GlStateManager.translatef(this.offsetX * initialScale * scaleFactor.getX(), this.offsetY * initialScale * scaleFactor.getY(), this.offsetZ * initialScale * scaleFactor.getZ());
 
-                    GlStateManager.callList(this.displayList);
-                    if (this.childModels != null) {
-                        for (RendererModel childModel : this.childModels) {
-                            childModel.render(scale);
-                        }
-                    }
-
-                    GlStateManager.popMatrix();
-                }
+                applyRotations(initialScale);
+                draw(initialScale);
 
                 GlStateManager.popMatrix();
             }
@@ -79,15 +50,15 @@ public class TimeModelRenderer extends RendererModel {
     }
 
     @Override
-    public void renderWithRotation(float scale) {
+    public void renderWithRotation(float initialScale) {
         if (!this.isHidden) {
             if (this.showModel) {
                 if (!this.compiled) {
-                    this.compileDisplayList(scale);
+                    this.compileDisplayList(initialScale);
                 }
 
                 GlStateManager.pushMatrix();
-                applyRotations(scale);
+                applyRotations(initialScale);
 
                 GlStateManager.callList(this.displayList);
                 GlStateManager.popMatrix();
@@ -95,27 +66,35 @@ public class TimeModelRenderer extends RendererModel {
         }
     }
 
+    private void draw(float initialScale) {
+        GlStateManager.scalef(scaleFactor.getX(), scaleFactor.getY(), scaleFactor.getZ());
+        GlStateManager.callList(this.displayList);
+        if (this.childModels != null) {
+            for (RendererModel childModel : this.childModels) {
+                childModel.render(initialScale);
+            }
+        }
+        GlStateManager.scalef(1 / scaleFactor.getX(), 1 / scaleFactor.getY(), 1 / scaleFactor.getZ());
+    }
+
     @Override
-    public void postRender(float scale) {
+    public void postRender(float initialScale) {
         if (!this.isHidden) {
             if (this.showModel) {
                 if (!this.compiled) {
-                    this.compileDisplayList(scale);
+                    this.compileDisplayList(initialScale);
                 }
 
-                if (this.rotateAngleX == 0.0F && this.rotateAngleY == 0.0F && this.rotateAngleZ == 0.0F) {
-                    if (this.rotationPointX != 0.0F || this.rotationPointY != 0.0F || this.rotationPointZ != 0.0F) {
-                        GlStateManager.translatef(this.rotationPointX * scale * scaleFactor.getX(), this.rotationPointY * scale * scaleFactor.getY(), this.rotationPointZ * scale * scaleFactor.getZ());
-                    }
-                } else {
-                    applyRotations(scale);
-                }
+                applyRotations(initialScale);
             }
         }
     }
 
-    private void applyRotations(float scale) {
-        GlStateManager.translatef(this.rotationPointX * scale * scaleFactor.getX(), this.rotationPointY * scale * scaleFactor.getY(), this.rotationPointZ * scale * scaleFactor.getZ());
+    private void applyRotations(float initialScale) {
+        if (rotationPointX != 0 || rotationPointY != 0 || rotationPointZ != 0) {
+            GlStateManager.translatef(this.rotationPointX * initialScale, this.rotationPointY * initialScale, this.rotationPointZ * initialScale);
+        }
+
         if (this.rotateAngleZ != 0.0F) {
             GlStateManager.rotatef(this.rotateAngleZ, 0.0F, 0.0F, 1.0F);
         }
@@ -145,17 +124,17 @@ public class TimeModelRenderer extends RendererModel {
      * Compiles a GL display list for this model
      */
     @Override
-    protected void compileDisplayList(float scale) {
+    protected void compileDisplayList(float initialScale) {
         this.displayList = GLAllocation.generateDisplayLists(1);
         GlStateManager.newList(this.displayList, 4864);
         BufferBuilder bufferbuilder = Tessellator.getInstance().getBuffer();
 
         for (ModelBox modelBox : this.cubeList) {
-            modelBox.render(bufferbuilder, scale);
+            modelBox.render(bufferbuilder, initialScale);
         }
 
         for (TimeModelBox cube : this.cubes) {
-            cube.render(bufferbuilder, scale);
+            cube.render(bufferbuilder, initialScale);
         }
 
         GlStateManager.endList();
