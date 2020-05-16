@@ -1,7 +1,6 @@
 package example.json;
 
 import example.ModEntities;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.util.ResourceLocation;
 import ru.timeconqueror.timecore.TimeCore;
@@ -18,13 +17,5 @@ public class RenderZombie extends TimeEntityRenderer<EntityZombie> {
     @Override
     protected ResourceLocation getEntityTexture(EntityZombie entity) {
         return new ResourceLocation(TimeCore.MODID, "textures/entity/zombie.png");
-    }
-
-    @Override
-    public float prepareScale(EntityZombie entitylivingbaseIn, float partialTicks) {
-        GlStateManager.enableRescaleNormal();
-        GlStateManager.rotate(180, 0, (float) entitylivingbaseIn.posY, 0);
-        this.preRenderCallback(entitylivingbaseIn, partialTicks);
-        return 0.0625F;
     }
 }

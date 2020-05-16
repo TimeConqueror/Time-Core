@@ -1,6 +1,5 @@
 package ru.timeconqueror.timecore.api.client.render;
 
-import net.minecraft.entity.Entity;
 import net.minecraft.util.ResourceLocation;
 import ru.timeconqueror.timecore.TimeCore;
 import ru.timeconqueror.timecore.client.render.animation.Animation;
@@ -10,7 +9,7 @@ import ru.timeconqueror.timecore.client.render.model.JsonModelParser;
 import java.util.List;
 
 public class TimeClientLoader {
-    private static List<TimeModel> BROKEN_MODEL = loadJsonModels(new ResourceLocation(TimeCore.MODID, "models/entity/broken.json"));
+    private static List<TimeModel> BROKEN_MODEL = loadJsonModels(new ResourceLocation(TimeCore.MODID, "models/broken.json"));
 
     public static List<TimeModel> loadJsonModels(ResourceLocation location) {
         try {
@@ -32,7 +31,7 @@ public class TimeClientLoader {
         return timeModels.get(0);
     }
 
-    public static <T extends Entity> TimeEntityModel loadJsonEntityModel(ResourceLocation location) {
+    public static TimeEntityModel loadJsonEntityModel(ResourceLocation location) {
         return new TimeEntityModel(loadJsonModel(location));
     }
 
