@@ -11,7 +11,7 @@ import net.minecraft.util.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 import ru.timeconqueror.timecore.api.client.render.TimeModel;
 import ru.timeconqueror.timecore.api.util.CollectionUtils;
-import ru.timeconqueror.timecore.client.JsonParsingException;
+import ru.timeconqueror.timecore.client.render.JsonParsingException;
 import ru.timeconqueror.timecore.util.JsonUtils;
 
 import javax.vecmath.Vector2f;

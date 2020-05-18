@@ -10,7 +10,7 @@ import net.minecraft.util.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ru.timeconqueror.timecore.api.util.CollectionUtils;
-import ru.timeconqueror.timecore.client.JsonParsingException;
+import ru.timeconqueror.timecore.client.render.JsonParsingException;
 import ru.timeconqueror.timecore.util.JsonUtils;
 
 import java.io.BufferedReader;

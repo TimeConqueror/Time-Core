@@ -4,10 +4,10 @@ import net.minecraft.entity.AgeableEntity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.world.World;
-import ru.timeconqueror.timecore.api.client.render.IAnimationProvider;
-import ru.timeconqueror.timecore.api.client.render.InsertType;
-import ru.timeconqueror.timecore.client.render.animation.AnimationManager;
-import ru.timeconqueror.timecore.registry.ModEntities;
+import ru.timeconqueror.timecore.api.client.animation.AnimationManager;
+import ru.timeconqueror.timecore.api.client.animation.IAnimationProvider;
+import ru.timeconqueror.timecore.api.client.animation.InsertType;
+import ru.timeconqueror.timecore.registry.TEntities;
 
 import javax.annotation.Nullable;
 
@@ -44,9 +44,9 @@ public class EntityZombie extends EntityStupidAnimal implements IAnimationProvid
         super.livingTick();
 
         if ((System.currentTimeMillis() / 1000) % 5 == 0) {
-            animationManager.startAnimation(ModEntities.HIT_ANIMATION, InsertType.IGNORE);
-            animationManager.startAnimation(ModEntities.SCALING_ANIMATION, InsertType.IGNORE);
-            animationManager.startAnimation(ModEntities.OFFSETTING_ANIMATION, InsertType.IGNORE);
+            animationManager.startAnimation(TEntities.HIT_ANIMATION, InsertType.IGNORE);
+            animationManager.startAnimation(TEntities.SCALING_ANIMATION, InsertType.IGNORE);
+//            animationManager.startAnimation(TEntities.OFFSETTING_ANIMATION, InsertType.IGNORE);
         }
     }
 }

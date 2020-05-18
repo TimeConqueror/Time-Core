@@ -1,8 +1,10 @@
-package ru.timeconqueror.timecore.api.client.render;
+package ru.timeconqueror.timecore.api.client.animation;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.util.ResourceLocation;
 import ru.timeconqueror.timecore.TimeCore;
+import ru.timeconqueror.timecore.api.client.render.TimeEntityModel;
+import ru.timeconqueror.timecore.api.client.render.TimeModel;
 import ru.timeconqueror.timecore.client.render.animation.Animation;
 import ru.timeconqueror.timecore.client.render.animation.JsonAnimationParser;
 import ru.timeconqueror.timecore.client.render.model.JsonModelParser;

@@ -1,4 +1,4 @@
-package ru.timeconqueror.timecore.client;
+package ru.timeconqueror.timecore.client.render;
 
 import java.io.IOException;
 

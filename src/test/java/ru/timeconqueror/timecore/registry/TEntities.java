@@ -14,7 +14,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import ru.timeconqueror.timecore.TimeCore;
-import ru.timeconqueror.timecore.api.client.render.TimeClientLoader;
+import ru.timeconqueror.timecore.api.client.animation.TimeClientLoader;
 import ru.timeconqueror.timecore.api.client.render.TimeEntityModel;
 import ru.timeconqueror.timecore.api.registry.TimeAutoRegistrable;
 import ru.timeconqueror.timecore.client.render.animation.Animation;
@@ -22,11 +22,11 @@ import ru.timeconqueror.timecore.entity.EntityZombie;
 import ru.timeconqueror.timecore.entity.RenderZombie;
 
 @TimeAutoRegistrable(target = TimeAutoRegistrable.Target.CLASS)
-public class ModEntities {
+public class TEntities {
     public static final EntityType<? extends AnimalEntity> ZOMBIE_TYPE = EntityType.Builder.create(EntityZombie::new, EntityClassification.CREATURE)
             .setTrackingRange(80)
             .setShouldReceiveVelocityUpdates(true)
-            .size(1, 2)
+            .size(2, 4)
             .build(TimeCore.MODID + ":zombie");
     public static TimeEntityModel<EntityZombie> zombieModel;
     public static Animation HIT_ANIMATION;
@@ -51,11 +51,11 @@ public class ModEntities {
      */
     @SubscribeEvent
     public static void registerRenders(FMLClientSetupEvent event) {
-        zombieModel = TimeClientLoader.loadJsonEntityModel(new ResourceLocation(TimeCore.MODID, "models/zombie.json"));
+        zombieModel = TimeClientLoader.loadJsonEntityModel(new ResourceLocation(TimeCore.MODID, "models/entity/zombie.json"));
         HIT_ANIMATION = TimeClientLoader.loadAnimation(new ResourceLocation(TimeCore.MODID, "animations/zombie_hit.json")).get(0);
         SCALING_ANIMATION = TimeClientLoader.loadAnimation(new ResourceLocation(TimeCore.MODID, "animations/scaling.json")).get(0);
         OFFSETTING_ANIMATION = TimeClientLoader.loadAnimation(new ResourceLocation(TimeCore.MODID, "animations/offsetting.json")).get(0);
-        RenderingRegistry.registerEntityRenderingHandler(EntityZombie.class, ModEntities::createRenderFor);
+        RenderingRegistry.registerEntityRenderingHandler(EntityZombie.class, TEntities::createRenderFor);
     }
 
     private static EntityRenderer<? super EntityZombie> createRenderFor(EntityRendererManager manager) {

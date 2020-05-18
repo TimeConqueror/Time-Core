@@ -4,7 +4,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import net.minecraft.client.renderer.Vector3f;
-import ru.timeconqueror.timecore.client.JsonParsingException;
+import ru.timeconqueror.timecore.client.render.JsonParsingException;
 
 import javax.vecmath.Vector2f;
 

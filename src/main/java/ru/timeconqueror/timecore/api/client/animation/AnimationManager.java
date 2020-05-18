@@ -1,8 +1,9 @@
-package ru.timeconqueror.timecore.client.render.animation;
+package ru.timeconqueror.timecore.api.client.animation;
 
 import net.minecraft.entity.LivingEntity;
-import ru.timeconqueror.timecore.api.client.render.InsertType;
 import ru.timeconqueror.timecore.api.client.render.TimeEntityModel;
+import ru.timeconqueror.timecore.client.render.animation.Animation;
+import ru.timeconqueror.timecore.client.render.animation.AnimationWatcher;
 
 import java.util.ArrayList;
 import java.util.Iterator;
