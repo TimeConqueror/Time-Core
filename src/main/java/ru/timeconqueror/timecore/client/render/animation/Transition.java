@@ -14,25 +14,6 @@ import java.util.List;
 import java.util.function.Consumer;
 
 public class Transition implements IAnimation {
-    private static final IAnimation.TransitionFactory IDLE_END_TRANSITION_FACTORY = new IAnimation.TransitionFactory(DUMMY_ANIMATION) {
-        @Override
-        public @Nullable List<TransitionBoneOption> createBoneOptions(IAnimation dest, TimeModel model, int existingTime, int transitionTime) {
-            throw new UnsupportedOperationException("Idle End Transition Factory shouldn't be used with source animation");
-        }
-
-        @Override
-        public @NotNull KeyFrame getDestKeyFrame(TimeModelRenderer piece, String boneName, OptionType optionType, int transitionTime) {
-            if (optionType == OptionType.ROTATION) {
-                return KeyFrame.createIdleKeyFrame(transitionTime, piece.rotateAngleX, piece.rotateAngleY, piece.rotateAngleZ);
-            } else if (optionType == OptionType.POSITION) {
-                return KeyFrame.createIdleKeyFrame(transitionTime, piece.offsetX, piece.offsetY, piece.offsetZ);
-            } else if (optionType == OptionType.SCALE) {
-                return KeyFrame.createIdleKeyFrame(transitionTime, piece.getScaleFactor().getX(), piece.getScaleFactor().getY(), piece.getScaleFactor().getZ());
-            }
-
-            throw new UnsupportedOperationException("Can't handle " + optionType + " option type");
-        }
-    };
     private static final IAnimation DUMMY_ANIMATION = new IAnimation() {
         @Override
         public void apply(TimeEntityModel<?> model, int existingTime) {
@@ -62,6 +43,25 @@ public class Transition implements IAnimation {
         @Override
         public void forEachBone(Consumer<String> action) {
 
+        }
+    };
+    private static final IAnimation.TransitionFactory IDLE_END_TRANSITION_FACTORY = new IAnimation.TransitionFactory(DUMMY_ANIMATION) {
+        @Override
+        public @Nullable List<TransitionBoneOption> createBoneOptions(IAnimation dest, TimeModel model, int existingTime, int transitionTime) {
+            throw new UnsupportedOperationException("Idle End Transition Factory shouldn't be used with source animation");
+        }
+
+        @Override
+        public @NotNull KeyFrame getDestKeyFrame(TimeModelRenderer piece, String boneName, OptionType optionType, int transitionTime) {
+            if (optionType == OptionType.ROTATION) {
+                return KeyFrame.createIdleKeyFrame(transitionTime, piece.rotateAngleX, piece.rotateAngleY, piece.rotateAngleZ);
+            } else if (optionType == OptionType.POSITION) {
+                return KeyFrame.createIdleKeyFrame(transitionTime, piece.offsetX, piece.offsetY, piece.offsetZ);
+            } else if (optionType == OptionType.SCALE) {
+                return KeyFrame.createIdleKeyFrame(transitionTime, piece.getScaleFactor().getX(), piece.getScaleFactor().getY(), piece.getScaleFactor().getZ());
+            }
+
+            throw new UnsupportedOperationException("Can't handle " + optionType + " option type");
         }
     };
     private int transitionLength;
