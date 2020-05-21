@@ -54,7 +54,7 @@ public class Transition implements IAnimation {
         @Override
         public @NotNull KeyFrame getDestKeyFrame(TimeModelRenderer piece, String boneName, OptionType optionType, int transitionTime) {
             if (optionType == OptionType.ROTATION) {
-                return KeyFrame.createIdleKeyFrame(transitionTime, piece.rotateAngleX, piece.rotateAngleY, piece.rotateAngleZ);
+                return KeyFrame.createIdleKeyFrame(transitionTime, 0, 0, 0);
             } else if (optionType == OptionType.POSITION) {
                 return KeyFrame.createIdleKeyFrame(transitionTime, piece.offsetX, piece.offsetY, piece.offsetZ);
             } else if (optionType == OptionType.SCALE) {
@@ -84,7 +84,7 @@ public class Transition implements IAnimation {
             TimeModelRenderer piece = model.getPiece(name);
             if (piece != null) {
                 // Rotations
-                KeyFrame startKeyFrame = KeyFrame.createIdleKeyFrame(transitionTime, piece.rotateAngleX, piece.rotateAngleY, piece.rotateAngleZ);
+                KeyFrame startKeyFrame = KeyFrame.createIdleKeyFrame(transitionTime, 0, 0, 0);
                 KeyFrame endKeyFrame = transitionFactory.getDestKeyFrame(piece, name, OptionType.ROTATION, transitionTime);
                 Pair<KeyFrame, KeyFrame> rotations = Pair.of(startKeyFrame, endKeyFrame);
 
@@ -213,7 +213,7 @@ public class Transition implements IAnimation {
                 TimeModelRenderer piece = model.getPiece(sourceBone.name);
                 if (piece != null) {
                     // Rotations
-                    KeyFrame startKeyFrame = calcStartKeyFrame(source, sourceBone.rotations, piece.rotateAngleX, piece.rotateAngleY, piece.rotateAngleZ, existingTime);
+                    KeyFrame startKeyFrame = calcStartKeyFrame(source, sourceBone.rotations, 0, 0, 0, existingTime);
                     KeyFrame endKeyFrame = destFactory.getDestKeyFrame(piece, sourceBone.name, OptionType.ROTATION, transitionTime);
                     Pair<KeyFrame, KeyFrame> rotations = Pair.of(startKeyFrame, endKeyFrame);
 
@@ -263,9 +263,9 @@ public class Transition implements IAnimation {
 
             if (piece != null) {
                 Vector3f interpolated = interpolate(rotations.getA(), rotations.getB(), existingTime);
-                piece.rotateAngleX = interpolated.getX();
-                piece.rotateAngleY = interpolated.getY();
-                piece.rotateAngleZ = interpolated.getZ();
+                piece.rotateAngleX += interpolated.getX();
+                piece.rotateAngleY += interpolated.getY();
+                piece.rotateAngleZ += interpolated.getZ();
 
                 interpolated = interpolate(positions.getA(), positions.getB(), existingTime);
                 piece.offsetX = interpolated.getX();

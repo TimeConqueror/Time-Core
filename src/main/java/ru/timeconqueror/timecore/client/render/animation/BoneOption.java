@@ -120,10 +120,10 @@ public class BoneOption {
         if (piece != null) {
             Pair<KeyFrame, KeyFrame> keyPair = findKeyFrames(rotations, existingTime);
             if (keyPair != null) {
-                Vector3f rotateVector = calcCurrentVectorFor(animation, keyPair, piece.rotateAngleX, piece.rotateAngleY, piece.rotateAngleZ, existingTime);
-                piece.rotateAngleX = rotateVector.getX();
-                piece.rotateAngleY = rotateVector.getY();
-                piece.rotateAngleZ = rotateVector.getZ();
+                Vector3f rotateVector = calcCurrentVectorFor(animation, keyPair, 0, 0, 0, existingTime);
+                piece.rotateAngleX += rotateVector.getX();
+                piece.rotateAngleY += rotateVector.getY();
+                piece.rotateAngleZ += rotateVector.getZ();
             }
 
             keyPair = findKeyFrames(positions, existingTime);

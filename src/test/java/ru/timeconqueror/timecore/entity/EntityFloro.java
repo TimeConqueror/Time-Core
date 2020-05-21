@@ -6,6 +6,7 @@ import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.world.World;
 import ru.timeconqueror.timecore.api.client.animation.AnimationManager;
 import ru.timeconqueror.timecore.api.client.animation.IAnimationProvider;
+import ru.timeconqueror.timecore.registry.TEntities;
 
 import javax.annotation.Nullable;
 
@@ -42,7 +43,8 @@ public class EntityFloro extends EntityStupidAnimal implements IAnimationProvide
         super.livingTick();
 
         if ((System.currentTimeMillis() / 1000) % 5 == 0) {
-//            animationManager.startAnimationIgnorable(TEntities.FLORO_WALK, 333);
+            animationManager.startAnimationIgnorable(TEntities.FLORO_WALK, 333);
+//            animationManager.removeAnimation(2000);
 //            animationManager.startAnimation(TEntities.SCALING_ANIMATION, InsertType.IGNORE);
 //            animationManager.startAnimation(TEntities.OFFSETTING_ANIMATION, InsertType.IGNORE);
         }

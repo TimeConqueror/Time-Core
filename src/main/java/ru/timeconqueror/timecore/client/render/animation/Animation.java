@@ -114,7 +114,7 @@ public class Animation implements IAnimation {
                 TimeModelRenderer piece = model.getPiece(name);
                 if (piece != null) {
                     // Rotations
-                    KeyFrame startKeyFrame = calcStartKeyFrame(source, sourceBone.getRotations(), piece.rotateAngleX, piece.rotateAngleY, piece.rotateAngleZ, existingTime);
+                    KeyFrame startKeyFrame = calcStartKeyFrame(source, sourceBone.getRotations(), 0, 0, 0, existingTime);
                     KeyFrame endKeyFrame = destFactory.getDestKeyFrame(piece, name, OptionType.ROTATION, transitionTime);
                     Pair<KeyFrame, KeyFrame> rotations = Pair.of(startKeyFrame, endKeyFrame);
 
@@ -143,9 +143,9 @@ public class Animation implements IAnimation {
 
             if (optionType == OptionType.ROTATION) {
                 if (destBone != null) {
-                    return calcEndKeyFrame(destBone.getRotations(), piece.rotateAngleX, piece.rotateAngleY, piece.rotateAngleZ, transitionTime);
+                    return calcEndKeyFrame(destBone.getRotations(), 0, 0, 0, transitionTime);
                 } else {
-                    return KeyFrame.createIdleKeyFrame(transitionTime, piece.rotateAngleX, piece.rotateAngleY, piece.rotateAngleZ);
+                    return KeyFrame.createIdleKeyFrame(transitionTime, 0, 0, 0);
                 }
             } else if (optionType == OptionType.POSITION) {
                 if (destBone != null) {
