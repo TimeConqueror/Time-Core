@@ -1,7 +1,5 @@
 package ru.timeconqueror.timecore.registry;
 
-import net.minecraft.client.renderer.entity.EntityRenderer;
-import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.entity.EntityClassification;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.passive.AnimalEntity;
@@ -18,7 +16,9 @@ import ru.timeconqueror.timecore.api.client.animation.TimeClientLoader;
 import ru.timeconqueror.timecore.api.client.render.TimeEntityModel;
 import ru.timeconqueror.timecore.api.registry.TimeAutoRegistrable;
 import ru.timeconqueror.timecore.client.render.animation.Animation;
+import ru.timeconqueror.timecore.entity.EntityFloro;
 import ru.timeconqueror.timecore.entity.EntityZombie;
+import ru.timeconqueror.timecore.entity.RenderFloro;
 import ru.timeconqueror.timecore.entity.RenderZombie;
 
 @TimeAutoRegistrable(target = TimeAutoRegistrable.Target.CLASS)
@@ -26,23 +26,34 @@ public class TEntities {
     public static final EntityType<? extends AnimalEntity> ZOMBIE_TYPE = EntityType.Builder.create(EntityZombie::new, EntityClassification.CREATURE)
             .setTrackingRange(80)
             .setShouldReceiveVelocityUpdates(true)
-            .size(2, 4)
+            .size(1, 2)
             .build(TimeCore.MODID + ":zombie");
+    public static final EntityType<? extends AnimalEntity> FLORO = EntityType.Builder.create(EntityFloro::new, EntityClassification.CREATURE)
+            .setTrackingRange(80)
+            .setShouldReceiveVelocityUpdates(true)
+            .size(1, 2)
+            .build(TimeCore.MODID + ":floro");
     public static TimeEntityModel<EntityZombie> zombieModel;
+    public static TimeEntityModel<EntityFloro> floroModel;
     public static Animation HIT_ANIMATION;
     public static Animation SCALING_ANIMATION;
     public static Animation OFFSETTING_ANIMATION;
+    //    public static Animation FLORO_HIDING;
+    public static Animation FLORO_SHOOT;
+    public static Animation FLORO_SHOWING;
+    public static Animation FLORO_WALK;
 
     @SubscribeEvent
     public static void register(RegistryEvent.Register<EntityType<?>> event) {
-        ZOMBIE_TYPE.setRegistryName(TimeCore.MODID + ":zombie");
-        event.getRegistry().register(ZOMBIE_TYPE);
+        event.getRegistry().register(ZOMBIE_TYPE.setRegistryName(TimeCore.MODID + ":zombie"));
+        event.getRegistry().register(FLORO.setRegistryName(TimeCore.MODID + ":floro"));
     }
 
     @SubscribeEvent
     public static void registerSpawnEggs(final RegistryEvent.Register<Item> event) {
         event.getRegistry().registerAll(
-                new SpawnEggItem(ZOMBIE_TYPE, 0xFF00FF00, 0xFF000000, new Item.Properties().group(ItemGroup.MISC)).setRegistryName(TimeCore.MODID, "spawn_zombie")
+                new SpawnEggItem(ZOMBIE_TYPE, 0xFF00FF00, 0xFF000000, new Item.Properties().group(ItemGroup.MISC)).setRegistryName(TimeCore.MODID, "spawn_zombie"),
+                new SpawnEggItem(FLORO, 0xFF00FF00, 0xFF000000, new Item.Properties().group(ItemGroup.MISC)).setRegistryName(TimeCore.MODID, "spawn_floro")
         );
     }
 
@@ -52,18 +63,15 @@ public class TEntities {
     @SubscribeEvent
     public static void registerRenders(FMLClientSetupEvent event) {
         zombieModel = TimeClientLoader.loadJsonEntityModel(new ResourceLocation(TimeCore.MODID, "models/entity/zombie.json"));
+        floroModel = TimeClientLoader.loadJsonEntityModel(new ResourceLocation(TimeCore.MODID, "models/entity/floro.json"));
         HIT_ANIMATION = TimeClientLoader.loadAnimation(new ResourceLocation(TimeCore.MODID, "animations/zombie_hit.json")).get(0);
         SCALING_ANIMATION = TimeClientLoader.loadAnimation(new ResourceLocation(TimeCore.MODID, "animations/scaling.json")).get(0);
         OFFSETTING_ANIMATION = TimeClientLoader.loadAnimation(new ResourceLocation(TimeCore.MODID, "animations/offsetting.json")).get(0);
-        RenderingRegistry.registerEntityRenderingHandler(EntityZombie.class, TEntities::createRenderFor);
-    }
-
-    private static EntityRenderer<? super EntityZombie> createRenderFor(EntityRendererManager manager) {
-        try {
-            return new RenderZombie(manager);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
+//        FLORO_HIDING = TimeClientLoader.loadAnimation(new ResourceLocation(TimeCore.MODID, "animations/floro.hiding.json")).get(0);
+        FLORO_SHOOT = TimeClientLoader.loadAnimation(new ResourceLocation(TimeCore.MODID, "animations/floro.shoot.json")).get(0);
+        FLORO_SHOWING = TimeClientLoader.loadAnimation(new ResourceLocation(TimeCore.MODID, "animations/floro.showing.json")).get(0);
+        FLORO_WALK = TimeClientLoader.loadAnimation(new ResourceLocation(TimeCore.MODID, "animations/floro.walk.json")).get(0);
+        RenderingRegistry.registerEntityRenderingHandler(EntityZombie.class, RenderZombie::new);
+        RenderingRegistry.registerEntityRenderingHandler(EntityFloro.class, RenderFloro::new);
     }
 }

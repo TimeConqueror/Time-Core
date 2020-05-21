@@ -2,6 +2,7 @@ package ru.timeconqueror.timecore.client.render.animation;
 
 import net.minecraft.client.renderer.Vector3f;
 import net.minecraft.util.math.MathHelper;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ru.timeconqueror.timecore.TimeCore;
 import ru.timeconqueror.timecore.api.client.render.TimeModel;
@@ -12,10 +13,19 @@ import java.util.List;
 
 public class BoneOption {
     private String boneName;
+    /**
+     * Immutable rotation keyframe list
+     */
     @Nullable
     private List<KeyFrame> rotations;
+    /**
+     * Immutable position keyframe list
+     */
     @Nullable
     private List<KeyFrame> positions;
+    /**
+     * Immutable scale keyframe list
+     */
     @Nullable
     private List<KeyFrame> scales;
 
@@ -26,8 +36,24 @@ public class BoneOption {
         this.scales = scales;
     }
 
+    /**
+     * Finds start and end keyframes for provided animation time.
+     * <p>
+     * Returns:
+     * <table>
+     *     <tr><th>Result</th><th>Predicate</th></tr>
+     *     <tr><td>null</td><td>if frames are null</td></tr>
+     *     <tr><td>Pair.of(null, firstFrame)</td><td>f time has not yet reached the first frame's one</td></tr>
+     *     <tr><td>Pair.of(startFrame, endFrame)</td><td>if existing time is within these frames' time bounds</td></tr>
+     *     <tr><td>Pair.of(lastFrame, null)</td><td>if existing time is behind time bounds of last frame</td></tr>
+     * </table>
+     *
+     * @param frames       frame array in
+     * @param existingTime animation's existing time
+     * @return start and end keyframes for provided animation time
+     */
     @Nullable
-    private static Pair<KeyFrame, KeyFrame> findKeyFrames(List<KeyFrame> frames, long existingTime) {
+    static Pair<KeyFrame, KeyFrame> findKeyFrames(List<KeyFrame> frames, long existingTime) {
         if (frames == null) return null;
 
 //        if(frames.size() == 1) return new Pair<>(frames.get(0), null);
@@ -36,20 +62,21 @@ public class BoneOption {
             KeyFrame keyFrame = frames.get(i);
 
             if (i == 0 && keyFrame.getStartTime() > existingTime) {
-                return new Pair<>(null, keyFrame);
+                return Pair.of(null, keyFrame);
             } else if (i == frames.size() - 1) {
-                return new Pair<>(keyFrame, null);
+                return Pair.of(keyFrame, null);
             }
 
             if (keyFrame.getStartTime() <= existingTime && frames.get(i + 1).getStartTime() > existingTime) {
-                return new Pair<>(keyFrame, frames.get(i + 1));
+                return Pair.of(keyFrame, frames.get(i + 1));
             }
         }
 
         return null;
     }
 
-    private static Vector3f calcChangeVectorFor(Animation animation, Pair<KeyFrame, KeyFrame> keyPair, float startX, float startY, float startZ, int existingTime) {
+    @NotNull
+    static Vector3f calcCurrentVectorFor(IAnimation animation, @NotNull Pair<KeyFrame, KeyFrame> keyPair, float startX, float startY, float startZ, int existingTime) {
         KeyFrame start = keyPair.getA();
         KeyFrame end = keyPair.getB();
 
@@ -74,22 +101,26 @@ public class BoneOption {
             endTime = end.getStartTime();
         }
 
+        return interpolate(startVec, endVec, startTime, endTime, existingTime);
+    }
+
+    static Vector3f interpolate(Vector3f start, Vector3f end, int startTime, int endTime, int existingTime) {
         float factor = endTime - startTime == 0 ? 1 : (existingTime - startTime) / (float) (endTime - startTime);
 
-        float outX = MathHelper.lerp(factor, startVec.getX(), endVec.getX());
-        float outY = MathHelper.lerp(factor, startVec.getY(), endVec.getY());
-        float outZ = MathHelper.lerp(factor, startVec.getZ(), endVec.getZ());
+        float outX = MathHelper.lerp(factor, start.getX(), end.getX());
+        float outY = MathHelper.lerp(factor, start.getY(), end.getY());
+        float outZ = MathHelper.lerp(factor, start.getZ(), end.getZ());
 
         return new Vector3f(outX, outY, outZ);
     }
 
-    public void apply(Animation animation, TimeModel model, int existingTime) {
+    public void apply(IAnimation animation, TimeModel model, int existingTime) {
         TimeModelRenderer piece = model.getPiece(boneName);
 
         if (piece != null) {
             Pair<KeyFrame, KeyFrame> keyPair = findKeyFrames(rotations, existingTime);
             if (keyPair != null) {
-                Vector3f rotateVector = calcChangeVectorFor(animation, keyPair, piece.rotateAngleX, piece.rotateAngleY, piece.rotateAngleZ, existingTime);
+                Vector3f rotateVector = calcCurrentVectorFor(animation, keyPair, piece.rotateAngleX, piece.rotateAngleY, piece.rotateAngleZ, existingTime);
                 piece.rotateAngleX = rotateVector.getX();
                 piece.rotateAngleY = rotateVector.getY();
                 piece.rotateAngleZ = rotateVector.getZ();
@@ -97,7 +128,7 @@ public class BoneOption {
 
             keyPair = findKeyFrames(positions, existingTime);
             if (keyPair != null) {
-                Vector3f posVector = calcChangeVectorFor(animation, keyPair, piece.offsetX, piece.offsetY, piece.offsetZ, existingTime);
+                Vector3f posVector = calcCurrentVectorFor(animation, keyPair, piece.offsetX, piece.offsetY, piece.offsetZ, existingTime);
                 piece.offsetX = posVector.getX();
                 piece.offsetY = posVector.getY();
                 piece.offsetZ = posVector.getZ();
@@ -105,11 +136,27 @@ public class BoneOption {
 
             keyPair = findKeyFrames(scales, existingTime);
             if (keyPair != null) {
-                Vector3f vec = calcChangeVectorFor(animation, keyPair, piece.getScaleFactor().getX(), piece.getScaleFactor().getY(), piece.getScaleFactor().getZ(), existingTime);
+                Vector3f vec = calcCurrentVectorFor(animation, keyPair, piece.getScaleFactor().getX(), piece.getScaleFactor().getY(), piece.getScaleFactor().getZ(), existingTime);
                 piece.setScaleFactor(vec.getX(), vec.getY(), vec.getZ());
             }
         } else {
             TimeCore.LOGGER.error("Can't find bone with name " + boneName + " in animation " + animation.getName() + " applied for model " + model.getName());
         }
+    }
+
+    public List<KeyFrame> getPositions() {
+        return positions;
+    }
+
+    public List<KeyFrame> getRotations() {
+        return rotations;
+    }
+
+    public List<KeyFrame> getScales() {
+        return scales;
+    }
+
+    public String getName() {
+        return boneName;
     }
 }

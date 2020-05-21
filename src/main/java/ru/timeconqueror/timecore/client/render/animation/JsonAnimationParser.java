@@ -15,10 +15,8 @@ import ru.timeconqueror.timecore.util.JsonUtils;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class JsonAnimationParser {
     private static final String[] ACCEPTABLE_FORMAT_VERSIONS = new String[]{"1.8.0"};
@@ -63,7 +61,7 @@ public class JsonAnimationParser {
                 }
             }
 
-            animationList.add(new Animation(loop, name, animationLength, !boneOptions.isEmpty() ? boneOptions : null));
+            animationList.add(new Animation(loop, name, animationLength, !boneOptions.isEmpty() ? Collections.unmodifiableMap(boneOptions.stream().collect(Collectors.toMap(BoneOption::getName, boneOption -> boneOption))) : null));
         }
 
         return animationList;
@@ -105,7 +103,7 @@ public class JsonAnimationParser {
             }
         }
 
-        return !keyFrames.isEmpty() ? keyFrames : null;
+        return !keyFrames.isEmpty() ? Collections.unmodifiableList(keyFrames) : null;
     }
 
     private void checkFormatVersion(String version) throws JsonParsingException {

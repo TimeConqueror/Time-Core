@@ -1,58 +1,69 @@
 package ru.timeconqueror.timecore.api.client.animation;
 
 import net.minecraft.entity.LivingEntity;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import ru.timeconqueror.timecore.api.client.render.TimeEntityModel;
-import ru.timeconqueror.timecore.client.render.animation.Animation;
+import ru.timeconqueror.timecore.api.util.Requirements;
 import ru.timeconqueror.timecore.client.render.animation.AnimationWatcher;
-
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import ru.timeconqueror.timecore.client.render.animation.IAnimation;
+import ru.timeconqueror.timecore.client.render.animation.Transition;
 
 public class AnimationManager {
-    private List<AnimationWatcher> animations = new ArrayList<>();
+    @Nullable
+    private AnimationWatcher currentAnimationWatcher;
 
-    public void startAnimation(Animation animation, InsertType insertType) {
-        if (insertType == InsertType.CLEAR) {
-            animations.clear();
-        } else {
-            for (Iterator<AnimationWatcher> iterator = animations.iterator(); iterator.hasNext(); ) {
-                AnimationWatcher animationWatcher = iterator.next();
-                Animation loopAnimation = animationWatcher.getAnimation();
-                if (loopAnimation == animation) {
-                    if (insertType == InsertType.IGNORE) {
-                        return;
-                    } else if (insertType == InsertType.OVERWRITE) {
-                        iterator.remove();
-                    }
+    public void startAnimationIgnorable(@NotNull IAnimation animation, int transitionTime) {
+        if (currentAnimationWatcher != null && animation.equals(currentAnimationWatcher.getAnimation())) return;
+
+        startAnimationWithTransition(animation, transitionTime);
+    }
+
+    public void startAnimationWithTransition(@NotNull IAnimation animation, int transitionTime) {
+        Requirements.greaterOrEqualsThan(transitionTime, 0);
+
+        if (currentAnimationWatcher == null) {
+            currentAnimationWatcher = new AnimationWatcher(null);
+        }
+
+        currentAnimationWatcher.enableTransitionMode(animation, transitionTime);
+    }
+
+    public void removeAnimation(int transitionTime) {
+        Requirements.greaterOrEqualsThan(transitionTime, 0);
+        if (currentAnimationWatcher != null) {
+            if (transitionTime == 0) {
+                currentAnimationWatcher = null;
+            } else {
+                currentAnimationWatcher.enableTransitionMode(null, transitionTime);
+            }
+        }
+    }
+
+    public <T extends LivingEntity> void processAnimations(TimeEntityModel<T> model) {
+        if (currentAnimationWatcher != null && currentAnimationWatcher.requiresTransitionPreparation()) {
+            IAnimation transition = Transition.create(currentAnimationWatcher, currentAnimationWatcher.getTransitionDestination(), model.getBaseModel(), currentAnimationWatcher.getTransitionTime());
+            currentAnimationWatcher = new AnimationWatcher(transition);
+        }
+
+        long time = System.currentTimeMillis();
+
+        if (currentAnimationWatcher != null) {
+            if (currentAnimationWatcher.isAnimationEnded(time)) {
+                if (currentAnimationWatcher.getAnimation() instanceof Transition) {
+                    IAnimation anim = ((Transition) currentAnimationWatcher.getAnimation()).getDestAnimation();
+                    currentAnimationWatcher = anim != null ? new AnimationWatcher(anim) : null;
+                } else if (currentAnimationWatcher.getAnimation().isLooped()) {
+                    currentAnimationWatcher.resetTimer();
+                } else {
+                    currentAnimationWatcher = null;
                 }
             }
         }
 
-        animations.add(new AnimationWatcher(animation));
-    }
-
-    public void removeAnimation(Animation animation) {
-        animations.removeIf(animationWatcher -> animationWatcher.getAnimation() == animation);
-    }
-
-    public <T extends LivingEntity> void processAnimations(TimeEntityModel<T> model) {
-        for (Iterator<AnimationWatcher> iterator = animations.iterator(); iterator.hasNext(); ) {
-            AnimationWatcher watcher = iterator.next();
-            Animation animation = watcher.getAnimation();
-
-            long time = System.currentTimeMillis();
-
-            if (watcher.isAnimationEnded(time)) {
-                if (watcher.getAnimation().isLooped()) {
-                    watcher.resetTimer();
-                } else {
-                    iterator.remove();
-                    continue;
-                }
-            }
-
-            animation.apply(model, watcher.getExistingTime(time));
+        if (currentAnimationWatcher != null) {
+            IAnimation animation = currentAnimationWatcher.getAnimation();
+            animation.apply(model, currentAnimationWatcher.getExistingTime(time));
         }
     }
 }
