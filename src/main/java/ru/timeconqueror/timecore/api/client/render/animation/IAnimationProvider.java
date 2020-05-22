@@ -1,4 +1,4 @@
-package ru.timeconqueror.timecore.api.client.animation;
+package ru.timeconqueror.timecore.api.client.render.animation;
 
 public interface IAnimationProvider {
     AnimationManager getAnimationManager();

@@ -4,8 +4,8 @@ import net.minecraft.entity.AgeableEntity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.world.World;
-import ru.timeconqueror.timecore.api.client.animation.AnimationManager;
-import ru.timeconqueror.timecore.api.client.animation.IAnimationProvider;
+import ru.timeconqueror.timecore.api.client.render.animation.AnimationManager;
+import ru.timeconqueror.timecore.api.client.render.animation.IAnimationProvider;
 import ru.timeconqueror.timecore.registry.TEntities;
 
 import javax.annotation.Nullable;

@@ -1,4 +1,4 @@
-package ru.timeconqueror.timecore.api.client.animation;
+package ru.timeconqueror.timecore.api.client.render.animation;
 
 import net.minecraft.entity.LivingEntity;
 import org.jetbrains.annotations.NotNull;
