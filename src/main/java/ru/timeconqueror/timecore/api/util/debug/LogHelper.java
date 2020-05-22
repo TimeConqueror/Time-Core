@@ -1,4 +1,4 @@
-package ru.timeconqueror.timecore.api.auxiliary.debug;
+package ru.timeconqueror.timecore.api.util.debug;
 
 import net.minecraft.launchwrapper.Launch;
 import net.minecraft.util.text.TextFormatting;

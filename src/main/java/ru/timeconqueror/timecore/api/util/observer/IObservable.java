@@ -1,4 +1,4 @@
-package ru.timeconqueror.timecore.api.auxiliary.observer;
+package ru.timeconqueror.timecore.api.util.observer;
 
 public interface IObservable<T> {
     void addListener(IListener<T> observer);

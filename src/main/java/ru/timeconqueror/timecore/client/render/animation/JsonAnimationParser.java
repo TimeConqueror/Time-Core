@@ -10,22 +10,20 @@ import net.minecraft.util.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.util.vector.Vector3f;
-import ru.timeconqueror.timecore.api.auxiliary.CollectionUtils;
+import ru.timeconqueror.timecore.api.util.CollectionUtils;
 import ru.timeconqueror.timecore.client.render.JsonParsingException;
 import ru.timeconqueror.timecore.util.JsonUtils;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class JsonAnimationParser {
     private static final String[] ACCEPTABLE_FORMAT_VERSIONS = new String[]{"1.8.0"};
     private static final Gson GSON = (new GsonBuilder()).create();
 
-    public List<Animation> parseAnimations(@NotNull ResourceLocation fileLocation) throws JsonParsingException {
+    public List<IAnimation> parseAnimations(@NotNull ResourceLocation fileLocation) throws JsonParsingException {
         try (final IResource resource = Minecraft.getMinecraft().getResourceManager().getResource(fileLocation)) {
             BufferedReader reader = new BufferedReader(new InputStreamReader(resource.getInputStream()));
 
@@ -38,14 +36,14 @@ public class JsonAnimationParser {
     }
 
     @NotNull
-    private List<Animation> parseAnimation(JsonObject object) throws JsonParsingException {
+    private List<IAnimation> parseAnimation(JsonObject object) throws JsonParsingException {
         if (object.has("format_version")) {
             String formatVersion = object.get("format_version").getAsString();
             checkFormatVersion(formatVersion);
         }
 
         JsonObject animations = JsonUtils.get("animations", object).getAsJsonObject();
-        List<Animation> animationList = new ArrayList<>();
+        List<IAnimation> animationList = new ArrayList<>();
 
         for (Map.Entry<String, JsonElement> animationEntry : animations.entrySet()) {
             String name = animationEntry.getKey();
@@ -65,7 +63,7 @@ public class JsonAnimationParser {
                 }
             }
 
-            animationList.add(new Animation(loop, name, animationLength, !boneOptions.isEmpty() ? boneOptions : null));
+            animationList.add(new Animation(loop, name, animationLength, !boneOptions.isEmpty() ? Collections.unmodifiableMap(boneOptions.stream().collect(Collectors.toMap(BoneOption::getName, boneOption -> boneOption))) : null));
         }
 
         return animationList;
@@ -107,7 +105,7 @@ public class JsonAnimationParser {
             }
         }
 
-        return !keyFrames.isEmpty() ? keyFrames : null;
+        return !keyFrames.isEmpty() ? Collections.unmodifiableList(keyFrames) : null;
     }
 
     private void checkFormatVersion(String version) throws JsonParsingException {

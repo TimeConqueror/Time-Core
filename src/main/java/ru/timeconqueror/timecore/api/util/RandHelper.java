@@ -1,4 +1,4 @@
-package ru.timeconqueror.timecore.api.auxiliary;
+package ru.timeconqueror.timecore.api.util;
 
 import java.util.Random;
 

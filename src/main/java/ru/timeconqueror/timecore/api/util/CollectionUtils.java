@@ -1,4 +1,4 @@
-package ru.timeconqueror.timecore.api.auxiliary;
+package ru.timeconqueror.timecore.api.util;
 
 public class CollectionUtils {
     public static <T> boolean contains(T[] array, T object) {

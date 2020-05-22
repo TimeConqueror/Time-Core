@@ -1,7 +1,7 @@
 @file:JvmName("MessageUtils")
 @file:JvmMultifileClass
 
-package ru.timeconqueror.timecore.api.auxiliary
+package ru.timeconqueror.timecore.api.util
 
 import net.minecraft.util.text.ITextComponent
 import net.minecraft.util.text.TextFormatting

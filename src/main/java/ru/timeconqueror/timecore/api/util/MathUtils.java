@@ -1,4 +1,4 @@
-package ru.timeconqueror.timecore.api.auxiliary;
+package ru.timeconqueror.timecore.api.util;
 
 //from net.minecraft.util.math.MathHelper 1.14.4
 public class MathUtils {

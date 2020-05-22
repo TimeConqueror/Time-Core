@@ -1,4 +1,4 @@
-package ru.timeconqueror.timecore.api.auxiliary.client;
+package ru.timeconqueror.timecore.api.util.client;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.TextureManager;

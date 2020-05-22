@@ -11,15 +11,15 @@ import net.minecraftforge.fml.common.registry.EntityRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import ru.timeconqueror.timecore.TimeCore;
-import ru.timeconqueror.timecore.api.client.render.TimeClientLoader;
 import ru.timeconqueror.timecore.api.client.render.TimeEntityModel;
-import ru.timeconqueror.timecore.client.render.animation.Animation;
+import ru.timeconqueror.timecore.api.client.render.animation.TimeClientLoader;
+import ru.timeconqueror.timecore.client.render.animation.IAnimation;
 
 public class ModEntities {
     public static TimeEntityModel zombieModel;
-    public static Animation hitAnimation;
-    public static Animation scalingAnimation;
-    public static Animation offsettingAnimation;
+    public static IAnimation hitAnimation;
+    public static IAnimation scalingAnimation;
+    public static IAnimation offsettingAnimation;
 
     public static void register() {
         int id = 0;
@@ -36,9 +36,9 @@ public class ModEntities {
         RenderingRegistry.registerEntityRenderingHandler(EntityPhoenix.class, RenderPhoenix::new);
         RenderingRegistry.registerEntityRenderingHandler(EntityZombie.class, RenderZombie::new);
         zombieModel = TimeClientLoader.loadJsonEntityModel(new ResourceLocation(TimeCore.MODID, "models/entity/zombie.json"));
-        hitAnimation = TimeClientLoader.loadAnimation(new ResourceLocation(TimeCore.MODID, "animations/zombie_hit.json")).get(0);
-        scalingAnimation = TimeClientLoader.loadAnimation(new ResourceLocation(TimeCore.MODID, "animations/scaling.json")).get(0);
-        offsettingAnimation = TimeClientLoader.loadAnimation(new ResourceLocation(TimeCore.MODID, "animations/offsetting.json")).get(0);
+        hitAnimation = TimeClientLoader.loadAnimation(new ResourceLocation(TimeCore.MODID, "animations/zombie_hit.json"));
+        scalingAnimation = TimeClientLoader.loadAnimation(new ResourceLocation(TimeCore.MODID, "animations/scaling.json"));
+        offsettingAnimation = TimeClientLoader.loadAnimation(new ResourceLocation(TimeCore.MODID, "animations/offsetting.json"));
     }
 
     /**

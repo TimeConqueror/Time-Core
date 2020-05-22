@@ -1,4 +1,4 @@
-package ru.timeconqueror.timecore.api.auxiliary.debug;
+package ru.timeconqueror.timecore.api.util.debug;
 
 import java.util.HashMap;
 import java.util.LinkedList;

@@ -4,9 +4,8 @@ import example.EntityStupidAnimal;
 import example.ModEntities;
 import net.minecraft.entity.EntityAgeable;
 import net.minecraft.world.World;
-import ru.timeconqueror.timecore.api.client.render.IAnimationProvider;
-import ru.timeconqueror.timecore.api.client.render.InsertType;
-import ru.timeconqueror.timecore.client.render.animation.AnimationManager;
+import ru.timeconqueror.timecore.api.client.render.animation.AnimationManager;
+import ru.timeconqueror.timecore.api.client.render.animation.IAnimationProvider;
 
 import javax.annotation.Nullable;
 
@@ -43,9 +42,9 @@ public class EntityZombie extends EntityStupidAnimal implements IAnimationProvid
         super.onLivingUpdate();
 
         if ((System.currentTimeMillis() / 1000) % 5 == 0) {
-            animationManager.startAnimation(ModEntities.hitAnimation, InsertType.IGNORE);
-            animationManager.startAnimation(ModEntities.scalingAnimation, InsertType.IGNORE);
-            animationManager.startAnimation(ModEntities.offsettingAnimation, InsertType.IGNORE);
+            animationManager.startAnimationIgnorable(ModEntities.hitAnimation, 333);
+            animationManager.startAnimationIgnorable(ModEntities.scalingAnimation, 333);
+            animationManager.startAnimationIgnorable(ModEntities.offsettingAnimation, 333);
         }
     }
 }

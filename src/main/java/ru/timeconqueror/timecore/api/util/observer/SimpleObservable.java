@@ -1,4 +1,4 @@
-package ru.timeconqueror.timecore.api.auxiliary.observer;
+package ru.timeconqueror.timecore.api.util.observer;
 
 import java.util.ArrayList;
 

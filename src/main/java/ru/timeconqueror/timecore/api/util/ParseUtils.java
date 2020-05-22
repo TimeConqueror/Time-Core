@@ -1,4 +1,4 @@
-package ru.timeconqueror.timecore.api.auxiliary;
+package ru.timeconqueror.timecore.api.util;
 
 public class ParseUtils {
     public static boolean isInt(String s) {
