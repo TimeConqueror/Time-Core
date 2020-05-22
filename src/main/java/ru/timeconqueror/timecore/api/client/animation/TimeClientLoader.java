@@ -6,6 +6,7 @@ import ru.timeconqueror.timecore.TimeCore;
 import ru.timeconqueror.timecore.api.client.render.TimeEntityModel;
 import ru.timeconqueror.timecore.api.client.render.TimeModel;
 import ru.timeconqueror.timecore.client.render.animation.Animation;
+import ru.timeconqueror.timecore.client.render.animation.IAnimation;
 import ru.timeconqueror.timecore.client.render.animation.JsonAnimationParser;
 import ru.timeconqueror.timecore.client.render.model.JsonModelParser;
 
@@ -39,13 +40,23 @@ public class TimeClientLoader {
         return new TimeEntityModel<>(loadJsonModel(location));
     }
 
-    public static List<Animation> loadAnimation(ResourceLocation location) {
+    public static List<IAnimation> loadAnimations(ResourceLocation location) {
         try {
             return new JsonAnimationParser().parseAnimations(location);
         } catch (Throwable e) {
             TimeCore.LOGGER.error("Can't load animation " + location.toString(), e);
         }
 
-        return BROKEN_ANIMATION;
+        throw new RuntimeException();//TODO add empty list with dummy animation
+    }
+
+    public static IAnimation loadAnimation(ResourceLocation location) {
+        List<IAnimation> iAnimations = loadAnimations(location);
+
+        if (iAnimations.size() != 1) {
+            throw new RuntimeException("Can't load animation " + location.toString() + " due to the file contains more than one animation. Use TimeModelLoader#loadAnimations method instead.");
+        }
+
+        return iAnimations.get(0);
     }
 }

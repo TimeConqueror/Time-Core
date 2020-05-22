@@ -15,7 +15,7 @@ import ru.timeconqueror.timecore.TimeCore;
 import ru.timeconqueror.timecore.api.client.animation.TimeClientLoader;
 import ru.timeconqueror.timecore.api.client.render.TimeEntityModel;
 import ru.timeconqueror.timecore.api.registry.TimeAutoRegistrable;
-import ru.timeconqueror.timecore.client.render.animation.Animation;
+import ru.timeconqueror.timecore.client.render.animation.IAnimation;
 import ru.timeconqueror.timecore.entity.EntityFloro;
 import ru.timeconqueror.timecore.entity.EntityZombie;
 import ru.timeconqueror.timecore.entity.RenderFloro;
@@ -35,13 +35,13 @@ public class TEntities {
             .build(TimeCore.MODID + ":floro");
     public static TimeEntityModel<EntityZombie> zombieModel;
     public static TimeEntityModel<EntityFloro> floroModel;
-    public static Animation HIT_ANIMATION;
-    public static Animation SCALING_ANIMATION;
-    public static Animation OFFSETTING_ANIMATION;
+    public static IAnimation HIT_ANIMATION;
+    public static IAnimation SCALING_ANIMATION;
+    public static IAnimation OFFSETTING_ANIMATION;
     //    public static Animation FLORO_HIDING;
-    public static Animation FLORO_SHOOT;
-    public static Animation FLORO_SHOWING;
-    public static Animation FLORO_WALK;
+    public static IAnimation FLORO_SHOOT;
+    public static IAnimation FLORO_SHOWING;
+    public static IAnimation FLORO_WALK;
 
     @SubscribeEvent
     public static void register(RegistryEvent.Register<EntityType<?>> event) {
@@ -64,13 +64,13 @@ public class TEntities {
     public static void registerRenders(FMLClientSetupEvent event) {
         zombieModel = TimeClientLoader.loadJsonEntityModel(new ResourceLocation(TimeCore.MODID, "models/entity/zombie.json"));
         floroModel = TimeClientLoader.loadJsonEntityModel(new ResourceLocation(TimeCore.MODID, "models/entity/floro.json"));
-        HIT_ANIMATION = TimeClientLoader.loadAnimation(new ResourceLocation(TimeCore.MODID, "animations/zombie_hit.json")).get(0);
-        SCALING_ANIMATION = TimeClientLoader.loadAnimation(new ResourceLocation(TimeCore.MODID, "animations/scaling.json")).get(0);
-        OFFSETTING_ANIMATION = TimeClientLoader.loadAnimation(new ResourceLocation(TimeCore.MODID, "animations/offsetting.json")).get(0);
-//        FLORO_HIDING = TimeClientLoader.loadAnimation(new ResourceLocation(TimeCore.MODID, "animations/floro.hiding.json")).get(0);
-        FLORO_SHOOT = TimeClientLoader.loadAnimation(new ResourceLocation(TimeCore.MODID, "animations/floro.shoot.json")).get(0);
-        FLORO_SHOWING = TimeClientLoader.loadAnimation(new ResourceLocation(TimeCore.MODID, "animations/floro.showing.json")).get(0);
-        FLORO_WALK = TimeClientLoader.loadAnimation(new ResourceLocation(TimeCore.MODID, "animations/floro.walk.json")).get(0);
+        HIT_ANIMATION = TimeClientLoader.loadAnimations(new ResourceLocation(TimeCore.MODID, "animations/zombie_hit.json")).get(0);
+        SCALING_ANIMATION = TimeClientLoader.loadAnimations(new ResourceLocation(TimeCore.MODID, "animations/scaling.json")).get(0);
+        OFFSETTING_ANIMATION = TimeClientLoader.loadAnimations(new ResourceLocation(TimeCore.MODID, "animations/offsetting.json")).get(0);
+//        FLORO_HIDING = TimeClientLoader.loadAnimations(new ResourceLocation(TimeCore.MODID, "animations/floro.hiding.json")).get(0);
+        FLORO_SHOOT = TimeClientLoader.loadAnimations(new ResourceLocation(TimeCore.MODID, "animations/floro.shoot.json")).get(0);
+        FLORO_SHOWING = TimeClientLoader.loadAnimations(new ResourceLocation(TimeCore.MODID, "animations/floro.showing.json")).get(0);
+        FLORO_WALK = TimeClientLoader.loadAnimations(new ResourceLocation(TimeCore.MODID, "animations/floro.walk.json")).get(0);
         RenderingRegistry.registerEntityRenderingHandler(EntityZombie.class, RenderZombie::new);
         RenderingRegistry.registerEntityRenderingHandler(EntityFloro.class, RenderFloro::new);
     }

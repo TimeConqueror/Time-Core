@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 public class JsonAnimationParser {
     private static final String[] ACCEPTABLE_FORMAT_VERSIONS = new String[]{"1.8.0"};
 
-    public List<Animation> parseAnimations(@NotNull ResourceLocation fileLocation) throws JsonParsingException {
+    public List<IAnimation> parseAnimations(@NotNull ResourceLocation fileLocation) throws JsonParsingException {
         try (final IResource resource = Minecraft.getInstance().getResourceManager().getResource(fileLocation)) {
             BufferedReader reader = new BufferedReader(new InputStreamReader(resource.getInputStream()));
 
@@ -34,14 +34,14 @@ public class JsonAnimationParser {
     }
 
     @NotNull
-    private List<Animation> parseAnimation(JsonObject object) throws JsonParsingException {
+    private List<IAnimation> parseAnimation(JsonObject object) throws JsonParsingException {
         if (object.has("format_version")) {
             String formatVersion = object.get("format_version").getAsString();
             checkFormatVersion(formatVersion);
         }
 
         JsonObject animations = JsonUtils.get("animations", object).getAsJsonObject();
-        List<Animation> animationList = new ArrayList<>();
+        List<IAnimation> animationList = new ArrayList<>();
 
         for (Map.Entry<String, JsonElement> animationEntry : animations.entrySet()) {
             String name = animationEntry.getKey();
