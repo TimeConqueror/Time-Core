@@ -1,9 +1,11 @@
-package ru.timeconqueror.timecore.client.render.animation;
+package ru.timeconqueror.timecore.api.client.render.animation;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ru.timeconqueror.timecore.api.client.render.TimeEntityModel;
 import ru.timeconqueror.timecore.api.client.render.TimeModel;
+import ru.timeconqueror.timecore.client.render.animation.KeyFrame;
+import ru.timeconqueror.timecore.client.render.animation.Transition;
 import ru.timeconqueror.timecore.client.render.model.TimeModelRenderer;
 
 import java.util.List;

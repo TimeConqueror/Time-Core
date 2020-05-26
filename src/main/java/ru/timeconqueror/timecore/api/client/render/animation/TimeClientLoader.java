@@ -6,7 +6,6 @@ import ru.timeconqueror.timecore.TimeCore;
 import ru.timeconqueror.timecore.api.client.render.TimeEntityModel;
 import ru.timeconqueror.timecore.api.client.render.TimeModel;
 import ru.timeconqueror.timecore.client.render.animation.Animation;
-import ru.timeconqueror.timecore.client.render.animation.IAnimation;
 import ru.timeconqueror.timecore.client.render.animation.JsonAnimationParser;
 import ru.timeconqueror.timecore.client.render.model.JsonModelParser;
 
@@ -14,7 +13,7 @@ import java.util.List;
 
 public class TimeClientLoader {
     private static List<TimeModel> BROKEN_MODEL = loadJsonModels(new ResourceLocation(TimeCore.MODID, "models/entity/broken.json"));
-    private static List<Animation> BROKEN_ANIMATION;//toDO
+    private static List<Animation> brokenAnimation;//toDO
 
     public static List<TimeModel> loadJsonModels(ResourceLocation location) {
         try {

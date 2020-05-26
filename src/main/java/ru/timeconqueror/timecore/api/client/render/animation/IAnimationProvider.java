@@ -1,5 +1,8 @@
 package ru.timeconqueror.timecore.api.client.render.animation;
 
+import org.jetbrains.annotations.NotNull;
+
 public interface IAnimationProvider {
-    AnimationManager getAnimationManager();
+    @NotNull
+    IAnimationManager getAnimationManager();
 }
