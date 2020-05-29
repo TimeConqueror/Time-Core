@@ -4,9 +4,8 @@ import net.minecraft.client.renderer.Vector3f;
 import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import ru.timeconqueror.timecore.TimeCore;
-import ru.timeconqueror.timecore.api.client.render.TimeModel;
 import ru.timeconqueror.timecore.api.client.render.animation.IAnimation;
+import ru.timeconqueror.timecore.api.client.render.animation.IAnimationLayer;
 import ru.timeconqueror.timecore.api.util.Pair;
 import ru.timeconqueror.timecore.client.render.model.TimeModelRenderer;
 
@@ -115,33 +114,24 @@ public class BoneOption {
         return new Vector3f(outX, outY, outZ);
     }
 
-    public void apply(IAnimation animation, TimeModel model, int existingTime) {
-        TimeModelRenderer piece = model.getPiece(boneName);
+    public void apply(IAnimation animation, IAnimationLayer layer, TimeModelRenderer piece, int existingTime) {
+        Pair<KeyFrame, KeyFrame> keyPair = findKeyFrames(rotations, existingTime);
+        if (keyPair != null) {
+            Vector3f rotateVec = calcCurrentVectorFor(animation, keyPair, 0, 0, 0, existingTime);
+            AnimationUtils.applyRotation(piece, layer, rotateVec);
+        }
 
-        if (piece != null) {
-            Pair<KeyFrame, KeyFrame> keyPair = findKeyFrames(rotations, existingTime);
-            if (keyPair != null) {
-                Vector3f rotateVector = calcCurrentVectorFor(animation, keyPair, 0, 0, 0, existingTime);
-                piece.rotateAngleX += rotateVector.getX();
-                piece.rotateAngleY += rotateVector.getY();
-                piece.rotateAngleZ += rotateVector.getZ();
-            }
+        keyPair = findKeyFrames(positions, existingTime);
+        if (keyPair != null) {
+            Vector3f posVec = calcCurrentVectorFor(animation, keyPair, piece.offsetX, piece.offsetY, piece.offsetZ, existingTime);
+            AnimationUtils.applyOffset(piece, layer, posVec);
+        }
 
-            keyPair = findKeyFrames(positions, existingTime);
-            if (keyPair != null) {
-                Vector3f posVector = calcCurrentVectorFor(animation, keyPair, piece.offsetX, piece.offsetY, piece.offsetZ, existingTime);
-                piece.offsetX = posVector.getX();
-                piece.offsetY = posVector.getY();
-                piece.offsetZ = posVector.getZ();
-            }
-
-            keyPair = findKeyFrames(scales, existingTime);
-            if (keyPair != null) {
-                Vector3f vec = calcCurrentVectorFor(animation, keyPair, piece.getScaleFactor().getX(), piece.getScaleFactor().getY(), piece.getScaleFactor().getZ(), existingTime);
-                piece.setScaleFactor(vec.getX(), vec.getY(), vec.getZ());
-            }
-        } else {
-            TimeCore.LOGGER.error("Can't find bone with name " + boneName + " in animation " + animation.getName() + " applied for model " + model.getName());
+        keyPair = findKeyFrames(scales, existingTime);
+        if (keyPair != null) {
+            Vector3f currentScale = piece.getScaleFactor();
+            Vector3f scaleVec = calcCurrentVectorFor(animation, keyPair, currentScale.getX(), currentScale.getY(), currentScale.getZ(), existingTime);
+            AnimationUtils.applyScale(piece, layer, scaleVec);
         }
     }
 

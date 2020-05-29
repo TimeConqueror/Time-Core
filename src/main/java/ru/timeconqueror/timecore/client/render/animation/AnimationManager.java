@@ -59,7 +59,7 @@ public class AnimationManager implements IAnimationManager {
 
             if (watcher != null) {
                 IAnimation animation = watcher.getAnimation();
-                animation.apply(model, watcher.getExistingTime(time));
+                animation.apply(model, layer, watcher.getExistingTime(time));
             }
         }
     }

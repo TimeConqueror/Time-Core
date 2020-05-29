@@ -22,13 +22,20 @@ public class AnimationStarter {
     }
 
     public AnimationStarter setSpeed(float speedFactor) {
-        data.speedFactor = Math.max(speedFactor, 0);
+        data.speedFactor = Math.max(speedFactor, 0.0001F);
         return this;
     }
 
     public void startAt(IAnimationLayer layer) {
-        if (this.ignorable && layer.hasAnimation() && data.prototype.equals(layer.getCurrentAnimation())) {
-            return;
+        if (ignorable) {
+            AnimationWatcher watcher = layer.getAnimationWatcher();
+            if (watcher != null) {
+                //noinspection ConstantConditions (#isInTransitionMode checks not-null)
+                if ((watcher.isInTransitionMode() && data.prototype.equals(watcher.getTransitionData().getDestination()))
+                        || data.prototype.equals(layer.getCurrentAnimation())) {//TODO add check for speed?
+                    return;
+                }
+            }
         }
 
         layer.setAnimation(this.data);

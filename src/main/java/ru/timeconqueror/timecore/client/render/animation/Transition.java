@@ -7,6 +7,7 @@ import ru.timeconqueror.timecore.TimeCore;
 import ru.timeconqueror.timecore.api.client.render.TimeEntityModel;
 import ru.timeconqueror.timecore.api.client.render.TimeModel;
 import ru.timeconqueror.timecore.api.client.render.animation.IAnimation;
+import ru.timeconqueror.timecore.api.client.render.animation.IAnimationLayer;
 import ru.timeconqueror.timecore.api.util.Pair;
 import ru.timeconqueror.timecore.client.render.model.TimeModelRenderer;
 
@@ -17,7 +18,7 @@ import java.util.function.Consumer;
 public class Transition implements IAnimation {
     private static final IAnimation DUMMY_ANIMATION = new IAnimation() {
         @Override
-        public void apply(TimeEntityModel<?> model, int existingTime) {
+        public void apply(TimeEntityModel<?> model, IAnimationLayer layer, int existingTime) {
 
         }
 
@@ -85,17 +86,17 @@ public class Transition implements IAnimation {
             TimeModelRenderer piece = model.getPiece(name);
             if (piece != null) {
                 // Rotations
-                KeyFrame startKeyFrame = KeyFrame.createIdleKeyFrame(transitionTime, 0, 0, 0);
+                KeyFrame startKeyFrame = KeyFrame.createIdleKeyFrame(0, 0, 0, 0);
                 KeyFrame endKeyFrame = transitionFactory.getDestKeyFrame(piece, name, OptionType.ROTATION, transitionTime);
                 Pair<KeyFrame, KeyFrame> rotations = Pair.of(startKeyFrame, endKeyFrame);
 
                 // Positions
-                startKeyFrame = KeyFrame.createIdleKeyFrame(transitionTime, piece.offsetX, piece.offsetY, piece.offsetZ);
+                startKeyFrame = KeyFrame.createIdleKeyFrame(0, piece.offsetX, piece.offsetY, piece.offsetZ);
                 endKeyFrame = transitionFactory.getDestKeyFrame(piece, name, OptionType.POSITION, transitionTime);
                 Pair<KeyFrame, KeyFrame> positions = Pair.of(startKeyFrame, endKeyFrame);
 
                 // Scales
-                startKeyFrame = KeyFrame.createIdleKeyFrame(transitionTime, piece.getScaleFactor().getX(), piece.getScaleFactor().getY(), piece.getScaleFactor().getZ());
+                startKeyFrame = KeyFrame.createIdleKeyFrame(0, piece.getScaleFactor().getX(), piece.getScaleFactor().getY(), piece.getScaleFactor().getZ());
                 endKeyFrame = transitionFactory.getDestKeyFrame(piece, name, OptionType.SCALE, transitionTime);
 
                 Pair<KeyFrame, KeyFrame> scales = Pair.of(startKeyFrame, endKeyFrame);
@@ -146,11 +147,19 @@ public class Transition implements IAnimation {
     }
 
     @Override
-    public void apply(TimeEntityModel<?> model, int existingTime) {
+    public void apply(TimeEntityModel<?> model, IAnimationLayer layer, int existingTime) {
         TimeModel baseModel = model.getBaseModel();
         if (options != null) {
             if (existingTime <= transitionLength) {
-                options.forEach(boneOption -> boneOption.apply(this, baseModel, existingTime));
+                options.forEach(boneOption -> {
+                    TimeModelRenderer piece = baseModel.getPiece(boneOption.name);
+
+                    if (piece != null) {
+                        boneOption.apply(piece, layer, existingTime);
+                    } else {
+                        TimeCore.LOGGER.error("Can't find bone with name " + boneOption.name + " for transition " + getName() + " applied for model " + baseModel.getName());
+                    }
+                });
             }
         }
     }
@@ -259,25 +268,15 @@ public class Transition implements IAnimation {
             return BoneOption.interpolate(start.getVec(), end.getVec(), start.getStartTime(), end.getStartTime(), existingTime);
         }
 
-        public void apply(Transition animation, TimeModel model, int existingTime) {
-            TimeModelRenderer piece = model.getPiece(name);
+        public void apply(TimeModelRenderer piece, IAnimationLayer layer, int existingTime) {
+            Vector3f interpolated = interpolate(rotations.getA(), rotations.getB(), existingTime);
+            AnimationUtils.applyRotation(piece, layer, interpolated);
 
-            if (piece != null) {
-                Vector3f interpolated = interpolate(rotations.getA(), rotations.getB(), existingTime);
-                piece.rotateAngleX += interpolated.getX();
-                piece.rotateAngleY += interpolated.getY();
-                piece.rotateAngleZ += interpolated.getZ();
+            interpolated = interpolate(positions.getA(), positions.getB(), existingTime);
+            AnimationUtils.applyOffset(piece, layer, interpolated);
 
-                interpolated = interpolate(positions.getA(), positions.getB(), existingTime);
-                piece.offsetX = interpolated.getX();
-                piece.offsetY = interpolated.getY();
-                piece.offsetZ = interpolated.getZ();
-
-                interpolated = interpolate(scales.getA(), scales.getB(), existingTime);
-                piece.setScaleFactor(interpolated.getX(), interpolated.getY(), interpolated.getZ());
-            } else {
-                TimeCore.LOGGER.error("Can't find bone with name " + name + " for transition " + animation.getName() + " applied for model " + model.getName());
-            }
+            interpolated = interpolate(scales.getA(), scales.getB(), existingTime);
+            AnimationUtils.applyScale(piece, layer, interpolated);
         }
     }
 }

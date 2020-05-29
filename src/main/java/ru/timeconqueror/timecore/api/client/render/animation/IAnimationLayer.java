@@ -2,6 +2,7 @@ package ru.timeconqueror.timecore.api.client.render.animation;
 
 import org.jetbrains.annotations.Nullable;
 import ru.timeconqueror.timecore.client.render.animation.AnimationStarter;
+import ru.timeconqueror.timecore.client.render.animation.AnimationWatcher;
 
 public interface IAnimationLayer {
     float getWeight();
@@ -16,6 +17,9 @@ public interface IAnimationLayer {
     IAnimation getCurrentAnimation();
 
     boolean hasAnimation();
+
+    @Nullable
+    AnimationWatcher getAnimationWatcher();
 
     void setAnimation(AnimationStarter.AnimationData data);
 

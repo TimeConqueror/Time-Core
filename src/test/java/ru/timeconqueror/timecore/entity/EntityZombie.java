@@ -8,6 +8,7 @@ import org.jetbrains.annotations.NotNull;
 import ru.timeconqueror.timecore.api.client.render.animation.AnimationAPI;
 import ru.timeconqueror.timecore.api.client.render.animation.IAnimationManager;
 import ru.timeconqueror.timecore.api.client.render.animation.IAnimationProvider;
+import ru.timeconqueror.timecore.registry.TEntities;
 
 import javax.annotation.Nullable;
 
@@ -45,6 +46,7 @@ public class EntityZombie extends EntityStupidAnimal implements IAnimationProvid
         super.livingTick();
 
         if ((System.currentTimeMillis() / 1000) % 5 == 0) {
+            AnimationAPI.newAnimationStarter(TEntities.HIT_ANIMATION).startAt(animationManager.getMainLayer());
 //            animationManager.startAnimationIgnorable(TEntities.HIT_ANIMATION, 333);
 //            animationManager.startAnimation(TEntities.SCALING_ANIMATION);
 //            animationManager.startAnimation(TEntities.OFFSETTING_ANIMATION, InsertType.IGNORE);

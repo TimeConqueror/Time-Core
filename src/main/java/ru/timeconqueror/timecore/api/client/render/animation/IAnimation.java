@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.function.Consumer;
 
 public interface IAnimation {
-    void apply(TimeEntityModel<?> model, int existingTime);
+    void apply(TimeEntityModel<?> model, IAnimationLayer layer, int existingTime);
 
     String getName();
 

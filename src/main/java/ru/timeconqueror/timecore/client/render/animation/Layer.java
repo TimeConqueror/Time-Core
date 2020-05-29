@@ -56,9 +56,11 @@ public class Layer implements IAnimationLayer {
     @Override
     public void setAnimation(AnimationStarter.AnimationData data) {
         if (animationWatcher == null) {
+            System.out.println("Added new animation.");
             animationWatcher = new AnimationWatcher(null, data.speedFactor);
         }
 
+        System.out.println("Enabled transition mode for animation watcher, dest: " + data.prototype);
         animationWatcher.enableTransitionMode(data.prototype, data.transitionTime, data.speedFactor);
     }
 
@@ -78,7 +80,7 @@ public class Layer implements IAnimationLayer {
         }
     }
 
-    AnimationWatcher getAnimationWatcher() {
+    public AnimationWatcher getAnimationWatcher() {
         return animationWatcher;
     }
 

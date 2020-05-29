@@ -49,17 +49,21 @@ public class AnimationWatcher {
         return getExistingTime(System.currentTimeMillis());
     }
 
-    public void enableTransitionMode(@Nullable IAnimation destination, int transitionTime, float speedFactor) {
+    void enableTransitionMode(@Nullable IAnimation destination, int transitionTime, float speedFactor) {
         Requirements.greaterOrEqualsThan(transitionTime, 0);
         Requirements.greaterThan(speedFactor, 0);
         transitionData = new TransitionData(transitionTime, speedFactor, destination);
     }
 
-    public boolean requiresTransitionPreparation() {
+    boolean requiresTransitionPreparation() {
         return transitionData != null && !transitionData.transitionCreated;
     }
 
-    public void initTransition(TimeEntityModel<?> model) {
+    public boolean isInTransitionMode() {
+        return transitionData != null;
+    }
+
+    void initTransition(TimeEntityModel<?> model) {
         AnimationWatcher.TransitionData transitionData = getTransitionData();
         //noinspection ConstantConditions (#requiresTransitionPreparation already check for having transition data)
         animation = Transition.create(this, transitionData.destination, model.getBaseModel(), transitionData.transitionTime);
@@ -87,6 +91,15 @@ public class AnimationWatcher {
 
         public float getSpeedFactor() {
             return speedFactor;
+        }
+
+        public int getTransitionTime() {
+            return transitionTime;
+        }
+
+        @Nullable
+        public IAnimation getDestination() {
+            return destination;
         }
     }
 }

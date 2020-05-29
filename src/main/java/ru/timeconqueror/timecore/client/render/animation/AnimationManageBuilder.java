@@ -9,9 +9,16 @@ public class AnimationManageBuilder {
     private HashMap<String, Layer> animationLayers = new HashMap<>();
     private boolean used = false;
 
-    public AnimationManageBuilder addLayer(String name, int priority, BlendType blendType, int weight) {
+    public AnimationManageBuilder addLayer(String name, int priority, BlendType blendType, float weight) {
         verifyNotUsed();
-        animationLayers.put(name, new Layer(priority, blendType, weight));
+        Layer prev = animationLayers.put(name, new Layer(priority, blendType, weight));
+        if (prev != null) throw new IllegalArgumentException("Layer with name " + name + " is already registered.");
+        return this;
+    }
+
+    public AnimationManageBuilder addMainLayer() {
+        addLayer(AnimationConstants.MAIN_LAYER_NAME, 0, BlendType.OVERRIDE, 1);
+
         return this;
     }
 
@@ -19,7 +26,7 @@ public class AnimationManageBuilder {
         verifyNotUsed();
 
         if (animationLayers.isEmpty()) {
-            animationLayers.put(AnimationConstants.MAIN_LAYER_NAME, new Layer(0, BlendType.OVERRIDE, 1));
+            addMainLayer();
         }
 
         AnimationManager manager = new AnimationManager();

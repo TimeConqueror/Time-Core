@@ -25,4 +25,8 @@ public class KeyFrame {
     public static KeyFrame createIdleKeyFrame(int startTime, float modelIdleX, float modelIdleY, float modelIdleZ) {
         return new KeyFrame(startTime, new Vector3f(modelIdleX, modelIdleY, modelIdleZ));
     }
+
+    public KeyFrame withNewStartTime(int startTime) {
+        return new KeyFrame(startTime, vec);
+    }
 }

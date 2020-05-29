@@ -12,9 +12,7 @@ public abstract class TimeEntityRenderer<T extends LivingEntity & IAnimationProv
 
     @Override
     public void doRender(T entity, double x, double y, double z, float entityYaw, float partialTicks) {
-        if (entity.getName().getString().contains("floro")) {
-            entity.getAnimationManager().applyAnimations(getEntityModel());
-        }
+        entity.getAnimationManager().applyAnimations(getEntityModel());
         super.doRender(entity, x, y, z, entityYaw, partialTicks);
     }
 }

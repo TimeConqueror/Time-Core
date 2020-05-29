@@ -3,9 +3,11 @@ package ru.timeconqueror.timecore.client.render.animation;
 import net.minecraft.client.renderer.Vector3f;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import ru.timeconqueror.timecore.TimeCore;
 import ru.timeconqueror.timecore.api.client.render.TimeEntityModel;
 import ru.timeconqueror.timecore.api.client.render.TimeModel;
 import ru.timeconqueror.timecore.api.client.render.animation.IAnimation;
+import ru.timeconqueror.timecore.api.client.render.animation.IAnimationLayer;
 import ru.timeconqueror.timecore.api.util.Pair;
 import ru.timeconqueror.timecore.client.render.model.TimeModelRenderer;
 
@@ -36,11 +38,19 @@ public class Animation implements IAnimation {
         this.options = options;
     }
 
-    public void apply(TimeEntityModel<?> model, int existingTime) {
+    public void apply(TimeEntityModel<?> model, IAnimationLayer layer, int existingTime) {
         TimeModel baseModel = model.getBaseModel();
         if (options != null) {
             if (existingTime <= length) {
-                options.forEach((s, boneOption) -> boneOption.apply(this, baseModel, existingTime));
+                options.forEach((s, boneOption) -> {
+                    TimeModelRenderer piece = baseModel.getPiece(boneOption.getName());
+
+                    if (piece != null) {
+                        boneOption.apply(this, layer, piece, existingTime);
+                    } else {
+                        TimeCore.LOGGER.error("Can't find bone with name " + boneOption.getName() + " in animation " + getName() + " applied for model " + baseModel.getName());
+                    }
+                });
             }
         }
     }
@@ -94,7 +104,7 @@ public class Animation implements IAnimation {
             if (destKeyFrames != null && !destKeyFrames.isEmpty()) {
                 KeyFrame keyFrame = destKeyFrames.get(0);
                 if (keyFrame.getStartTime() == 0) {
-                    return keyFrame;
+                    return keyFrame.withNewStartTime(transitionTime);
                 }
             }
 
