@@ -5,6 +5,9 @@ import org.jetbrains.annotations.NotNull;
 import ru.timeconqueror.timecore.api.client.render.TimeEntityModel;
 
 public interface IAnimationManager {
+
+    boolean containsLayer(String name);
+
     /**
      * //TODO
      *

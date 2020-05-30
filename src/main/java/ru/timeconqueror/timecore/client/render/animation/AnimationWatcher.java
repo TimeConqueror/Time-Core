@@ -6,7 +6,7 @@ import ru.timeconqueror.timecore.api.client.render.animation.IAnimation;
 import ru.timeconqueror.timecore.api.util.Requirements;
 
 public class AnimationWatcher {
-    private long startTime;
+    private FreezableTime startTime;
     private IAnimation animation;
     private TransitionData transitionData;
 
@@ -17,24 +17,17 @@ public class AnimationWatcher {
 
     public AnimationWatcher(IAnimation animation, float speed) {
         Requirements.greaterThan(speed, 0);
+        this.startTime = new FreezableTime(System.currentTimeMillis());
         this.animation = animation;
         this.speed = speed;
-        resetTimer();
     }
 
     public boolean isAnimationEnded(long time) {
-//        System.out.println("Current time: " + time);
-//        System.out.println("Start time: " + startTime);
-//        System.out.println("Difference:  " + (time - startTime));
-//        System.out.println("Animation length: " + animation.getLength());
-//        System.out.println("Calculated length: " + (animation.getLength() / speed));
-//        System.out.println("Full time: " + (startTime + Math.round(animation.getLength() / speed)));
-//        System.out.println("Is ended: " + (time > (startTime + Math.round(animation.getLength() / speed))));
-        return time > startTime + Math.round(animation.getLength() / speed);
+        return time > startTime.get() + Math.round(animation.getLength() / speed);
     }
 
     public void resetTimer() {
-        startTime = System.currentTimeMillis();
+        startTime.set(System.currentTimeMillis());
     }
 
     public IAnimation getAnimation() {
@@ -42,11 +35,24 @@ public class AnimationWatcher {
     }
 
     public int getExistingTime(long time) {
-        return (int) ((int) (time - startTime) * speed);
+        int i = (int) ((int) (time - (startTime.get())) * speed);
+        return i;
     }
 
     public int getExistingTime() {
         return getExistingTime(System.currentTimeMillis());
+    }
+
+    public void freeze() {
+        startTime.freeze();
+    }
+
+    public void unfreeze() {
+        startTime.unfreeze();
+    }
+
+    public boolean isInTransitionMode() {
+        return transitionData != null;
     }
 
     void enableTransitionMode(@Nullable IAnimation destination, int transitionTime, float speedFactor) {
@@ -57,10 +63,6 @@ public class AnimationWatcher {
 
     boolean requiresTransitionPreparation() {
         return transitionData != null && !transitionData.transitionCreated;
-    }
-
-    public boolean isInTransitionMode() {
-        return transitionData != null;
     }
 
     void initTransition(TimeEntityModel<?> model) {
@@ -100,6 +102,40 @@ public class AnimationWatcher {
         @Nullable
         public IAnimation getDestination() {
             return destination;
+        }
+    }
+
+    private static class FreezableTime {
+        private long time;
+        private long freezingTime = -1;
+
+        public FreezableTime(long time) {
+            this.time = time;
+        }
+
+        public void freeze() {
+            if (freezingTime == -1) {
+                freezingTime = System.currentTimeMillis();
+            }
+        }
+
+        public void unfreeze() {
+            if (freezingTime != -1) {
+                time += System.currentTimeMillis() - freezingTime;
+                freezingTime = -1;
+            }
+        }
+
+        public long get() {
+            if (freezingTime != -1) {
+                return time + (System.currentTimeMillis() - freezingTime);
+            } else {
+                return time;
+            }
+        }
+
+        public void set(long time) {
+            this.time = time;
         }
     }
 }

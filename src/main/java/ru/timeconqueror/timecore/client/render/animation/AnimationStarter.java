@@ -1,7 +1,9 @@
 package ru.timeconqueror.timecore.client.render.animation;
 
+import ru.timeconqueror.timecore.TimeCore;
 import ru.timeconqueror.timecore.api.client.render.animation.IAnimation;
 import ru.timeconqueror.timecore.api.client.render.animation.IAnimationLayer;
+import ru.timeconqueror.timecore.api.client.render.animation.IAnimationManager;
 
 public class AnimationStarter {
     private AnimationData data;
@@ -24,6 +26,14 @@ public class AnimationStarter {
     public AnimationStarter setSpeed(float speedFactor) {
         data.speedFactor = Math.max(speedFactor, 0.0001F);
         return this;
+    }
+
+    public void startAt(IAnimationManager manager, String layerName) {
+        if (manager.containsLayer(layerName)) {
+            startAt(manager.getLayer(layerName));
+        } else {
+            TimeCore.LOGGER.error("Can't remove animation: layer with name " + layerName + " doesn't exist in provided animation manager.");
+        }
     }
 
     public void startAt(IAnimationLayer layer) {

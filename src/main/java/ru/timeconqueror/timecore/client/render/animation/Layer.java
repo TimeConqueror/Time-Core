@@ -4,6 +4,7 @@ import org.jetbrains.annotations.Nullable;
 import ru.timeconqueror.timecore.api.client.render.animation.BlendType;
 import ru.timeconqueror.timecore.api.client.render.animation.IAnimation;
 import ru.timeconqueror.timecore.api.client.render.animation.IAnimationLayer;
+import ru.timeconqueror.timecore.api.util.MathUtils;
 
 public class Layer implements IAnimationLayer {
     private final int priority;
@@ -14,7 +15,7 @@ public class Layer implements IAnimationLayer {
     private float weight;
 
     public Layer(int priority, BlendType blendType, float weight) {
-        this.weight = weight;
+        this.weight = MathUtils.coerceInRange(weight, 0, 1);
         this.blendType = blendType;
         this.priority = priority;
     }
@@ -56,11 +57,9 @@ public class Layer implements IAnimationLayer {
     @Override
     public void setAnimation(AnimationStarter.AnimationData data) {
         if (animationWatcher == null) {
-            System.out.println("Added new animation.");
             animationWatcher = new AnimationWatcher(null, data.speedFactor);
         }
 
-        System.out.println("Enabled transition mode for animation watcher, dest: " + data.prototype);
         animationWatcher.enableTransitionMode(data.prototype, data.transitionTime, data.speedFactor);
     }
 

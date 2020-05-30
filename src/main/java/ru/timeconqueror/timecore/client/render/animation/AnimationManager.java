@@ -1,5 +1,6 @@
 package ru.timeconqueror.timecore.client.render.animation;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.LivingEntity;
 import org.jetbrains.annotations.NotNull;
 import ru.timeconqueror.timecore.api.client.render.TimeEntityModel;
@@ -16,6 +17,11 @@ public class AnimationManager implements IAnimationManager {
     private List<Layer> layers;
 
     AnimationManager() {
+    }
+
+    @Override
+    public boolean containsLayer(String name) {
+        return layerMap.get(name) != null;
     }
 
     @NotNull
@@ -35,22 +41,31 @@ public class AnimationManager implements IAnimationManager {
     public <T extends LivingEntity> void applyAnimations(TimeEntityModel<T> model) {
         for (Layer layer : layers) {
             AnimationWatcher watcher = layer.getAnimationWatcher();
-            if (watcher != null && watcher.requiresTransitionPreparation()) {
-                watcher.initTransition(model);
-            }
+
+            boolean paused = Minecraft.getInstance().isGamePaused();
 
             long time = System.currentTimeMillis();
 
             if (watcher != null) {
-                if (watcher.isAnimationEnded(time)) {
-                    if (watcher.getAnimation() instanceof Transition) {
-                        IAnimation anim = ((Transition) watcher.getAnimation()).getDestAnimation();
-                        //noinspection ConstantConditions (transition should always have its data)
-                        watcher = anim != null ? new AnimationWatcher(anim, watcher.getTransitionData().getSpeedFactor()) : null;
-                    } else if (watcher.getAnimation().isLooped()) {
-                        watcher.resetTimer();
-                    } else {
-                        watcher = null;
+                if (paused) {
+                    watcher.freeze();
+                } else {
+                    watcher.unfreeze();
+
+                    if (watcher.requiresTransitionPreparation()) {
+                        watcher.initTransition(model);
+                    }
+
+                    if (watcher.isAnimationEnded(time)) {
+                        if (watcher.getAnimation() instanceof Transition) {
+                            IAnimation anim = ((Transition) watcher.getAnimation()).getDestAnimation();
+                            //noinspection ConstantConditions (transition should always have its data)
+                            watcher = anim != null ? new AnimationWatcher(anim, watcher.getTransitionData().getSpeedFactor()) : null;
+                        } else if (watcher.getAnimation().isLooped()) {
+                            watcher.resetTimer();
+                        } else {
+                            watcher = null;
+                        }
                     }
                 }
             }

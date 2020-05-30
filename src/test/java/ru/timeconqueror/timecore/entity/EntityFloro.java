@@ -51,8 +51,9 @@ public class EntityFloro extends EntityStupidAnimal implements IAnimationProvide
         super.livingTick();
 
         if ((System.currentTimeMillis() / 1000) % 5 == 0) {
+//            animationManager.getMainLayer().removeAnimation();
 //            animationManager.getLayer("main").removeAnimation();
-            AnimationAPI.newAnimationStarter(TEntities.FLORO_WALK)
+            AnimationAPI.startAnimation(TEntities.FLORO_WALK)
                     .setIgnorable(true)
                     .setSpeed(1.5F)
                     .startAt(animationManager.getMainLayer());
@@ -62,8 +63,8 @@ public class EntityFloro extends EntityStupidAnimal implements IAnimationProvide
 //            animationManager.startAnimation(TEntities.OFFSETTING_ANIMATION, InsertType.IGNORE);
         }
 
-        if (new Random().nextInt(100) == 0) {
-            AnimationAPI.newAnimationStarter(TEntities.FLORO_SHOOT)
+        if (new Random().nextInt(20) == 0) {
+            AnimationAPI.startAnimation(TEntities.FLORO_SHOOT)
                     .setIgnorable(true)
                     .startAt(animationManager.getLayer("attack"));
         }

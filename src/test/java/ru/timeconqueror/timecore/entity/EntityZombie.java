@@ -46,9 +46,8 @@ public class EntityZombie extends EntityStupidAnimal implements IAnimationProvid
         super.livingTick();
 
         if ((System.currentTimeMillis() / 1000) % 5 == 0) {
-            AnimationAPI.newAnimationStarter(TEntities.HIT_ANIMATION).startAt(animationManager.getMainLayer());
+            AnimationAPI.startAnimation(TEntities.SCALING_ANIMATION).startAt(animationManager.getMainLayer());
 //            animationManager.startAnimationIgnorable(TEntities.HIT_ANIMATION, 333);
-//            animationManager.startAnimation(TEntities.SCALING_ANIMATION);
 //            animationManager.startAnimation(TEntities.OFFSETTING_ANIMATION, InsertType.IGNORE);
         }
     }
