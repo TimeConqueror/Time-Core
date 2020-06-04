@@ -4,10 +4,10 @@ import net.minecraft.client.renderer.Vector3f;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ru.timeconqueror.timecore.TimeCore;
-import ru.timeconqueror.timecore.api.client.render.TimeEntityModel;
-import ru.timeconqueror.timecore.api.client.render.TimeModel;
 import ru.timeconqueror.timecore.api.client.render.animation.IAnimation;
 import ru.timeconqueror.timecore.api.client.render.animation.IAnimationLayer;
+import ru.timeconqueror.timecore.api.client.render.model.TimeEntityModel;
+import ru.timeconqueror.timecore.api.client.render.model.TimeModel;
 import ru.timeconqueror.timecore.api.util.Pair;
 import ru.timeconqueror.timecore.client.render.model.TimeModelRenderer;
 
@@ -66,10 +66,10 @@ public class Transition implements IAnimation {
             throw new UnsupportedOperationException("Can't handle " + optionType + " option type");
         }
     };
-    private int transitionLength;
-    private String name;
+    private final int transitionLength;
+    private final String name;
     private List<TransitionBoneOption> options = new ArrayList<>();
-    private IAnimation destAnimation;
+    private final IAnimation destAnimation;
 
     private Transition(int transitionLength, String name, IAnimation destAnimation) {
         this.transitionLength = transitionLength;
@@ -251,11 +251,11 @@ public class Transition implements IAnimation {
     }
 
     public static class TransitionBoneOption {
-        private String name;
+        private final String name;
 
-        private Pair<KeyFrame, KeyFrame> rotations;
-        private Pair<KeyFrame, KeyFrame> positions;
-        private Pair<KeyFrame, KeyFrame> scales;
+        private final Pair<KeyFrame, KeyFrame> rotations;
+        private final Pair<KeyFrame, KeyFrame> positions;
+        private final Pair<KeyFrame, KeyFrame> scales;
 
         public TransitionBoneOption(String boneName, Pair<KeyFrame, KeyFrame> rotations, Pair<KeyFrame, KeyFrame> positions, Pair<KeyFrame, KeyFrame> scales) {
             this.name = boneName;

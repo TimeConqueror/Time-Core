@@ -4,10 +4,10 @@ import net.minecraft.client.renderer.Vector3f;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ru.timeconqueror.timecore.TimeCore;
-import ru.timeconqueror.timecore.api.client.render.TimeEntityModel;
-import ru.timeconqueror.timecore.api.client.render.TimeModel;
 import ru.timeconqueror.timecore.api.client.render.animation.IAnimation;
 import ru.timeconqueror.timecore.api.client.render.animation.IAnimationLayer;
+import ru.timeconqueror.timecore.api.client.render.model.TimeEntityModel;
+import ru.timeconqueror.timecore.api.client.render.model.TimeModel;
 import ru.timeconqueror.timecore.api.util.Pair;
 import ru.timeconqueror.timecore.client.render.model.TimeModelRenderer;
 
@@ -17,19 +17,19 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 public class Animation implements IAnimation {
-    private boolean loop;
-    private String name;
+    private final boolean loop;
+    private final String name;
     /**
      * animation length in ms
      */
-    private int length;
+    private final int length;
 
     /**
      * Unmodifiable map of bone options.
      * Key - bone name.
      */
     @Nullable
-    private Map<String, BoneOption> options;
+    private final Map<String, BoneOption> options;
 
     public Animation(boolean loop, String name, int length, @Nullable Map<String, BoneOption> options) {
         this.loop = loop;

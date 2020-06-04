@@ -1,19 +1,19 @@
 package ru.timeconqueror.timecore.client.render.animation;
 
 import org.jetbrains.annotations.Nullable;
-import ru.timeconqueror.timecore.api.client.render.TimeEntityModel;
 import ru.timeconqueror.timecore.api.client.render.animation.IAnimation;
+import ru.timeconqueror.timecore.api.client.render.model.TimeEntityModel;
 import ru.timeconqueror.timecore.api.util.Requirements;
 
 public class AnimationWatcher {
-    private FreezableTime startTime;
+    private final FreezableTime startTime;
     private IAnimation animation;
     private TransitionData transitionData;
 
     /**
      * Speed factor of the animation
      */
-    private float speed;
+    private final float speed;
 
     public AnimationWatcher(IAnimation animation, float speed) {
         Requirements.greaterThan(speed, 0);
@@ -78,10 +78,10 @@ public class AnimationWatcher {
     }
 
     public static class TransitionData {
-        private int transitionTime;
-        private float speedFactor;
+        private final int transitionTime;
+        private final float speedFactor;
         @Nullable
-        private IAnimation destination;
+        private final IAnimation destination;
 
         private boolean transitionCreated = false;
 

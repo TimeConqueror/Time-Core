@@ -2,7 +2,7 @@ package ru.timeconqueror.timecore.api.client.render.animation;
 
 import net.minecraft.entity.LivingEntity;
 import org.jetbrains.annotations.NotNull;
-import ru.timeconqueror.timecore.api.client.render.TimeEntityModel;
+import ru.timeconqueror.timecore.api.client.render.model.TimeEntityModel;
 
 public interface IAnimationManager {
 

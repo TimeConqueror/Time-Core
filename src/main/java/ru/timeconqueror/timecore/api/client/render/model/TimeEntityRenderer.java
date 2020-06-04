@@ -1,4 +1,4 @@
-package ru.timeconqueror.timecore.api.client.render;
+package ru.timeconqueror.timecore.api.client.render.model;
 
 import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.client.renderer.entity.LivingRenderer;

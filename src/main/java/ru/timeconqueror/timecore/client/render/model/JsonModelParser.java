@@ -10,7 +10,7 @@ import net.minecraft.resources.IResource;
 import net.minecraft.util.JSONUtils;
 import net.minecraft.util.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
-import ru.timeconqueror.timecore.api.client.render.TimeModel;
+import ru.timeconqueror.timecore.api.client.render.model.TimeModel;
 import ru.timeconqueror.timecore.api.util.CollectionUtils;
 import ru.timeconqueror.timecore.client.render.JsonParsingException;
 import ru.timeconqueror.timecore.util.JsonUtils;
@@ -132,14 +132,14 @@ public class JsonModelParser {
     }
 
     public static class RawModelBone {
-        private List<RawModelCube> cubes;
-        private Vector3f pivot;
-        private Vector3f rotationAngles;
-        private boolean mirror;
-        private boolean neverRender;
-        private float inflate;
-        private String name;
-        private String parentName;
+        private final List<RawModelCube> cubes;
+        private final Vector3f pivot;
+        private final Vector3f rotationAngles;
+        private final boolean mirror;
+        private final boolean neverRender;
+        private final float inflate;
+        private final String name;
+        private final String parentName;
 
         private List<RawModelBone> children;
 
@@ -177,9 +177,9 @@ public class JsonModelParser {
     }
 
     public static class RawModelCube {
-        private Vector3f origin;
-        private Vector3f size;
-        private Vector2f uv;
+        private final Vector3f origin;
+        private final Vector3f size;
+        private final Vector2f uv;
 
         private RawModelCube(Vector3f origin, Vector3f size, Vector2f uv) {
             this.origin = origin;

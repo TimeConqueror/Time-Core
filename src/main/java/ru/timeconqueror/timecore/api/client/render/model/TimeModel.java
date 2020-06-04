@@ -1,4 +1,4 @@
-package ru.timeconqueror.timecore.api.client.render;
+package ru.timeconqueror.timecore.api.client.render.model;
 
 import net.minecraft.client.renderer.entity.model.RendererModel;
 import net.minecraft.client.renderer.model.Model;
@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 public class TimeModel extends Model {
-    private String name;
+    private final String name;
     private List<TimeModelRenderer> pieces;
     private Map<String, TimeModelRenderer> pieceMap;
 

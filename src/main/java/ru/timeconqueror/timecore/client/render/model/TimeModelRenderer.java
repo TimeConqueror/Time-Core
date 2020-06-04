@@ -8,14 +8,14 @@ import net.minecraft.client.renderer.Vector3f;
 import net.minecraft.client.renderer.entity.model.RendererModel;
 import net.minecraft.client.renderer.model.ModelBox;
 import org.jetbrains.annotations.NotNull;
-import ru.timeconqueror.timecore.api.client.render.TimeModel;
+import ru.timeconqueror.timecore.api.client.render.model.TimeModel;
 
 import java.util.List;
 
 public class TimeModelRenderer extends RendererModel {
     public List<TimeModelBox> cubes;
     public Vector3f startRotationAngles;
-    private Vector3f scaleFactor = new Vector3f(1, 1, 1);
+    private final Vector3f scaleFactor = new Vector3f(1, 1, 1);
 
     public TimeModelRenderer(TimeModel model, Vector3f rotationAngles, String name, @NotNull List<TimeModelBox> cubes, boolean neverRender) {
         super(model, name);

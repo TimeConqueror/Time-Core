@@ -3,9 +3,9 @@ package ru.timeconqueror.timecore.client.render.animation;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.LivingEntity;
 import org.jetbrains.annotations.NotNull;
-import ru.timeconqueror.timecore.api.client.render.TimeEntityModel;
 import ru.timeconqueror.timecore.api.client.render.animation.IAnimation;
 import ru.timeconqueror.timecore.api.client.render.animation.IAnimationManager;
+import ru.timeconqueror.timecore.api.client.render.model.TimeEntityModel;
 
 import java.util.Comparator;
 import java.util.HashMap;

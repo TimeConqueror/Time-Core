@@ -1,11 +1,11 @@
-package ru.timeconqueror.timecore.api.client.render;
+package ru.timeconqueror.timecore.api.client.render.model;
 
 import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.renderer.entity.model.EntityModel;
 import net.minecraft.entity.Entity;
 
 public class TimeEntityModel<T extends Entity> extends EntityModel<T> {
-    private TimeModel model;
+    private final TimeModel model;
 
     public TimeEntityModel(TimeModel model) {
         this.model = model;
