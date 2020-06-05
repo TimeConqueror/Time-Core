@@ -43,7 +43,10 @@ public abstract class ConfigManager extends TimeRegistry {
         String configPath = validate(config.getRelativePath());
         createParentDirs(FMLPaths.CONFIGDIR.get().resolve(configPath));
 
-        ForgeConfigSpec spec = config.setup();
+        ImprovedConfigBuilder configBuilder = config.getBuilder();
+        config.setup(configBuilder);
+        ForgeConfigSpec spec = configBuilder.build();
+
         CONFIG_LIST.add(config);
 
         ModLoadingContext.get().registerConfig(config.getType(), spec, configPath);

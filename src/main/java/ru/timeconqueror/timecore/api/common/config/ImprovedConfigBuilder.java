@@ -18,23 +18,23 @@ import java.util.function.Supplier;
  */
 public class ImprovedConfigBuilder extends ForgeConfigSpec.Builder {
 
-    private String modid;
-    private ConfigSectionHolder section;
+    private final String modid;
+    private ConfigSection section;
 
     /**
      * If true the builder will add line with default value to comments.
      */
-    private boolean defValueToComment;
+    private final boolean defValueToComment;
 
     /**
      * If true the builder will add prefixes, that are pushed in during deepening in subsections, to properties' lang keys.
      */
-    private boolean autoLangKey;
+    private final boolean autoLangKey;
 
-    private Stack<String> i18nPrefix = new Stack<>();
-    private List<String> commentAdditions = new ArrayList<>();
+    private final Stack<String> i18nPrefix = new Stack<>();
+    private final List<String> commentAdditions = new ArrayList<>();
 
-    public ImprovedConfigBuilder(ConfigSectionHolder section) {
+    public ImprovedConfigBuilder(ConfigSection section) {
         this(section, true, true);
     }
 
@@ -42,15 +42,16 @@ public class ImprovedConfigBuilder extends ForgeConfigSpec.Builder {
      * @param addDefaultValueToComment if true system will add line with default value to comments.
      * @param autoGenLangKey           if true the builder will add prefixes, that are pushed in during deepening in subsections, to properties' lang keys.
      */
-    public ImprovedConfigBuilder(ConfigSectionHolder section, boolean addDefaultValueToComment, boolean autoGenLangKey) {
+    public ImprovedConfigBuilder(ConfigSection section, boolean addDefaultValueToComment, boolean autoGenLangKey) {
         modid = ModLoadingContext.get().getActiveNamespace();
         this.section = section;
         this.defValueToComment = addDefaultValueToComment;
         this.autoLangKey = autoGenLangKey;
 
-        comment(section.getComment());
+        comment(section.getComment() != null ? section.getComment() : "");
         pushWithLang(section.getKey());
     }
+
 
     /**
      * Just adds extra functionality to the base define method.
@@ -73,16 +74,16 @@ public class ImprovedConfigBuilder extends ForgeConfigSpec.Builder {
     }
 
     /**
-     * Setups provided subsection and adds it to bound holder ({@link #section}).
+     * Setups provided subsection and adds it to bound {@link #section}.
      */
     public void addAndSetupSection(ConfigSection section) {
         addAndSetupSection(section, null, null);
     }
 
     /**
-     * Setups provided subsection and adds it to bound holder ({@link #section}).
+     * Setups provided subsection and adds it to bound {@link #section}.
      *
-     * @param sectionIn     subsection, which you want to add to holder.
+     * @param sectionIn     subsection, which you want to add to parent section.
      * @param customComment if not null it will be set above category in config file,
      *                      otherwise {@code sectionIn#getComment()} will be used.
      */
@@ -91,9 +92,9 @@ public class ImprovedConfigBuilder extends ForgeConfigSpec.Builder {
     }
 
     /**
-     * Setups provided subsection and adds it to bound holder ({@link #section}).
+     * Setups provided subsection and adds it to bound {@link #section}.
      *
-     * @param sectionIn        subsection, which you want to add to holder.
+     * @param sectionIn        subsection, which you want to add to parent section.
      * @param customI18nPrefix if not null it will be added to lang key to be set in config property during its creation.
      *                         otherwise {@code sectionIn#getKey()} will be used.
      * @param customComment    if not null it will be set above category in config file,
@@ -109,7 +110,7 @@ public class ImprovedConfigBuilder extends ForgeConfigSpec.Builder {
 
         this.section.addSection(sectionIn);
 
-        ConfigSectionHolder prevSection = this.section;
+        ConfigSection prevSection = this.section;
         this.section = sectionIn;
 
         push(sectionIn.getKey());
@@ -170,6 +171,11 @@ public class ImprovedConfigBuilder extends ForgeConfigSpec.Builder {
         }
     }
 
+    /**
+     * Builds and returns specification for defined variables.
+     * <br>
+     * <font color=yellow>For internal use, shouldn't be called. Overriding is fine.</font>
+     */
     @Override
     public ForgeConfigSpec build() {
         return super.build();
