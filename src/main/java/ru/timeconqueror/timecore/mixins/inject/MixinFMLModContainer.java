@@ -1,4 +1,4 @@
-package ru.timeconqueror.timecore.mixins.injectors;
+package ru.timeconqueror.timecore.mixins.inject;
 
 import net.minecraftforge.fml.LifecycleEventProvider;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;

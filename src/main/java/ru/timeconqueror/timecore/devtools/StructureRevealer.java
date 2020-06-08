@@ -13,7 +13,6 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.IWorld;
-import net.minecraft.world.gen.feature.Feature;
 import net.minecraft.world.gen.feature.structure.Structure;
 import net.minecraft.world.gen.feature.structure.StructurePiece;
 import net.minecraft.world.gen.feature.structure.StructureStart;
@@ -26,10 +25,8 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.fml.network.PacketDistributor;
-import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.opengl.GL11;
-import ru.timeconqueror.timecore.TimeCore;
 import ru.timeconqueror.timecore.api.util.RandHelper;
 import ru.timeconqueror.timecore.mod.common.config.MainConfig;
 import ru.timeconqueror.timecore.mod.common.packet.InternalPacketManager;
@@ -58,8 +55,8 @@ public class StructureRevealer {
     public StructureRevealer() {
         if (FMLEnvironment.dist == Dist.CLIENT) {
             structureRenderer = new Renderer();
-            MinecraftForge.EVENT_BUS.addListener(structureRenderer::onWorldRender);
-            MinecraftForge.EVENT_BUS.addListener(structureRenderer::onChunkUnload);
+            MinecraftForge.EVENT_BUS.addListener(structureRenderer::onWorldRender);//TODO move to FMLJavaModLoadingContext.get().getModEventBus()
+            MinecraftForge.EVENT_BUS.addListener(structureRenderer::onChunkUnload);//TODO move to FMLJavaModLoadingContext.get().getModEventBus()
         } else {
             structureRenderer = null;
         }
@@ -99,20 +96,14 @@ public class StructureRevealer {
         }
     }
 
-    public void subscribePlayerToStructure(ServerPlayerEntity player, ResourceLocation structureName) {
-        if (checkIsStructure(structureName)) {
-            Feature<?> feature = ForgeRegistries.FEATURES.getValue(structureName);
-            if (!subscribedStructures.containsEntry(feature, player.getUniqueID())) {
-                subscribedStructures.put(((Structure<?>) feature), player.getUniqueID());
-            }
+    public void subscribePlayerToStructure(ServerPlayerEntity player, Structure<?> structure) {
+        if (!subscribedStructures.containsEntry(structure, player.getUniqueID())) {
+            subscribedStructures.put(structure, player.getUniqueID());
         }
     }
 
-    public void unsubscribePlayerFromStructure(ServerPlayerEntity player, ResourceLocation structureName) {
-        if (checkIsStructure(structureName)) {
-            Feature<?> feature = ForgeRegistries.FEATURES.getValue(structureName);
-            subscribedStructures.remove(feature, player.getUniqueID());
-        }
+    public void unsubscribePlayerFromStructure(ServerPlayerEntity player, Structure<?> structure) {
+        subscribedStructures.remove(structure, player.getUniqueID());
     }
 
     public void unsubscribePlayerFromAllStructures(ServerPlayerEntity player) {
@@ -122,7 +113,7 @@ public class StructureRevealer {
         }
     }
 
-    public List<ResourceLocation> getSubscribedStructures(ServerPlayerEntity player) {
+    public List<ResourceLocation> getSubscriptions(ServerPlayerEntity player) {
         List<ResourceLocation> structures = new ArrayList<>();
 
         for (Structure<?> structure : subscribedStructures.keySet()) {
@@ -140,23 +131,10 @@ public class StructureRevealer {
         return INSTANCE.get();
     }
 
-    private boolean checkIsStructure(ResourceLocation structureName) {
-        Feature<?> feature = ForgeRegistries.FEATURES.getValue(structureName);
-
-        if (feature != null) {
-            if (feature instanceof Structure<?>) {
-                return true;
-            } else
-                TimeCore.LOGGER.warn("Provided structure name {} belongs to feature, not a structure.", structureName);
-        } else TimeCore.LOGGER.warn("Provided structure name {} doesn't belong to any structure", structureName);
-
-        return false;
-    }
-
     public static class Renderer {
         private final List<StructurePieceContainer> trackedStructurePieces = new ArrayList<>();
         private final HashMap<ResourceLocation, Integer> structureColorMap = new HashMap<>();
-        private boolean canBeSeenUnderground = false;
+        private boolean visibleThroughBlocks = false;
 
         public void onWorldRender(RenderWorldLastEvent event) {
             Tessellator tessellator = Tessellator.getInstance();
@@ -176,7 +154,7 @@ public class StructureRevealer {
             GlStateManager.alphaFunc(GL11.GL_GREATER, 0.001F);
             GlStateManager.disableTexture();
 
-            if (canBeSeenUnderground) {
+            if (visibleThroughBlocks) {
                 GlStateManager.disableDepthTest();
             } else {
                 GlStateManager.depthMask(false);
@@ -186,7 +164,7 @@ public class StructureRevealer {
 
             tessellator.draw();
 
-            if (canBeSeenUnderground) {
+            if (visibleThroughBlocks) {
                 GlStateManager.enableDepthTest();
             } else {
                 GlStateManager.depthMask(true);
@@ -218,8 +196,8 @@ public class StructureRevealer {
             trackedStructurePieces.add(new StructurePieceContainer(structureName, bb));
         }
 
-        public void setCanBeSeenUnderground(boolean canBeSeenUnderground) {
-            this.canBeSeenUnderground = canBeSeenUnderground;
+        public void setVisibleThroughBlocks(boolean visibleThroughBlocks) {
+            this.visibleThroughBlocks = visibleThroughBlocks;
         }
 
         public void setStructureColor(ResourceLocation structureName, int color) {

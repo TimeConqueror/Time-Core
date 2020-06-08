@@ -14,7 +14,8 @@ import java.lang.annotation.Target;
  * If target class inherits {@link Initable},
  * its method {@link Initable#onInit(FMLCommonSetupEvent)} will be called during {@link FMLCommonSetupEvent} event.<br>
  * <p>
- * Otherwise, it will be registered to the {@link EventBusSubscriber.Bus#MOD},
+ * Otherwise, it will be registered to the {@link EventBusSubscriber.Bus#MOD}
+ * (events are fired on the mod event bus when they should be handled during initialization of a mod),
  * so all non-static methods annotated with {@link SubscribeEvent} will work.<br>
  *
  * <b><font color="yellow">

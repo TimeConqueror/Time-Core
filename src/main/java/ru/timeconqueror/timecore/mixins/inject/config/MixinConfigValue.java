@@ -1,4 +1,4 @@
-package ru.timeconqueror.timecore.mixins.injectors.config;
+package ru.timeconqueror.timecore.mixins.inject.config;
 
 import net.minecraftforge.common.ForgeConfigSpec;
 import org.spongepowered.asm.mixin.Implements;

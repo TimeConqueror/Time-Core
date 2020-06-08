@@ -1,4 +1,4 @@
-package ru.timeconqueror.timecore.mixins.injectors;
+package ru.timeconqueror.timecore.mixins.inject;
 
 import net.minecraft.data.DirectoryCache;
 import org.spongepowered.asm.mixin.Mixin;
