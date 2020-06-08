@@ -1,16 +1,16 @@
-package ru.timeconqueror.timecore.api.util;
+package ru.timeconqueror.timecore.util;
 
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import ru.timeconqueror.timecore.TimeCore;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -50,21 +50,11 @@ public class NetworkUtils {
     }
 
     /**
-     * Sends message to all players in given distance.
+     * Find player by its uuid.
      *
-     * @param distanceIn distance from `fromPos`, in which players will be get a message.
+     * @apiNote Only for logical server side!
      */
-    public static void sendMessageToAllNearby(BlockPos fromPos, ITextComponent msg, double distanceIn) {
-        for (ServerPlayerEntity player : NetworkUtils.getPlayersNearby(fromPos, distanceIn)) {
-            player.sendMessage(msg);
-        }
-    }
-
-    /**
-     * Changes format (usually color) of provided message.
-     */
-    public static <T extends ITextComponent> T format(T msg, TextFormatting format) {
-        msg.getStyle().setColor(format);
-        return msg;
+    public static Optional<ServerPlayerEntity> getPlayer(UUID uuid) {
+        return Optional.ofNullable(ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayerByUUID(uuid));
     }
 }

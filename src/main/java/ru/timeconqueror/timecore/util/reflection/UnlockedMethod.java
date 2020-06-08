@@ -32,4 +32,8 @@ public class UnlockedMethod<T> {
             throw new RuntimeException(e);
         }
     }
+
+    public Method getMethod() {
+        return method;
+    }
 }

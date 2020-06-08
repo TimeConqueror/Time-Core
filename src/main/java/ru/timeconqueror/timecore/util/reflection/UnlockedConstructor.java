@@ -30,4 +30,8 @@ public class UnlockedConstructor<T> {
             throw new RuntimeException(e);
         }
     }
+
+    public Constructor<T> getConstructor() {
+        return c;
+    }
 }

@@ -24,8 +24,22 @@ public interface ITimePacket {
     LogicalSide getReceptionSide();
 
     interface ITimePacketHandler<T extends ITimePacket> {
+        /**
+         * Encodes provided {@code packet} to {@code buffer}.
+         *
+         * @param packet packet to encode
+         * @param buffer buffer, where you should encode packet.
+         */
         void encode(T packet, PacketBuffer buffer);
 
+        /**
+         * Decodes packet from provided buffer.
+         * <p>
+         * Here you should read data from buffer and then create and return baked packet object.
+         *
+         * @param buffer buffer, from which data will be read
+         */
+        @NotNull
         T decode(PacketBuffer buffer);
 
         void onPacketReceived(T packet, Supplier<NetworkEvent.Context> contextSupplier);

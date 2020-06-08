@@ -57,4 +57,8 @@ public class UnlockedField<T> {
             throw new RuntimeException(e);
         }
     }
+
+    public Field getField() {
+        return field;
+    }
 }

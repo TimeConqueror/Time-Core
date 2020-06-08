@@ -1,9 +1,11 @@
-package ru.timeconqueror.timecore.api.client;
+package ru.timeconqueror.timecore.util.client;
 
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.util.math.AxisAlignedBB;
 import org.lwjgl.opengl.GL11;
 
 public class DrawHelper {
@@ -100,7 +102,7 @@ public class DrawHelper {
     }
 
     /**
-     * Draws textured rectangle цшер autoexpandable width. So if you have texture width, for example, in 30 pixels, while your rectangle have a larger width.
+     * Draws textured rectangle with autoexpandable width. So if you have texture width, for example, in 30 pixels, while your rectangle have a larger width.
      * How it works: this method renders left and right part of rectangle, depending on given {@code requiredWidth}, and then repeats center element until it fill all remaining width.
      * <p>
      * If {@code requiredWidth} is less than the sum of {@code startElement, endElement} width, it will be expanded to this sum.
@@ -263,33 +265,81 @@ public class DrawHelper {
         drawStringWithShadow(fontRendererIn, text, x - fontRendererIn.getStringWidth(text) / 2F, y - fontRendererIn.FONT_HEIGHT / 2F, color);
     }
 
+    /**
+     * Returns red channel data of the ARGB color.
+     */
+    public static int getRed(int argb) {
+        return argb >> 16 & 0xFF;
+    }
+
+    /**
+     * Returns green channel data of the ARGB color.
+     */
+    public static int getGreen(int argb) {
+        return argb >> 8 & 0xFF;
+    }
+
+    /**
+     * Returns blue channel data of the ARGB color.
+     */
+    public static int getBlue(int argb) {
+        return argb & 0xFF;
+    }
+
+    /**
+     * Returns alpha channel data of the ARGB color.
+     */
+    public static int getAlpha(int argb) {
+        return argb >> 24 & 0xFF;
+    }
+
+    /**
+     * Returns the opaque version of this color (without alpha)
+     */
+    public static int opaquefy(int argb) {
+        return argb | 0xFF000000;
+    }
+
+    /**
+     * Adds filled bounding box render to buffer builder, which can be drawn later via {@link Tessellator#draw()}
+     * <p>
+     * Provided builder should have {@link DefaultVertexFormats#POSITION_COLOR} mode and .
+     */
+    public static void buildFilledBoundingBox(BufferBuilder builder, AxisAlignedBB bb, int argbColor) {
+        float red = getRed(argbColor) / 255F;
+        float green = getGreen(argbColor) / 255F;
+        float blue = getBlue(argbColor) / 255F;
+        float alpha = getAlpha(argbColor) / 255F;
+        WorldRenderer.addChainedFilledBoxVertices(builder, bb.minX, bb.minY, bb.minZ, bb.maxX, bb.maxY, bb.maxZ, red, green, blue, alpha);
+    }
+
     public static class TexturedRect {
         /**
          * Represents coordinate length along the axis X.
          */
-        private float width;
+        private final float width;
         /**
          * Represents coordinate length along the axis Y.
          */
-        private float height;
+        private final float height;
         /**
          * Start texture x-point (x of left-top texture corner).
          */
-        private float textureX;
+        private final float textureX;
         /**
          * Start texture y-point (y of left-top texture corner).
          */
-        private float textureY;
+        private final float textureY;
         /**
          * Texture width in points.
          * Point is a relative texture coordinate. It is used in {@code textureX, textureY, textureWidth, textureHeight} to determine its sizes and coordinates relative to the entire texture.
          */
-        private float textureWidth;
+        private final float textureWidth;
         /**
          * Texture height in points.
          * Point is a relative texture coordinate. It is used in {@code textureX, textureY, textureWidth, textureHeight} to determine its sizes and coordinates relative to the entire texture.
          */
-        private float textureHeight;
+        private final float textureHeight;
 
         public TexturedRect(float width, float height, float textureX, float textureY, float textureWidth, float textureHeight) {
             this.width = width;
