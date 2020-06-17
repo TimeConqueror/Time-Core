@@ -3,13 +3,17 @@ package ru.timeconqueror.timecore.client.command;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.ParseResults;
 import com.mojang.brigadier.StringReader;
+import com.mojang.brigadier.context.CommandContextBuilder;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import com.mojang.brigadier.tree.CommandNode;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.CommandSource;
 import net.minecraft.util.text.*;
 import net.minecraft.util.text.event.ClickEvent;
 import net.minecraft.util.text.event.HoverEvent;
 import ru.timeconqueror.timecore.TimeCore;
+
+import java.util.Arrays;
 
 public class ClientCommandManager {
     private static final CommandDispatcher<CommandSource> CLIENT_DISPATCHER = new CommandDispatcher<>();
@@ -80,10 +84,30 @@ public class ClientCommandManager {
      * Checks for unknown command exception, so determines if command can be handled on client.
      */
     private static boolean canBeHandled(ParseResults<CommandSource> parseResults) {
+        String[] commandPath = parseResults.getReader().getString().substring(1).split(" ");
+        CommandNode<CommandSource> node = CLIENT_DISPATCHER.findNode(Arrays.asList(commandPath));
+        System.out.println(node);
+        System.out.println(parseResults.getContext());
+        CommandContextBuilder<CommandSource> context = parseResults.getContext();
+        context.getCommand();
+
+
         if (parseResults.getReader().canRead()) {
             return !parseResults.getContext().getRange().isEmpty();
         }
 
+        return true;
+    }
+
+    private static boolean searchByLiterals(ParseResults<CommandSource> parseResults) {
+//        String[] commandPath = parseResults.getReader().getString().substring(1).split(" ");
+//        CommandNode<S> node = root;
+//        for (final String name : commandPath) {
+//            node = node.getChild(name);
+//            if (node == null) {
+//                return null;
+//            }
+//        }
         return true;
     }
 

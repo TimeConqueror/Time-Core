@@ -1,8 +1,8 @@
 package ru.timeconqueror.timecore.api.client.render.animation;
 
 import org.jetbrains.annotations.Nullable;
-import ru.timeconqueror.timecore.client.render.animation.AnimationStarter;
-import ru.timeconqueror.timecore.client.render.animation.AnimationWatcher;
+import ru.timeconqueror.timecore.animation.common.AnimationStarter;
+import ru.timeconqueror.timecore.animation.common.AnimationWatcher;
 
 public interface IAnimationLayer {
     float getWeight();

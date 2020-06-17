@@ -1,10 +1,11 @@
-package ru.timeconqueror.timecore.client.render.animation;
+package ru.timeconqueror.timecore.animation.common;
 
 import org.jetbrains.annotations.Nullable;
 import ru.timeconqueror.timecore.api.client.render.animation.BlendType;
 import ru.timeconqueror.timecore.api.client.render.animation.IAnimation;
 import ru.timeconqueror.timecore.api.client.render.animation.IAnimationLayer;
 import ru.timeconqueror.timecore.api.util.MathUtils;
+import ru.timeconqueror.timecore.client.render.animation.AnimationConstants;
 
 public class Layer implements IAnimationLayer {
     private final int priority;

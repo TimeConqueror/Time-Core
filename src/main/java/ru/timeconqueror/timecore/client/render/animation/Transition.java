@@ -4,6 +4,7 @@ import net.minecraft.client.renderer.Vector3f;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ru.timeconqueror.timecore.TimeCore;
+import ru.timeconqueror.timecore.animation.common.AnimationWatcher;
 import ru.timeconqueror.timecore.api.client.render.animation.IAnimation;
 import ru.timeconqueror.timecore.api.client.render.animation.IAnimationLayer;
 import ru.timeconqueror.timecore.api.client.render.model.TimeEntityModel;

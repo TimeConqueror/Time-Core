@@ -1,12 +1,13 @@
-package ru.timeconqueror.timecore.client.render.animation;
+package ru.timeconqueror.timecore.animation.common;
 
 import ru.timeconqueror.timecore.TimeCore;
 import ru.timeconqueror.timecore.api.client.render.animation.IAnimation;
 import ru.timeconqueror.timecore.api.client.render.animation.IAnimationLayer;
 import ru.timeconqueror.timecore.api.client.render.animation.IAnimationManager;
+import ru.timeconqueror.timecore.client.render.animation.AnimationConstants;
 
 public class AnimationStarter {
-    private AnimationData data;
+    private final AnimationData data;
     private boolean ignorable = true;
 
     public AnimationStarter(IAnimation animation) {

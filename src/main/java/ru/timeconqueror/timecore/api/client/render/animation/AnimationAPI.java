@@ -1,8 +1,8 @@
 package ru.timeconqueror.timecore.api.client.render.animation;
 
 import ru.timeconqueror.timecore.TimeCore;
-import ru.timeconqueror.timecore.client.render.animation.AnimationManageBuilder;
-import ru.timeconqueror.timecore.client.render.animation.AnimationStarter;
+import ru.timeconqueror.timecore.animation.common.AnimationManageBuilder;
+import ru.timeconqueror.timecore.animation.common.AnimationStarter;
 
 public class AnimationAPI {
     public static AnimationManageBuilder newManagerFactory() {

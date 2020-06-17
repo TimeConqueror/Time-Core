@@ -11,6 +11,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import ru.timeconqueror.timecore.api.TimeMod;
 import ru.timeconqueror.timecore.client.resource.TimePackFinder;
+import ru.timeconqueror.timecore.util.I18nResolver;
 
 @Mod(TimeCore.MODID)
 public final class TimeCore extends TimeMod {
@@ -18,11 +19,15 @@ public final class TimeCore extends TimeMod {
     public static final Logger LOGGER = LogManager.getLogger(MODID);
     public static TimeCore INSTANCE = null;
 
+    public static final I18nResolver LANG_RESOLVER = new I18nResolver(MODID);
+
     public TimeCore() {
         INSTANCE = this;
 
         DistExecutor.runWhenOn(Dist.CLIENT, () -> () -> {
             Minecraft mc = Minecraft.getInstance();
+
+            //mc.displayGuiScreen(new ChatScreen(""));
 
             //noinspection ConstantConditions
             if (mc != null) {//it's null in runData

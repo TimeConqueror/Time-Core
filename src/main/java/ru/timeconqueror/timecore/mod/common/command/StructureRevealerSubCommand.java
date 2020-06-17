@@ -20,14 +20,16 @@ import ru.timeconqueror.timecore.TimeCore;
 import ru.timeconqueror.timecore.common.command.argument.StructureArgument;
 import ru.timeconqueror.timecore.devtools.StructureRevealer;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class StructureRevealerSubCommand {
-    public static final SimpleCommandExceptionType REVEALER_DEACTIVATED = new SimpleCommandExceptionType(new TranslationTextComponent("cmd." + TimeCore.MODID + ".structure_revealer.deactivated"));
+    public static final SimpleCommandExceptionType REVEALER_DEACTIVATED = new SimpleCommandExceptionType(new TranslationTextComponent(TimeCore.LANG_RESOLVER.commandKey("structure_revealer.deactivated")));
 
     public static ArgumentBuilder<CommandSource, ?> register() {
-        /**
+        /*
          * /timecore structure_revealer subscribe *structure_name* *player*|me
          * /timecore structure_revealer unsubscribe *structure_name* *player*|me
          * /timecore structure_revealer unsubscribe_all *player*|me
@@ -36,45 +38,53 @@ public class StructureRevealerSubCommand {
         return Commands.literal("structure_revealer")
                 .then(Commands.literal("subscribe")
                         .then(Commands.argument("structure", StructureArgument.create())
-                                .then(Commands.argument("player", EntityArgument.player())
-                                        .executes(context -> subscribe(context.getSource(), context.getArgument("player", ServerPlayerEntity.class), context.getArgument("structure", Structure.class)))
-                                ).executes(context -> subscribe(context.getSource(), context.getSource().asPlayer(), context.getArgument("structure", Structure.class)))
+                                .then(Commands.argument("player", EntityArgument.players())
+                                        .executes(context -> subscribe(context.getSource(), EntityArgument.getPlayers(context, "player"), context.getArgument("structure", Structure.class)))
+                                ).executes(context -> subscribe(context.getSource(), Collections.singleton(context.getSource().asPlayer()), context.getArgument("structure", Structure.class)))
                         )
                 ).then(Commands.literal("unsubscribe")
                         .then(Commands.argument("structure", StructureArgument.create())
-                                .then(Commands.argument("player", EntityArgument.player())
-                                        .executes(context -> unsubscribe(context.getArgument("player", ServerPlayerEntity.class), context.getArgument("structure", Structure.class)))
-                                ).executes(context -> unsubscribe(context.getSource().asPlayer(), context.getArgument("structure", Structure.class)))
+                                .then(Commands.argument("player", EntityArgument.players())
+                                        .executes(context -> unsubscribe(context.getSource(), EntityArgument.getPlayers(context, "player"), context.getArgument("structure", Structure.class)))
+                                ).executes(context -> unsubscribe(context.getSource(), Collections.singleton(context.getSource().asPlayer()), context.getArgument("structure", Structure.class)))
                         )
                 ).then(Commands.literal("unsubscribe_all")
-                        .then(Commands.argument("player", EntityArgument.player())
-                                .executes(context -> unsubscribe(context.getArgument("player", ServerPlayerEntity.class), null))
-                        ).executes(context -> unsubscribe(context.getSource().asPlayer(), null))
+                        .then(Commands.argument("player", EntityArgument.players())
+                                .executes(context -> unsubscribe(context.getSource(), EntityArgument.getPlayers(context, "player"), null))
+                        ).executes(context -> unsubscribe(context.getSource(), Collections.singleton(context.getSource().asPlayer()), null))
                 ).then(Commands.literal("get_subscriptions")
-                        .then(Commands.argument("player", EntityArgument.player())
+                        .then(Commands.argument("player", EntityArgument.players())
                                 .executes(context -> getSubscriptions(context.getArgument("player", ServerPlayerEntity.class), context.getSource()))
                         ).executes(context -> getSubscriptions(context.getSource().asPlayer(), context.getSource()))
                 );
     }
 
-    private static int subscribe(CommandSource source, ServerPlayerEntity player, Structure<?> structure) throws CommandSyntaxException {
+    private static int subscribe(CommandSource source, Collection<ServerPlayerEntity> players, Structure<?> structure) throws CommandSyntaxException {
         StructureRevealer instance = checkRevealerActiveness();
 
-        instance.subscribePlayerToStructure(player, structure);
+        for (ServerPlayerEntity player : players) {
+            instance.subscribePlayerToStructure(player, structure);
+        }
 
-//        source.sendFeedback(new TranslationTextComponent("cmd." + TextFormatting));
+        source.sendFeedback(new TranslationTextComponent(TimeCore.LANG_RESOLVER.commandKey("structure_revealer.subscribe.success"), players.stream().map(player -> player.getName().getString()).collect(Collectors.joining(",")), structure.getStructureName()), true);
 
         return 1;
     }
 
-    private static int unsubscribe(ServerPlayerEntity player, @Nullable Structure<?> structure) throws CommandSyntaxException {
+    private static int unsubscribe(CommandSource source, Collection<ServerPlayerEntity> players, @Nullable Structure<?> structure) throws CommandSyntaxException {
         StructureRevealer instance = checkRevealerActiveness();
 
         if (structure == null) {
-            instance.unsubscribePlayerFromAllStructures(player);
+            for (ServerPlayerEntity player : players) {
+                instance.unsubscribePlayerFromAllStructures(player);
+            }
         } else {
-            instance.unsubscribePlayerFromStructure(player, structure);
+            for (ServerPlayerEntity player : players) {
+                instance.unsubscribePlayerFromStructure(player, structure);
+            }
         }
+
+        source.sendFeedback(new TranslationTextComponent(TimeCore.LANG_RESOLVER.commandKey("structure_revealer.unsubscribe.success")), true);
 
         return 1;
     }
@@ -106,7 +116,7 @@ public class StructureRevealerSubCommand {
 
     public static class ClientSubCommand {
         public static ArgumentBuilder<CommandSource, ?> register() {
-            /**
+            /*
              * /timecore structure_revealer set_color *structure_name* *color(int)*
              * /timecore structure_revealer set_visible_through_blocks *true|false*
              */

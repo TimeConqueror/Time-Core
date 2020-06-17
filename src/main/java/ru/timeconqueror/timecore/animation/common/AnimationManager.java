@@ -1,4 +1,4 @@
-package ru.timeconqueror.timecore.client.render.animation;
+package ru.timeconqueror.timecore.animation.common;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.LivingEntity;
@@ -6,6 +6,8 @@ import org.jetbrains.annotations.NotNull;
 import ru.timeconqueror.timecore.api.client.render.animation.IAnimation;
 import ru.timeconqueror.timecore.api.client.render.animation.IAnimationManager;
 import ru.timeconqueror.timecore.api.client.render.model.TimeEntityModel;
+import ru.timeconqueror.timecore.client.render.animation.AnimationConstants;
+import ru.timeconqueror.timecore.client.render.animation.Transition;
 
 import java.util.Comparator;
 import java.util.HashMap;

@@ -1,12 +1,13 @@
-package ru.timeconqueror.timecore.client.render.animation;
+package ru.timeconqueror.timecore.animation.common;
 
 import ru.timeconqueror.timecore.api.client.render.animation.BlendType;
 import ru.timeconqueror.timecore.api.client.render.animation.IAnimationManager;
+import ru.timeconqueror.timecore.client.render.animation.AnimationConstants;
 
 import java.util.HashMap;
 
 public class AnimationManageBuilder {
-    private HashMap<String, Layer> animationLayers = new HashMap<>();
+    private final HashMap<String, Layer> animationLayers = new HashMap<>();
     private boolean used = false;
 
     public AnimationManageBuilder addLayer(String name, int priority, BlendType blendType, float weight) {
