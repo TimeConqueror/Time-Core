@@ -1,19 +1,14 @@
 package ru.timeconqueror.timecore.api.client.render.animation;
 
 import ru.timeconqueror.timecore.TimeCore;
-import ru.timeconqueror.timecore.animation.common.AnimationManageBuilder;
-import ru.timeconqueror.timecore.animation.common.AnimationStarter;
+import ru.timeconqueror.timecore.animation.AnimationStarter;
 
 public class AnimationAPI {
-    public static AnimationManageBuilder newManagerFactory() {
-        return new AnimationManageBuilder();
-    }
-
-    public static AnimationStarter startAnimation(IAnimation animation) {
+    public static AnimationStarter newAnimationStarter(IAnimation animation) {
         return new AnimationStarter(animation);
     }
 
-    public static void removeAnimation(IAnimationManager animationManager, String layerName) {
+    public static void removeAnimation(AnimationManager animationManager, String layerName) {
         if (animationManager.containsLayer(layerName)) {
             animationManager.getLayer(layerName).removeAnimation();
         } else {

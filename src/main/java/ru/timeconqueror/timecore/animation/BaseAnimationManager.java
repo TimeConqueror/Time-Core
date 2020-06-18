@@ -1,10 +1,8 @@
-package ru.timeconqueror.timecore.animation.common;
+package ru.timeconqueror.timecore.animation;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.entity.LivingEntity;
 import org.jetbrains.annotations.NotNull;
+import ru.timeconqueror.timecore.api.client.render.animation.AnimationManager;
 import ru.timeconqueror.timecore.api.client.render.animation.IAnimation;
-import ru.timeconqueror.timecore.api.client.render.animation.IAnimationManager;
 import ru.timeconqueror.timecore.api.client.render.model.TimeEntityModel;
 import ru.timeconqueror.timecore.client.render.animation.AnimationConstants;
 import ru.timeconqueror.timecore.client.render.animation.Transition;
@@ -14,12 +12,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class AnimationManager implements IAnimationManager {
+public abstract class BaseAnimationManager implements AnimationManager {
     private HashMap<String, Layer> layerMap;
     private List<Layer> layers;
-
-    AnimationManager() {
-    }
 
     @Override
     public boolean containsLayer(String name) {
@@ -40,13 +35,12 @@ public class AnimationManager implements IAnimationManager {
     }
 
     @Override
-    public <T extends LivingEntity> void applyAnimations(TimeEntityModel<T> model) {
+    public void applyAnimations(TimeEntityModel<?> model) {
         for (Layer layer : layers) {
             AnimationWatcher watcher = layer.getAnimationWatcher();
 
-            boolean paused = Minecraft.getInstance().isGamePaused();
-
-            long time = System.currentTimeMillis();
+            boolean paused = isGamePaused();
+            long currentTime = System.currentTimeMillis();
 
             if (watcher != null) {
                 if (paused) {
@@ -58,7 +52,9 @@ public class AnimationManager implements IAnimationManager {
                         watcher.initTransition(model);
                     }
 
-                    if (watcher.isAnimationEnded(time)) {
+                    if (watcher.isAnimationEnded(currentTime)) {
+                        onAnimationEnd(model, layer, watcher, currentTime);
+
                         if (watcher.getAnimation() instanceof Transition) {
                             IAnimation anim = ((Transition) watcher.getAnimation()).getDestAnimation();
                             //noinspection ConstantConditions (transition should always have its data)
@@ -75,10 +71,17 @@ public class AnimationManager implements IAnimationManager {
             layer.setAnimationWatcher(watcher); //here we update current watcher
 
             if (watcher != null) {
-                IAnimation animation = watcher.getAnimation();
-                animation.apply(model, layer, watcher.getExistingTime(time));
+                applyAnimation(model, layer, watcher, currentTime);
             }
         }
+    }
+
+    protected abstract void applyAnimation(TimeEntityModel<?> model, Layer layer, AnimationWatcher watcher, long currentTime);
+
+    protected abstract boolean isGamePaused();
+
+    protected void onAnimationEnd(TimeEntityModel<?> model, Layer layer, AnimationWatcher watcher, long currentTime) {
+
     }
 
     void setLayers(HashMap<String, Layer> layers) {

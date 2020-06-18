@@ -5,16 +5,16 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
-import ru.timeconqueror.timecore.api.client.render.animation.AnimationAPI;
-import ru.timeconqueror.timecore.api.client.render.animation.IAnimationManager;
-import ru.timeconqueror.timecore.api.client.render.animation.IAnimationProvider;
-import ru.timeconqueror.timecore.registry.TEntities;
+import ru.timeconqueror.timecore.animation.AnimationManagerBuilder;
+import ru.timeconqueror.timecore.animation.StateMachineBuilder;
+import ru.timeconqueror.timecore.api.animation.StateMachine;
+import ru.timeconqueror.timecore.api.client.render.animation.AnimationProvider;
 
 import javax.annotation.Nullable;
 
 @SuppressWarnings("EntityConstructor")
-public class EntityZombie extends EntityStupidAnimal implements IAnimationProvider {
-    private IAnimationManager animationManager = AnimationAPI.newManagerFactory().build();
+public class EntityZombie extends EntityStupidAnimal implements AnimationProvider<EntityZombie> {
+    private final StateMachine<EntityZombie> stateMachine = new StateMachineBuilder<EntityZombie>(new AnimationManagerBuilder()).build(this, world);
 
     public EntityZombie(EntityType<? extends AnimalEntity> type, World worldIn) {
         super(type, worldIn);
@@ -35,20 +35,19 @@ public class EntityZombie extends EntityStupidAnimal implements IAnimationProvid
         return false;
     }
 
-    @NotNull
-    @Override
-    public IAnimationManager getAnimationManager() {
-        return animationManager;
-    }
-
     @Override
     public void livingTick() {
         super.livingTick();
 
         if ((System.currentTimeMillis() / 1000) % 5 == 0) {
-            AnimationAPI.startAnimation(TEntities.SCALING_ANIMATION).startAt(animationManager.getMainLayer());
+//            AnimationAPI.newAnimationStarter(TEntities.SCALING_ANIMATION).startAt(animationManager.getMainLayer());
 //            animationManager.startAnimationIgnorable(TEntities.HIT_ANIMATION, 333);
-//            animationManager.startAnimation(TEntities.OFFSETTING_ANIMATION, InsertType.IGNORE);
+//            animationManager.newAnimationStarter(TEntities.OFFSETTING_ANIMATION, InsertType.IGNORE);
         }
+    }
+
+    @Override
+    public @NotNull StateMachine<EntityZombie> getStateMachine() {
+        return stateMachine;
     }
 }

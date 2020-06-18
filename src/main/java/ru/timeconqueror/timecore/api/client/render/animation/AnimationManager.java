@@ -1,10 +1,9 @@
 package ru.timeconqueror.timecore.api.client.render.animation;
 
-import net.minecraft.entity.LivingEntity;
 import org.jetbrains.annotations.NotNull;
 import ru.timeconqueror.timecore.api.client.render.model.TimeEntityModel;
 
-public interface IAnimationManager {
+public interface AnimationManager {
 
     boolean containsLayer(String name);
 
@@ -28,5 +27,5 @@ public interface IAnimationManager {
     @NotNull
     IAnimationLayer getMainLayer();
 
-    <T extends LivingEntity> void applyAnimations(TimeEntityModel<T> model);
+    void applyAnimations(TimeEntityModel<?> model);
 }

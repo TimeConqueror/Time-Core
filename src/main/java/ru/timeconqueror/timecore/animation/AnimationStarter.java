@@ -1,9 +1,9 @@
-package ru.timeconqueror.timecore.animation.common;
+package ru.timeconqueror.timecore.animation;
 
 import ru.timeconqueror.timecore.TimeCore;
+import ru.timeconqueror.timecore.api.client.render.animation.AnimationManager;
 import ru.timeconqueror.timecore.api.client.render.animation.IAnimation;
 import ru.timeconqueror.timecore.api.client.render.animation.IAnimationLayer;
-import ru.timeconqueror.timecore.api.client.render.animation.IAnimationManager;
 import ru.timeconqueror.timecore.client.render.animation.AnimationConstants;
 
 public class AnimationStarter {
@@ -29,7 +29,7 @@ public class AnimationStarter {
         return this;
     }
 
-    public void startAt(IAnimationManager manager, String layerName) {
+    public void startAt(AnimationManager manager, String layerName) {
         if (manager.containsLayer(layerName)) {
             startAt(manager.getLayer(layerName));
         } else {
@@ -50,6 +50,10 @@ public class AnimationStarter {
         }
 
         layer.setAnimation(this.data);
+    }
+
+    AnimationData getData() {
+        return data;
     }
 
     public static class AnimationData {

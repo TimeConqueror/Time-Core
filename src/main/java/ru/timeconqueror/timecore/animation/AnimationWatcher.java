@@ -1,4 +1,4 @@
-package ru.timeconqueror.timecore.animation.common;
+package ru.timeconqueror.timecore.animation;
 
 import org.jetbrains.annotations.Nullable;
 import ru.timeconqueror.timecore.api.client.render.animation.IAnimation;

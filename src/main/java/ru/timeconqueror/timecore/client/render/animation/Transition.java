@@ -4,7 +4,7 @@ import net.minecraft.client.renderer.Vector3f;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ru.timeconqueror.timecore.TimeCore;
-import ru.timeconqueror.timecore.animation.common.AnimationWatcher;
+import ru.timeconqueror.timecore.animation.AnimationWatcher;
 import ru.timeconqueror.timecore.api.client.render.animation.IAnimation;
 import ru.timeconqueror.timecore.api.client.render.animation.IAnimationLayer;
 import ru.timeconqueror.timecore.api.client.render.model.TimeEntityModel;
@@ -70,9 +70,10 @@ public class Transition implements IAnimation {
     private final int transitionLength;
     private final String name;
     private List<TransitionBoneOption> options = new ArrayList<>();
+    @Nullable
     private final IAnimation destAnimation;
 
-    private Transition(int transitionLength, String name, IAnimation destAnimation) {
+    private Transition(int transitionLength, String name, @Nullable IAnimation destAnimation) {
         this.transitionLength = transitionLength;
         this.name = name;
         this.destAnimation = destAnimation;
