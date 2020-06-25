@@ -37,15 +37,11 @@ public class AnimationStarter {
     }
 
     public void startAt(IAnimationLayer layer) {
-//        System.out.println("AnimationStarter.startAt");
         if (ignorable) {
             AnimationWatcher watcher = layer.getAnimationWatcher();
             if (watcher != null) {
-//                System.out.println("watcher.getAnimation() = " + watcher.getAnimation());
-                //noinspection ConstantConditions (#isInTransitionMode checks not-null)
-                if ((watcher.isInTransitionMode() && data.prototype.equals(watcher.getTransitionData().getDestination()))
-                        || data.prototype.equals(layer.getCurrentAnimation())) {//TODO add check for speed?
-                    return;
+                if (data.prototype.equals(watcher.getAnimation()) || (watcher instanceof TransitionWatcher && data.prototype.equals(((TransitionWatcher) watcher).getDestination()))) {
+                    return;//TODO add check for speed
                 }
             }
         }

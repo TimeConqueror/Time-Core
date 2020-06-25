@@ -4,7 +4,6 @@ import net.minecraft.client.renderer.Vector3f;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ru.timeconqueror.timecore.TimeCore;
-import ru.timeconqueror.timecore.animation.AnimationWatcher;
 import ru.timeconqueror.timecore.api.client.render.animation.IAnimation;
 import ru.timeconqueror.timecore.api.client.render.animation.IAnimationLayer;
 import ru.timeconqueror.timecore.api.client.render.model.TimeEntityModel;
@@ -121,17 +120,15 @@ public class Transition implements IAnimation {
         return transition;
     }
 
-    public static IAnimation create(@Nullable AnimationWatcher sourceWatcher, @Nullable IAnimation dest, TimeModel model, int transitionTime) {
+    @NotNull
+    public static IAnimation create(@Nullable IAnimation source, int sourceExistingTime, @Nullable IAnimation dest, TimeModel model, int transitionTime) {
         if (dest == null) {
-            return createToIdleState(sourceWatcher != null ? sourceWatcher.getAnimation() : null, model, sourceWatcher != null ? sourceWatcher.getExistingTime() : -1, transitionTime);
-        } else if (sourceWatcher == null || sourceWatcher.getAnimation() == null) {
+            return createToIdleState(source, model, source != null ? sourceExistingTime : 0, transitionTime);
+        } else if (source == null) {
             return createFromIdleState(dest, model, transitionTime);
         }
 
-        IAnimation source = sourceWatcher.getAnimation();
-        int existingTime = sourceWatcher.getExistingTime();
-
-        return create(source, dest, model, existingTime, transitionTime);
+        return create(source, dest, model, sourceExistingTime, transitionTime);
     }
 
     private static IAnimation create(@NotNull IAnimation source, @NotNull IAnimation dest, TimeModel model, int existingTime, int transitionTime) {

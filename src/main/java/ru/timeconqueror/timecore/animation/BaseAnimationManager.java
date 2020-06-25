@@ -5,7 +5,6 @@ import org.jetbrains.annotations.Nullable;
 import ru.timeconqueror.timecore.api.animation.AnimationManager;
 import ru.timeconqueror.timecore.api.client.render.animation.IAnimation;
 import ru.timeconqueror.timecore.api.client.render.model.TimeEntityModel;
-import ru.timeconqueror.timecore.client.render.animation.Transition;
 
 import java.util.Comparator;
 import java.util.HashMap;
@@ -55,21 +54,15 @@ public abstract class BaseAnimationManager implements AnimationManager {
                 } else {
                     watcher.unfreeze();
 
-                    if (watcher.requiresTransitionPreparation()) {
-                        watcher.initTransition(model);
-                    }
+                    watcher.onFrame(model);
 
                     if (watcher.isAnimationEnded(currentTime)) {
                         onAnimationEnd(model, layer, watcher, currentTime);
 
-                        if (watcher.getAnimation() instanceof Transition) {
-                            IAnimation anim = ((Transition) watcher.getAnimation()).getDestAnimation();
-                            //noinspection ConstantConditions (transition should always have its data)
-                            watcher = anim != null ? new AnimationWatcher(anim, watcher.getTransitionData().getDestAnimSpeedFactor()) : null;
-                        } else if (watcher.getAnimation().isLooped()) {
+                        if (watcher.getAnimation().isLooped()) {
                             watcher.resetTimer();
                         } else {
-                            watcher = null;
+                            watcher = watcher.next();
                         }
                     }
                 }

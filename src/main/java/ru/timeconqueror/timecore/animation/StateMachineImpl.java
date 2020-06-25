@@ -45,7 +45,7 @@ public class StateMachineImpl<T extends MobEntity> implements StateMachine<T> {
                 if (posChanged) {
                     new AnimationStarter(animationManager.getWalkingAnimation())
                             .setIgnorable(true)
-                            .setSpeed(2.0F)
+//                            .setSpeed(2.0F)
                             .startAt(walkingLayer);
                 } else {
                     walkingLayer.removeAnimation();

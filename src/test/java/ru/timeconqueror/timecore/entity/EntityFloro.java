@@ -33,7 +33,7 @@ public class EntityFloro extends EntityStupidAnimal implements AnimationProvider
 
     @Override
     protected void registerGoals() {
-        this.goalSelector.addGoal(0, new RandomWalkingGoal(this, 0.3F));
+        this.goalSelector.addGoal(0, new RandomWalkingGoal(this, getSpeed()));
     }
 
     @Nullable
@@ -44,7 +44,7 @@ public class EntityFloro extends EntityStupidAnimal implements AnimationProvider
 
     @Override
     public double getSpeed() {
-        return 0.37D;
+        return 0.3D;
     }
 
     public boolean isFemale() {

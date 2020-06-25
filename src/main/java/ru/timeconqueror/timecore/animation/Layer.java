@@ -59,10 +59,10 @@ public class Layer implements IAnimationLayer {
     @Override
     public void setAnimation(AnimationStarter.AnimationData data) {
         if (animationWatcher == null) {
-            animationWatcher = new AnimationWatcher(null, data.speedFactor);
+            animationWatcher = new TransitionWatcher(data.transitionTime, data.prototype, data.speedFactor);
+        } else {
+            animationWatcher = new TransitionWatcher(animationWatcher.getAnimation(), animationWatcher.getExistingTime(), data.transitionTime, data.prototype, data.speedFactor);
         }
-
-        animationWatcher.enableTransitionMode(data.prototype, data.transitionTime, data.speedFactor);
     }
 
     @Override
@@ -76,7 +76,9 @@ public class Layer implements IAnimationLayer {
             if (transitionTime == 0) {
                 animationWatcher = null;
             } else {
-                animationWatcher.enableTransitionMode(null, transitionTime, 1.0F);
+                if (!(animationWatcher instanceof TransitionWatcher && ((TransitionWatcher) animationWatcher).getDestination() == null)) {
+                    animationWatcher = new TransitionWatcher(animationWatcher.getAnimation(), animationWatcher.getExistingTime(), transitionTime, null, 1.0F/*unused*/);
+                }
             }
         }
     }

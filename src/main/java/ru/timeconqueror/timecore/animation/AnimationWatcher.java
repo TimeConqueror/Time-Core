@@ -4,23 +4,38 @@ import org.jetbrains.annotations.Nullable;
 import ru.timeconqueror.timecore.api.client.render.animation.IAnimation;
 import ru.timeconqueror.timecore.api.client.render.model.TimeEntityModel;
 import ru.timeconqueror.timecore.api.util.Requirements;
-import ru.timeconqueror.timecore.client.render.animation.Transition;
 
 public class AnimationWatcher {
-    private final FreezableTime startTime;
-    private IAnimation animation;
-    private TransitionData transitionData;
-
+    protected final FreezableTime startTime;
+    protected IAnimation animation;
     /**
      * Speed factor of the animation
      */
-    private final float speed;
+    protected final float speed;
+
+    private boolean inited = false;
 
     public AnimationWatcher(IAnimation animation, float speed) {
         Requirements.greaterThan(speed, 0);
         this.startTime = new FreezableTime(System.currentTimeMillis());
         this.animation = animation;
         this.speed = speed;
+    }
+
+    public void onFrame(TimeEntityModel<?> model) {
+        if (!inited) {
+            init(model);
+            inited = true;
+        }
+    }
+
+    protected void init(TimeEntityModel<?> model) {
+
+    }
+
+    @Nullable
+    public AnimationWatcher next() {
+        return null;//TODO
     }
 
     public boolean isAnimationEnded(long time) {
@@ -36,8 +51,7 @@ public class AnimationWatcher {
     }
 
     public int getExistingTime(long time) {
-        int i = (int) ((int) (time - (startTime.get())) * speed);
-        return i;
+        return (int) ((int) (time - (startTime.get())) * speed);
     }
 
     public int getExistingTime() {
@@ -50,60 +64,6 @@ public class AnimationWatcher {
 
     public void unfreeze() {
         startTime.unfreeze();
-    }
-
-    public boolean isInTransitionMode() {
-        return transitionData != null;
-    }
-
-    void enableTransitionMode(@Nullable IAnimation destination, int transitionTime, float speedFactor) {
-        Requirements.greaterOrEqualsThan(transitionTime, 0);
-        Requirements.greaterThan(speedFactor, 0);
-        transitionData = new TransitionData(transitionTime, speedFactor, destination);
-    }
-
-    boolean requiresTransitionPreparation() {
-        return transitionData != null && !transitionData.transitionCreated;
-    }
-
-    void initTransition(TimeEntityModel<?> model) {
-        AnimationWatcher.TransitionData transitionData = getTransitionData();
-        //noinspection ConstantConditions (#requiresTransitionPreparation already check for having transition data)
-        animation = Transition.create(this, transitionData.destination, model.getBaseModel(), transitionData.transitionTime);
-        transitionData.transitionCreated = true;
-    }
-
-    @Nullable
-    public TransitionData getTransitionData() {
-        return transitionData;
-    }
-
-    public static class TransitionData {
-        private final int transitionTime;
-        private final float destAnimSpeedFactor;
-        @Nullable
-        private final IAnimation destination;
-
-        private boolean transitionCreated = false;
-
-        public TransitionData(int transitionTime, float destAnimSpeedFactor, @Nullable IAnimation destination) {
-            this.transitionTime = transitionTime;
-            this.destAnimSpeedFactor = destAnimSpeedFactor;
-            this.destination = destination;
-        }
-
-        public float getDestAnimSpeedFactor() {
-            return destAnimSpeedFactor;
-        }
-
-        public int getTransitionTime() {
-            return transitionTime;
-        }
-
-        @Nullable
-        public IAnimation getDestination() {
-            return destination;
-        }
     }
 
     private static class FreezableTime {
