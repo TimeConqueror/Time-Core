@@ -7,14 +7,14 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import ru.timeconqueror.timecore.animation.AnimationManagerBuilder;
 import ru.timeconqueror.timecore.animation.StateMachineBuilder;
+import ru.timeconqueror.timecore.api.animation.AnimationProvider;
 import ru.timeconqueror.timecore.api.animation.StateMachine;
-import ru.timeconqueror.timecore.api.client.render.animation.AnimationProvider;
 
 import javax.annotation.Nullable;
 
 @SuppressWarnings("EntityConstructor")
 public class EntityZombie extends EntityStupidAnimal implements AnimationProvider<EntityZombie> {
-    private final StateMachine<EntityZombie> stateMachine = new StateMachineBuilder<EntityZombie>(new AnimationManagerBuilder()).build(this, world);
+    private final StateMachine<EntityZombie> stateMachine = new StateMachineBuilder<EntityZombie>(new AnimationManagerBuilder(true)).build(this, world);
 
     public EntityZombie(EntityType<? extends AnimalEntity> type, World worldIn) {
         super(type, worldIn);

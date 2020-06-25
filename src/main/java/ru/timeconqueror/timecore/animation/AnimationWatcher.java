@@ -80,20 +80,20 @@ public class AnimationWatcher {
 
     public static class TransitionData {
         private final int transitionTime;
-        private final float speedFactor;
+        private final float destAnimSpeedFactor;
         @Nullable
         private final IAnimation destination;
 
         private boolean transitionCreated = false;
 
-        public TransitionData(int transitionTime, float speedFactor, @Nullable IAnimation destination) {
+        public TransitionData(int transitionTime, float destAnimSpeedFactor, @Nullable IAnimation destination) {
             this.transitionTime = transitionTime;
-            this.speedFactor = speedFactor;
+            this.destAnimSpeedFactor = destAnimSpeedFactor;
             this.destination = destination;
         }
 
-        public float getSpeedFactor() {
-            return speedFactor;
+        public float getDestAnimSpeedFactor() {
+            return destAnimSpeedFactor;
         }
 
         public int getTransitionTime() {

@@ -12,22 +12,22 @@ import ru.timeconqueror.timecore.client.render.model.TimeModelRenderer;
 import java.util.List;
 
 public class BoneOption {
-    private String boneName;
+    private final String boneName;
     /**
      * Immutable rotation keyframe list
      */
     @Nullable
-    private List<KeyFrame> rotations;
+    private final List<KeyFrame> rotations;
     /**
      * Immutable position keyframe list
      */
     @Nullable
-    private List<KeyFrame> positions;
+    private final List<KeyFrame> positions;
     /**
      * Immutable scale keyframe list
      */
     @Nullable
-    private List<KeyFrame> scales;
+    private final List<KeyFrame> scales;
 
     public BoneOption(String boneName, @Nullable List<KeyFrame> rotations, @Nullable List<KeyFrame> positions, @Nullable List<KeyFrame> scales) {
         this.boneName = boneName;

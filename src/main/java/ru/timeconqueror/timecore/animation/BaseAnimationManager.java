@@ -1,10 +1,10 @@
 package ru.timeconqueror.timecore.animation;
 
 import org.jetbrains.annotations.NotNull;
-import ru.timeconqueror.timecore.api.client.render.animation.AnimationManager;
+import org.jetbrains.annotations.Nullable;
+import ru.timeconqueror.timecore.api.animation.AnimationManager;
 import ru.timeconqueror.timecore.api.client.render.animation.IAnimation;
 import ru.timeconqueror.timecore.api.client.render.model.TimeEntityModel;
-import ru.timeconqueror.timecore.client.render.animation.AnimationConstants;
 import ru.timeconqueror.timecore.client.render.animation.Transition;
 
 import java.util.Comparator;
@@ -15,6 +15,13 @@ import java.util.stream.Collectors;
 public abstract class BaseAnimationManager implements AnimationManager {
     private HashMap<String, Layer> layerMap;
     private List<Layer> layers;
+
+    @Nullable
+    private final IAnimation walkingAnimation;
+
+    public BaseAnimationManager(@Nullable IAnimation walkingAnimation) {
+        this.walkingAnimation = walkingAnimation;
+    }
 
     @Override
     public boolean containsLayer(String name) {
@@ -58,7 +65,7 @@ public abstract class BaseAnimationManager implements AnimationManager {
                         if (watcher.getAnimation() instanceof Transition) {
                             IAnimation anim = ((Transition) watcher.getAnimation()).getDestAnimation();
                             //noinspection ConstantConditions (transition should always have its data)
-                            watcher = anim != null ? new AnimationWatcher(anim, watcher.getTransitionData().getSpeedFactor()) : null;
+                            watcher = anim != null ? new AnimationWatcher(anim, watcher.getTransitionData().getDestAnimSpeedFactor()) : null;
                         } else if (watcher.getAnimation().isLooped()) {
                             watcher.resetTimer();
                         } else {
@@ -90,5 +97,9 @@ public abstract class BaseAnimationManager implements AnimationManager {
         this.layers = layers.values().stream()
                 .sorted(Comparator.comparingInt(Layer::getPriority))
                 .collect(Collectors.toList());
+    }
+
+    public @Nullable IAnimation getWalkingAnimation() {
+        return walkingAnimation;
     }
 }

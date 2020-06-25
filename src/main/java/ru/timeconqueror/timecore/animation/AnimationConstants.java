@@ -1,4 +1,4 @@
-package ru.timeconqueror.timecore.client.render.animation;
+package ru.timeconqueror.timecore.animation;
 
 public class AnimationConstants {
     /**

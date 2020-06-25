@@ -6,8 +6,8 @@ public class KeyFrame {
     /**
      * in ms
      */
-    private int startTime;
-    private Vector3f vec;
+    private final int startTime;
+    private final Vector3f vec;
 
     public KeyFrame(int startTime, Vector3f vec) {
         this.startTime = startTime;

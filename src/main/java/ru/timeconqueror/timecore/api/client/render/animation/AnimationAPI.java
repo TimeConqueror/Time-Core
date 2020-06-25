@@ -2,6 +2,7 @@ package ru.timeconqueror.timecore.api.client.render.animation;
 
 import ru.timeconqueror.timecore.TimeCore;
 import ru.timeconqueror.timecore.animation.AnimationStarter;
+import ru.timeconqueror.timecore.api.animation.AnimationManager;
 
 public class AnimationAPI {
     public static AnimationStarter newAnimationStarter(IAnimation animation) {

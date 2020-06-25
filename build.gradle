@@ -64,6 +64,9 @@ minecraft {
                 timecore {
                     source sourceSets.main
                     source sourceSets.test
+
+                    resource sourceSets.main.resources
+                    resource sourceSets.test.resources
                 }
             }
         }
@@ -86,6 +89,9 @@ minecraft {
                 timecore {
                     source sourceSets.main
                     source sourceSets.test
+
+                    resource sourceSets.main.resources
+                    resource sourceSets.test.resources
                 }
             }
         }

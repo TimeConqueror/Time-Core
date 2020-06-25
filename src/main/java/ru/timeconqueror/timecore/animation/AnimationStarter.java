@@ -1,10 +1,9 @@
 package ru.timeconqueror.timecore.animation;
 
 import ru.timeconqueror.timecore.TimeCore;
-import ru.timeconqueror.timecore.api.client.render.animation.AnimationManager;
+import ru.timeconqueror.timecore.api.animation.AnimationManager;
 import ru.timeconqueror.timecore.api.client.render.animation.IAnimation;
 import ru.timeconqueror.timecore.api.client.render.animation.IAnimationLayer;
-import ru.timeconqueror.timecore.client.render.animation.AnimationConstants;
 
 public class AnimationStarter {
     private final AnimationData data;
@@ -38,9 +37,11 @@ public class AnimationStarter {
     }
 
     public void startAt(IAnimationLayer layer) {
+//        System.out.println("AnimationStarter.startAt");
         if (ignorable) {
             AnimationWatcher watcher = layer.getAnimationWatcher();
             if (watcher != null) {
+//                System.out.println("watcher.getAnimation() = " + watcher.getAnimation());
                 //noinspection ConstantConditions (#isInTransitionMode checks not-null)
                 if ((watcher.isInTransitionMode() && data.prototype.equals(watcher.getTransitionData().getDestination()))
                         || data.prototype.equals(layer.getCurrentAnimation())) {//TODO add check for speed?

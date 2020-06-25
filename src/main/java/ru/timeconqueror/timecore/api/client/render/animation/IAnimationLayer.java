@@ -4,7 +4,7 @@ import org.jetbrains.annotations.Nullable;
 import ru.timeconqueror.timecore.animation.AnimationStarter;
 import ru.timeconqueror.timecore.animation.AnimationWatcher;
 
-public interface IAnimationLayer {
+public interface IAnimationLayer extends Cloneable {
     float getWeight();
 
     void setWeight(float weight);
@@ -26,4 +26,6 @@ public interface IAnimationLayer {
     void removeAnimation();
 
     void removeAnimation(int transition);
+
+    String getName();
 }

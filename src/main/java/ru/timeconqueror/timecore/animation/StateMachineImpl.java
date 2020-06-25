@@ -1,14 +1,16 @@
 package ru.timeconqueror.timecore.animation;
 
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.MobEntity;
+import ru.timeconqueror.timecore.api.animation.AnimationManager;
 import ru.timeconqueror.timecore.api.animation.StateMachine;
 import ru.timeconqueror.timecore.api.client.render.animation.AnimationAPI;
-import ru.timeconqueror.timecore.api.client.render.animation.AnimationManager;
+import ru.timeconqueror.timecore.api.client.render.animation.IAnimation;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class StateMachineImpl<T extends Entity> implements StateMachine<T> {
+public class StateMachineImpl<T extends MobEntity> implements StateMachine<T> {
     private final List<ActionWatcher<T>> actionWatchers = new ArrayList<>();
     private final BaseAnimationManager animationManager;
     private final T entity;
@@ -19,16 +21,42 @@ public class StateMachineImpl<T extends Entity> implements StateMachine<T> {
     }
 
     @Override
-    public void enableAction(Action<T> action, boolean looped) {
+    public void enableAction(DelayedAction<T> action, boolean looped) {
         actionWatchers.add(new ActionWatcher<>(action, looped));
         action.getAnimationStarter().startAt(animationManager, action.getAnimationLayer());
     }
 
     @Override
-    public void disableAction(Action<T> action) {
-        actionWatchers.removeIf(watcher -> watcher.action == action);
+    public void disableAction(DelayedAction<T> action) {
+        actionWatchers.removeIf(watcher -> watcher.action.equals(action));
 
         AnimationAPI.removeAnimation(animationManager, action.getAnimationLayer());
+    }
+
+    @Override
+    public void onTick() {
+        if (entity.world.isRemote) {
+            boolean posChanged = entity.posX != entity.prevPosX || entity.posY != entity.prevPosY || entity.posZ != entity.prevPosZ;
+            if (animationManager.containsLayer(LayerReference.WALKING.getName())) {
+                Layer walkingLayer = animationManager.getLayer(LayerReference.WALKING.getName());
+
+                IAnimation currentAnimation = walkingLayer.getCurrentAnimation();
+//                System.out.println("currentAnimation = " + (currentAnimation != null ? currentAnimation.getName() : null));
+                if (posChanged) {
+                    new AnimationStarter(animationManager.getWalkingAnimation())
+                            .setIgnorable(true)
+                            .setSpeed(2.0F)
+                            .startAt(walkingLayer);
+                } else {
+                    walkingLayer.removeAnimation();
+                }
+            }
+
+//            new AnimationStarter(animationManager.getWalkingAnimation())
+//                    .setIgnorable(true)
+//                    .startAt(animationManager.getLayer(LayerReference.WALKING.getName()));
+//            AnimationAPI.removeAnimation(animationManager, "walking");
+        }
     }
 
     @Override
@@ -45,10 +73,10 @@ public class StateMachineImpl<T extends Entity> implements StateMachine<T> {
     }
 
     public static class ActionWatcher<T extends Entity> {
-        private final Action<T> action;
+        private final DelayedAction<T> action;
         private final boolean looped;
 
-        public ActionWatcher(Action<T> action, boolean looped) {
+        public ActionWatcher(DelayedAction<T> action, boolean looped) {
             this.action = action;
             this.looped = looped;
         }
@@ -57,7 +85,7 @@ public class StateMachineImpl<T extends Entity> implements StateMachine<T> {
             return looped;
         }
 
-        public Action<T> getAction() {
+        public DelayedAction<T> getAction() {
             return action;
         }
     }

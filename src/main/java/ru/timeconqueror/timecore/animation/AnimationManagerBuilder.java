@@ -1,20 +1,33 @@
 package ru.timeconqueror.timecore.animation;
 
-import net.minecraft.entity.Entity;
+import net.minecraft.entity.MobEntity;
 import ru.timeconqueror.timecore.api.animation.StateMachine;
 import ru.timeconqueror.timecore.api.client.render.animation.BlendType;
-import ru.timeconqueror.timecore.client.render.animation.AnimationConstants;
+import ru.timeconqueror.timecore.api.client.render.animation.IAnimation;
 import ru.timeconqueror.timecore.util.SingleUseBuilder;
 
 import java.util.HashMap;
 
 public class AnimationManagerBuilder extends SingleUseBuilder {
     private final HashMap<String, Layer> animationLayers = new HashMap<>();
+    private IAnimation walkingAnimation;
+
+    public AnimationManagerBuilder(boolean setupDefaultLayer) {
+        if (setupDefaultLayer) {
+            addLayer(LayerReference.WALKING.createLayerFromDefault());
+        }
+    }
+
+    public AnimationManagerBuilder setWalkingAnimation(IAnimation walkingAnimation) {
+        this.walkingAnimation = walkingAnimation;
+        return this;
+    }
 
     public AnimationManagerBuilder addLayer(String name, int priority, BlendType blendType, float weight) {
         verifyNotUsed();
-        Layer prev = animationLayers.put(name, new Layer(priority, blendType, weight));
-        if (prev != null) throw new IllegalArgumentException("Layer with name " + name + " is already registered.");
+        Layer prev = animationLayers.put(name, new Layer(name, priority, blendType, weight));
+        if (prev != null)
+            throw new IllegalArgumentException("Layer with name " + name + " already exist in provided animation manager.");
         return this;
     }
 
@@ -25,8 +38,21 @@ public class AnimationManagerBuilder extends SingleUseBuilder {
         return this;
     }
 
+    private AnimationManagerBuilder addLayer(Layer layer) {
+        verifyNotUsed();
+        try {
+            Layer prev = animationLayers.put(layer.getName(), layer.clone());
+            if (prev != null)
+                throw new IllegalArgumentException("Layer with name " + layer.getName() + " already exist in provided animation manager.");
+
+            return this;
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     BaseAnimationManager build(boolean serverSide) {
-        BaseAnimationManager manager = serverSide ? new ServerAnimationManager<>() : new ClientAnimationManager();
+        BaseAnimationManager manager = serverSide ? new ServerAnimationManager<>(walkingAnimation) : new ClientAnimationManager(walkingAnimation);
 
         if (animationLayers.isEmpty()) {
             addMainLayer();
@@ -40,7 +66,7 @@ public class AnimationManagerBuilder extends SingleUseBuilder {
     }
 
     @SuppressWarnings("unchecked")
-    <T extends Entity> void init(BaseAnimationManager manager, StateMachine<T> stateMachine) {
+    <T extends MobEntity> void init(BaseAnimationManager manager, StateMachine<T> stateMachine) {
         if (manager instanceof ServerAnimationManager) {
             ((ServerAnimationManager<T>) manager).setStateMachine((StateMachineImpl<T>) stateMachine);
         }

@@ -1,15 +1,18 @@
 package ru.timeconqueror.timecore.animation;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.Entity;
+import net.minecraft.entity.MobEntity;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.loading.FMLEnvironment;
+import org.jetbrains.annotations.Nullable;
+import ru.timeconqueror.timecore.api.client.render.animation.IAnimation;
 import ru.timeconqueror.timecore.api.client.render.model.TimeEntityModel;
 
-public class ServerAnimationManager<T extends Entity> extends BaseAnimationManager {
+public class ServerAnimationManager<T extends MobEntity> extends BaseAnimationManager {
     private StateMachineImpl<T> stateMachine;
 
-    public ServerAnimationManager() {
+    public ServerAnimationManager(@Nullable IAnimation walkingAnimation) {
+        super(walkingAnimation);
     }
 
     void setStateMachine(StateMachineImpl<T> stateMachine) {
@@ -29,7 +32,7 @@ public class ServerAnimationManager<T extends Entity> extends BaseAnimationManag
     private void proceedActions(AnimationWatcher watcher) {
         for (StateMachineImpl.ActionWatcher<T> actionWatcher : stateMachine.getActionWatchers()) {
             if (actionWatcher.getAction().getAnimationStarter().getData().prototype.equals(watcher.getAnimation())) {
-                Action<T> action = actionWatcher.getAction();
+                DelayedAction<T> action = actionWatcher.getAction();
 
                 if (action.getActionDelayPredicate().test(watcher)) {
                     action.getAction().accept(stateMachine.getEntity());

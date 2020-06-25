@@ -1,11 +1,13 @@
 package ru.timeconqueror.timecore.animation;
 
 import net.minecraft.entity.Entity;
+import net.minecraft.util.ResourceLocation;
 
+import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
-public class Action<T extends Entity> {
+public class DelayedAction<T extends Entity> {
     private final AnimationStarter animationStarter;
     private final String animationLayer;
 
@@ -13,7 +15,10 @@ public class Action<T extends Entity> {
     private Consumer<T> action = t -> {
     };
 
-    public Action(AnimationStarter animationStarter, String animationLayer) {
+    private final ResourceLocation id;
+
+    public DelayedAction(ResourceLocation id, AnimationStarter animationStarter, String animationLayer) {
+        this.id = id;
         this.animationStarter = animationStarter;
         this.animationLayer = animationLayer;
     }
@@ -40,5 +45,18 @@ public class Action<T extends Entity> {
 
     public String getAnimationLayer() {
         return animationLayer;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof DelayedAction)) return false;
+        DelayedAction<?> action = (DelayedAction<?>) o;
+        return id.equals(action.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }

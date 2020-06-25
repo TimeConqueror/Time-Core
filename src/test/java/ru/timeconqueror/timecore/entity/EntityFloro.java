@@ -2,14 +2,16 @@ package ru.timeconqueror.timecore.entity;
 
 import net.minecraft.entity.AgeableEntity;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.ai.goal.RandomWalkingGoal;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import ru.timeconqueror.timecore.animation.AnimationManagerBuilder;
 import ru.timeconqueror.timecore.animation.StateMachineBuilder;
+import ru.timeconqueror.timecore.api.animation.AnimationProvider;
 import ru.timeconqueror.timecore.api.animation.StateMachine;
-import ru.timeconqueror.timecore.api.client.render.animation.AnimationProvider;
 import ru.timeconqueror.timecore.api.client.render.animation.BlendType;
+import ru.timeconqueror.timecore.registry.TEntities;
 
 import javax.annotation.Nullable;
 
@@ -21,10 +23,17 @@ public class EntityFloro extends EntityStupidAnimal implements AnimationProvider
         super(type, worldIn);
 
         stateMachine = new StateMachineBuilder<EntityFloro>(
-                new AnimationManagerBuilder()
-                        .addMainLayer()
+                new AnimationManagerBuilder(true)
+//                        .addLayer("walking", 0, BlendType.OVERRIDE, 1F)
+                        .setWalkingAnimation(TEntities.FLORO_WALK)
+//                        .addMainLayer()
                         .addLayer("attack", 1, BlendType.ADDING, 0.9F)
         ).build(this, world);
+    }
+
+    @Override
+    protected void registerGoals() {
+        this.goalSelector.addGoal(0, new RandomWalkingGoal(this, 0.3F));
     }
 
     @Nullable

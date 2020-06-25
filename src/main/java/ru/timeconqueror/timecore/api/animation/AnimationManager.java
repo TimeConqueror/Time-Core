@@ -1,6 +1,7 @@
-package ru.timeconqueror.timecore.api.client.render.animation;
+package ru.timeconqueror.timecore.api.animation;
 
 import org.jetbrains.annotations.NotNull;
+import ru.timeconqueror.timecore.api.client.render.animation.IAnimationLayer;
 import ru.timeconqueror.timecore.api.client.render.model.TimeEntityModel;
 
 public interface AnimationManager {

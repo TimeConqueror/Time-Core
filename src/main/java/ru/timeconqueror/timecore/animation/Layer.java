@@ -5,17 +5,18 @@ import ru.timeconqueror.timecore.api.client.render.animation.BlendType;
 import ru.timeconqueror.timecore.api.client.render.animation.IAnimation;
 import ru.timeconqueror.timecore.api.client.render.animation.IAnimationLayer;
 import ru.timeconqueror.timecore.api.util.MathUtils;
-import ru.timeconqueror.timecore.client.render.animation.AnimationConstants;
 
 public class Layer implements IAnimationLayer {
-    private final int priority;
+    private int priority;
+    private String name;
 
     @Nullable
     private AnimationWatcher animationWatcher;
     private BlendType blendType;
     private float weight;
 
-    public Layer(int priority, BlendType blendType, float weight) {
+    public Layer(String name, int priority, BlendType blendType, float weight) {
+        this.name = name;
         this.weight = MathUtils.coerceInRange(weight, 0, 1);
         this.blendType = blendType;
         this.priority = priority;
@@ -86,5 +87,25 @@ public class Layer implements IAnimationLayer {
 
     void setAnimationWatcher(AnimationWatcher animationWatcher) {
         this.animationWatcher = animationWatcher;
+    }
+
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    protected Layer clone() throws CloneNotSupportedException {
+        if (this.animationWatcher != null) {
+            throw new CloneNotSupportedException("Can't clone this layer, it's already in work.");
+        }
+
+        Layer clone = (Layer) super.clone();
+        clone.name = name;
+        clone.priority = priority;
+        clone.blendType = blendType;
+        clone.weight = weight;
+
+        return clone;
     }
 }
