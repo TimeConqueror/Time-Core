@@ -32,5 +32,6 @@ public abstract class EntityStupidAnimal extends AnimalEntity {
         super.registerAttributes();
         this.getAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(10.0D);
         this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(getSpeed());
+        this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(getSpeed());
     }
 }

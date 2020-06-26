@@ -1,12 +1,12 @@
 package ru.timeconqueror.timecore.client.render.animation;
 
 import net.minecraft.client.renderer.Vector3f;
+import ru.timeconqueror.timecore.api.client.render.animation.AnimationLayer;
 import ru.timeconqueror.timecore.api.client.render.animation.BlendType;
-import ru.timeconqueror.timecore.api.client.render.animation.IAnimationLayer;
 import ru.timeconqueror.timecore.client.render.model.TimeModelRenderer;
 
 public class AnimationUtils {
-    public static void applyRotation(TimeModelRenderer piece, IAnimationLayer layer, Vector3f rotationIn) {
+    public static void applyRotation(TimeModelRenderer piece, AnimationLayer layer, Vector3f rotationIn) {
         BlendType blendType = layer.getBlendType();
         rotationIn.mul(layer.getWeight());
 
@@ -21,7 +21,7 @@ public class AnimationUtils {
         } else throw new UnsupportedOperationException();
     }
 
-    public static void applyOffset(TimeModelRenderer piece, IAnimationLayer layer, Vector3f offsetIn) {
+    public static void applyOffset(TimeModelRenderer piece, AnimationLayer layer, Vector3f offsetIn) {
         BlendType blendType = layer.getBlendType();
         offsetIn.mul(layer.getWeight());
 
@@ -36,7 +36,7 @@ public class AnimationUtils {
         } else throw new UnsupportedOperationException();
     }
 
-    public static void applyScale(TimeModelRenderer piece, IAnimationLayer layer, Vector3f scaleIn) {
+    public static void applyScale(TimeModelRenderer piece, AnimationLayer layer, Vector3f scaleIn) {
         BlendType blendType = layer.getBlendType();
         float weight = layer.getWeight();
 

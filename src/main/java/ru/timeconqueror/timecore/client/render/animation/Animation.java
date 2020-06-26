@@ -1,11 +1,12 @@
 package ru.timeconqueror.timecore.client.render.animation;
 
 import net.minecraft.client.renderer.Vector3f;
+import net.minecraft.util.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ru.timeconqueror.timecore.TimeCore;
+import ru.timeconqueror.timecore.api.client.render.animation.AnimationLayer;
 import ru.timeconqueror.timecore.api.client.render.animation.IAnimation;
-import ru.timeconqueror.timecore.api.client.render.animation.IAnimationLayer;
 import ru.timeconqueror.timecore.api.client.render.model.TimeEntityModel;
 import ru.timeconqueror.timecore.api.client.render.model.TimeModel;
 import ru.timeconqueror.timecore.api.util.Pair;
@@ -19,6 +20,7 @@ import java.util.function.Consumer;
 public class Animation implements IAnimation {
     private final boolean loop;
     private final String name;
+    private final ResourceLocation id;
     /**
      * animation length in ms
      */
@@ -31,14 +33,15 @@ public class Animation implements IAnimation {
     @Nullable
     private final Map<String, BoneOption> options;
 
-    public Animation(boolean loop, String name, int length, @Nullable Map<String, BoneOption> options) {
+    public Animation(boolean loop, ResourceLocation id, String name, int length, @Nullable Map<String, BoneOption> options) {
         this.loop = loop;
         this.name = name;
+        this.id = id;
         this.length = length;
         this.options = options;
     }
 
-    public void apply(TimeEntityModel<?> model, IAnimationLayer layer, int existingTime) {
+    public void apply(TimeEntityModel<?> model, AnimationLayer layer, int existingTime) {
         TimeModel baseModel = model.getBaseModel();
         if (options != null) {
             if (existingTime <= length) {
@@ -61,6 +64,11 @@ public class Animation implements IAnimation {
 
     public String getName() {
         return name;
+    }
+
+    @Override
+    public ResourceLocation getId() {
+        return id;
     }
 
     public boolean isLooped() {

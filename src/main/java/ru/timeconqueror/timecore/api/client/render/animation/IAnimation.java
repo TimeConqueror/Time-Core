@@ -1,5 +1,6 @@
 package ru.timeconqueror.timecore.api.client.render.animation;
 
+import net.minecraft.util.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ru.timeconqueror.timecore.api.client.render.model.TimeEntityModel;
@@ -12,12 +13,14 @@ import java.util.List;
 import java.util.function.Consumer;
 
 public interface IAnimation {
-    void apply(TimeEntityModel<?> model, IAnimationLayer layer, int existingTime);
+    void apply(TimeEntityModel<?> model, AnimationLayer layer, int existingTime);
 
     String getName();
 
+    ResourceLocation getId();
+
     /**
-     * in ms
+     * Length in ms
      */
     int getLength();
 

@@ -1,11 +1,12 @@
 package ru.timeconqueror.timecore.client.render.animation;
 
 import net.minecraft.client.renderer.Vector3f;
+import net.minecraft.util.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ru.timeconqueror.timecore.TimeCore;
+import ru.timeconqueror.timecore.api.client.render.animation.AnimationLayer;
 import ru.timeconqueror.timecore.api.client.render.animation.IAnimation;
-import ru.timeconqueror.timecore.api.client.render.animation.IAnimationLayer;
 import ru.timeconqueror.timecore.api.client.render.model.TimeEntityModel;
 import ru.timeconqueror.timecore.api.client.render.model.TimeModel;
 import ru.timeconqueror.timecore.api.util.Pair;
@@ -17,14 +18,21 @@ import java.util.function.Consumer;
 
 public class Transition implements IAnimation {
     private static final IAnimation DUMMY_ANIMATION = new IAnimation() {
+        private final ResourceLocation id = new ResourceLocation(TimeCore.MODID, "internal/" + getName());
+
         @Override
-        public void apply(TimeEntityModel<?> model, IAnimationLayer layer, int existingTime) {
+        public void apply(TimeEntityModel<?> model, AnimationLayer layer, int existingTime) {
 
         }
 
         @Override
         public String getName() {
             return "dummy";
+        }
+
+        @Override
+        public ResourceLocation getId() {
+            return id;
         }
 
         @Override
@@ -66,15 +74,18 @@ public class Transition implements IAnimation {
             throw new UnsupportedOperationException("Can't handle " + optionType + " option type");
         }
     };
+
     private final int transitionLength;
     private final String name;
     private List<TransitionBoneOption> options = new ArrayList<>();
     @Nullable
     private final IAnimation destAnimation;
+    private final ResourceLocation id;
 
     private Transition(int transitionLength, String name, @Nullable IAnimation destAnimation) {
         this.transitionLength = transitionLength;
         this.name = name;
+        this.id = new ResourceLocation(TimeCore.MODID, "internal/" + getName());
         this.destAnimation = destAnimation;
     }
 
@@ -146,7 +157,7 @@ public class Transition implements IAnimation {
     }
 
     @Override
-    public void apply(TimeEntityModel<?> model, IAnimationLayer layer, int existingTime) {
+    public void apply(TimeEntityModel<?> model, AnimationLayer layer, int existingTime) {
         TimeModel baseModel = model.getBaseModel();
         if (options != null) {
             if (existingTime <= transitionLength) {
@@ -186,6 +197,11 @@ public class Transition implements IAnimation {
     @Override
     public String getName() {
         return name;
+    }
+
+    @Override
+    public ResourceLocation getId() {
+        return id;
     }
 
     @Nullable
@@ -267,7 +283,7 @@ public class Transition implements IAnimation {
             return BoneOption.interpolate(start.getVec(), end.getVec(), start.getStartTime(), end.getStartTime(), existingTime);
         }
 
-        public void apply(TimeModelRenderer piece, IAnimationLayer layer, int existingTime) {
+        public void apply(TimeModelRenderer piece, AnimationLayer layer, int existingTime) {
             Vector3f interpolated = interpolate(rotations.getA(), rotations.getB(), existingTime);
             AnimationUtils.applyRotation(piece, layer, interpolated);
 

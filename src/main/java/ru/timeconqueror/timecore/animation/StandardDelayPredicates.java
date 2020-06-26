@@ -1,5 +1,7 @@
 package ru.timeconqueror.timecore.animation;
 
+import ru.timeconqueror.timecore.api.util.Requirements;
+
 import java.util.function.Predicate;
 
 public class StandardDelayPredicates {
@@ -15,7 +17,14 @@ public class StandardDelayPredicates {
         return watcher -> watcher.getExistingTime() >= animationTime;
     }
 
-    public static Predicate<AnimationWatcher> unlessPassed(int animationTime) {
-        return watcher -> watcher.getExistingTime() < animationTime;
+    public static Predicate<AnimationWatcher> whenPassed(float percents) {
+        Requirements.inRangeInclusive(percents, 0, 1);
+
+        return watcher -> {
+            float length = watcher.getAnimation().getLength();
+            float existingTime = watcher.getExistingTime();
+
+            return existingTime >= length * percents;
+        };
     }
 }

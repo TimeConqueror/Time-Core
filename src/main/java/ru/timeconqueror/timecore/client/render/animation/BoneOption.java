@@ -4,8 +4,8 @@ import net.minecraft.client.renderer.Vector3f;
 import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import ru.timeconqueror.timecore.api.client.render.animation.AnimationLayer;
 import ru.timeconqueror.timecore.api.client.render.animation.IAnimation;
-import ru.timeconqueror.timecore.api.client.render.animation.IAnimationLayer;
 import ru.timeconqueror.timecore.api.util.Pair;
 import ru.timeconqueror.timecore.client.render.model.TimeModelRenderer;
 
@@ -114,7 +114,7 @@ public class BoneOption {
         return new Vector3f(outX, outY, outZ);
     }
 
-    public void apply(IAnimation animation, IAnimationLayer layer, TimeModelRenderer piece, int existingTime) {
+    public void apply(IAnimation animation, AnimationLayer layer, TimeModelRenderer piece, int existingTime) {
         Pair<KeyFrame, KeyFrame> keyPair = findKeyFrames(rotations, existingTime);
         if (keyPair != null) {
             Vector3f rotateVec = calcCurrentVectorFor(animation, keyPair, 0, 0, 0, existingTime);

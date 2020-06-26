@@ -1,12 +1,12 @@
 package ru.timeconqueror.timecore.animation;
 
 import org.jetbrains.annotations.Nullable;
+import ru.timeconqueror.timecore.api.client.render.animation.AnimationLayer;
 import ru.timeconqueror.timecore.api.client.render.animation.BlendType;
 import ru.timeconqueror.timecore.api.client.render.animation.IAnimation;
-import ru.timeconqueror.timecore.api.client.render.animation.IAnimationLayer;
 import ru.timeconqueror.timecore.api.util.MathUtils;
 
-public class Layer implements IAnimationLayer {
+public class Layer implements AnimationLayer {
     private int priority;
     private String name;
 
@@ -56,8 +56,7 @@ public class Layer implements IAnimationLayer {
         return getAnimationWatcher() != null && getAnimationWatcher().getAnimation() != null;
     }
 
-    @Override
-    public void setAnimation(AnimationStarter.AnimationData data) {
+    void setAnimation(AnimationStarter.AnimationData data) {
         if (animationWatcher == null) {
             animationWatcher = new TransitionWatcher(data.transitionTime, data.prototype, data.speedFactor);
         } else {
@@ -65,13 +64,7 @@ public class Layer implements IAnimationLayer {
         }
     }
 
-    @Override
-    public void removeAnimation() {
-        removeAnimation(AnimationConstants.BASIC_TRANSITION_TIME);
-    }
-
-    @Override
-    public void removeAnimation(int transitionTime) {
+    void removeAnimation(int transitionTime) {
         if (animationWatcher != null) {
             if (transitionTime == 0) {
                 animationWatcher = null;

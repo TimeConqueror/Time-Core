@@ -1,7 +1,8 @@
 package ru.timeconqueror.timecore.api.animation;
 
 import org.jetbrains.annotations.NotNull;
-import ru.timeconqueror.timecore.api.client.render.animation.IAnimationLayer;
+import ru.timeconqueror.timecore.animation.AnimationStarter;
+import ru.timeconqueror.timecore.api.client.render.animation.AnimationLayer;
 import ru.timeconqueror.timecore.api.client.render.model.TimeEntityModel;
 
 public interface AnimationManager {
@@ -16,7 +17,7 @@ public interface AnimationManager {
      * @throws RuntimeException if layer is not found
      */
     @NotNull
-    IAnimationLayer getLayer(String name);
+    AnimationLayer getLayer(String name);
 
     /**
      * If animation has layer with name 'main', then it will return specifically that layer.
@@ -26,7 +27,13 @@ public interface AnimationManager {
      * @return animation layer with name 'main' or if it doesn't find so, it will return the first layer.
      */
     @NotNull
-    IAnimationLayer getMainLayer();
+    AnimationLayer getMainLayer();
 
     void applyAnimations(TimeEntityModel<?> model);
+
+    void setAnimation(AnimationStarter.AnimationData animationData, String layerName);
+
+    void removeAnimation(String layerName);
+
+    void removeAnimation(String layerName, int transitionTime);
 }

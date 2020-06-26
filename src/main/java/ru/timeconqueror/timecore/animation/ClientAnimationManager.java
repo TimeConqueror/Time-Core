@@ -13,6 +13,9 @@ public class ClientAnimationManager extends BaseAnimationManager {
     @Override
     protected void applyAnimation(TimeEntityModel<?> model, Layer layer, AnimationWatcher watcher, long currentTime) {
         IAnimation animation = watcher.getAnimation();
+//        System.out.println("model = " + model + ", layer = " + layer + ", watcher = " + watcher + ", currentTime = " + currentTime);
+//        System.out.println(watcher);
+//        System.out.println(animation);
         animation.apply(model, layer, watcher.getExistingTime(currentTime));
     }
 

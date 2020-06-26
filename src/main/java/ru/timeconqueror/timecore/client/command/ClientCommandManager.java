@@ -86,8 +86,8 @@ public class ClientCommandManager {
     private static boolean canBeHandled(ParseResults<CommandSource> parseResults) {
         String[] commandPath = parseResults.getReader().getString().substring(1).split(" ");
         CommandNode<CommandSource> node = CLIENT_DISPATCHER.findNode(Arrays.asList(commandPath));
-        System.out.println(node);
-        System.out.println(parseResults.getContext());
+//        System.out.println(node);
+//        System.out.println(parseResults.getContext());
         CommandContextBuilder<CommandSource> context = parseResults.getContext();
         context.getCommand();
 

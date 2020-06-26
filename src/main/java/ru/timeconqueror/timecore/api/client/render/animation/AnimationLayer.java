@@ -1,10 +1,9 @@
 package ru.timeconqueror.timecore.api.client.render.animation;
 
 import org.jetbrains.annotations.Nullable;
-import ru.timeconqueror.timecore.animation.AnimationStarter;
 import ru.timeconqueror.timecore.animation.AnimationWatcher;
 
-public interface IAnimationLayer extends Cloneable {
+public interface AnimationLayer extends Cloneable {
     float getWeight();
 
     void setWeight(float weight);
@@ -20,12 +19,6 @@ public interface IAnimationLayer extends Cloneable {
 
     @Nullable
     AnimationWatcher getAnimationWatcher();
-
-    void setAnimation(AnimationStarter.AnimationData data);
-
-    void removeAnimation();
-
-    void removeAnimation(int transition);
 
     String getName();
 }

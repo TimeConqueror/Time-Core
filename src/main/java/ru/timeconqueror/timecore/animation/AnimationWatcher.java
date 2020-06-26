@@ -13,7 +13,7 @@ public class AnimationWatcher {
      */
     protected final float speed;
 
-    private boolean inited = false;
+    private final boolean inited = false;
 
     public AnimationWatcher(IAnimation animation, float speed) {
         Requirements.greaterThan(speed, 0);
@@ -22,14 +22,11 @@ public class AnimationWatcher {
         this.speed = speed;
     }
 
-    public void onFrame(TimeEntityModel<?> model) {
-        if (!inited) {
-            init(model);
-            inited = true;
-        }
+    public boolean isInited() {
+        return inited;
     }
 
-    protected void init(TimeEntityModel<?> model) {
+    public void init(TimeEntityModel<?> model) {
 
     }
 

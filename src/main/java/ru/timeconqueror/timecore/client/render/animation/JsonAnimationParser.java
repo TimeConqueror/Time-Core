@@ -7,6 +7,8 @@ import net.minecraft.client.renderer.Vector3f;
 import net.minecraft.resources.IResource;
 import net.minecraft.util.JSONUtils;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.fml.loading.FMLEnvironment;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ru.timeconqueror.timecore.api.client.render.animation.IAnimation;
@@ -27,7 +29,7 @@ public class JsonAnimationParser {
             BufferedReader reader = new BufferedReader(new InputStreamReader(resource.getInputStream()));
 
             JsonObject json = JSONUtils.fromJson(reader, true/*isLenient*/);
-            return parseAnimation(json);
+            return parseAnimation(fileLocation, json);
 
         } catch (Throwable e) {
             throw new JsonParsingException(e);
@@ -35,7 +37,7 @@ public class JsonAnimationParser {
     }
 
     @NotNull
-    private List<IAnimation> parseAnimation(JsonObject object) throws JsonParsingException {
+    private List<IAnimation> parseAnimation(ResourceLocation fileLocation, JsonObject object) throws JsonParsingException {
         if (object.has("format_version")) {
             String formatVersion = object.get("format_version").getAsString();
             checkFormatVersion(formatVersion);
@@ -52,17 +54,20 @@ public class JsonAnimationParser {
             int animationLength = (int) (JsonUtils.getFloat("animation_length", animationJson) * 1000);
 
             List<BoneOption> boneOptions = new ArrayList<>();
-            JsonElement bones = animationJson.getAsJsonObject().get("bones");
-            if (bones != null) {
-                for (Map.Entry<String, JsonElement> boneEntryJson : JsonUtils.get("bones", animationJson.getAsJsonObject()).getAsJsonObject().entrySet()) {
-                    String boneName = boneEntryJson.getKey();
-                    JsonObject boneJson = boneEntryJson.getValue().getAsJsonObject();
-                    BoneOption option = parseAnimationBone(boneName, boneJson);
-                    boneOptions.add(option);
+
+            if (FMLEnvironment.dist == Dist.CLIENT) {
+                JsonElement bones = animationJson.getAsJsonObject().get("bones");
+                if (bones != null) {
+                    for (Map.Entry<String, JsonElement> boneEntryJson : JsonUtils.get("bones", animationJson.getAsJsonObject()).getAsJsonObject().entrySet()) {
+                        String boneName = boneEntryJson.getKey();
+                        JsonObject boneJson = boneEntryJson.getValue().getAsJsonObject();
+                        BoneOption option = parseAnimationBone(boneName, boneJson);
+                        boneOptions.add(option);
+                    }
                 }
             }
 
-            animationList.add(new Animation(loop, name, animationLength, !boneOptions.isEmpty() ? Collections.unmodifiableMap(boneOptions.stream().collect(Collectors.toMap(BoneOption::getName, boneOption -> boneOption))) : null));
+            animationList.add(new Animation(loop, new ResourceLocation(fileLocation.getNamespace(), fileLocation.getPath() + "/" + name), name, animationLength, !boneOptions.isEmpty() ? Collections.unmodifiableMap(boneOptions.stream().collect(Collectors.toMap(BoneOption::getName, boneOption -> boneOption))) : null));
         }
 
         return animationList;

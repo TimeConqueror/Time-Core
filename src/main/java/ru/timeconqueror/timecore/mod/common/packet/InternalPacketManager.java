@@ -12,5 +12,7 @@ public class InternalPacketManager extends PacketTimeRegistry {
     @Override
     protected void register() {
         regPacket(INSTANCE, StructureRevealingS2CPacket.class, new StructureRevealingS2CPacket.PacketHandler());
+        regPacket(INSTANCE, S2CStartAnimationMsg.class, new S2CStartAnimationMsg.Handler());
+        regPacket(INSTANCE, S2CEndAnimationMsg.class, new S2CEndAnimationMsg.Handler());
     }
 }

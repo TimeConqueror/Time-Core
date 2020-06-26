@@ -27,8 +27,6 @@ public final class TimeCore extends TimeMod {
         DistExecutor.runWhenOn(Dist.CLIENT, () -> () -> {
             Minecraft mc = Minecraft.getInstance();
 
-            //mc.displayGuiScreen(new ChatScreen(""));
-
             //noinspection ConstantConditions
             if (mc != null) {//it's null in runData
                 mc.getResourcePackList().addPackFinder(new TimePackFinder());

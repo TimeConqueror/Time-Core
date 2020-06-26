@@ -2,6 +2,7 @@ package ru.timeconqueror.timecore.animation;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import ru.timeconqueror.timecore.TimeCore;
 import ru.timeconqueror.timecore.api.animation.AnimationManager;
 import ru.timeconqueror.timecore.api.client.render.model.TimeEntityModel;
 
@@ -34,6 +35,32 @@ public abstract class BaseAnimationManager implements AnimationManager {
     }
 
     @Override
+    public void setAnimation(AnimationStarter.AnimationData animationData, String layerName) {
+        if (containsLayer(layerName)) {
+            getLayer(layerName).setAnimation(animationData);
+        } else {
+            TimeCore.LOGGER.error("Can't start animation: layer with name " + layerName + " doesn't exist in provided animation manager.");
+        }
+    }
+
+    @Override
+    public void removeAnimation(String layerName) {
+        removeAnimation(layerName, AnimationConstants.BASIC_TRANSITION_TIME);
+    }
+
+    @Override
+    public void removeAnimation(String layerName, int transitionTime) {
+        if (containsLayer(layerName)) {
+            Layer layer = getLayer(layerName);
+            layer.removeAnimation(transitionTime);
+
+            onAnimationEnd(DummyElements.DUMMY_ENTITY_MODEL, layer, layer.getAnimationWatcher(), System.currentTimeMillis());
+        } else {
+            TimeCore.LOGGER.error("Can't find layer with name " + layerName);
+        }
+    }
+
+    @Override
     public @NotNull Layer getMainLayer() {
         return layerMap.containsKey(AnimationConstants.MAIN_LAYER_NAME) ? layerMap.get(AnimationConstants.MAIN_LAYER_NAME) : layers.get(0) /*won't be empty, because we check it in AnimationStarter*/;
     }
@@ -52,12 +79,18 @@ public abstract class BaseAnimationManager implements AnimationManager {
                 } else {
                     watcher.unfreeze();
 
-                    watcher.onFrame(model);
+                    if (!watcher.isInited()) {
+                        watcher.init(model);
+                    }
 
                     if (watcher.isAnimationEnded(currentTime)) {
                         onAnimationEnd(model, layer, watcher, currentTime);
 
                         watcher = watcher.next();
+
+                        if (watcher != null && !watcher.isInited()) {
+                            watcher.init(model);
+                        }
                     }
                 }
             }
