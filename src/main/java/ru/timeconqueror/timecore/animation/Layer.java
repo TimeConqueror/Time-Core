@@ -77,7 +77,7 @@ public class Layer implements IAnimationLayer {
                 animationWatcher = null;
             } else {
                 if (!(animationWatcher instanceof TransitionWatcher && ((TransitionWatcher) animationWatcher).getDestination() == null)) {
-                    animationWatcher = new TransitionWatcher(animationWatcher.getAnimation(), animationWatcher.getExistingTime(), transitionTime, null, 1.0F/*unused*/);
+                    animationWatcher = new TransitionWatcher(animationWatcher.getAnimation(), animationWatcher.getExistingTime(), transitionTime, null, -1);
                 }
             }
         }

@@ -35,7 +35,13 @@ public class AnimationWatcher {
 
     @Nullable
     public AnimationWatcher next() {
-        return null;//TODO
+        if (getAnimation().isLooped()) {
+            resetTimer();
+
+            return this;
+        } else {
+            return new TransitionWatcher(getAnimation(), getExistingTime(), AnimationConstants.BASIC_TRANSITION_TIME, null, -1);
+        }
     }
 
     public boolean isAnimationEnded(long time) {

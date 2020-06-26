@@ -57,11 +57,7 @@ public abstract class BaseAnimationManager implements AnimationManager {
                     if (watcher.isAnimationEnded(currentTime)) {
                         onAnimationEnd(model, layer, watcher, currentTime);
 
-                        if (watcher.getAnimation().isLooped()) {
-                            watcher.resetTimer();
-                        } else {
-                            watcher = watcher.next();
-                        }
+                        watcher = watcher.next();
                     }
                 }
             }

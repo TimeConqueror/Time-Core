@@ -22,8 +22,9 @@ public class TransitionWatcher extends AnimationWatcher {
 
     public TransitionWatcher(@Nullable IAnimation source, int sourceExistingTime, int transitionTime, @Nullable IAnimation destination, float destAnimSpeedFactor) {
         super(null, 1.0F);
+
         Requirements.greaterOrEqualsThan(transitionTime, 0);
-        Requirements.greaterThan(destAnimSpeedFactor, 0);
+        if (destination != null) Requirements.greaterThan(destAnimSpeedFactor, 0);
 
         this.transitionTime = transitionTime;
         this.destAnimSpeedFactor = destAnimSpeedFactor;
@@ -38,11 +39,12 @@ public class TransitionWatcher extends AnimationWatcher {
     }
 
     @Override
+    @Nullable
     public AnimationWatcher next() {
         return destination != null ? new AnimationWatcher(destination, destAnimSpeedFactor) : null;
     }
 
-    public IAnimation getDestination() {
+    public @Nullable IAnimation getDestination() {
         return destination;
     }
 }
