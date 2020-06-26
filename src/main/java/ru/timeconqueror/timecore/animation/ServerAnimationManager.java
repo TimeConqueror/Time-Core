@@ -5,14 +5,13 @@ import net.minecraft.entity.MobEntity;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 import org.jetbrains.annotations.Nullable;
-import ru.timeconqueror.timecore.api.client.render.animation.IAnimation;
 import ru.timeconqueror.timecore.api.client.render.model.TimeEntityModel;
 
 public class ServerAnimationManager<T extends MobEntity> extends BaseAnimationManager {
     private StateMachineImpl<T> stateMachine;
 
-    public ServerAnimationManager(@Nullable IAnimation walkingAnimation) {
-        super(walkingAnimation);
+    public ServerAnimationManager(@Nullable AnimationStarter walkingAnimationStarter) {
+        super(walkingAnimationStarter);
     }
 
     void setStateMachine(StateMachineImpl<T> stateMachine) {

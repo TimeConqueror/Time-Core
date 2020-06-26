@@ -3,14 +3,13 @@ package ru.timeconqueror.timecore.animation;
 import net.minecraft.entity.MobEntity;
 import ru.timeconqueror.timecore.api.animation.StateMachine;
 import ru.timeconqueror.timecore.api.client.render.animation.BlendType;
-import ru.timeconqueror.timecore.api.client.render.animation.IAnimation;
 import ru.timeconqueror.timecore.util.SingleUseBuilder;
 
 import java.util.HashMap;
 
 public class AnimationManagerBuilder extends SingleUseBuilder {
     private final HashMap<String, Layer> animationLayers = new HashMap<>();
-    private IAnimation walkingAnimation;
+    private AnimationStarter walkingAnimationStarter;
 
     public AnimationManagerBuilder(boolean setupDefaultLayer) {
         if (setupDefaultLayer) {
@@ -18,8 +17,8 @@ public class AnimationManagerBuilder extends SingleUseBuilder {
         }
     }
 
-    public AnimationManagerBuilder setWalkingAnimation(IAnimation walkingAnimation) {
-        this.walkingAnimation = walkingAnimation;
+    public AnimationManagerBuilder setWalkingAnimationStarter(AnimationStarter walkingAnimationStarter) {
+        this.walkingAnimationStarter = walkingAnimationStarter;
         return this;
     }
 
@@ -52,7 +51,7 @@ public class AnimationManagerBuilder extends SingleUseBuilder {
     }
 
     BaseAnimationManager build(boolean serverSide) {
-        BaseAnimationManager manager = serverSide ? new ServerAnimationManager<>(walkingAnimation) : new ClientAnimationManager(walkingAnimation);
+        BaseAnimationManager manager = serverSide ? new ServerAnimationManager<>(walkingAnimationStarter) : new ClientAnimationManager(walkingAnimationStarter);
 
         if (animationLayers.isEmpty()) {
             addMainLayer();

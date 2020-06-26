@@ -5,7 +5,6 @@ import net.minecraft.entity.MobEntity;
 import ru.timeconqueror.timecore.api.animation.AnimationManager;
 import ru.timeconqueror.timecore.api.animation.StateMachine;
 import ru.timeconqueror.timecore.api.client.render.animation.AnimationAPI;
-import ru.timeconqueror.timecore.api.client.render.animation.IAnimation;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,13 +39,10 @@ public class StateMachineImpl<T extends MobEntity> implements StateMachine<T> {
             if (animationManager.containsLayer(LayerReference.WALKING.getName())) {
                 Layer walkingLayer = animationManager.getLayer(LayerReference.WALKING.getName());
 
-                IAnimation currentAnimation = walkingLayer.getCurrentAnimation();
-//                System.out.println("currentAnimation = " + (currentAnimation != null ? currentAnimation.getName() : null));
                 if (posChanged) {
-                    new AnimationStarter(animationManager.getWalkingAnimation())
-                            .setIgnorable(true)
-//                            .setSpeed(2.0F)
-                            .startAt(walkingLayer);
+                    if (animationManager.getWalkingAnimationStarter() != null) {
+                        animationManager.getWalkingAnimationStarter().startAt(walkingLayer);
+                    }
                 } else {
                     walkingLayer.removeAnimation();
                 }

@@ -6,8 +6,8 @@ import ru.timeconqueror.timecore.api.client.render.animation.IAnimation;
 import ru.timeconqueror.timecore.api.client.render.model.TimeEntityModel;
 
 public class ClientAnimationManager extends BaseAnimationManager {
-    public ClientAnimationManager(@Nullable IAnimation walkingAnimation) {
-        super(walkingAnimation);
+    public ClientAnimationManager(@Nullable AnimationStarter walkingAnimationStarter) {
+        super(walkingAnimationStarter);
     }
 
     @Override

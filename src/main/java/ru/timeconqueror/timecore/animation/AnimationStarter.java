@@ -32,7 +32,7 @@ public class AnimationStarter {
         if (manager.containsLayer(layerName)) {
             startAt(manager.getLayer(layerName));
         } else {
-            TimeCore.LOGGER.error("Can't remove animation: layer with name " + layerName + " doesn't exist in provided animation manager.");
+            TimeCore.LOGGER.error("Can't start animation: layer with name " + layerName + " doesn't exist in provided animation manager.");
         }
     }
 

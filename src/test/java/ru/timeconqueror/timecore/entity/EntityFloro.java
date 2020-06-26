@@ -7,6 +7,7 @@ import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import ru.timeconqueror.timecore.animation.AnimationManagerBuilder;
+import ru.timeconqueror.timecore.animation.AnimationStarter;
 import ru.timeconqueror.timecore.animation.StateMachineBuilder;
 import ru.timeconqueror.timecore.api.animation.AnimationProvider;
 import ru.timeconqueror.timecore.api.animation.StateMachine;
@@ -24,9 +25,7 @@ public class EntityFloro extends EntityStupidAnimal implements AnimationProvider
 
         stateMachine = new StateMachineBuilder<EntityFloro>(
                 new AnimationManagerBuilder(true)
-//                        .addLayer("walking", 0, BlendType.OVERRIDE, 1F)
-                        .setWalkingAnimation(TEntities.FLORO_WALK)
-//                        .addMainLayer()
+                        .setWalkingAnimationStarter(new AnimationStarter(TEntities.FLORO_WALK).setSpeed(2.0F))
                         .addLayer("attack", 1, BlendType.ADDING, 0.9F)
         ).build(this, world);
     }

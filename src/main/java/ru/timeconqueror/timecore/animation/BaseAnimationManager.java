@@ -3,7 +3,6 @@ package ru.timeconqueror.timecore.animation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ru.timeconqueror.timecore.api.animation.AnimationManager;
-import ru.timeconqueror.timecore.api.client.render.animation.IAnimation;
 import ru.timeconqueror.timecore.api.client.render.model.TimeEntityModel;
 
 import java.util.Comparator;
@@ -14,12 +13,11 @@ import java.util.stream.Collectors;
 public abstract class BaseAnimationManager implements AnimationManager {
     private HashMap<String, Layer> layerMap;
     private List<Layer> layers;
-
     @Nullable
-    private final IAnimation walkingAnimation;
+    private final AnimationStarter walkingAnimationStarter;
 
-    public BaseAnimationManager(@Nullable IAnimation walkingAnimation) {
-        this.walkingAnimation = walkingAnimation;
+    public BaseAnimationManager(@Nullable AnimationStarter walkingAnimationStarter) {
+        this.walkingAnimationStarter = walkingAnimationStarter;
     }
 
     @Override
@@ -92,7 +90,8 @@ public abstract class BaseAnimationManager implements AnimationManager {
                 .collect(Collectors.toList());
     }
 
-    public @Nullable IAnimation getWalkingAnimation() {
-        return walkingAnimation;
+    @Nullable
+    public AnimationStarter getWalkingAnimationStarter() {
+        return walkingAnimationStarter;
     }
 }
