@@ -40,16 +40,14 @@ public class ServerAnimationManager<T extends MobEntity> extends BaseAnimationMa
     protected void onAnimationEnd(TimeEntityModel<?> model, Layer layer, AnimationWatcher watcher, long currentTime) {
         proceedActions(watcher);
 
-        stateMachine.getActionWatchers().removeIf(actionWatcher -> actionWatcher.getDelayedAction().isBound(watcher.getAnimation()));
+        stateMachine.getActionWatchers().removeIf(actionWatcher -> actionWatcher.isBound(watcher.getAnimation()));
     }
 
     private void proceedActions(AnimationWatcher watcher) {
         for (StateMachineImpl.ActionWatcher<T> actionWatcher : stateMachine.getActionWatchers()) {
-            if (actionWatcher.getDelayedAction().isBound(watcher.getAnimation())) {
-                DelayedAction<T> action = actionWatcher.getDelayedAction();
-
-                if (action.getActionDelayPredicate().test(watcher)) {
-                    action.getAction().accept(stateMachine.getEntity());
+            if (actionWatcher.isBound(watcher.getAnimation())) {
+                if (actionWatcher.shouldBeExecuted(watcher)) {
+                    actionWatcher.runAction(stateMachine.getEntity());
                 }
             }
         }

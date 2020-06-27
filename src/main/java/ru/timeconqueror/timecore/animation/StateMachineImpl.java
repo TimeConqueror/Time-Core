@@ -4,6 +4,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.MobEntity;
 import ru.timeconqueror.timecore.api.animation.AnimationManager;
 import ru.timeconqueror.timecore.api.animation.StateMachine;
+import ru.timeconqueror.timecore.api.client.render.animation.IAnimation;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +27,7 @@ public class StateMachineImpl<T extends MobEntity> implements StateMachine<T> {
 
     public boolean isActionEnabled(DelayedAction<T> action) {
         for (ActionWatcher<T> actionWatcher : actionWatchers) {
-            if (actionWatcher.getDelayedAction().equals(action)) {
+            if (actionWatcher.stores(action)) {
                 return true;
             }
         }
@@ -54,11 +55,6 @@ public class StateMachineImpl<T extends MobEntity> implements StateMachine<T> {
                     animationManager.removeAnimation(LayerReference.WALKING.getName());
                 }
             }
-
-//            new AnimationStarter(animationManager.getWalkingAnimation())
-//                    .setIgnorable(true)
-//                    .startAt(animationManager.getLayer(LayerReference.WALKING.getName()));
-//            AnimationAPI.removeAnimation(animationManager, "walking");
         }
     }
 
@@ -77,13 +73,27 @@ public class StateMachineImpl<T extends MobEntity> implements StateMachine<T> {
 
     public static class ActionWatcher<T extends Entity> {
         private final DelayedAction<T> action;
+        private boolean done;
 
         public ActionWatcher(DelayedAction<T> action) {
             this.action = action;
         }
 
-        public DelayedAction<T> getDelayedAction() {
-            return action;
+        public boolean isBound(IAnimation animation) {
+            return action.isBound(animation);
+        }
+
+        public boolean stores(DelayedAction<T> action) {
+            return this.action.equals(action);
+        }
+
+        public boolean shouldBeExecuted(AnimationWatcher watcherWithBoundAnimation) {
+            return !done && action.getActionDelayPredicate().test(watcherWithBoundAnimation);
+        }
+
+        public void runAction(T entity) {
+            action.getAction().accept(entity);
+            done = true;
         }
     }
 }

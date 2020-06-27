@@ -22,6 +22,7 @@ public class EntityFloro extends MonsterEntity implements AnimationProvider<Enti
             new AnimationStarter(TEntities.FLORO_SHOOT), "attack")
             .setDelayPredicate(StandardDelayPredicates.whenPassed(0.5F))
             .setOnCall(AnimatedMeleeAttackGoal.BASIC_MELEE_ATTACK_ACTION);
+
     private final StateMachine<EntityFloro> stateMachine;
 
     public EntityFloro(EntityType<? extends MonsterEntity> type, World worldIn) {
