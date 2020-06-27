@@ -1,9 +1,11 @@
 package ru.timeconqueror.timecore.animation;
 
 import org.jetbrains.annotations.Nullable;
-import ru.timeconqueror.timecore.api.client.render.animation.AnimationLayer;
-import ru.timeconqueror.timecore.api.client.render.animation.BlendType;
-import ru.timeconqueror.timecore.api.client.render.animation.IAnimation;
+import ru.timeconqueror.timecore.animation.watcher.AnimationWatcher;
+import ru.timeconqueror.timecore.animation.watcher.TransitionWatcher;
+import ru.timeconqueror.timecore.api.animation.Animation;
+import ru.timeconqueror.timecore.api.animation.AnimationLayer;
+import ru.timeconqueror.timecore.api.animation.BlendType;
 import ru.timeconqueror.timecore.api.util.MathUtils;
 
 public class Layer implements AnimationLayer {
@@ -47,7 +49,7 @@ public class Layer implements AnimationLayer {
     }
 
     @Override
-    public @Nullable IAnimation getCurrentAnimation() {
+    public @Nullable Animation getCurrentAnimation() {
         return hasAnimation() ? getAnimationWatcher().getAnimation() : null;
     }
 
@@ -58,9 +60,9 @@ public class Layer implements AnimationLayer {
 
     void setAnimation(AnimationStarter.AnimationData data) {
         if (animationWatcher == null) {
-            animationWatcher = new TransitionWatcher(data.transitionTime, data.prototype, data.speedFactor);
+            animationWatcher = new TransitionWatcher(data.getTransitionTime(), data.getAnimation(), data.getSpeedFactor());
         } else {
-            animationWatcher = new TransitionWatcher(animationWatcher.getAnimation(), animationWatcher.getExistingTime(), data.transitionTime, data.prototype, data.speedFactor);
+            animationWatcher = new TransitionWatcher(animationWatcher.getAnimation(), animationWatcher.getExistingTime(), data.getTransitionTime(), data.getAnimation(), data.getSpeedFactor());
         }
     }
 

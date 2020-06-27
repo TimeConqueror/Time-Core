@@ -1,12 +1,13 @@
-package ru.timeconqueror.timecore.client.render.animation;
+package ru.timeconqueror.timecore.animation.component;
 
 import net.minecraft.client.renderer.Vector3f;
 import net.minecraft.util.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ru.timeconqueror.timecore.TimeCore;
-import ru.timeconqueror.timecore.api.client.render.animation.AnimationLayer;
-import ru.timeconqueror.timecore.api.client.render.animation.IAnimation;
+import ru.timeconqueror.timecore.animation.util.AnimationUtils;
+import ru.timeconqueror.timecore.api.animation.Animation;
+import ru.timeconqueror.timecore.api.animation.AnimationLayer;
 import ru.timeconqueror.timecore.api.client.render.model.TimeEntityModel;
 import ru.timeconqueror.timecore.api.client.render.model.TimeModel;
 import ru.timeconqueror.timecore.api.util.Pair;
@@ -16,8 +17,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
-public class Transition implements IAnimation {
-    private static final IAnimation DUMMY_ANIMATION = new IAnimation() {
+public class Transition implements Animation {
+    private static final Animation DUMMY_ANIMATION = new Animation() {
         private final ResourceLocation id = new ResourceLocation(TimeCore.MODID, "internal/" + getName());
 
         @Override
@@ -46,7 +47,7 @@ public class Transition implements IAnimation {
         }
 
         @Override
-        public @NotNull IAnimation.TransitionFactory getTransitionFactory() {
+        public @NotNull Animation.TransitionFactory getTransitionFactory() {
             return IDLE_END_TRANSITION_FACTORY;
         }
 
@@ -55,9 +56,9 @@ public class Transition implements IAnimation {
 
         }
     };
-    private static final IAnimation.TransitionFactory IDLE_END_TRANSITION_FACTORY = new IAnimation.TransitionFactory(DUMMY_ANIMATION) {
+    private static final Animation.TransitionFactory IDLE_END_TRANSITION_FACTORY = new Animation.TransitionFactory(DUMMY_ANIMATION) {
         @Override
-        public @Nullable List<TransitionBoneOption> createBoneOptions(IAnimation dest, TimeModel model, int existingTime, int transitionTime) {
+        public @Nullable List<TransitionBoneOption> createBoneOptions(Animation dest, TimeModel model, int existingTime, int transitionTime) {
             throw new UnsupportedOperationException("Idle End Transition Factory shouldn't be used with source animation");
         }
 
@@ -74,25 +75,24 @@ public class Transition implements IAnimation {
             throw new UnsupportedOperationException("Can't handle " + optionType + " option type");
         }
     };
-
     private final int transitionLength;
     private final String name;
-    private List<TransitionBoneOption> options = new ArrayList<>();
     @Nullable
-    private final IAnimation destAnimation;
+    private final Animation destAnimation;
     private final ResourceLocation id;
+    private List<TransitionBoneOption> options = new ArrayList<>();
 
-    private Transition(int transitionLength, String name, @Nullable IAnimation destAnimation) {
+    private Transition(int transitionLength, String name, @Nullable Animation destAnimation) {
         this.transitionLength = transitionLength;
         this.name = name;
         this.id = new ResourceLocation(TimeCore.MODID, "internal/" + getName());
         this.destAnimation = destAnimation;
     }
 
-    private static IAnimation createFromIdleState(@NotNull IAnimation dest, TimeModel model, int transitionTime) {
+    private static Animation createFromIdleState(@NotNull Animation dest, TimeModel model, int transitionTime) {
         Transition transition = new Transition(transitionTime, "idle_to_" + dest.getName(), dest);
 
-        IAnimation.TransitionFactory transitionFactory = dest.getTransitionFactory();
+        Animation.TransitionFactory transitionFactory = dest.getTransitionFactory();
 
         dest.forEachBone(name -> {
             TimeModelRenderer piece = model.getPiece(name);
@@ -120,11 +120,11 @@ public class Transition implements IAnimation {
         return transition;
     }
 
-    private static IAnimation createToIdleState(@Nullable IAnimation source, TimeModel model, int existingTime, int transitionTime) {
+    private static Animation createToIdleState(@Nullable Animation source, TimeModel model, int existingTime, int transitionTime) {
         Transition transition = new Transition(transitionTime, (source != null ? source.getName() : "idle") + "_to_idle", null);
 
         if (source != null) {
-            IAnimation.TransitionFactory transitionFactory = source.getTransitionFactory();
+            Animation.TransitionFactory transitionFactory = source.getTransitionFactory();
             transition.options = transitionFactory.createBoneOptions(DUMMY_ANIMATION, model, existingTime, transitionTime);
         }
 
@@ -132,7 +132,7 @@ public class Transition implements IAnimation {
     }
 
     @NotNull
-    public static IAnimation create(@Nullable IAnimation source, int sourceExistingTime, @Nullable IAnimation dest, TimeModel model, int transitionTime) {
+    public static Animation create(@Nullable Animation source, int sourceExistingTime, @Nullable Animation dest, TimeModel model, int transitionTime) {
         if (dest == null) {
             return createToIdleState(source, model, source != null ? sourceExistingTime : 0, transitionTime);
         } else if (source == null) {
@@ -142,8 +142,8 @@ public class Transition implements IAnimation {
         return create(source, dest, model, sourceExistingTime, transitionTime);
     }
 
-    private static IAnimation create(@NotNull IAnimation source, @NotNull IAnimation dest, TimeModel model, int existingTime, int transitionTime) {
-        IAnimation.TransitionFactory sourceTFactory = source.getTransitionFactory();
+    private static Animation create(@NotNull Animation source, @NotNull Animation dest, TimeModel model, int existingTime, int transitionTime) {
+        Animation.TransitionFactory sourceTFactory = source.getTransitionFactory();
 
         List<TransitionBoneOption> options = sourceTFactory.createBoneOptions(dest, model, existingTime, transitionTime);
         if (options == null) {
@@ -185,7 +185,7 @@ public class Transition implements IAnimation {
     }
 
     @Override
-    public @NotNull IAnimation.TransitionFactory getTransitionFactory() {
+    public @NotNull Animation.TransitionFactory getTransitionFactory() {
         return new TransitionFactory(this);
     }
 
@@ -205,17 +205,17 @@ public class Transition implements IAnimation {
     }
 
     @Nullable
-    public IAnimation getDestAnimation() {
+    public Animation getDestAnimation() {
         return destAnimation;
     }
 
-    private static class TransitionFactory extends IAnimation.TransitionFactory {
+    private static class TransitionFactory extends Animation.TransitionFactory {
 
         public TransitionFactory(Transition source) {
             super(source);
         }
 
-        private static KeyFrame calcStartKeyFrame(IAnimation sourceAnimation, @Nullable Pair<KeyFrame, KeyFrame> sourceKeyFrames, float modelIdleX, float modelIdleY, float modelIdleZ, int existingTime) {
+        private static KeyFrame calcStartKeyFrame(Animation sourceAnimation, @Nullable Pair<KeyFrame, KeyFrame> sourceKeyFrames, float modelIdleX, float modelIdleY, float modelIdleZ, int existingTime) {
             if (sourceKeyFrames != null) {
                 Vector3f vec = BoneOption.calcCurrentVectorFor(sourceAnimation, sourceKeyFrames, modelIdleX, modelIdleY, modelIdleZ, existingTime);
                 return new KeyFrame(0, vec);
@@ -225,13 +225,13 @@ public class Transition implements IAnimation {
         }
 
         @Override
-        public java.util.@Nullable List<Transition.TransitionBoneOption> createBoneOptions(IAnimation dest, TimeModel model, int existingTime, int transitionTime) {
+        public java.util.@Nullable List<Transition.TransitionBoneOption> createBoneOptions(Animation dest, TimeModel model, int existingTime, int transitionTime) {
             Transition source = getSourceTyped();
             if (source.options == null || source.options.isEmpty()) {
                 return null;
             }
 
-            IAnimation.TransitionFactory destFactory = dest.getTransitionFactory();
+            Animation.TransitionFactory destFactory = dest.getTransitionFactory();
 
             List<Transition.TransitionBoneOption> transitionBones = new ArrayList<>();
             source.options.forEach(sourceBone -> {

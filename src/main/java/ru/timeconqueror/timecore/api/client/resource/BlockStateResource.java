@@ -6,7 +6,7 @@ import java.util.ArrayList;
 
 public class BlockStateResource extends JSONTimeResource {
 
-    private ArrayList<Variant> variants = new ArrayList<>(1);
+    private final ArrayList<Variant> variants = new ArrayList<>(1);
 
     @Override
     public String buildJSONString() {
@@ -65,7 +65,7 @@ public class BlockStateResource extends JSONTimeResource {
          * variant's name
          * Examples: "north=true"
          */
-        private String name;
+        private final String name;
         private BlockModelLocation model;
 
         public Variant(String name, BlockModelLocation model) {

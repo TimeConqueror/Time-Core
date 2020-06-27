@@ -1,21 +1,23 @@
 package ru.timeconqueror.timecore.animation;
 
 import net.minecraft.network.PacketBuffer;
-import ru.timeconqueror.timecore.TimeCore;
-import ru.timeconqueror.timecore.animation.internal.AnimationRegistry;
+import ru.timeconqueror.timecore.api.animation.Animation;
+import ru.timeconqueror.timecore.api.animation.AnimationConstants;
 import ru.timeconqueror.timecore.api.animation.AnimationManager;
-import ru.timeconqueror.timecore.api.client.render.animation.AnimationLayer;
-import ru.timeconqueror.timecore.api.client.render.animation.IAnimation;
 
 public class AnimationStarter {
     private final AnimationData data;
 
-    public AnimationStarter(IAnimation animation) {
+    public AnimationStarter(Animation animation) {
         this.data = new AnimationData(animation);
     }
 
     private AnimationStarter(AnimationData animationData) {
-        this.data = animationData;
+        this.data = animationData.copy();
+    }
+
+    public static AnimationStarter fromAnimationData(AnimationData data) {
+        return new AnimationStarter(data);
     }
 
     public AnimationStarter setIgnorable(boolean ignorable) {
@@ -34,44 +36,44 @@ public class AnimationStarter {
     }
 
     public void startAt(AnimationManager manager, String layerName) {
-        if (manager.containsLayer(layerName)) {
-            AnimationLayer layer = manager.getLayer(layerName);
-            if (data.ignorable) {
-                AnimationWatcher watcher = layer.getAnimationWatcher();
-                if (watcher != null) {
-                    if (data.prototype.equals(watcher.getAnimation()) || (watcher instanceof TransitionWatcher && data.prototype.equals(((TransitionWatcher) watcher).getDestination()))) {
-                        return;//TODO add check for speed
-                    }
-                }
-            }
-
-            manager.setAnimation(this.data, layerName);
-
-        } else {
-            TimeCore.LOGGER.error("Can't start animation: layer with name " + layerName + " doesn't exist in provided animation manager.");
-        }
+        manager.setAnimation(this, layerName);
     }
 
-    public AnimationData buildData() {
+    public AnimationData getData() {
         return data;
     }
 
-    public static AnimationStarter fromAnimationData(AnimationData data) {
-        return new AnimationStarter(data);
-    }
-
     public static class AnimationData {
-        final IAnimation prototype;
-        boolean ignorable = true;
-        int transitionTime = AnimationConstants.BASIC_TRANSITION_TIME;
-        float speedFactor = 1F;
+        private final Animation animation;
+        private boolean ignorable = true;
+        private int transitionTime = AnimationConstants.BASIC_TRANSITION_TIME;
+        private float speedFactor = 1F;
 
-        private AnimationData(IAnimation prototype) {
-            this.prototype = prototype;
+        private AnimationData(Animation animation) {
+            this.animation = animation;
         }
 
-        public IAnimation getPrototype() {
-            return prototype;
+        public static void encode(AnimationStarter.AnimationData animationData, PacketBuffer buffer) {
+            buffer.writeResourceLocation(animationData.getAnimation().getId());
+            buffer.writeFloat(animationData.getSpeedFactor());
+            buffer.writeInt(animationData.getTransitionTime());
+            buffer.writeBoolean(animationData.isIgnorable());
+        }
+
+        public static AnimationStarter.AnimationData decode(PacketBuffer buffer) {
+            Animation animation = AnimationRegistry.getAnimation(buffer.readResourceLocation());
+
+            AnimationData animationData = new AnimationData(animation);
+
+            animationData.speedFactor = buffer.readFloat();
+            animationData.transitionTime = buffer.readInt();
+            animationData.ignorable = buffer.readBoolean();
+
+            return animationData;
+        }
+
+        public Animation getAnimation() {
+            return animation;
         }
 
         public float getSpeedFactor() {
@@ -86,21 +88,11 @@ public class AnimationStarter {
             return ignorable;
         }
 
-        public static void encode(AnimationStarter.AnimationData animationData, PacketBuffer buffer) {
-            buffer.writeResourceLocation(animationData.getPrototype().getId());
-            buffer.writeFloat(animationData.getSpeedFactor());
-            buffer.writeInt(animationData.getTransitionTime());
-            buffer.writeBoolean(animationData.isIgnorable());
-        }
-
-        public static AnimationStarter.AnimationData decode(PacketBuffer buffer) {
-            IAnimation animation = AnimationRegistry.getAnimation(buffer.readResourceLocation());
-
+        public AnimationData copy() {
             AnimationData animationData = new AnimationData(animation);
-
-            animationData.speedFactor = buffer.readFloat();
-            animationData.transitionTime = buffer.readInt();
-            animationData.ignorable = buffer.readBoolean();
+            animationData.speedFactor = this.speedFactor;
+            animationData.ignorable = this.ignorable;
+            animationData.transitionTime = this.transitionTime;
 
             return animationData;
         }

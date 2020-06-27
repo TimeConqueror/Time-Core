@@ -4,8 +4,8 @@ import net.minecraft.util.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
 public abstract class AdaptiveLocation {
-    private String namespace;
-    private String path;
+    private final String namespace;
+    private final String path;
 
     /**
      * @param path represents the path to the texture.

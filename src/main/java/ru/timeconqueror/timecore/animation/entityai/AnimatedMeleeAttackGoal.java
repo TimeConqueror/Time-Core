@@ -4,9 +4,9 @@ import net.minecraft.entity.CreatureEntity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.goal.MeleeAttackGoal;
 import net.minecraft.util.Hand;
-import ru.timeconqueror.timecore.animation.DelayedAction;
+import ru.timeconqueror.timecore.animation.component.DelayedAction;
+import ru.timeconqueror.timecore.api.animation.ActionController;
 import ru.timeconqueror.timecore.api.animation.AnimationProvider;
-import ru.timeconqueror.timecore.api.animation.StateMachine;
 
 import java.util.Objects;
 import java.util.function.Consumer;
@@ -16,12 +16,12 @@ public class AnimatedMeleeAttackGoal<T extends CreatureEntity & AnimationProvide
         entity.swingArm(Hand.MAIN_HAND);
         entity.attackEntityAsMob(Objects.requireNonNull(entity.getAttackTarget()));
     };
-    private final DelayedAction<T> attackAction;
+    private final DelayedAction<T> delayedAttackAction;
 
-    public AnimatedMeleeAttackGoal(T creature, DelayedAction<T> attackAction, double speedIn, boolean useLongMemory) {
+    public AnimatedMeleeAttackGoal(T creature, DelayedAction<T> delayedAttackAction, double speedIn, boolean useLongMemory) {
         super(creature, speedIn, useLongMemory);
 
-        this.attackAction = attackAction;
+        this.delayedAttackAction = delayedAttackAction;
     }
 
     @Override
@@ -30,10 +30,10 @@ public class AnimatedMeleeAttackGoal<T extends CreatureEntity & AnimationProvide
         double d0 = this.getAttackReachSqr(enemy);
 
         AnimationProvider<T> stateProvider = (AnimationProvider<T>) attacker;
-        StateMachine<T> stateMachine = stateProvider.getStateMachine();
+        ActionController<T> actionController = stateProvider.getActionController();
 
-        if (distToEnemySqr <= d0 && !stateMachine.isActionEnabled(attackAction)) {
-            stateMachine.enableAction(attackAction);
+        if (distToEnemySqr <= d0 && !actionController.isActionEnabled(delayedAttackAction)) {
+            actionController.enableAction(delayedAttackAction);
         }
     }
 }

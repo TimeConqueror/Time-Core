@@ -9,7 +9,7 @@ import java.util.function.Supplier;
  * Factory for creating properties with applied configurations, represented in {@link #creator}.
  */
 public class BlockPropsFactory {
-    private Supplier<Block.Properties> creator;
+    private final Supplier<Block.Properties> creator;
 
     public BlockPropsFactory(Supplier<Block.Properties> creator) {
         this.creator = creator;

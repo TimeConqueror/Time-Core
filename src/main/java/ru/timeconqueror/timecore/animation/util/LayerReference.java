@@ -1,6 +1,7 @@
-package ru.timeconqueror.timecore.animation;
+package ru.timeconqueror.timecore.animation.util;
 
-import ru.timeconqueror.timecore.api.client.render.animation.BlendType;
+import ru.timeconqueror.timecore.animation.Layer;
+import ru.timeconqueror.timecore.api.animation.BlendType;
 
 import java.util.Objects;
 import java.util.function.Function;
@@ -35,6 +36,13 @@ public class LayerReference {
     @Override
     public int hashCode() {
         return Objects.hash(name);
+    }
+
+    @Override
+    public String toString() {
+        return "LayerReference{" +
+                "name='" + name + '\'' +
+                '}';
     }
 
     public String getName() {

@@ -1,4 +1,4 @@
-package ru.timeconqueror.timecore.client.render.animation;
+package ru.timeconqueror.timecore.animation.component;
 
 import net.minecraft.client.renderer.Vector3f;
 
@@ -14,16 +14,16 @@ public class KeyFrame {
         this.vec = vec;
     }
 
+    public static KeyFrame createIdleKeyFrame(int startTime, float modelIdleX, float modelIdleY, float modelIdleZ) {
+        return new KeyFrame(startTime, new Vector3f(modelIdleX, modelIdleY, modelIdleZ));
+    }
+
     public int getStartTime() {
         return startTime;
     }
 
     public Vector3f getVec() {
         return vec;
-    }
-
-    public static KeyFrame createIdleKeyFrame(int startTime, float modelIdleX, float modelIdleY, float modelIdleZ) {
-        return new KeyFrame(startTime, new Vector3f(modelIdleX, modelIdleY, modelIdleZ));
     }
 
     public KeyFrame withNewStartTime(int startTime) {

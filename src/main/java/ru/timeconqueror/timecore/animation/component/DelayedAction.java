@@ -1,8 +1,11 @@
-package ru.timeconqueror.timecore.animation;
+package ru.timeconqueror.timecore.animation.component;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.util.ResourceLocation;
-import ru.timeconqueror.timecore.api.client.render.animation.IAnimation;
+import ru.timeconqueror.timecore.animation.AnimationStarter;
+import ru.timeconqueror.timecore.animation.util.StandardDelayPredicates;
+import ru.timeconqueror.timecore.animation.watcher.AnimationWatcher;
+import ru.timeconqueror.timecore.api.animation.Animation;
 
 import java.util.Objects;
 import java.util.function.Consumer;
@@ -11,12 +14,10 @@ import java.util.function.Predicate;
 public class DelayedAction<T extends Entity> {
     private final AnimationStarter animationStarter;
     private final String animationLayer;
-
+    private final ResourceLocation id;
     private Predicate<AnimationWatcher> actionDelayPredicate = StandardDelayPredicates.onStart();
     private Consumer<? super T> action = t -> {
     };
-
-    private final ResourceLocation id;
 
     public DelayedAction(ResourceLocation id, AnimationStarter animationStarter, String animationLayer) {
         this.id = id;
@@ -60,8 +61,8 @@ public class DelayedAction<T extends Entity> {
         return id.equals(action.id);
     }
 
-    public boolean isBound(IAnimation animation) {
-        return animationStarter.buildData().prototype.equals(animation);
+    public boolean isBound(Animation animation) {
+        return animationStarter.getData().getAnimation().equals(animation);
     }
 
     @Override

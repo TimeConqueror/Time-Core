@@ -3,6 +3,11 @@ package ru.timeconqueror.timecore.animation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ru.timeconqueror.timecore.TimeCore;
+import ru.timeconqueror.timecore.animation.util.DummyElements;
+import ru.timeconqueror.timecore.animation.watcher.AnimationWatcher;
+import ru.timeconqueror.timecore.animation.watcher.TransitionWatcher;
+import ru.timeconqueror.timecore.api.animation.Animation;
+import ru.timeconqueror.timecore.api.animation.AnimationConstants;
 import ru.timeconqueror.timecore.api.animation.AnimationManager;
 import ru.timeconqueror.timecore.api.client.render.model.TimeEntityModel;
 
@@ -12,13 +17,13 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public abstract class BaseAnimationManager implements AnimationManager {
+    @Nullable
+    private final AnimationSetting walkingAnimationSetting;
     private HashMap<String, Layer> layerMap;
     private List<Layer> layers;
-    @Nullable
-    private final AnimationStarter walkingAnimationStarter;
 
-    public BaseAnimationManager(@Nullable AnimationStarter walkingAnimationStarter) {
-        this.walkingAnimationStarter = walkingAnimationStarter;
+    public BaseAnimationManager(@Nullable AnimationSetting walkingAnimationSetting) {
+        this.walkingAnimationSetting = walkingAnimationSetting;
     }
 
     @Override
@@ -35,12 +40,31 @@ public abstract class BaseAnimationManager implements AnimationManager {
     }
 
     @Override
-    public void setAnimation(AnimationStarter.AnimationData animationData, String layerName) {
+    public void setAnimation(AnimationStarter animationStarter, String layerName) {
+        AnimationStarter.AnimationData data = animationStarter.getData();
         if (containsLayer(layerName)) {
-            getLayer(layerName).setAnimation(animationData);
+            Layer layer = getLayer(layerName);
+
+            if (data.isIgnorable()) {
+                AnimationWatcher watcher = layer.getAnimationWatcher();
+                if (watcher != null) {
+                    Animation animationIn = data.getAnimation();
+
+                    if (animationIn.equals(watcher.getAnimation()) || (watcher instanceof TransitionWatcher && animationIn.equals(((TransitionWatcher) watcher).getDestination()))) {
+                        return;//TODO add check for speed
+                    }
+                }
+            }
+
+            layer.setAnimation(data);
+            onAnimationSet(data, layer);
         } else {
             TimeCore.LOGGER.error("Can't start animation: layer with name " + layerName + " doesn't exist in provided animation manager.");
         }
+    }
+
+    protected void onAnimationSet(AnimationStarter.AnimationData data, Layer layer) {
+
     }
 
     @Override
@@ -61,11 +85,6 @@ public abstract class BaseAnimationManager implements AnimationManager {
     }
 
     @Override
-    public @NotNull Layer getMainLayer() {
-        return layerMap.containsKey(AnimationConstants.MAIN_LAYER_NAME) ? layerMap.get(AnimationConstants.MAIN_LAYER_NAME) : layers.get(0) /*won't be empty, because we check it in AnimationStarter*/;
-    }
-
-    @Override
     public void applyAnimations(TimeEntityModel<?> model) {
         for (Layer layer : layers) {
             AnimationWatcher watcher = layer.getAnimationWatcher();
@@ -79,7 +98,7 @@ public abstract class BaseAnimationManager implements AnimationManager {
                 } else {
                     watcher.unfreeze();
 
-                    if (!watcher.isInited()) {
+                    if (watcher.requiresInit()) {
                         watcher.init(model);
                     }
 
@@ -88,7 +107,7 @@ public abstract class BaseAnimationManager implements AnimationManager {
 
                         watcher = watcher.next();
 
-                        if (watcher != null && !watcher.isInited()) {
+                        if (watcher != null && watcher.requiresInit()) {
                             watcher.init(model);
                         }
                     }
@@ -120,7 +139,7 @@ public abstract class BaseAnimationManager implements AnimationManager {
     }
 
     @Nullable
-    public AnimationStarter getWalkingAnimationStarter() {
-        return walkingAnimationStarter;
+    public AnimationSetting getWalkingAnimationSetting() {
+        return walkingAnimationSetting;
     }
 }

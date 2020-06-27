@@ -1,26 +1,26 @@
-package ru.timeconqueror.timecore.animation;
+package ru.timeconqueror.timecore.animation.watcher;
 
 import org.jetbrains.annotations.Nullable;
-import ru.timeconqueror.timecore.api.client.render.animation.IAnimation;
+import ru.timeconqueror.timecore.animation.component.Transition;
+import ru.timeconqueror.timecore.api.animation.Animation;
 import ru.timeconqueror.timecore.api.client.render.model.TimeEntityModel;
 import ru.timeconqueror.timecore.api.util.Requirements;
-import ru.timeconqueror.timecore.client.render.animation.Transition;
 
 public class TransitionWatcher extends AnimationWatcher {
     private final int transitionTime;
     private final float destAnimSpeedFactor;
     @Nullable
-    private final IAnimation destination;
+    private final Animation destination;
 
-    private final IAnimation source;
+    private final Animation source;
     private final int sourceExistingTime;
 
     //from null source
-    public TransitionWatcher(int transitionTime, @Nullable IAnimation destination, float destAnimSpeedFactor) {
+    public TransitionWatcher(int transitionTime, @Nullable Animation destination, float destAnimSpeedFactor) {
         this(null, 0, transitionTime, destination, destAnimSpeedFactor);
     }
 
-    public TransitionWatcher(@Nullable IAnimation source, int sourceExistingTime, int transitionTime, @Nullable IAnimation destination, float destAnimSpeedFactor) {
+    public TransitionWatcher(@Nullable Animation source, int sourceExistingTime, int transitionTime, @Nullable Animation destination, float destAnimSpeedFactor) {
         super(null, 1.0F);
 
         Requirements.greaterOrEqualsThan(transitionTime, 0);
@@ -35,6 +35,7 @@ public class TransitionWatcher extends AnimationWatcher {
 
     @Override
     public void init(TimeEntityModel<?> model) {
+        super.init(model);
         animation = Transition.create(source, sourceExistingTime, destination, model.getBaseModel(), transitionTime);
     }
 
@@ -44,7 +45,7 @@ public class TransitionWatcher extends AnimationWatcher {
         return destination != null ? new AnimationWatcher(destination, destAnimSpeedFactor) : null;
     }
 
-    public @Nullable IAnimation getDestination() {
+    public @Nullable Animation getDestination() {
         return destination;
     }
 }

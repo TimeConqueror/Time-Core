@@ -17,9 +17,8 @@ import ru.timeconqueror.timecore.util.I18nResolver;
 public final class TimeCore extends TimeMod {
     public static final String MODID = "timecore";
     public static final Logger LOGGER = LogManager.getLogger(MODID);
-    public static TimeCore INSTANCE = null;
-
     public static final I18nResolver LANG_RESOLVER = new I18nResolver(MODID);
+    public static TimeCore INSTANCE = null;
 
     public TimeCore() {
         INSTANCE = this;

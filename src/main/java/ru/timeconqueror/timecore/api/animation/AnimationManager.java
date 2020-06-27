@@ -2,38 +2,59 @@ package ru.timeconqueror.timecore.api.animation;
 
 import org.jetbrains.annotations.NotNull;
 import ru.timeconqueror.timecore.animation.AnimationStarter;
-import ru.timeconqueror.timecore.api.client.render.animation.AnimationLayer;
+import ru.timeconqueror.timecore.animation.util.DummyElements;
 import ru.timeconqueror.timecore.api.client.render.model.TimeEntityModel;
 
 public interface AnimationManager {
 
+    /**
+     * Returns true, if this animation manager contains the layer with provided name,
+     * otherwise returns false.
+     */
     boolean containsLayer(String name);
 
     /**
-     * //TODO
+     * Returns layer object by its name.
      *
-     * @param name
-     * @return
-     * @throws RuntimeException if layer is not found
+     * @throws RuntimeException if layer is not found,
+     *                          so you should check existing of the layer in {@link #containsLayer(String)} firstly.
      */
     @NotNull
     AnimationLayer getLayer(String name);
 
     /**
-     * If animation has layer with name 'main', then it will return specifically that layer.
-     * (It will has that layer, if you don't add layers to your manager)
-     * Otherwise it will return the first layer in the manager.
+     * On client: called on every frame for model from the renderer of entity, which contains this manager.
+     * On server: called on every tick and with {@link DummyElements#DUMMY_ENTITY_MODEL} as a param,
+     * since no operations with model shouldn't be done on server (because no model exists on server side).
      *
-     * @return animation layer with name 'main' or if it doesn't find so, it will return the first layer.
+     * @param model model to perform calculations on it.
+     *              <p>
+     *              on client: model of the bound entity;<p>
+     *              on server: {@link DummyElements#DUMMY_ENTITY_MODEL}
      */
-    @NotNull
-    AnimationLayer getMainLayer();
-
     void applyAnimations(TimeEntityModel<?> model);
 
-    void setAnimation(AnimationStarter.AnimationData animationData, String layerName);
+    /**
+     * Sets animation data to start new animation in the layer with provided name.
+     *
+     * @see AnimationStarter#startAt(AnimationManager, String)
+     */
+    void setAnimation(AnimationStarter animationStarter, String layerName);
 
+    /**
+     * Removes animation from the layer with provided name.
+     * Transition name is default here: {@link AnimationConstants#BASIC_TRANSITION_TIME}
+     *
+     * @param layerName name of the layer, where you need to remove animation.
+     */
     void removeAnimation(String layerName);
 
+    /**
+     * Removes animation from the layer with provided name.
+     *
+     * @param layerName      name of the layer, where you need to remove animation.
+     * @param transitionTime time of transition to the idle state.
+     *                       If this value is bigger than 0, then transition will be created, which will smoothly end current animation.
+     */
     void removeAnimation(String layerName, int transitionTime);
 }

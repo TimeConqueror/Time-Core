@@ -10,8 +10,8 @@ public class ItemModel extends JSONTimeResource {
     /**
      * Represents the location of the model parent.
      */
-    private ModelLocation parent;
-    private ArrayList<TextureLocation> layers = new ArrayList<>(1);
+    private final ModelLocation parent;
+    private final ArrayList<TextureLocation> layers = new ArrayList<>(1);
 
     public ItemModel(StandardItemModelParents parent) {
         this(parent.getModelLocation());

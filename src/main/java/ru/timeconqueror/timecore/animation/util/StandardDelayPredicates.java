@@ -1,5 +1,6 @@
-package ru.timeconqueror.timecore.animation;
+package ru.timeconqueror.timecore.animation.util;
 
+import ru.timeconqueror.timecore.animation.watcher.AnimationWatcher;
 import ru.timeconqueror.timecore.api.util.Requirements;
 
 import java.util.function.Predicate;

@@ -1,4 +1,4 @@
-package ru.timeconqueror.timecore.api.client.render.animation;
+package ru.timeconqueror.timecore.api.animation;
 
 public enum BlendType {
     /**

@@ -27,25 +27,6 @@ public class StructureRevealingS2CPacket implements ITimePacket {
 
     public static class PacketHandler implements ITimePacketHandler<StructureRevealingS2CPacket> {
 
-        @Override
-        public void encode(StructureRevealingS2CPacket packet, PacketBuffer buffer) {
-            encodeAABB(packet.bb, buffer);
-            buffer.writeResourceLocation(packet.structureName);
-        }
-
-        @Override
-        public @NotNull StructureRevealingS2CPacket decode(PacketBuffer buffer) {
-            return new StructureRevealingS2CPacket(decodeAABB(buffer), buffer.readResourceLocation());
-        }
-
-        @Override
-        public void onPacketReceived(StructureRevealingS2CPacket packet, Supplier<NetworkEvent.Context> contextSupplier) {
-            StructureRevealer instance = StructureRevealer.getInstance();
-            if (instance != null && instance.structureRenderer != null) {
-                instance.structureRenderer.trackStructurePiece(packet.structureName, packet.bb);
-            }
-        }
-
         public static void encodeAABB(AxisAlignedBB boundingBox, PacketBuffer bufferTo) {
             bufferTo.writeDouble(boundingBox.minX);
             bufferTo.writeDouble(boundingBox.minY);
@@ -64,6 +45,25 @@ public class StructureRevealingS2CPacket implements ITimePacket {
                     bufferFrom.readDouble(),
                     bufferFrom.readDouble()
             );
+        }
+
+        @Override
+        public void encode(StructureRevealingS2CPacket packet, PacketBuffer buffer) {
+            encodeAABB(packet.bb, buffer);
+            buffer.writeResourceLocation(packet.structureName);
+        }
+
+        @Override
+        public @NotNull StructureRevealingS2CPacket decode(PacketBuffer buffer) {
+            return new StructureRevealingS2CPacket(decodeAABB(buffer), buffer.readResourceLocation());
+        }
+
+        @Override
+        public void onPacketReceived(StructureRevealingS2CPacket packet, Supplier<NetworkEvent.Context> contextSupplier) {
+            StructureRevealer instance = StructureRevealer.getInstance();
+            if (instance != null && instance.structureRenderer != null) {
+                instance.structureRenderer.trackStructurePiece(packet.structureName, packet.bb);
+            }
         }
     }
 }

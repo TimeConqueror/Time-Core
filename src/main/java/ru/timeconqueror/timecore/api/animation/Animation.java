@@ -1,22 +1,29 @@
-package ru.timeconqueror.timecore.api.client.render.animation;
+package ru.timeconqueror.timecore.api.animation;
 
 import net.minecraft.util.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import ru.timeconqueror.timecore.animation.component.KeyFrame;
+import ru.timeconqueror.timecore.animation.component.Transition;
 import ru.timeconqueror.timecore.api.client.render.model.TimeEntityModel;
 import ru.timeconqueror.timecore.api.client.render.model.TimeModel;
-import ru.timeconqueror.timecore.client.render.animation.KeyFrame;
-import ru.timeconqueror.timecore.client.render.animation.Transition;
 import ru.timeconqueror.timecore.client.render.model.TimeModelRenderer;
 
 import java.util.List;
 import java.util.function.Consumer;
 
-public interface IAnimation {
+public interface Animation {
     void apply(TimeEntityModel<?> model, AnimationLayer layer, int existingTime);
 
+    /**
+     * Name of the animation, that is indicated in animation file.
+     */
     String getName();
 
+    /**
+     * By default contains the path to the file, from which this animation was parsed,
+     * merged with the animation name from the file.
+     */
     ResourceLocation getId();
 
     /**
@@ -30,12 +37,12 @@ public interface IAnimation {
      * Should return the factory, that can handle your IAnimation implementation class
      */
     @NotNull
-    IAnimation.TransitionFactory getTransitionFactory();
+    Animation.TransitionFactory getTransitionFactory();
 
     /**
-     * Proceeds action for each bone.
+     * Proceeds some action for each bone.
      *
-     * @param action action to call for every bone. Should consume bone name.
+     * @param action action to call for every bone. Consumes bone name.
      */
     void forEachBone(Consumer<String> action);
 
@@ -49,9 +56,9 @@ public interface IAnimation {
         /**
          * Animation, from which transition will start.
          */
-        protected IAnimation source;
+        protected Animation source;
 
-        public TransitionFactory(IAnimation source) {
+        public TransitionFactory(Animation source) {
             this.source = source;
         }
 
@@ -73,17 +80,17 @@ public interface IAnimation {
          * @param transitionTime time of transition between source and destination animations.
          */
         @Nullable
-        public abstract List<Transition.TransitionBoneOption> createBoneOptions(IAnimation dest, TimeModel model, int existingTime, int transitionTime);
+        public abstract List<Transition.TransitionBoneOption> createBoneOptions(Animation dest, TimeModel model, int existingTime, int transitionTime);
 
         /**
-         * TODO
+         * Returns destination keyframe of provided type for transition animation.
          * <p>
          * Will be called only when {@link #source} is a destination animation.
          *
-         * @param boneName
-         * @param optionType
-         * @param transitionTime
-         * @return
+         * @param piece          piece for which destination keyframe should be calculated.
+         * @param boneName       name of bone/piece for which destination keyframe should be calculated.
+         * @param optionType     type of keyframe which should be calculated.
+         * @param transitionTime time of transition between source and destination animations.
          */
         @NotNull
         public abstract KeyFrame getDestKeyFrame(TimeModelRenderer piece, String boneName, OptionType optionType, int transitionTime);

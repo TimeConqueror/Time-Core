@@ -6,19 +6,20 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.fml.network.PacketDistributor;
 import org.jetbrains.annotations.Nullable;
+import ru.timeconqueror.timecore.animation.watcher.AnimationWatcher;
 import ru.timeconqueror.timecore.api.client.render.model.TimeEntityModel;
 import ru.timeconqueror.timecore.mod.common.packet.InternalPacketManager;
 import ru.timeconqueror.timecore.mod.common.packet.S2CEndAnimationMsg;
 import ru.timeconqueror.timecore.mod.common.packet.S2CStartAnimationMsg;
 
 public class ServerAnimationManager<T extends MobEntity> extends BaseAnimationManager {
-    private StateMachineImpl<T> stateMachine;
+    private ActionControllerImpl<T> stateMachine;
 
-    public ServerAnimationManager(@Nullable AnimationStarter walkingAnimationStarter) {
+    public ServerAnimationManager(@Nullable AnimationSetting walkingAnimationStarter) {
         super(walkingAnimationStarter);
     }
 
-    void setStateMachine(StateMachineImpl<T> stateMachine) {
+    void setStateMachine(ActionControllerImpl<T> stateMachine) {
         this.stateMachine = stateMachine;
     }
 
@@ -28,12 +29,10 @@ public class ServerAnimationManager<T extends MobEntity> extends BaseAnimationMa
     }
 
     @Override
-    public void setAnimation(AnimationStarter.AnimationData animationData, String layerName) {
-        super.setAnimation(animationData, layerName);
+    protected void onAnimationSet(AnimationStarter.AnimationData data, Layer layer) {
+        super.onAnimationSet(data, layer);
 
-        if (containsLayer(layerName)) {
-            InternalPacketManager.INSTANCE.send(PacketDistributor.TRACKING_ENTITY.with(() -> stateMachine.getEntity()), new S2CStartAnimationMsg(stateMachine.getEntity(), layerName, animationData));
-        }
+        InternalPacketManager.INSTANCE.send(PacketDistributor.TRACKING_ENTITY.with(() -> stateMachine.getEntity()), new S2CStartAnimationMsg(stateMachine.getEntity(), layer.getName(), data));
     }
 
     @Override
@@ -44,7 +43,7 @@ public class ServerAnimationManager<T extends MobEntity> extends BaseAnimationMa
     }
 
     private void proceedActions(AnimationWatcher watcher) {
-        for (StateMachineImpl.ActionWatcher<T> actionWatcher : stateMachine.getActionWatchers()) {
+        for (ActionControllerImpl.ActionWatcher<T> actionWatcher : stateMachine.getActionWatchers()) {
             if (actionWatcher.isBound(watcher.getAnimation())) {
                 if (actionWatcher.shouldBeExecuted(watcher)) {
                     actionWatcher.runAction(stateMachine.getEntity());

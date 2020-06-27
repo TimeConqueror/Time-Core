@@ -1,4 +1,4 @@
-package ru.timeconqueror.timecore.client.render.animation;
+package ru.timeconqueror.timecore.animation.loading;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -11,7 +11,10 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import ru.timeconqueror.timecore.api.client.render.animation.IAnimation;
+import ru.timeconqueror.timecore.animation.component.BasicAnimation;
+import ru.timeconqueror.timecore.animation.component.BoneOption;
+import ru.timeconqueror.timecore.animation.component.KeyFrame;
+import ru.timeconqueror.timecore.api.animation.Animation;
 import ru.timeconqueror.timecore.api.util.CollectionUtils;
 import ru.timeconqueror.timecore.client.render.JsonParsingException;
 import ru.timeconqueror.timecore.util.JsonUtils;
@@ -24,7 +27,7 @@ import java.util.stream.Collectors;
 public class JsonAnimationParser {
     private static final String[] ACCEPTABLE_FORMAT_VERSIONS = new String[]{"1.8.0"};
 
-    public List<IAnimation> parseAnimations(@NotNull ResourceLocation fileLocation) throws JsonParsingException {
+    public Map<String, Animation> parseAnimations(@NotNull ResourceLocation fileLocation) throws JsonParsingException {
         try (final IResource resource = Minecraft.getInstance().getResourceManager().getResource(fileLocation)) {
             BufferedReader reader = new BufferedReader(new InputStreamReader(resource.getInputStream()));
 
@@ -37,14 +40,14 @@ public class JsonAnimationParser {
     }
 
     @NotNull
-    private List<IAnimation> parseAnimation(ResourceLocation fileLocation, JsonObject object) throws JsonParsingException {
+    private Map<String, Animation> parseAnimation(ResourceLocation fileLocation, JsonObject object) throws JsonParsingException {
         if (object.has("format_version")) {
             String formatVersion = object.get("format_version").getAsString();
             checkFormatVersion(formatVersion);
         }
 
         JsonObject animations = JsonUtils.get("animations", object).getAsJsonObject();
-        List<IAnimation> animationList = new ArrayList<>();
+        Map<String, Animation> animationMap = new HashMap<>();
 
         for (Map.Entry<String, JsonElement> animationEntry : animations.entrySet()) {
             String name = animationEntry.getKey();
@@ -67,10 +70,10 @@ public class JsonAnimationParser {
                 }
             }
 
-            animationList.add(new Animation(loop, new ResourceLocation(fileLocation.getNamespace(), fileLocation.getPath() + "/" + name), name, animationLength, !boneOptions.isEmpty() ? Collections.unmodifiableMap(boneOptions.stream().collect(Collectors.toMap(BoneOption::getName, boneOption -> boneOption))) : null));
+            animationMap.put(name, new BasicAnimation(loop, new ResourceLocation(fileLocation.getNamespace(), fileLocation.getPath() + "/" + name), name, animationLength, !boneOptions.isEmpty() ? Collections.unmodifiableMap(boneOptions.stream().collect(Collectors.toMap(BoneOption::getName, boneOption -> boneOption))) : null));
         }
 
-        return animationList;
+        return animationMap;
     }
 
     private BoneOption parseAnimationBone(String boneName, JsonObject boneJson) throws JsonParsingException {

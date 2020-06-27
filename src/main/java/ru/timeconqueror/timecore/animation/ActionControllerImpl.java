@@ -2,19 +2,22 @@ package ru.timeconqueror.timecore.animation;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.MobEntity;
+import ru.timeconqueror.timecore.TimeCore;
+import ru.timeconqueror.timecore.animation.component.DelayedAction;
+import ru.timeconqueror.timecore.animation.watcher.AnimationWatcher;
+import ru.timeconqueror.timecore.api.animation.ActionController;
+import ru.timeconqueror.timecore.api.animation.Animation;
 import ru.timeconqueror.timecore.api.animation.AnimationManager;
-import ru.timeconqueror.timecore.api.animation.StateMachine;
-import ru.timeconqueror.timecore.api.client.render.animation.IAnimation;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class StateMachineImpl<T extends MobEntity> implements StateMachine<T> {
+public class ActionControllerImpl<T extends MobEntity> implements ActionController<T> {
     private final List<ActionWatcher<T>> actionWatchers = new ArrayList<>();
     private final BaseAnimationManager animationManager;
     private final T entity;
 
-    public StateMachineImpl(BaseAnimationManager animationManager, T entity) {
+    public ActionControllerImpl(BaseAnimationManager animationManager, T entity) {
         this.animationManager = animationManager;
         this.entity = entity;
     }
@@ -45,14 +48,19 @@ public class StateMachineImpl<T extends MobEntity> implements StateMachine<T> {
     @Override
     public void onTick() {
         if (entity.world.isRemote) {
-            boolean posChanged = entity.posX != entity.prevPosX || entity.posY != entity.prevPosY || entity.posZ != entity.prevPosZ;
-            if (animationManager.containsLayer(LayerReference.WALKING.getName())) {
-                if (posChanged) {
-                    if (animationManager.getWalkingAnimationStarter() != null) {
-                        animationManager.getWalkingAnimationStarter().startAt(animationManager, LayerReference.WALKING.getName());
+            AnimationSetting walkingAnimationSetting = animationManager.getWalkingAnimationSetting();
+
+            if (walkingAnimationSetting != null) {
+                if (animationManager.containsLayer(walkingAnimationSetting.getLayerName())) {
+                    boolean posChanged = entity.posX != entity.prevPosX || entity.posY != entity.prevPosY || entity.posZ != entity.prevPosZ;
+
+                    if (posChanged) {
+                        walkingAnimationSetting.getAnimationStarter().startAt(animationManager, walkingAnimationSetting.getLayerName());
+                    } else {
+                        animationManager.removeAnimation(walkingAnimationSetting.getLayerName());
                     }
                 } else {
-                    animationManager.removeAnimation(LayerReference.WALKING.getName());
+                    TimeCore.LOGGER.error("Walking animation for entity {} is set up to be displayed on layer '{}', but this layer doesn't exist.", entity.getClass(), walkingAnimationSetting.getLayerName());
                 }
             }
         }
@@ -79,7 +87,7 @@ public class StateMachineImpl<T extends MobEntity> implements StateMachine<T> {
             this.action = action;
         }
 
-        public boolean isBound(IAnimation animation) {
+        public boolean isBound(Animation animation) {
             return action.isBound(animation);
         }
 

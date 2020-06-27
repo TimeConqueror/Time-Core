@@ -19,20 +19,17 @@ import java.util.function.Supplier;
 public class ImprovedConfigBuilder extends ForgeConfigSpec.Builder {
 
     private final String modid;
-    private ConfigSection section;
-
     /**
      * If true the builder will add line with default value to comments.
      */
     private final boolean defValueToComment;
-
     /**
      * If true the builder will add prefixes, that are pushed in during deepening in subsections, to properties' lang keys.
      */
     private final boolean autoLangKey;
-
     private final Stack<String> i18nPrefix = new Stack<>();
     private final List<String> commentAdditions = new ArrayList<>();
+    private ConfigSection section;
 
     public ImprovedConfigBuilder(ConfigSection section) {
         this(section, true, true);

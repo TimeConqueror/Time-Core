@@ -8,8 +8,6 @@ import javax.annotation.OverridingMethodsMustInvokeSuper;
 import java.util.ArrayList;
 
 public abstract class ConfigSection {
-    private ArrayList<ConfigSection> sections;
-
     /**
      * Determines the section in config file and also is used as a part of lang keys.
      * <br>
@@ -22,6 +20,7 @@ public abstract class ConfigSection {
      */
     @Nullable
     private final String comment;
+    private ArrayList<ConfigSection> sections;
 
     public ConfigSection(@NotNull String key, @Nullable String comment) {
         this.key = key;

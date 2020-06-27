@@ -1,9 +1,9 @@
 package ru.timeconqueror.timecore.api.animation;
 
 import net.minecraft.entity.Entity;
-import ru.timeconqueror.timecore.animation.DelayedAction;
+import ru.timeconqueror.timecore.animation.component.DelayedAction;
 
-public interface StateMachine<T extends Entity> {
+public interface ActionController<T extends Entity> {
     void enableAction(DelayedAction<T> action);
 
     boolean isActionEnabled(DelayedAction<T> action);

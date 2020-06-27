@@ -73,7 +73,7 @@ public abstract class TileEntityTimeRegistry extends WrappedForgeTimeRegistry<Ti
     }
 
     public class TileEntityWrapper<T extends TileEntity> extends EntryWrapper {
-        private Class<T> tileEntityClass;
+        private final Class<T> tileEntityClass;
 
         public TileEntityWrapper(Class<T> tileEntityClass, TileEntityType<T> entry, String name) {
             super(entry, name);

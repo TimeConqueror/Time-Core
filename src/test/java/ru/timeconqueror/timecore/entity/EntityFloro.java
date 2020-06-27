@@ -9,11 +9,15 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import ru.timeconqueror.timecore.TimeCore;
-import ru.timeconqueror.timecore.animation.*;
+import ru.timeconqueror.timecore.animation.ActionControllerBuilder;
+import ru.timeconqueror.timecore.animation.AnimationManagerBuilder;
+import ru.timeconqueror.timecore.animation.AnimationStarter;
+import ru.timeconqueror.timecore.animation.component.DelayedAction;
 import ru.timeconqueror.timecore.animation.entityai.AnimatedMeleeAttackGoal;
+import ru.timeconqueror.timecore.animation.util.StandardDelayPredicates;
+import ru.timeconqueror.timecore.api.animation.ActionController;
 import ru.timeconqueror.timecore.api.animation.AnimationProvider;
-import ru.timeconqueror.timecore.api.animation.StateMachine;
-import ru.timeconqueror.timecore.api.client.render.animation.BlendType;
+import ru.timeconqueror.timecore.api.animation.BlendType;
 import ru.timeconqueror.timecore.registry.TEntities;
 
 @SuppressWarnings("EntityConstructor")
@@ -23,14 +27,14 @@ public class EntityFloro extends MonsterEntity implements AnimationProvider<Enti
             .setDelayPredicate(StandardDelayPredicates.whenPassed(0.5F))
             .setOnCall(AnimatedMeleeAttackGoal.BASIC_MELEE_ATTACK_ACTION);
 
-    private final StateMachine<EntityFloro> stateMachine;
+    private final ActionController<EntityFloro> actionController;
 
     public EntityFloro(EntityType<? extends MonsterEntity> type, World worldIn) {
         super(type, worldIn);
 
-        stateMachine = new StateMachineBuilder<EntityFloro>(
+        actionController = new ActionControllerBuilder<EntityFloro>(
                 new AnimationManagerBuilder(true)
-                        .setWalkingAnimationStarter(new AnimationStarter(TEntities.FLORO_WALK).setSpeed(2.0F))
+                        .addWalkingAnimationHandling(new AnimationStarter(TEntities.FLORO_WALK).setSpeed(2.0F), "walking")
                         .addLayer("attack", 1, BlendType.ADDING, 0.9F)
         ).build(this, world);
     }
@@ -48,36 +52,8 @@ public class EntityFloro extends MonsterEntity implements AnimationProvider<Enti
         return 0.3F;
     }
 
-    public boolean isFemale() {
-        return false;
-    }
-
     @Override
-    public void livingTick() {
-        super.livingTick();
-
-        if ((System.currentTimeMillis() / 1000) % 5 == 0) {
-//            animationManager.getMainLayer().removeAnimation();
-//            animationManager.getLayer("main").removeAnimation();
-//            AnimationAPI.newAnimationStarter(TEntities.FLORO_WALK)
-//                    .setIgnorable(true)
-//                    .setSpeed(1.5F)
-//                    .startAt(animationManager.getMainLayer());
-//            animationManager.startAnimationIgnorable(TEntities.FLORO_WALK, 333);
-//            animationManager.removeAnimation(2000);
-//            animationManager.newAnimationStarter(TEntities.SCALING_ANIMATION, InsertType.IGNORE);
-//            animationManager.newAnimationStarter(TEntities.OFFSETTING_ANIMATION, InsertType.IGNORE);
-        }
-
-//        if (new Random().nextInt(20) == 0) {
-//            AnimationAPI.newAnimationStarter(TEntities.FLORO_SHOOT)
-//                    .setIgnorable(true)
-//                    .startAt(animationManager.getLayer("attack"));
-//        }
-    }
-
-    @Override
-    public @NotNull StateMachine<EntityFloro> getStateMachine() {
-        return stateMachine;
+    public @NotNull ActionController<EntityFloro> getActionController() {
+        return actionController;
     }
 }

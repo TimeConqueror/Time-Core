@@ -1,33 +1,36 @@
-package ru.timeconqueror.timecore.animation;
+package ru.timeconqueror.timecore.animation.watcher;
 
 import org.jetbrains.annotations.Nullable;
-import ru.timeconqueror.timecore.api.client.render.animation.IAnimation;
+import ru.timeconqueror.timecore.api.animation.Animation;
+import ru.timeconqueror.timecore.api.animation.AnimationConstants;
 import ru.timeconqueror.timecore.api.client.render.model.TimeEntityModel;
 import ru.timeconqueror.timecore.api.util.Requirements;
 
+import javax.annotation.OverridingMethodsMustInvokeSuper;
+
 public class AnimationWatcher {
     protected final FreezableTime startTime;
-    protected IAnimation animation;
     /**
      * Speed factor of the animation
      */
     protected final float speed;
+    private boolean inited = false;
+    protected Animation animation;
 
-    private final boolean inited = false;
-
-    public AnimationWatcher(IAnimation animation, float speed) {
+    public AnimationWatcher(Animation animation, float speed) {
         Requirements.greaterThan(speed, 0);
         this.startTime = new FreezableTime(System.currentTimeMillis());
         this.animation = animation;
         this.speed = speed;
     }
 
-    public boolean isInited() {
-        return inited;
+    public boolean requiresInit() {
+        return !inited;
     }
 
+    @OverridingMethodsMustInvokeSuper
     public void init(TimeEntityModel<?> model) {
-
+        inited = true;
     }
 
     @Nullable
@@ -49,7 +52,7 @@ public class AnimationWatcher {
         startTime.set(System.currentTimeMillis());
     }
 
-    public IAnimation getAnimation() {
+    public Animation getAnimation() {
         return animation;
     }
 

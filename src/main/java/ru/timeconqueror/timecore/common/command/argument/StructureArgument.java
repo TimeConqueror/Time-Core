@@ -26,6 +26,10 @@ public class StructureArgument implements ArgumentType<Structure<?>> {
     public static final SimpleCommandExceptionType IS_FEATURE = new SimpleCommandExceptionType(new TranslationTextComponent("argument." + TimeCore.MODID + ".structure.is_feature"));
     public static final SimpleCommandExceptionType UNKNOWN = new SimpleCommandExceptionType(new TranslationTextComponent("argument." + TimeCore.MODID + ".structure.unknown"));
 
+    public static StructureArgument create() {
+        return new StructureArgument();
+    }
+
     @Override
     public Structure<?> parse(StringReader reader) throws CommandSyntaxException {
         ResourceLocation structureName = ResourceLocation.read(reader);
@@ -49,9 +53,5 @@ public class StructureArgument implements ArgumentType<Structure<?>> {
     @Override
     public Collection<String> getExamples() {
         return EXAMPLES;
-    }
-
-    public static StructureArgument create() {
-        return new StructureArgument();
     }
 }

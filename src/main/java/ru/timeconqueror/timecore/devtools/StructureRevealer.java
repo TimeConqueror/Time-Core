@@ -69,6 +69,11 @@ public class StructureRevealer {
         }
     }
 
+    @Nullable
+    public static StructureRevealer getInstance() {
+        return INSTANCE.get();
+    }
+
     public void onServerChunkLoad(ChunkEvent.Load event) {
         if (MainConfig.INSTANCE.areDevFeaturesEnabled()) {
             IWorld world = event.getWorld();
@@ -124,11 +129,6 @@ public class StructureRevealer {
         }
 
         return structures;
-    }
-
-    @Nullable
-    public static StructureRevealer getInstance() {
-        return INSTANCE.get();
     }
 
     public static class Renderer {

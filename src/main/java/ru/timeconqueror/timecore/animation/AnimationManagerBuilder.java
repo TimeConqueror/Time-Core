@@ -1,15 +1,17 @@
 package ru.timeconqueror.timecore.animation;
 
 import net.minecraft.entity.MobEntity;
-import ru.timeconqueror.timecore.api.animation.StateMachine;
-import ru.timeconqueror.timecore.api.client.render.animation.BlendType;
+import ru.timeconqueror.timecore.animation.util.LayerReference;
+import ru.timeconqueror.timecore.api.animation.ActionController;
+import ru.timeconqueror.timecore.api.animation.AnimationConstants;
+import ru.timeconqueror.timecore.api.animation.BlendType;
 import ru.timeconqueror.timecore.util.SingleUseBuilder;
 
 import java.util.HashMap;
 
 public class AnimationManagerBuilder extends SingleUseBuilder {
     private final HashMap<String, Layer> animationLayers = new HashMap<>();
-    private AnimationStarter walkingAnimationStarter;
+    private AnimationSetting walkingAnimationSetting;
 
     public AnimationManagerBuilder(boolean setupDefaultLayer) {
         if (setupDefaultLayer) {
@@ -17,9 +19,13 @@ public class AnimationManagerBuilder extends SingleUseBuilder {
         }
     }
 
-    public AnimationManagerBuilder setWalkingAnimationStarter(AnimationStarter walkingAnimationStarter) {
-        this.walkingAnimationStarter = walkingAnimationStarter;
-        return this;
+    public AnimationManagerBuilder addWalkingAnimationHandling(AnimationStarter walkingAnimationStarter, String layerName) {
+        if (animationLayers.containsKey(layerName)) {
+            walkingAnimationSetting = new AnimationSetting(layerName, walkingAnimationStarter);
+            return this;
+        } else {
+            throw new IllegalStateException(String.format("You need to define layer %s before adding animation handlers to it.", layerName));
+        }
     }
 
     public AnimationManagerBuilder addLayer(String name, int priority, BlendType blendType, float weight) {
@@ -51,7 +57,7 @@ public class AnimationManagerBuilder extends SingleUseBuilder {
     }
 
     BaseAnimationManager build(boolean serverSide) {
-        BaseAnimationManager manager = serverSide ? new ServerAnimationManager<>(walkingAnimationStarter) : new ClientAnimationManager(walkingAnimationStarter);
+        BaseAnimationManager manager = serverSide ? new ServerAnimationManager<>(walkingAnimationSetting) : new ClientAnimationManager(walkingAnimationSetting);
 
         if (animationLayers.isEmpty()) {
             addMainLayer();
@@ -65,9 +71,9 @@ public class AnimationManagerBuilder extends SingleUseBuilder {
     }
 
     @SuppressWarnings("unchecked")
-    <T extends MobEntity> void init(BaseAnimationManager manager, StateMachine<T> stateMachine) {
+    <T extends MobEntity> void init(BaseAnimationManager manager, ActionController<T> actionController) {
         if (manager instanceof ServerAnimationManager) {
-            ((ServerAnimationManager<T>) manager).setStateMachine((StateMachineImpl<T>) stateMachine);
+            ((ServerAnimationManager<T>) manager).setStateMachine((ActionControllerImpl<T>) actionController);
         }
     }
 }

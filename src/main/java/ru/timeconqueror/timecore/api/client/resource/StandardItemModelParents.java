@@ -7,7 +7,7 @@ public enum StandardItemModelParents {
     DEFAULT(new ItemModelLocation("minecraft", "item/generated")),
     HANDHELD(new ItemModelLocation("minecraft", "item/handheld"));
 
-    private ModelLocation location;
+    private final ModelLocation location;
 
     StandardItemModelParents(ModelLocation location) {
         this.location = location;

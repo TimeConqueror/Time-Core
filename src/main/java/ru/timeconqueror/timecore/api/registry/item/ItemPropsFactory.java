@@ -9,7 +9,7 @@ import java.util.function.Consumer;
  * Factory for creating properties with applied configurations, represented in {@link #processor}.
  */
 public class ItemPropsFactory {
-    private Consumer<Item.Properties> processor;
+    private final Consumer<Item.Properties> processor;
 
     /**
      * @param group Item Group that will be applied for every properties object, created via {{@link #createProps()}}.

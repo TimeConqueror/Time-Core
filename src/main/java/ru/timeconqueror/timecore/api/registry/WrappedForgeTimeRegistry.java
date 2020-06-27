@@ -16,7 +16,7 @@ import net.minecraftforge.registries.IForgeRegistryEntry;
  */
 public abstract class WrappedForgeTimeRegistry<T extends IForgeRegistryEntry<T>> extends ForgeTimeRegistry<T> {
     public class EntryWrapper {
-        private T entry;
+        private final T entry;
 
         /**
          * Calling this constructor you will also register entry.

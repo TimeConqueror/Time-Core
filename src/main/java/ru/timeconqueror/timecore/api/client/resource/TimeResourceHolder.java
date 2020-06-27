@@ -13,8 +13,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class TimeResourceHolder {
-    private HashMap<ResourceLocation, TimeResource> resources = new HashMap<>();
-    private HashSet<String> domains = new HashSet<>();
+    private final HashMap<ResourceLocation, TimeResource> resources = new HashMap<>();
+    private final HashSet<String> domains = new HashSet<>();
 
     /**
      * Adds {@code resource} to the internal resourcepack. It will be available on given location.

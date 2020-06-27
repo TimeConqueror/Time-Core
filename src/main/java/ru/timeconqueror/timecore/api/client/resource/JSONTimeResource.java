@@ -10,13 +10,6 @@ import java.util.ArrayList;
 import java.util.function.Supplier;
 
 public abstract class JSONTimeResource implements TimeResource {
-    @Override
-    public InputStream getInputStream() {
-        return new ByteArrayInputStream(buildJSONString().getBytes(StandardCharsets.UTF_8));
-    }
-
-    public abstract String buildJSONString();
-
     public static String object(@Nullable String key, String... children) {
         StringBuilder str = new StringBuilder();
         if (key != null) {
@@ -62,4 +55,11 @@ public abstract class JSONTimeResource implements TimeResource {
     public static String listOf(ArrayList<String> objects) {
         return Joiner.on(',').join(objects);
     }
+
+    @Override
+    public InputStream getInputStream() {
+        return new ByteArrayInputStream(buildJSONString().getBytes(StandardCharsets.UTF_8));
+    }
+
+    public abstract String buildJSONString();
 }

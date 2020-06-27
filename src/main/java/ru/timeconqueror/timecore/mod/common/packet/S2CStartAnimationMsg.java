@@ -6,8 +6,8 @@ import net.minecraftforge.fml.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
 import ru.timeconqueror.timecore.TimeCore;
 import ru.timeconqueror.timecore.animation.AnimationStarter;
+import ru.timeconqueror.timecore.api.animation.Animation;
 import ru.timeconqueror.timecore.api.animation.AnimationProvider;
-import ru.timeconqueror.timecore.api.client.render.animation.IAnimation;
 
 import java.util.function.Supplier;
 
@@ -42,7 +42,7 @@ public class S2CStartAnimationMsg extends S2CAnimationMsg {
         @Override
         public void onPacket(S2CStartAnimationMsg packet, AnimationProvider<?> provider, String layerName, Supplier<NetworkEvent.Context> contextSupplier) {
             AnimationStarter animationStarter = AnimationStarter.fromAnimationData(packet.animationData);
-            IAnimation animation = animationStarter.buildData().getPrototype();
+            Animation animation = animationStarter.getData().getAnimation();
 
             String errorMessage = null;
 
@@ -51,7 +51,7 @@ public class S2CStartAnimationMsg extends S2CAnimationMsg {
             }
 
             if (errorMessage == null) {
-                animationStarter.startAt(provider.getStateMachine().getAnimationManager(), packet.layerName);
+                animationStarter.startAt(provider.getActionController().getAnimationManager(), packet.layerName);
             } else {
                 TimeCore.LOGGER.error(errorMessage);
             }

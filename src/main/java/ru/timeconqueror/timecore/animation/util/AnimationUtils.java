@@ -1,8 +1,8 @@
-package ru.timeconqueror.timecore.client.render.animation;
+package ru.timeconqueror.timecore.animation.util;
 
 import net.minecraft.client.renderer.Vector3f;
-import ru.timeconqueror.timecore.api.client.render.animation.AnimationLayer;
-import ru.timeconqueror.timecore.api.client.render.animation.BlendType;
+import ru.timeconqueror.timecore.api.animation.AnimationLayer;
+import ru.timeconqueror.timecore.api.animation.BlendType;
 import ru.timeconqueror.timecore.client.render.model.TimeModelRenderer;
 
 public class AnimationUtils {

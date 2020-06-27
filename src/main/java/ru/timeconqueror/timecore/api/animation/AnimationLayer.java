@@ -1,7 +1,7 @@
-package ru.timeconqueror.timecore.api.client.render.animation;
+package ru.timeconqueror.timecore.api.animation;
 
 import org.jetbrains.annotations.Nullable;
-import ru.timeconqueror.timecore.animation.AnimationWatcher;
+import ru.timeconqueror.timecore.animation.watcher.AnimationWatcher;
 
 public interface AnimationLayer extends Cloneable {
     float getWeight();
@@ -13,7 +13,7 @@ public interface AnimationLayer extends Cloneable {
     void setBlendType(BlendType type);
 
     @Nullable
-    IAnimation getCurrentAnimation();
+    Animation getCurrentAnimation();
 
     boolean hasAnimation();
 

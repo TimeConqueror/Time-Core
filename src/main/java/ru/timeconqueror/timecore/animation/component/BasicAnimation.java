@@ -1,12 +1,12 @@
-package ru.timeconqueror.timecore.client.render.animation;
+package ru.timeconqueror.timecore.animation.component;
 
 import net.minecraft.client.renderer.Vector3f;
 import net.minecraft.util.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ru.timeconqueror.timecore.TimeCore;
-import ru.timeconqueror.timecore.api.client.render.animation.AnimationLayer;
-import ru.timeconqueror.timecore.api.client.render.animation.IAnimation;
+import ru.timeconqueror.timecore.api.animation.Animation;
+import ru.timeconqueror.timecore.api.animation.AnimationLayer;
 import ru.timeconqueror.timecore.api.client.render.model.TimeEntityModel;
 import ru.timeconqueror.timecore.api.client.render.model.TimeModel;
 import ru.timeconqueror.timecore.api.util.Pair;
@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
-public class Animation implements IAnimation {
+public class BasicAnimation implements Animation {
     private final boolean loop;
     private final String name;
     private final ResourceLocation id;
@@ -33,7 +33,7 @@ public class Animation implements IAnimation {
     @Nullable
     private final Map<String, BoneOption> options;
 
-    public Animation(boolean loop, ResourceLocation id, String name, int length, @Nullable Map<String, BoneOption> options) {
+    public BasicAnimation(boolean loop, ResourceLocation id, String name, int length, @Nullable Map<String, BoneOption> options) {
         this.loop = loop;
         this.name = name;
         this.id = id;
@@ -80,7 +80,7 @@ public class Animation implements IAnimation {
     }
 
     @Override
-    public @NotNull IAnimation.TransitionFactory getTransitionFactory() {
+    public @NotNull Animation.TransitionFactory getTransitionFactory() {
         return new TransitionFactory(this);
     }
 
@@ -91,12 +91,12 @@ public class Animation implements IAnimation {
         }
     }
 
-    public static class TransitionFactory extends IAnimation.TransitionFactory {
-        public TransitionFactory(Animation source) {
+    public static class TransitionFactory extends Animation.TransitionFactory {
+        public TransitionFactory(BasicAnimation source) {
             super(source);
         }
 
-        private static KeyFrame calcStartKeyFrame(Animation sourceAnimation, @Nullable List<KeyFrame> sourceKeyFrames, float modelIdleX, float modelIdleY, float modelIdleZ, int existingTime) {
+        private static KeyFrame calcStartKeyFrame(BasicAnimation sourceAnimation, @Nullable List<KeyFrame> sourceKeyFrames, float modelIdleX, float modelIdleY, float modelIdleZ, int existingTime) {
             if (sourceKeyFrames != null) {
                 Pair<KeyFrame, KeyFrame> keyPair = BoneOption.findKeyFrames(sourceKeyFrames, existingTime);
                 if (keyPair != null) {
@@ -120,13 +120,13 @@ public class Animation implements IAnimation {
         }
 
         @Override
-        public @Nullable List<Transition.TransitionBoneOption> createBoneOptions(IAnimation dest, TimeModel model, int existingTime, int transitionTime) {
-            Animation source = getSourceTyped();
+        public @Nullable List<Transition.TransitionBoneOption> createBoneOptions(Animation dest, TimeModel model, int existingTime, int transitionTime) {
+            BasicAnimation source = getSourceTyped();
             if (source.getOptions() == null || source.getOptions().isEmpty()) {
                 return null;
             }
 
-            IAnimation.TransitionFactory destFactory = dest.getTransitionFactory();
+            Animation.TransitionFactory destFactory = dest.getTransitionFactory();
 
             List<Transition.TransitionBoneOption> transitionBones = new ArrayList<>();
             source.getOptions().forEach((name, sourceBone) -> {
@@ -156,7 +156,7 @@ public class Animation implements IAnimation {
 
         @Override
         public @NotNull KeyFrame getDestKeyFrame(TimeModelRenderer piece, String boneName, OptionType optionType, int transitionTime) {
-            Animation dest = getSourceTyped();
+            BasicAnimation dest = getSourceTyped();
             boolean destContainsSameBone = dest.getOptions() != null && dest.getOptions().containsKey(boneName);
             BoneOption destBone = destContainsSameBone ? dest.getOptions().get(boneName) : null;
 

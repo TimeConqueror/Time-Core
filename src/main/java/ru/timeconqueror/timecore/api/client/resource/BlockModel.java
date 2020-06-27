@@ -7,7 +7,7 @@ import ru.timeconqueror.timecore.api.client.resource.location.TextureLocation;
  * Contains some static methods for its creating.
  */
 public class BlockModel extends JSONTimeResource {
-    private String jsonString;
+    private final String jsonString;
 
     private BlockModel(String jsonString) {
         this.jsonString = jsonString;
