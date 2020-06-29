@@ -2,7 +2,7 @@ package ru.timeconqueror.timecore.api.client.resource;
 
 import net.minecraft.util.ResourceLocation;
 
-public class ResourceHelper {
+public class LocationResolver {
     public static ResourceLocation toItemModelLocation(ResourceLocation registryName) {
         return new ResourceLocation(registryName.getNamespace(), "models/item/" + registryName.getPath() + ".json");
     }

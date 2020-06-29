@@ -2,7 +2,6 @@ package ru.timeconqueror.timecore.api.animation;
 
 import org.jetbrains.annotations.NotNull;
 import ru.timeconqueror.timecore.animation.AnimationStarter;
-import ru.timeconqueror.timecore.animation.util.DummyElements;
 import ru.timeconqueror.timecore.api.client.render.model.TimeEntityModel;
 
 public interface AnimationManager {
@@ -24,13 +23,13 @@ public interface AnimationManager {
 
     /**
      * On client: called on every frame for model from the renderer of entity, which contains this manager.
-     * On server: called on every tick and with {@link DummyElements#DUMMY_ENTITY_MODEL} as a param,
+     * On server: called on every tick and with null model as a param,
      * since no operations with model shouldn't be done on server (because no model exists on server side).
      *
      * @param model model to perform calculations on it.
      *              <p>
      *              on client: model of the bound entity;<p>
-     *              on server: {@link DummyElements#DUMMY_ENTITY_MODEL}
+     *              on server: null
      */
     void applyAnimations(TimeEntityModel<?> model);
 

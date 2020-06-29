@@ -2,9 +2,7 @@ package ru.timeconqueror.timecore.animation.loading;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.Vector3f;
-import net.minecraft.resources.IResource;
 import net.minecraft.util.JSONUtils;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
@@ -18,8 +16,10 @@ import ru.timeconqueror.timecore.api.animation.Animation;
 import ru.timeconqueror.timecore.api.util.CollectionUtils;
 import ru.timeconqueror.timecore.client.render.JsonParsingException;
 import ru.timeconqueror.timecore.util.JsonUtils;
+import ru.timeconqueror.timecore.util.ResourceUtils;
 
 import java.io.BufferedReader;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -28,8 +28,8 @@ public class JsonAnimationParser {
     private static final String[] ACCEPTABLE_FORMAT_VERSIONS = new String[]{"1.8.0"};
 
     public Map<String, Animation> parseAnimations(@NotNull ResourceLocation fileLocation) throws JsonParsingException {
-        try (final IResource resource = Minecraft.getInstance().getResourceManager().getResource(fileLocation)) {
-            BufferedReader reader = new BufferedReader(new InputStreamReader(resource.getInputStream()));
+        try (final InputStream inputStream = ResourceUtils.getStream(ResourceUtils.asDataSubpath(fileLocation.getNamespace() + "/" + fileLocation.getPath()))) {
+            BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
 
             JsonObject json = JSONUtils.fromJson(reader, true/*isLenient*/);
             return parseAnimation(fileLocation, json);

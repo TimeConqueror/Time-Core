@@ -42,22 +42,26 @@ public @interface TimeAutoRegistrable {
      */
     Target target() default Target.INSTANCE;
 
+    /**
+     * Name of the field in this class, which will contain created instance.
+     * If it equals empty string, then system will consider, that there is no field to place instance in.
+     * <br>
+     * Only works when {@link #target()} equals {@link Target#INSTANCE}.
+     * <br>
+     * The field should be the same type as class.
+     * Field should be static.
+     * Field can have any access modifier.
+     * <pre>
+     *     {@literal @}TimeAutoRegisterable(target = INSTANCE, instance = "INSTANCE")
+     *     public class TestClass {
+     *         public final TestClass INSTANCE = null;
+     *     }
+     * </pre>
+     */
+    String instance() default "";
+
     enum Target {
         INSTANCE,
         CLASS
-    }
-
-    /**
-     * If field is annotated with it, its value will be registered.
-     * Field should be public static final and shouldn't contain null value, otherwise an exception will be thrown.
-     * Also you should annotate only one field in the specified class.
-     * <br>
-     * Applying this annotation to field also means that the system will register only this field value
-     * and won't register neither class itself nor new instance,
-     * that could be created by annotating class with {@code TimeAutoRegistrable(target = Target.INSTANCE)}
-     */
-    @java.lang.annotation.Target(ElementType.FIELD)
-    @Retention(RetentionPolicy.RUNTIME)
-    @interface Instance {
     }
 }

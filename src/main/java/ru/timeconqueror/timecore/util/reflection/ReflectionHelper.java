@@ -78,6 +78,26 @@ public class ReflectionHelper {
     }
 
     /**
+     * Finds a field with the specified name in the given class and makes it accessible.
+     * Note: for performance, store the returned value and avoid calling this repeatedly.
+     * <p>
+     * Throws {@link RuntimeException} if the field is not found.
+     *
+     * @param clazz     The class to find the field on.
+     * @param fieldName The name of the field to find.
+     * @return The field with the specified name in the given class or null if the field is not found.
+     * @see #findField(Class, String)
+     */
+    public static <T> UnlockedField<T> findFieldUnsuppressed(Class<?> clazz, String fieldName) {
+        try {
+            Field f = clazz.getDeclaredField(fieldName);
+            return new UnlockedField<>(f);
+        } catch (Throwable e) {
+            throw new RuntimeException("Can't retrieve field " + fieldName + " from class " + clazz, e);
+        }
+    }
+
+    /**
      * Only for fields, which come from vanilla minecraft!
      * <p>
      * Finds a field with the specified name in the given class and makes it accessible.

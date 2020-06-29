@@ -13,4 +13,9 @@ public class ObjectUtils {
 
         return true;
     }
+
+    @SuppressWarnings("unchecked")
+    public static <T> T bypassClassChecking(Object obj) {
+        return (T) obj;
+    }
 }

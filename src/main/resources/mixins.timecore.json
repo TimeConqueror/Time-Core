@@ -8,10 +8,10 @@
   "mixins": [
     "MixinDirectoryCache",
     "MixinFMLModContainer",
-    "command.ClientPlayerEntityMixin",
-    "command.ClientPlayNetHandlerMixin",
     "config.MixinConfigValue"
   ],
   "client": [
+    "command.ClientPlayerEntityMixin",
+    "command.ClientPlayNetHandlerMixin"
   ]
 }

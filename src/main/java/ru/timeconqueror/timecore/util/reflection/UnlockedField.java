@@ -2,6 +2,7 @@ package ru.timeconqueror.timecore.util.reflection;
 
 import javax.annotation.Nullable;
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 
 /**
  * Wrapper for field, unlocks the access to it.
@@ -60,5 +61,12 @@ public class UnlockedField<T> {
 
     public Field getField() {
         return field;
+    }
+
+    /**
+     * Returns true, if provided field is static, otherwise returns false.
+     */
+    public boolean isStatic() {
+        return Modifier.isStatic(field.getModifiers());
     }
 }

@@ -36,7 +36,12 @@ public class TransitionWatcher extends AnimationWatcher {
     @Override
     public void init(TimeEntityModel<?> model) {
         super.init(model);
-        animation = Transition.create(source, sourceExistingTime, destination, model.getBaseModel(), transitionTime);
+
+        if (model != null) {
+            animation = Transition.create(source, sourceExistingTime, destination, model.getBaseModel(), transitionTime);
+        } else {
+            animation = Transition.createForServer(source, destination, transitionTime);
+        }
     }
 
     @Override

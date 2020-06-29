@@ -142,6 +142,12 @@ public class Transition implements Animation {
         return create(source, dest, model, sourceExistingTime, transitionTime);
     }
 
+    public static Animation createForServer(@Nullable Animation source, @Nullable Animation dest, int transitionTime) {
+        String sourceName = source != null ? source.getName() : "idle";
+        String destName = dest != null ? dest.getName() : "idle";
+        return new Transition(transitionTime, sourceName + "_to_" + destName, dest);
+    }
+
     private static Animation create(@NotNull Animation source, @NotNull Animation dest, TimeModel model, int existingTime, int transitionTime) {
         Animation.TransitionFactory sourceTFactory = source.getTransitionFactory();
 

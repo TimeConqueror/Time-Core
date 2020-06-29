@@ -3,7 +3,6 @@ package ru.timeconqueror.timecore.animation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ru.timeconqueror.timecore.TimeCore;
-import ru.timeconqueror.timecore.animation.util.DummyElements;
 import ru.timeconqueror.timecore.animation.watcher.AnimationWatcher;
 import ru.timeconqueror.timecore.animation.watcher.TransitionWatcher;
 import ru.timeconqueror.timecore.api.animation.Animation;
@@ -78,7 +77,7 @@ public abstract class BaseAnimationManager implements AnimationManager {
             Layer layer = getLayer(layerName);
             layer.removeAnimation(transitionTime);
 
-            onAnimationEnd(DummyElements.DUMMY_ENTITY_MODEL, layer, layer.getAnimationWatcher(), System.currentTimeMillis());
+            onAnimationEnd(null, layer, layer.getAnimationWatcher(), System.currentTimeMillis());
         } else {
             TimeCore.LOGGER.error("Can't find layer with name " + layerName);
         }
@@ -126,7 +125,7 @@ public abstract class BaseAnimationManager implements AnimationManager {
 
     protected abstract boolean isGamePaused();
 
-    protected void onAnimationEnd(TimeEntityModel<?> model, Layer layer, AnimationWatcher watcher, long currentTime) {
+    protected void onAnimationEnd(@Nullable TimeEntityModel<?> model, Layer layer, AnimationWatcher watcher, long currentTime) {
 
     }
 

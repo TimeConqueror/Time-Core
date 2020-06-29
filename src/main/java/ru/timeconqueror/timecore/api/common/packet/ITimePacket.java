@@ -7,14 +7,16 @@ import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
+import ru.timeconqueror.timecore.util.ObjectUtils;
 
 import java.util.function.Supplier;
 
 public interface ITimePacket {
+
     @NotNull
     default World getWorld(NetworkEvent.Context ctx) {
         return DistExecutor.runForDist(
-                () -> () -> Minecraft.getInstance().world,
+                () -> () -> ObjectUtils.bypassClassChecking(Minecraft.getInstance().world),
                 () -> () -> ctx.getSender().world);
     }
 

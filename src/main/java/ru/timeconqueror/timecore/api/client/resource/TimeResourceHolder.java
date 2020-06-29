@@ -39,7 +39,7 @@ public class TimeResourceHolder {
             return;
         }
 
-        resources.put(ResourceHelper.toItemModelLocation(registryName), model);
+        resources.put(LocationResolver.toItemModelLocation(registryName), model);
     }
 
     /**
@@ -56,7 +56,7 @@ public class TimeResourceHolder {
             return;
         }
 
-        resources.put(ResourceHelper.toBlockStateLocation(registryName), blockStateResource);
+        resources.put(LocationResolver.toBlockStateLocation(registryName), blockStateResource);
     }
 
     /**
