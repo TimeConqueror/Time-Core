@@ -1,9 +1,8 @@
-package ru.timeconqueror.timecore.api.client.render.model;
+package ru.timeconqueror.timecore.client.render.model;
 
 import net.minecraft.client.renderer.entity.model.RendererModel;
 import net.minecraft.client.renderer.model.Model;
 import org.jetbrains.annotations.Nullable;
-import ru.timeconqueror.timecore.client.render.model.TimeModelRenderer;
 
 import java.util.HashMap;
 import java.util.List;

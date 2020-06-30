@@ -3,7 +3,7 @@ package ru.timeconqueror.timecore.api.animation;
 import net.minecraft.entity.Entity;
 import ru.timeconqueror.timecore.animation.component.DelayedAction;
 
-public interface ActionController<T extends Entity> {
+public interface ActionManager<T extends Entity> {
     void enableAction(DelayedAction<T> action);
 
     boolean isActionEnabled(DelayedAction<T> action);

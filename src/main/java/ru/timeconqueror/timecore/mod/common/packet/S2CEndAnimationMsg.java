@@ -26,7 +26,7 @@ public class S2CEndAnimationMsg extends S2CAnimationMsg {
 
         @Override
         public void onPacket(S2CEndAnimationMsg packet, AnimationProvider<?> provider, String layerName, Supplier<NetworkEvent.Context> contextSupplier) {
-            AnimationManager animationManager = provider.getActionController().getAnimationManager();
+            AnimationManager animationManager = provider.getActionManager().getAnimationManager();
             animationManager.removeAnimation(layerName, packet.transitionTime);
         }
 

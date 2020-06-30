@@ -4,7 +4,7 @@ import net.minecraft.client.Minecraft;
 import org.jetbrains.annotations.Nullable;
 import ru.timeconqueror.timecore.animation.watcher.AnimationWatcher;
 import ru.timeconqueror.timecore.api.animation.Animation;
-import ru.timeconqueror.timecore.api.client.render.model.TimeEntityModel;
+import ru.timeconqueror.timecore.client.render.model.TimeEntityModel;
 
 public class ClientAnimationManager extends BaseAnimationManager {
     public ClientAnimationManager(@Nullable AnimationSetting walkingAnimationStarter) {

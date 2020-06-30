@@ -2,7 +2,7 @@ package ru.timeconqueror.timecore.api.animation;
 
 import net.minecraft.entity.Entity;
 import org.jetbrains.annotations.NotNull;
-import ru.timeconqueror.timecore.api.client.render.model.TimeEntityRenderer;
+import ru.timeconqueror.timecore.client.render.model.TimeEntityRenderer;
 
 /**
  * An interface for entities to provide animation stuff.
@@ -36,5 +36,5 @@ public interface AnimationProvider<T extends Entity> {
      * The entry point for accessing animation stuff.
      */
     @NotNull
-    ActionController<T> getActionController();
+    ActionManager<T> getActionManager();
 }

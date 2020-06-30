@@ -7,19 +7,19 @@ import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.fml.network.PacketDistributor;
 import org.jetbrains.annotations.Nullable;
 import ru.timeconqueror.timecore.animation.watcher.AnimationWatcher;
-import ru.timeconqueror.timecore.api.client.render.model.TimeEntityModel;
+import ru.timeconqueror.timecore.client.render.model.TimeEntityModel;
 import ru.timeconqueror.timecore.mod.common.packet.InternalPacketManager;
 import ru.timeconqueror.timecore.mod.common.packet.S2CEndAnimationMsg;
 import ru.timeconqueror.timecore.mod.common.packet.S2CStartAnimationMsg;
 
 public class ServerAnimationManager<T extends MobEntity> extends BaseAnimationManager {
-    private ActionControllerImpl<T> stateMachine;
+    private ActionManagerImpl<T> stateMachine;
 
     public ServerAnimationManager(@Nullable AnimationSetting walkingAnimationStarter) {
         super(walkingAnimationStarter);
     }
 
-    void setStateMachine(ActionControllerImpl<T> stateMachine) {
+    void setStateMachine(ActionManagerImpl<T> stateMachine) {
         this.stateMachine = stateMachine;
     }
 
@@ -43,7 +43,7 @@ public class ServerAnimationManager<T extends MobEntity> extends BaseAnimationMa
     }
 
     private void proceedActions(AnimationWatcher watcher) {
-        for (ActionControllerImpl.ActionWatcher<T> actionWatcher : stateMachine.getActionWatchers()) {
+        for (ActionManagerImpl.ActionWatcher<T> actionWatcher : stateMachine.getActionWatchers()) {
             if (actionWatcher.isBound(watcher.getAnimation())) {
                 if (actionWatcher.shouldBeExecuted(watcher)) {
                     actionWatcher.runAction(stateMachine.getEntity());

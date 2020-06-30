@@ -5,16 +5,16 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
-import ru.timeconqueror.timecore.animation.ActionControllerBuilder;
+import ru.timeconqueror.timecore.animation.ActionManagerBuilder;
 import ru.timeconqueror.timecore.animation.AnimationManagerBuilder;
-import ru.timeconqueror.timecore.api.animation.ActionController;
+import ru.timeconqueror.timecore.api.animation.ActionManager;
 import ru.timeconqueror.timecore.api.animation.AnimationProvider;
 
 import javax.annotation.Nullable;
 
 @SuppressWarnings("EntityConstructor")
 public class EntityZombie extends EntityStupidAnimal implements AnimationProvider<EntityZombie> {
-    private final ActionController<EntityZombie> actionController = new ActionControllerBuilder<EntityZombie>(new AnimationManagerBuilder(true)).build(this, world);
+    private final ActionManager<EntityZombie> actionManager = new ActionManagerBuilder<EntityZombie>(new AnimationManagerBuilder()).build(this, world);
 
     public EntityZombie(EntityType<? extends AnimalEntity> type, World worldIn) {
         super(type, worldIn);
@@ -47,7 +47,7 @@ public class EntityZombie extends EntityStupidAnimal implements AnimationProvide
     }
 
     @Override
-    public @NotNull ActionController<EntityZombie> getActionController() {
-        return actionController;
+    public @NotNull ActionManager<EntityZombie> getActionManager() {
+        return actionManager;
     }
 }

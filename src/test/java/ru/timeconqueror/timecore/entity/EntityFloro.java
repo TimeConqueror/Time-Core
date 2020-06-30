@@ -9,13 +9,14 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import ru.timeconqueror.timecore.TimeCore;
-import ru.timeconqueror.timecore.animation.ActionControllerBuilder;
+import ru.timeconqueror.timecore.animation.ActionManagerBuilder;
 import ru.timeconqueror.timecore.animation.AnimationManagerBuilder;
 import ru.timeconqueror.timecore.animation.AnimationStarter;
 import ru.timeconqueror.timecore.animation.component.DelayedAction;
 import ru.timeconqueror.timecore.animation.entityai.AnimatedMeleeAttackGoal;
+import ru.timeconqueror.timecore.animation.util.LayerReference;
 import ru.timeconqueror.timecore.animation.util.StandardDelayPredicates;
-import ru.timeconqueror.timecore.api.animation.ActionController;
+import ru.timeconqueror.timecore.api.animation.ActionManager;
 import ru.timeconqueror.timecore.api.animation.AnimationProvider;
 import ru.timeconqueror.timecore.api.animation.BlendType;
 import ru.timeconqueror.timecore.registry.TEntities;
@@ -27,13 +28,14 @@ public class EntityFloro extends MonsterEntity implements AnimationProvider<Enti
             .setDelayPredicate(StandardDelayPredicates.whenPassed(0.5F))
             .setOnCall(AnimatedMeleeAttackGoal.BASIC_MELEE_ATTACK_ACTION);
 
-    private final ActionController<EntityFloro> actionController;
+    private final ActionManager<EntityFloro> actionManager;
 
     public EntityFloro(EntityType<? extends MonsterEntity> type, World worldIn) {
         super(type, worldIn);
 
-        actionController = new ActionControllerBuilder<EntityFloro>(
-                new AnimationManagerBuilder(true)
+        actionManager = new ActionManagerBuilder<EntityFloro>(
+                AnimationManagerBuilder.create()
+                        .addLayer(LayerReference.WALKING)
                         .addWalkingAnimationHandling(new AnimationStarter(TEntities.FLORO_WALK).setSpeed(2.0F), "walking")
                         .addLayer("attack", 1, BlendType.ADDING, 0.9F)
         ).build(this, world);
@@ -53,7 +55,7 @@ public class EntityFloro extends MonsterEntity implements AnimationProvider<Enti
     }
 
     @Override
-    public @NotNull ActionController<EntityFloro> getActionController() {
-        return actionController;
+    public @NotNull ActionManager<EntityFloro> getActionManager() {
+        return actionManager;
     }
 }

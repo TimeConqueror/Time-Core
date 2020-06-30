@@ -1,4 +1,4 @@
-package ru.timeconqueror.timecore.api.client.render.model;
+package ru.timeconqueror.timecore.client.render.model;
 
 import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.renderer.entity.model.EntityModel;

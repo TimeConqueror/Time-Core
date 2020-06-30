@@ -5,7 +5,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.goal.MeleeAttackGoal;
 import net.minecraft.util.Hand;
 import ru.timeconqueror.timecore.animation.component.DelayedAction;
-import ru.timeconqueror.timecore.api.animation.ActionController;
+import ru.timeconqueror.timecore.api.animation.ActionManager;
 import ru.timeconqueror.timecore.api.animation.AnimationProvider;
 
 import java.util.Objects;
@@ -30,10 +30,10 @@ public class AnimatedMeleeAttackGoal<T extends CreatureEntity & AnimationProvide
         double d0 = this.getAttackReachSqr(enemy);
 
         AnimationProvider<T> stateProvider = (AnimationProvider<T>) attacker;
-        ActionController<T> actionController = stateProvider.getActionController();
+        ActionManager<T> actionManager = stateProvider.getActionManager();
 
-        if (distToEnemySqr <= d0 && !actionController.isActionEnabled(delayedAttackAction)) {
-            actionController.enableAction(delayedAttackAction);
+        if (distToEnemySqr <= d0 && !actionManager.isActionEnabled(delayedAttackAction)) {
+            actionManager.enableAction(delayedAttackAction);
         }
     }
 }

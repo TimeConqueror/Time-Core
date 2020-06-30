@@ -1,4 +1,4 @@
-package ru.timeconqueror.timecore.api.client.render.model;
+package ru.timeconqueror.timecore.client.render.model;
 
 import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.client.renderer.entity.LivingRenderer;
@@ -12,7 +12,7 @@ public abstract class TimeEntityRenderer<T extends LivingEntity & AnimationProvi
 
     @Override
     public void doRender(T entity, double x, double y, double z, float entityYaw, float partialTicks) {
-        entity.getActionController().getAnimationManager().applyAnimations(getEntityModel());
+        entity.getActionManager().getAnimationManager().applyAnimations(getEntityModel());
         super.doRender(entity, x, y, z, entityYaw, partialTicks);
     }
 }

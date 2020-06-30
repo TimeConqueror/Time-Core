@@ -8,7 +8,7 @@ import ru.timeconqueror.timecore.animation.watcher.TransitionWatcher;
 import ru.timeconqueror.timecore.api.animation.Animation;
 import ru.timeconqueror.timecore.api.animation.AnimationConstants;
 import ru.timeconqueror.timecore.api.animation.AnimationManager;
-import ru.timeconqueror.timecore.api.client.render.model.TimeEntityModel;
+import ru.timeconqueror.timecore.client.render.model.TimeEntityModel;
 
 import java.util.Comparator;
 import java.util.HashMap;

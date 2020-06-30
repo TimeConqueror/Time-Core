@@ -3,8 +3,6 @@ package ru.timeconqueror.timecore.client.render.model;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.ResourceLocation;
 import ru.timeconqueror.timecore.TimeCore;
-import ru.timeconqueror.timecore.api.client.render.model.TimeEntityModel;
-import ru.timeconqueror.timecore.api.client.render.model.TimeModel;
 
 import java.util.List;
 
