@@ -23,7 +23,7 @@ import ru.timeconqueror.timecore.registry.TEntities;
 
 @SuppressWarnings("EntityConstructor")
 public class EntityFloro extends MonsterEntity implements AnimationProvider<EntityFloro> {
-    private static final DelayedAction<EntityFloro> MELEE_ATTACK_ACTION = new DelayedAction<EntityFloro>(new ResourceLocation(TimeCore.MODID, "floro/melee_attack"),
+    private static final DelayedAction<EntityFloro, Object> MELEE_ATTACK_ACTION = new DelayedAction<EntityFloro, Object>(new ResourceLocation(TimeCore.MODID, "floro/melee_attack"),
             new AnimationStarter(TEntities.FLORO_SHOOT), "attack")
             .setDelayPredicate(StandardDelayPredicates.whenPassed(0.5F))
             .setOnCall(AnimatedMeleeAttackGoal.BASIC_MELEE_ATTACK_ACTION);

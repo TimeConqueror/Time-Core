@@ -9,16 +9,16 @@ import ru.timeconqueror.timecore.api.animation.ActionManager;
 import ru.timeconqueror.timecore.api.animation.AnimationProvider;
 
 import java.util.Objects;
-import java.util.function.Consumer;
+import java.util.function.BiConsumer;
 
 public class AnimatedMeleeAttackGoal<T extends CreatureEntity & AnimationProvider<T>> extends MeleeAttackGoal {
-    public static final Consumer<? super CreatureEntity> BASIC_MELEE_ATTACK_ACTION = entity -> {
+    public static final BiConsumer<CreatureEntity, Object> BASIC_MELEE_ATTACK_ACTION = (entity, data) -> {
         entity.swingArm(Hand.MAIN_HAND);
-        entity.attackEntityAsMob(Objects.requireNonNull(entity.getAttackTarget()));
+        entity.attackEntityAsMob(Objects.requireNonNull(entity.getAttackTarget()));//TODO pass attack target as an extra data
     };
-    private final DelayedAction<T> delayedAttackAction;
+    private final DelayedAction<T, Object> delayedAttackAction;
 
-    public AnimatedMeleeAttackGoal(T creature, DelayedAction<T> delayedAttackAction, double speedIn, boolean useLongMemory) {
+    public AnimatedMeleeAttackGoal(T creature, DelayedAction<T, Object> delayedAttackAction, double speedIn, boolean useLongMemory) {
         super(creature, speedIn, useLongMemory);
 
         this.delayedAttackAction = delayedAttackAction;
@@ -33,7 +33,7 @@ public class AnimatedMeleeAttackGoal<T extends CreatureEntity & AnimationProvide
         ActionManager<T> actionManager = stateProvider.getActionManager();
 
         if (distToEnemySqr <= d0 && !actionManager.isActionEnabled(delayedAttackAction)) {
-            actionManager.enableAction(delayedAttackAction);
+            actionManager.enableAction(delayedAttackAction, new Object());
         }
     }
 }
