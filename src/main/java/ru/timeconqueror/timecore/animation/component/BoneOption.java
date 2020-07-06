@@ -1,12 +1,12 @@
 package ru.timeconqueror.timecore.animation.component;
 
 import net.minecraft.client.renderer.Vector3f;
-import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ru.timeconqueror.timecore.animation.util.AnimationUtils;
 import ru.timeconqueror.timecore.api.animation.Animation;
 import ru.timeconqueror.timecore.api.animation.AnimationLayer;
+import ru.timeconqueror.timecore.api.util.MathUtils;
 import ru.timeconqueror.timecore.api.util.Pair;
 import ru.timeconqueror.timecore.client.render.model.TimeModelRenderer;
 
@@ -108,9 +108,9 @@ public class BoneOption {
     static Vector3f interpolate(Vector3f start, Vector3f end, int startTime, int endTime, int existingTime) {
         float factor = endTime - startTime == 0 ? 1 : (existingTime - startTime) / (float) (endTime - startTime);
 
-        float outX = MathHelper.lerp(factor, start.getX(), end.getX());
-        float outY = MathHelper.lerp(factor, start.getY(), end.getY());
-        float outZ = MathHelper.lerp(factor, start.getZ(), end.getZ());
+        float outX = MathUtils.interpolate(factor, start.getX(), end.getX());
+        float outY = MathUtils.interpolate(factor, start.getY(), end.getY());
+        float outZ = MathUtils.interpolate(factor, start.getZ(), end.getZ());
 
         return new Vector3f(outX, outY, outZ);
     }
@@ -136,15 +136,15 @@ public class BoneOption {
         }
     }
 
-    public List<KeyFrame> getPositions() {
+    public @Nullable List<KeyFrame> getPositions() {
         return positions;
     }
 
-    public List<KeyFrame> getRotations() {
+    public @Nullable List<KeyFrame> getRotations() {
         return rotations;
     }
 
-    public List<KeyFrame> getScales() {
+    public @Nullable List<KeyFrame> getScales() {
         return scales;
     }
 

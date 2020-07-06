@@ -79,4 +79,11 @@ public class MathUtils {
     public static double calcPercentage(double current, double start, double end) {
         return end - start != 0 ? (current - start) / (end - start) : 1;
     }
+
+    /**
+     * Returns the difference between two numbers.
+     */
+    public static double calcDifference(double number1, double number2) {
+        return Math.abs(number1 - number2);
+    }
 }
