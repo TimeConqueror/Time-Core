@@ -1,9 +1,10 @@
-package ru.timeconqueror.timecore.registry;
+package ru.timeconqueror.timecore.registry.common.base;
 
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.IForgeRegistryEntry;
+import ru.timeconqueror.timecore.registry.TimeAutoRegistrable;
 
 import java.util.ArrayList;
 
@@ -11,7 +12,7 @@ import java.util.ArrayList;
  * Used for simplifying adding such stuff, that can be registered by Forge way (these objects implement {@link IForgeRegistryEntry}).
  * You need to extend it and do your stuff in {@link #register()} method<br>
  * <p>
- * Any your registry class that extends it should be annotated with {@link TimeAutoRegistrable} with INSTANCE Target
+ * Any your registry class that extends it should be annotated with {@link TimeAutoRegistrable} with {@link TimeAutoRegistrable.Target#INSTANCE} target
  * to create its instance automatically and provide register features.<br>
  *
  * <b><font color="yellow">WARNING: Any annotated registry class must contain constructor without params or exception will be thrown.</b>

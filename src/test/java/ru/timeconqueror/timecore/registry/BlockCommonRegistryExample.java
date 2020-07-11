@@ -7,8 +7,7 @@ import ru.timeconqueror.timecore.api.client.resource.BlockModel;
 import ru.timeconqueror.timecore.api.client.resource.location.BlockModelLocation;
 import ru.timeconqueror.timecore.api.client.resource.location.TextureLocation;
 import ru.timeconqueror.timecore.block.DummyBlockWithTileEntity;
-import ru.timeconqueror.timecore.registry.block.BlockPropsFactory;
-import ru.timeconqueror.timecore.registry.block.BlockTimeRegistry;
+import ru.timeconqueror.timecore.registry.common.BlockTimeRegistry;
 
 @TimeAutoRegistrable
 public class BlockCommonRegistryExample extends BlockTimeRegistry {

@@ -1,4 +1,4 @@
-package ru.timeconqueror.timecore.registry.block;
+package ru.timeconqueror.timecore.registry;
 
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;

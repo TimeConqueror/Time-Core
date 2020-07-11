@@ -7,8 +7,8 @@ import net.minecraftforge.fml.RegistryObject;
 import ru.timeconqueror.timecore.TimeCore;
 import ru.timeconqueror.timecore.api.client.resource.location.TextureLocation;
 import ru.timeconqueror.timecore.block.TestCobbleBlock;
+import ru.timeconqueror.timecore.registry.BlockPropsFactory;
 import ru.timeconqueror.timecore.registry.TimeAutoRegistrable;
-import ru.timeconqueror.timecore.registry.block.BlockPropsFactory;
 
 public class BlockDeferredRegistryExample {
     @TimeAutoRegistrable

@@ -1,4 +1,4 @@
-package ru.timeconqueror.timecore.registry;
+package ru.timeconqueror.timecore.registry.common.base;
 
 import net.minecraftforge.fml.ModLoadingContext;
 import ru.timeconqueror.timecore.api.TimeMod;

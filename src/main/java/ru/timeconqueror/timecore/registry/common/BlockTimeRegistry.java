@@ -1,4 +1,4 @@
-package ru.timeconqueror.timecore.registry.block;
+package ru.timeconqueror.timecore.registry.common;
 
 import net.minecraft.block.Block;
 import net.minecraft.item.BlockItem;
@@ -15,9 +15,9 @@ import ru.timeconqueror.timecore.api.client.resource.BlockStateResource;
 import ru.timeconqueror.timecore.api.client.resource.ItemModel;
 import ru.timeconqueror.timecore.api.client.resource.location.BlockModelLocation;
 import ru.timeconqueror.timecore.api.client.resource.location.TextureLocation;
+import ru.timeconqueror.timecore.registry.ItemPropsFactory;
 import ru.timeconqueror.timecore.registry.TimeAutoRegistrable;
-import ru.timeconqueror.timecore.registry.WrappedForgeTimeRegistry;
-import ru.timeconqueror.timecore.registry.item.ItemPropsFactory;
+import ru.timeconqueror.timecore.registry.common.base.WrappedForgeTimeRegistry;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -26,7 +26,7 @@ import java.util.function.Supplier;
 /**
  * Used for simplifying block adding. You need to extend it and do your stuff in {@link #register()} method<br>
  * <p>
- * Any your registry that extends it should be annotated with {@link TimeAutoRegistrable} with INSTANCE Target
+ * Any your registry that extends it should be annotated with {@link TimeAutoRegistrable} with {@link TimeAutoRegistrable.Target#INSTANCE} target
  * to create its instance automatically and provide register features.<br>
  *
  * <b><font color="yellow">WARNING: Any annotated registry class must contain constructor without params or exception will be thrown.</b><br>

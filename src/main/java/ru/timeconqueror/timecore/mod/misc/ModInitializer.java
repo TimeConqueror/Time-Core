@@ -7,7 +7,6 @@ import net.minecraftforge.fml.loading.moddiscovery.ModAnnotation;
 import net.minecraftforge.fml.loading.moddiscovery.ModInfo;
 import net.minecraftforge.forgespi.language.ModFileScanData;
 import ru.timeconqueror.timecore.TimeCore;
-import ru.timeconqueror.timecore.registry.Initable;
 import ru.timeconqueror.timecore.registry.TimeAutoRegistrable;
 import ru.timeconqueror.timecore.registry.deferred.base.DeferredFMLImplForgeRegister;
 import ru.timeconqueror.timecore.registry.deferred.base.DeferredTimeRegister;
@@ -58,10 +57,6 @@ public class ModInitializer {
                                     } else {
                                         FMLJavaModLoadingContext.get().getModEventBus().register(instance);
                                         TimeCore.LOGGER.debug("{}: Registered Event Subscriber as instance: {}", ModLoadingContext.get().getActiveNamespace(), containerClass);
-                                    }
-
-                                    if (Initable.class.isAssignableFrom(containerClass)) {//TODO remove
-                                        FMLJavaModLoadingContext.get().getModEventBus().addListener(((Initable) instance)::onInit);
                                     }
 
                                     String instanceFieldName = (String) annotationData.getAnnotationData().getOrDefault("instance", "");

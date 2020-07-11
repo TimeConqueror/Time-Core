@@ -2,7 +2,6 @@ package ru.timeconqueror.timecore.registry;
 
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
-import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import org.objectweb.asm.Type;
 import ru.timeconqueror.timecore.registry.deferred.base.DeferredTimeRegister;
 
@@ -25,9 +24,6 @@ import java.lang.annotation.Target;
  *             //TODO
  *     </li>
  * </ul>
- * <p>
- * If target is class and it inherits {@link Initable},
- * its method {@link Initable#onInit(FMLCommonSetupEvent)} will be called during {@link FMLCommonSetupEvent} event.<br>
  * <p>
  * Otherwise, it will be registered to the {@link EventBusSubscriber.Bus#MOD}
  * (events are fired on the mod event bus when they should be handled during initialization of a mod),

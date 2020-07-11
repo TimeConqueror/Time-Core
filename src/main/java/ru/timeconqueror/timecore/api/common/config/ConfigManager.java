@@ -7,7 +7,7 @@ import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.loading.FMLPaths;
 import ru.timeconqueror.timecore.api.common.event.FMLModConstructedEvent;
 import ru.timeconqueror.timecore.registry.TimeAutoRegistrable;
-import ru.timeconqueror.timecore.registry.TimeRegistry;
+import ru.timeconqueror.timecore.registry.common.base.TimeRegistry;
 
 import java.io.File;
 import java.nio.file.Path;

@@ -14,10 +14,10 @@ import ru.timeconqueror.timecore.api.client.resource.BlockModel;
 import ru.timeconqueror.timecore.api.client.resource.BlockStateResource;
 import ru.timeconqueror.timecore.api.client.resource.location.BlockModelLocation;
 import ru.timeconqueror.timecore.api.client.resource.location.TextureLocation;
+import ru.timeconqueror.timecore.registry.ItemPropsFactory;
 import ru.timeconqueror.timecore.registry.TimeAutoRegistrable;
 import ru.timeconqueror.timecore.registry.deferred.DeferredItemRegister.ItemRegistrator;
 import ru.timeconqueror.timecore.registry.deferred.base.DeferredFMLImplForgeRegister;
-import ru.timeconqueror.timecore.registry.item.ItemPropsFactory;
 
 import java.util.function.Consumer;
 import java.util.function.Supplier;

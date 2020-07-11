@@ -1,9 +1,10 @@
-package ru.timeconqueror.timecore.registry;
+package ru.timeconqueror.timecore.registry.common.base;
 
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.registries.IForgeRegistryEntry;
+import ru.timeconqueror.timecore.registry.TimeAutoRegistrable;
 
 /**
  * Used for simplifying adding such stuff, that can be registered by Forge way (these objects implement {@link IForgeRegistryEntry}).

@@ -3,6 +3,7 @@ package ru.timeconqueror.timecore.registry;
 import net.minecraft.tileentity.TileEntityType;
 import ru.timeconqueror.timecore.block.tile.DummyTileEntity;
 import ru.timeconqueror.timecore.client.DummyTileEntityRenderer;
+import ru.timeconqueror.timecore.registry.common.TileEntityTimeRegistry;
 
 @TimeAutoRegistrable
 public class TileEntityCommonRegistryExample extends TileEntityTimeRegistry {
