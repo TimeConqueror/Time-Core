@@ -1,4 +1,4 @@
-package ru.timeconqueror.timecore.api.registry;
+package ru.timeconqueror.timecore.registry;
 
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.advancements.ICriterionInstance;

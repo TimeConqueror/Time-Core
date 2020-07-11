@@ -1,8 +1,8 @@
 package ru.timeconqueror.timecore.mod.common.packet;
 
 import net.minecraftforge.fml.network.simple.SimpleChannel;
-import ru.timeconqueror.timecore.api.registry.PacketTimeRegistry;
-import ru.timeconqueror.timecore.api.registry.TimeAutoRegistrable;
+import ru.timeconqueror.timecore.registry.PacketTimeRegistry;
+import ru.timeconqueror.timecore.registry.TimeAutoRegistrable;
 
 @TimeAutoRegistrable
 public class InternalPacketManager extends PacketTimeRegistry {

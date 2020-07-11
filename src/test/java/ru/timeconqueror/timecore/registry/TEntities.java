@@ -16,7 +16,6 @@ import ru.timeconqueror.timecore.TimeCore;
 import ru.timeconqueror.timecore.animation.AnimationRegistry;
 import ru.timeconqueror.timecore.animation.loading.AnimationLoader;
 import ru.timeconqueror.timecore.api.animation.Animation;
-import ru.timeconqueror.timecore.api.registry.TimeAutoRegistrable;
 import ru.timeconqueror.timecore.client.render.model.TimeEntityModel;
 import ru.timeconqueror.timecore.entity.EntityFloro;
 import ru.timeconqueror.timecore.entity.EntityZombie;

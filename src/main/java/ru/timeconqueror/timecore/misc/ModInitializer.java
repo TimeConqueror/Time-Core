@@ -7,8 +7,8 @@ import net.minecraftforge.fml.loading.moddiscovery.ModAnnotation;
 import net.minecraftforge.fml.loading.moddiscovery.ModInfo;
 import net.minecraftforge.forgespi.language.ModFileScanData;
 import ru.timeconqueror.timecore.TimeCore;
-import ru.timeconqueror.timecore.api.registry.Initable;
-import ru.timeconqueror.timecore.api.registry.TimeAutoRegistrable;
+import ru.timeconqueror.timecore.registry.Initable;
+import ru.timeconqueror.timecore.registry.TimeAutoRegistrable;
 import ru.timeconqueror.timecore.util.reflection.ReflectionHelper;
 import ru.timeconqueror.timecore.util.reflection.UnlockedField;
 

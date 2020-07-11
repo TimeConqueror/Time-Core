@@ -1,4 +1,4 @@
-package ru.timeconqueror.timecore.api.registry.block;
+package ru.timeconqueror.timecore.registry.block;
 
 import net.minecraft.block.Block;
 import net.minecraft.item.BlockItem;
@@ -15,9 +15,9 @@ import ru.timeconqueror.timecore.api.client.resource.BlockStateResource;
 import ru.timeconqueror.timecore.api.client.resource.ItemModel;
 import ru.timeconqueror.timecore.api.client.resource.location.BlockModelLocation;
 import ru.timeconqueror.timecore.api.client.resource.location.TextureLocation;
-import ru.timeconqueror.timecore.api.registry.TimeAutoRegistrable;
-import ru.timeconqueror.timecore.api.registry.WrappedForgeTimeRegistry;
-import ru.timeconqueror.timecore.api.registry.item.ItemPropsFactory;
+import ru.timeconqueror.timecore.registry.TimeAutoRegistrable;
+import ru.timeconqueror.timecore.registry.WrappedForgeTimeRegistry;
+import ru.timeconqueror.timecore.registry.item.ItemPropsFactory;
 
 import java.util.ArrayList;
 import java.util.Objects;

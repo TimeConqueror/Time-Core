@@ -3,9 +3,8 @@ package ru.timeconqueror.timecore.registry;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import ru.timeconqueror.timecore.api.client.resource.location.TextureLocation;
-import ru.timeconqueror.timecore.api.registry.TimeAutoRegistrable;
-import ru.timeconqueror.timecore.api.registry.item.ItemPropsFactory;
-import ru.timeconqueror.timecore.api.registry.item.ItemTimeRegistry;
+import ru.timeconqueror.timecore.registry.item.ItemPropsFactory;
+import ru.timeconqueror.timecore.registry.item.ItemTimeRegistry;
 
 @TimeAutoRegistrable
 public class TItems extends ItemTimeRegistry {

@@ -1,4 +1,4 @@
-package ru.timeconqueror.timecore.api.registry;
+package ru.timeconqueror.timecore.registry;
 
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;

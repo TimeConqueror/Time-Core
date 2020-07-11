@@ -6,8 +6,8 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
-import ru.timeconqueror.timecore.api.registry.TimeAutoRegistrable;
 import ru.timeconqueror.timecore.client.command.ClientCommandManager;
+import ru.timeconqueror.timecore.registry.TimeAutoRegistrable;
 
 @TimeAutoRegistrable(target = TimeAutoRegistrable.Target.CLASS)
 @Mod.EventBusSubscriber
