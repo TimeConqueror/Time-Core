@@ -9,7 +9,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import ru.timeconqueror.timecore.api.TimeMod;
 import ru.timeconqueror.timecore.api.common.event.FMLModConstructedEvent;
-import ru.timeconqueror.timecore.misc.ModInitializer;
+import ru.timeconqueror.timecore.mod.misc.ModInitializer;
 
 @Mixin(value = FMLModContainer.class, remap = false)
 public abstract class MixinFMLModContainer {

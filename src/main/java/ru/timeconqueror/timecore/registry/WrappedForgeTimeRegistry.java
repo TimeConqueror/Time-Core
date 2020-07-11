@@ -1,5 +1,6 @@
 package ru.timeconqueror.timecore.registry;
 
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.registries.IForgeRegistryEntry;
@@ -31,6 +32,10 @@ public abstract class WrappedForgeTimeRegistry<T extends IForgeRegistryEntry<T>>
          */
         public T getEntry() {
             return entry;
+        }
+
+        public ResourceLocation getId() {
+            return getEntry().getRegistryName();
         }
 
         /**

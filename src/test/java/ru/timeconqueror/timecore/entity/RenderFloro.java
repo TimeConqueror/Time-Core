@@ -5,11 +5,11 @@ import net.minecraft.util.ResourceLocation;
 import ru.timeconqueror.timecore.TimeCore;
 import ru.timeconqueror.timecore.client.render.model.TimeEntityModel;
 import ru.timeconqueror.timecore.client.render.model.TimeEntityRenderer;
-import ru.timeconqueror.timecore.registry.TEntities;
+import ru.timeconqueror.timecore.registry.EntityCommonRegistryExample;
 
 public class RenderFloro extends TimeEntityRenderer<EntityFloro, TimeEntityModel<EntityFloro>> {
     public RenderFloro(EntityRendererManager rendermanagerIn) {
-        super(rendermanagerIn, TEntities.floroModel, 0.5F);
+        super(rendermanagerIn, EntityCommonRegistryExample.floroModel, 0.5F);
     }
 
     @Override

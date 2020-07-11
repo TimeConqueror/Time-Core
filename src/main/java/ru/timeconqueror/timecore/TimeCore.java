@@ -40,5 +40,6 @@ public final class TimeCore extends TimeMod {
     }
 
     private void doClientStuff(final FMLClientSetupEvent event) {
+        System.out.println("hello!");
     }
 }

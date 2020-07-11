@@ -7,7 +7,7 @@ import ru.timeconqueror.timecore.registry.item.ItemPropsFactory;
 import ru.timeconqueror.timecore.registry.item.ItemTimeRegistry;
 
 @TimeAutoRegistrable
-public class TItems extends ItemTimeRegistry {
+public class ItemCommonRegistryExample extends ItemTimeRegistry {
     public static ItemPropsFactory miscGrouped = new ItemPropsFactory(ItemGroup.MISC);
 
     public static Item mcDiamond = new Item(miscGrouped.createProps());

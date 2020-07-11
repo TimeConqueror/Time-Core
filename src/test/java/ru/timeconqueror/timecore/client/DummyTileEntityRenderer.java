@@ -4,7 +4,7 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
-import ru.timeconqueror.timecore.block.DummyTileEntity;
+import ru.timeconqueror.timecore.block.tile.DummyTileEntity;
 
 public class DummyTileEntityRenderer extends TileEntityRenderer<DummyTileEntity> {
 

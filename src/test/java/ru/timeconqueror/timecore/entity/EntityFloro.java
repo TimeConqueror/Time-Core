@@ -19,12 +19,12 @@ import ru.timeconqueror.timecore.animation.util.StandardDelayPredicates;
 import ru.timeconqueror.timecore.api.animation.ActionManager;
 import ru.timeconqueror.timecore.api.animation.AnimationProvider;
 import ru.timeconqueror.timecore.api.animation.BlendType;
-import ru.timeconqueror.timecore.registry.TEntities;
+import ru.timeconqueror.timecore.registry.EntityCommonRegistryExample;
 
 @SuppressWarnings("EntityConstructor")
 public class EntityFloro extends MonsterEntity implements AnimationProvider<EntityFloro> {
     private static final DelayedAction<EntityFloro, Object> MELEE_ATTACK_ACTION = new DelayedAction<EntityFloro, Object>(new ResourceLocation(TimeCore.MODID, "floro/melee_attack"),
-            new AnimationStarter(TEntities.FLORO_SHOOT), "attack")
+            new AnimationStarter(EntityCommonRegistryExample.FLORO_SHOOT), "attack")
             .setDelayPredicate(StandardDelayPredicates.whenPassed(0.5F))
             .setOnCall(AnimatedMeleeAttackGoal.BASIC_MELEE_ATTACK_ACTION);
 
@@ -36,7 +36,7 @@ public class EntityFloro extends MonsterEntity implements AnimationProvider<Enti
         actionManager = new ActionManagerBuilder<EntityFloro>(
                 AnimationManagerBuilder.create()
                         .addLayer(LayerReference.WALKING)
-                        .addWalkingAnimationHandling(new AnimationStarter(TEntities.FLORO_WALK).setSpeed(2.0F), "walking")
+                        .addWalkingAnimationHandling(new AnimationStarter(EntityCommonRegistryExample.FLORO_WALK).setSpeed(2.0F), "walking")
                         .addLayer("attack", 1, BlendType.ADDING, 0.9F)
         ).build(this, world);
     }

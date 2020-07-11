@@ -21,7 +21,7 @@ import ru.timeconqueror.timecore.entity.EntityFloro;
 import ru.timeconqueror.timecore.entity.EntityZombie;
 
 @TimeAutoRegistrable(target = TimeAutoRegistrable.Target.CLASS)
-public class TEntities {
+public class EntityCommonRegistryExample {
     public static final EntityType<? extends AnimalEntity> ZOMBIE_TYPE = EntityType.Builder.create(EntityZombie::new, EntityClassification.CREATURE)
             .setTrackingRange(80)
             .setShouldReceiveVelocityUpdates(true)

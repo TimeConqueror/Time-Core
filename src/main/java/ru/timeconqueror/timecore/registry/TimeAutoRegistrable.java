@@ -4,6 +4,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import org.objectweb.asm.Type;
+import ru.timeconqueror.timecore.registry.deferred.base.DeferredTimeRegister;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -11,7 +12,21 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * If target class inherits {@link Initable},
+ * Applies to:
+ * <ul>
+ *     <li>
+ *         field:<br>
+ *             If field has {@link DeferredTimeRegister} type, is static and has any access modifier, then it be registered with this annotation,
+ *             otherwise exception will be thrown.<br>
+ *             Extra annotation params will be ignored.
+ *     </li>
+ *     <li>
+ *          class:<br>
+ *             //TODO
+ *     </li>
+ * </ul>
+ * <p>
+ * If target is class and it inherits {@link Initable},
  * its method {@link Initable#onInit(FMLCommonSetupEvent)} will be called during {@link FMLCommonSetupEvent} event.<br>
  * <p>
  * Otherwise, it will be registered to the {@link EventBusSubscriber.Bus#MOD}
@@ -22,7 +37,7 @@ import java.lang.annotation.Target;
  * WARNING: Annotated class with {@code target==Target.INSTANCE} must contain nullary constructor or exception will be thrown.
  * </b>
  */
-@Target(ElementType.TYPE)
+@Target({ElementType.TYPE, ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface TimeAutoRegistrable {
     Type ASM_TYPE = Type.getType(TimeAutoRegistrable.class);

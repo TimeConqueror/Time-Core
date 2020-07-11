@@ -5,13 +5,13 @@ import net.minecraft.util.ResourceLocation;
 import ru.timeconqueror.timecore.TimeCore;
 import ru.timeconqueror.timecore.client.render.model.TimeEntityModel;
 import ru.timeconqueror.timecore.client.render.model.TimeEntityRenderer;
-import ru.timeconqueror.timecore.registry.TEntities;
+import ru.timeconqueror.timecore.registry.EntityCommonRegistryExample;
 
 import javax.annotation.Nullable;
 
 public class RenderZombie extends TimeEntityRenderer<EntityZombie, TimeEntityModel<EntityZombie>> {
     public RenderZombie(EntityRendererManager rendermanagerIn) {
-        super(rendermanagerIn, TEntities.zombieModel, 0.5F);
+        super(rendermanagerIn, EntityCommonRegistryExample.zombieModel, 0.5F);
     }
 
     @Nullable
