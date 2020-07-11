@@ -10,7 +10,6 @@ import net.minecraft.item.SpawnEggItem;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import ru.timeconqueror.timecore.TimeCore;
@@ -19,11 +18,8 @@ import ru.timeconqueror.timecore.animation.loading.AnimationLoader;
 import ru.timeconqueror.timecore.api.animation.Animation;
 import ru.timeconqueror.timecore.api.registry.TimeAutoRegistrable;
 import ru.timeconqueror.timecore.client.render.model.TimeEntityModel;
-import ru.timeconqueror.timecore.client.render.model.TimeModelLoader;
 import ru.timeconqueror.timecore.entity.EntityFloro;
 import ru.timeconqueror.timecore.entity.EntityZombie;
-import ru.timeconqueror.timecore.entity.RenderFloro;
-import ru.timeconqueror.timecore.entity.RenderZombie;
 
 @TimeAutoRegistrable(target = TimeAutoRegistrable.Target.CLASS)
 public class TEntities {
@@ -74,10 +70,10 @@ public class TEntities {
 
     @SubscribeEvent
     public static void registerRenders(FMLClientSetupEvent event) {
-        zombieModel = TimeModelLoader.loadJsonEntityModel(new ResourceLocation(TimeCore.MODID, "models/entity/zombie.json"));
-        floroModel = TimeModelLoader.loadJsonEntityModel(new ResourceLocation(TimeCore.MODID, "models/entity/floro.json"));
+//        zombieModel = TimeModelLoader.loadJsonEntityModel(new ResourceLocation(TimeCore.MODID, "models/entity/zombie.json"));//FIXME
+//        floroModel = TimeModelLoader.loadJsonEntityModel(new ResourceLocation(TimeCore.MODID, "models/entity/floro.json"));
 
-        RenderingRegistry.registerEntityRenderingHandler(EntityZombie.class, RenderZombie::new);
-        RenderingRegistry.registerEntityRenderingHandler(EntityFloro.class, RenderFloro::new);
+//        RenderingRegistry.registerEntityRenderingHandler(EntityZombie.class, RenderZombie::new);//FIXME
+//        RenderingRegistry.registerEntityRenderingHandler(EntityFloro.class, RenderFloro::new);//FIXME
     }
 }

@@ -1,5 +1,7 @@
 package ru.timeconqueror.timecore.client.render.model;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
+import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.client.renderer.entity.LivingRenderer;
 import net.minecraft.entity.LivingEntity;
@@ -11,8 +13,8 @@ public abstract class TimeEntityRenderer<T extends LivingEntity & AnimationProvi
     }
 
     @Override
-    public void doRender(T entity, double x, double y, double z, float entityYaw, float partialTicks) {
+    public void render(T entity, float entityYaw, float partialTicks, MatrixStack matrixStack, IRenderTypeBuffer buffer, int packedLight) {
         entity.getActionManager().getAnimationManager().applyAnimations(getEntityModel());
-        super.doRender(entity, x, y, z, entityYaw, partialTicks);
+        super.render(entity, entityYaw, partialTicks, matrixStack, buffer, packedLight);
     }
 }

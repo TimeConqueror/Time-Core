@@ -43,14 +43,14 @@ public class TimeSpecialResourcePack implements IResourcePack {
         }
     }
 
-    @NotNull
     @Override
-    public Collection<ResourceLocation> getAllResourceLocations(@NotNull ResourcePackType type, @NotNull String pathIn, int maxDepth, @NotNull Predicate<String> filter) {
+    public Collection<ResourceLocation> getAllResourceLocations(ResourcePackType type, String namespaceIn, String pathIn, int maxDepthIn, Predicate<String> filter) {
         if (type != ResourcePackType.CLIENT_RESOURCES) {
             return Collections.emptyList();
         }
 
         return resourceHolder.getResources().keySet().stream()
+                .filter(location -> location.getNamespace().equals(namespaceIn))
                 .filter(location -> location.getPath().startsWith(pathIn) && filter.test(location.getPath()))
                 .collect(Collectors.toList());
     }

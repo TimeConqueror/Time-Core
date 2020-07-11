@@ -70,11 +70,11 @@ public class Transition implements Animation {
         @Override
         public @NotNull KeyFrame getDestKeyFrame(TimeModelRenderer piece, String boneName, OptionType optionType, int transitionTime) {
             if (optionType == OptionType.ROTATION) {
-                return KeyFrame.createIdleKeyFrame(transitionTime, 0, 0, 0);
+                return KeyFrame.createIdleKeyFrame(transitionTime, new Vector3f(0, 0, 0));
             } else if (optionType == OptionType.POSITION) {
-                return KeyFrame.createIdleKeyFrame(transitionTime, piece.offsetX, piece.offsetY, piece.offsetZ);
+                return KeyFrame.createIdleKeyFrame(transitionTime, piece.offset);
             } else if (optionType == OptionType.SCALE) {
-                return KeyFrame.createIdleKeyFrame(transitionTime, piece.getScaleFactor().getX(), piece.getScaleFactor().getY(), piece.getScaleFactor().getZ());
+                return KeyFrame.createIdleKeyFrame(transitionTime, piece.getScaleFactor());
             }
 
             throw new UnsupportedOperationException("Can't handle " + optionType + " option type");
@@ -103,17 +103,17 @@ public class Transition implements Animation {
             TimeModelRenderer piece = model.getPiece(name);
             if (piece != null) {
                 // Rotations
-                KeyFrame startKeyFrame = KeyFrame.createIdleKeyFrame(0, 0, 0, 0);
+                KeyFrame startKeyFrame = KeyFrame.createIdleKeyFrame(0, new Vector3f(0, 0, 0));
                 KeyFrame endKeyFrame = transitionFactory.getDestKeyFrame(piece, name, OptionType.ROTATION, transitionTime);
                 Pair<KeyFrame, KeyFrame> rotations = Pair.of(startKeyFrame, endKeyFrame);
 
                 // Positions
-                startKeyFrame = KeyFrame.createIdleKeyFrame(0, piece.offsetX, piece.offsetY, piece.offsetZ);
+                startKeyFrame = KeyFrame.createIdleKeyFrame(0, piece.offset);
                 endKeyFrame = transitionFactory.getDestKeyFrame(piece, name, OptionType.POSITION, transitionTime);
                 Pair<KeyFrame, KeyFrame> positions = Pair.of(startKeyFrame, endKeyFrame);
 
                 // Scales
-                startKeyFrame = KeyFrame.createIdleKeyFrame(0, piece.getScaleFactor().getX(), piece.getScaleFactor().getY(), piece.getScaleFactor().getZ());
+                startKeyFrame = KeyFrame.createIdleKeyFrame(0, piece.getScaleFactor());
                 endKeyFrame = transitionFactory.getDestKeyFrame(piece, name, OptionType.SCALE, transitionTime);
 
                 Pair<KeyFrame, KeyFrame> scales = Pair.of(startKeyFrame, endKeyFrame);
@@ -231,13 +231,13 @@ public class Transition implements Animation {
             super(source);
         }
 
-        private static KeyFrame calcStartKeyFrame(Animation sourceAnimation, @Nullable Pair<KeyFrame, KeyFrame> sourceKeyFrames, float modelIdleX, float modelIdleY, float modelIdleZ, int existingTime) {
+        private static KeyFrame calcStartKeyFrame(Animation sourceAnimation, @Nullable Pair<KeyFrame, KeyFrame> sourceKeyFrames, Vector3f modelIdleVec, int existingTime) {
             if (sourceKeyFrames != null) {
-                Vector3f vec = BoneOption.calcCurrentVectorFor(sourceAnimation, sourceKeyFrames, modelIdleX, modelIdleY, modelIdleZ, existingTime);
+                Vector3f vec = BoneOption.calcCurrentVectorFor(sourceAnimation, sourceKeyFrames, modelIdleVec, existingTime);
                 return new KeyFrame(0, vec);
             }
 
-            return KeyFrame.createIdleKeyFrame(0, modelIdleX, modelIdleY, modelIdleZ);
+            return KeyFrame.createIdleKeyFrame(0, modelIdleVec);
         }
 
         @Override
@@ -254,17 +254,17 @@ public class Transition implements Animation {
                 TimeModelRenderer piece = model.getPiece(sourceBone.name);
                 if (piece != null) {
                     // Rotations
-                    KeyFrame startKeyFrame = calcStartKeyFrame(source, sourceBone.rotations, 0, 0, 0, existingTime);
+                    KeyFrame startKeyFrame = calcStartKeyFrame(source, sourceBone.rotations, new Vector3f(0, 0, 0), existingTime);
                     KeyFrame endKeyFrame = destFactory.getDestKeyFrame(piece, sourceBone.name, OptionType.ROTATION, transitionTime);
                     Pair<KeyFrame, KeyFrame> rotations = Pair.of(startKeyFrame, endKeyFrame);
 
                     // Positions
-                    startKeyFrame = calcStartKeyFrame(source, sourceBone.positions, piece.offsetX, piece.offsetY, piece.offsetZ, existingTime);
+                    startKeyFrame = calcStartKeyFrame(source, sourceBone.positions, piece.offset, existingTime);
                     endKeyFrame = destFactory.getDestKeyFrame(piece, sourceBone.name, OptionType.POSITION, transitionTime);
                     Pair<KeyFrame, KeyFrame> positions = Pair.of(startKeyFrame, endKeyFrame);
 
                     // Scales
-                    startKeyFrame = calcStartKeyFrame(source, sourceBone.scales, piece.getScaleFactor().getX(), piece.getScaleFactor().getY(), piece.getScaleFactor().getZ(), existingTime);
+                    startKeyFrame = calcStartKeyFrame(source, sourceBone.scales, piece.getScaleFactor(), existingTime);
                     endKeyFrame = destFactory.getDestKeyFrame(piece, sourceBone.name, OptionType.SCALE, transitionTime);
                     Pair<KeyFrame, KeyFrame> scales = Pair.of(startKeyFrame, endKeyFrame);
 

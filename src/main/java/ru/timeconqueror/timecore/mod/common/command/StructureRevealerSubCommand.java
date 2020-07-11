@@ -123,7 +123,7 @@ public class StructureRevealerSubCommand {
             return Commands.literal("structure_revealer")
                     .then(Commands.literal("set_color")
                             .then(Commands.argument("structure", StructureArgument.create())
-                                    .then(Commands.argument("color", new ColorArgument())
+                                    .then(Commands.argument("color", ColorArgument.color())
                                             .executes(context -> setStructureColor(context.getArgument("structure", Structure.class), context.getArgument("color", TextFormatting.class)))
                                     )
                             )

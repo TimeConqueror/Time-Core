@@ -26,13 +26,9 @@ public class AnimationUtils {
         offsetIn.mul(layer.getWeight());
 
         if (blendType == BlendType.OVERRIDE) {
-            piece.offsetX = offsetIn.getX();
-            piece.offsetY = offsetIn.getY();
-            piece.offsetZ = offsetIn.getZ();
+            piece.offset = offsetIn;
         } else if (blendType == BlendType.ADDING) {
-            piece.offsetX += offsetIn.getX() - piece.offsetX;
-            piece.offsetY += offsetIn.getY() - piece.offsetY;
-            piece.offsetZ += offsetIn.getZ() - piece.offsetZ;
+            piece.offset.add(offsetIn);
         } else throw new UnsupportedOperationException();
     }
 

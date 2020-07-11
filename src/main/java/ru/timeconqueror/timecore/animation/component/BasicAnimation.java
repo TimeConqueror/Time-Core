@@ -142,19 +142,19 @@ public class BasicAnimation implements Animation {
             super(source);
         }
 
-        private static KeyFrame calcStartKeyFrame(BasicAnimation sourceAnimation, @Nullable List<KeyFrame> sourceKeyFrames, float modelIdleX, float modelIdleY, float modelIdleZ, int existingTime) {
+        private static KeyFrame calcStartKeyFrame(BasicAnimation sourceAnimation, @Nullable List<KeyFrame> sourceKeyFrames, Vector3f modelIdleVec, int existingTime) {
             if (sourceKeyFrames != null) {
                 Pair<KeyFrame, KeyFrame> keyPair = BoneOption.findKeyFrames(sourceKeyFrames, existingTime);
                 if (keyPair != null) {
-                    Vector3f vec = BoneOption.calcCurrentVectorFor(sourceAnimation, keyPair, modelIdleX, modelIdleY, modelIdleZ, existingTime);
+                    Vector3f vec = BoneOption.calcCurrentVectorFor(sourceAnimation, keyPair, modelIdleVec, existingTime);
                     return new KeyFrame(0, vec);
                 }
             }
 
-            return KeyFrame.createIdleKeyFrame(0, modelIdleX, modelIdleY, modelIdleZ);
+            return KeyFrame.createIdleKeyFrame(0, modelIdleVec);
         }
 
-        private static KeyFrame calcEndKeyFrame(@Nullable List<KeyFrame> destKeyFrames, float modelIdleX, float modelIdleY, float modelIdleZ, int transitionTime /*may cause flicking? maybe -1?*/) {
+        private static KeyFrame calcEndKeyFrame(@Nullable List<KeyFrame> destKeyFrames, Vector3f modelIdleVec, int transitionTime /*may cause flicking? maybe -1?*/) {
             if (destKeyFrames != null && !destKeyFrames.isEmpty()) {
                 KeyFrame keyFrame = destKeyFrames.get(0);
                 if (keyFrame.getStartTime() == 0) {
@@ -162,7 +162,7 @@ public class BasicAnimation implements Animation {
                 }
             }
 
-            return KeyFrame.createIdleKeyFrame(transitionTime, modelIdleX, modelIdleY, modelIdleZ);
+            return KeyFrame.createIdleKeyFrame(transitionTime, modelIdleVec);
         }
 
         @Override
@@ -179,17 +179,17 @@ public class BasicAnimation implements Animation {
                 TimeModelRenderer piece = model.getPiece(name);
                 if (piece != null) {
                     // Rotations
-                    KeyFrame startKeyFrame = calcStartKeyFrame(source, sourceBone.getRotations(), 0, 0, 0, existingTime);
+                    KeyFrame startKeyFrame = calcStartKeyFrame(source, sourceBone.getRotations(), new Vector3f(0, 0, 0), existingTime);
                     KeyFrame endKeyFrame = destFactory.getDestKeyFrame(piece, name, OptionType.ROTATION, transitionTime);
                     Pair<KeyFrame, KeyFrame> rotations = Pair.of(startKeyFrame, endKeyFrame);
 
                     // Positions
-                    startKeyFrame = calcStartKeyFrame(source, sourceBone.getPositions(), piece.offsetX, piece.offsetY, piece.offsetZ, existingTime);
+                    startKeyFrame = calcStartKeyFrame(source, sourceBone.getPositions(), piece.offset, existingTime);
                     endKeyFrame = destFactory.getDestKeyFrame(piece, name, OptionType.POSITION, transitionTime);
                     Pair<KeyFrame, KeyFrame> positions = Pair.of(startKeyFrame, endKeyFrame);
 
                     // Scales
-                    startKeyFrame = calcStartKeyFrame(source, sourceBone.getScales(), piece.getScaleFactor().getX(), piece.getScaleFactor().getY(), piece.getScaleFactor().getZ(), existingTime);
+                    startKeyFrame = calcStartKeyFrame(source, sourceBone.getScales(), piece.getScaleFactor(), existingTime);
                     endKeyFrame = destFactory.getDestKeyFrame(piece, name, OptionType.SCALE, transitionTime);
                     Pair<KeyFrame, KeyFrame> scales = Pair.of(startKeyFrame, endKeyFrame);
 
@@ -208,21 +208,21 @@ public class BasicAnimation implements Animation {
 
             if (optionType == OptionType.ROTATION) {
                 if (destBone != null) {
-                    return calcEndKeyFrame(destBone.getRotations(), 0, 0, 0, transitionTime);
+                    return calcEndKeyFrame(destBone.getRotations(), new Vector3f(0, 0, 0), transitionTime);
                 } else {
-                    return KeyFrame.createIdleKeyFrame(transitionTime, 0, 0, 0);
+                    return KeyFrame.createIdleKeyFrame(transitionTime, new Vector3f(0, 0, 0));
                 }
             } else if (optionType == OptionType.POSITION) {
                 if (destBone != null) {
-                    return calcEndKeyFrame(destBone.getPositions(), piece.offsetX, piece.offsetY, piece.offsetZ, transitionTime);
+                    return calcEndKeyFrame(destBone.getPositions(), piece.offset, transitionTime);
                 } else {
-                    return KeyFrame.createIdleKeyFrame(transitionTime, piece.offsetX, piece.offsetY, piece.offsetZ);
+                    return KeyFrame.createIdleKeyFrame(transitionTime, piece.offset);
                 }
             } else if (optionType == OptionType.SCALE) {
                 if (destBone != null) {
-                    return calcEndKeyFrame(destBone.getScales(), piece.getScaleFactor().getX(), piece.getScaleFactor().getY(), piece.getScaleFactor().getZ(), transitionTime);
+                    return calcEndKeyFrame(destBone.getScales(), piece.getScaleFactor(), transitionTime);
                 } else {
-                    return KeyFrame.createIdleKeyFrame(transitionTime, piece.getScaleFactor().getX(), piece.getScaleFactor().getY(), piece.getScaleFactor().getZ());
+                    return KeyFrame.createIdleKeyFrame(transitionTime, piece.getScaleFactor());
                 }
             }
 

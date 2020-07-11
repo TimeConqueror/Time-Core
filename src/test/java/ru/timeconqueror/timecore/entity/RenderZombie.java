@@ -16,7 +16,7 @@ public class RenderZombie extends TimeEntityRenderer<EntityZombie, TimeEntityMod
 
     @Nullable
     @Override
-    protected ResourceLocation getEntityTexture(EntityZombie entity) {
+    public ResourceLocation getEntityTexture(EntityZombie entity) {
         return new ResourceLocation(TimeCore.MODID, "textures/entity/zombie.png");
     }
 }

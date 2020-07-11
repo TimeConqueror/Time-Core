@@ -1,12 +1,17 @@
 package ru.timeconqueror.timecore.client.render.model;
 
-import net.minecraft.client.renderer.entity.model.RendererModel;
+import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.IVertexBuilder;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.model.Model;
+import net.minecraft.client.renderer.model.ModelRenderer;
+import net.minecraft.util.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
 public class TimeModel extends Model {
     private final String name;
@@ -15,7 +20,8 @@ public class TimeModel extends Model {
 
     private float scaleMultiplier = 1F;
 
-    public TimeModel(String name, int textureWidth, int textureHeight) {
+    public TimeModel(Function<ResourceLocation, RenderType> renderTypeIn, String name, int textureWidth, int textureHeight) {
+        super(renderTypeIn);
         this.name = name;
         this.textureWidth = textureWidth;
         this.textureHeight = textureHeight;
@@ -37,19 +43,16 @@ public class TimeModel extends Model {
         return this;
     }
 
-    /**
-     * Renders model with provided scale.
-     *
-     * @param initialScale controls initial scale settings of the model.
-     *                     Once you provided some number as initial scale,
-     *                     you should always provide this particular number,
-     *                     otherwise you'll see unexpected render behaviour.
-     */
-    public void render(float initialScale) {
+    @Override
+    public void render(MatrixStack matrixStackIn, IVertexBuilder bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha) {
         if (pieces != null) {
+            matrixStackIn.scale(scaleMultiplier, scaleMultiplier, scaleMultiplier);
+
             for (TimeModelRenderer piece : pieces) {
-                piece.render(scaleMultiplier * initialScale);
+                piece.render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
             }
+
+            matrixStackIn.scale(1 / scaleMultiplier, 1 / scaleMultiplier, 1 / scaleMultiplier);
         }
     }
 
@@ -67,11 +70,11 @@ public class TimeModel extends Model {
     }
 
     private void addRendererToMap(TimeModelRenderer renderer) {
-        pieceMap.put(renderer.boxName, renderer);
+        pieceMap.put(renderer.getName(), renderer);
 
-        List<RendererModel> children = renderer.childModels;
+        List<ModelRenderer> children = renderer.childModels;
         if (children != null) {
-            for (RendererModel child : children) {
+            for (ModelRenderer child : children) {
                 if (child instanceof TimeModelRenderer) {
                     addRendererToMap(((TimeModelRenderer) child));
                 }

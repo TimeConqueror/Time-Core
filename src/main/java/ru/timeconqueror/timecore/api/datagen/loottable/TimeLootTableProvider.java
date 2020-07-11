@@ -8,9 +8,10 @@ import net.minecraft.data.DataGenerator;
 import net.minecraft.data.DirectoryCache;
 import net.minecraft.data.IDataProvider;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.storage.loot.LootParameterSets;
 import net.minecraft.world.storage.loot.LootTable;
 import net.minecraft.world.storage.loot.LootTableManager;
-import net.minecraft.world.storage.loot.ValidationResults;
+import net.minecraft.world.storage.loot.ValidationTracker;
 import org.jetbrains.annotations.NotNull;
 import ru.timeconqueror.timecore.TimeCore;
 
@@ -48,11 +49,11 @@ public class TimeLootTableProvider implements IDataProvider {
             });
         });
 
-        ValidationResults validationresults = new ValidationResults();
+        ValidationTracker validationtracker = new ValidationTracker(LootParameterSets.GENERIC, (p_229442_0_) -> null, map::get);
 
-        validate(map, validationresults);
+        validate(map, validationtracker);
 
-        Multimap<String, String> multimap = validationresults.getProblems();
+        Multimap<String, String> multimap = validationtracker.getProblems();
         if (!multimap.isEmpty()) {
             multimap.forEach((p_218435_0_, p_218435_1_) -> {
                 TimeCore.LOGGER.warn("Found validation problem in " + p_218435_0_ + ": " + p_218435_1_);
@@ -72,8 +73,10 @@ public class TimeLootTableProvider implements IDataProvider {
         }
     }
 
-    protected void validate(Map<ResourceLocation, LootTable> map, ValidationResults validationresults) {
-        map.forEach((resourceLocation, lootTable) -> LootTableManager.func_215302_a(validationresults, resourceLocation, lootTable, map::get));
+    protected void validate(Map<ResourceLocation, LootTable> map, ValidationTracker validationtracker) {
+        map.forEach((resourceLocation, lootTable) -> {
+            LootTableManager.func_227508_a_(validationtracker, resourceLocation, lootTable);
+        });
     }
 
     public void addLootTableSet(LootTableSet set) {

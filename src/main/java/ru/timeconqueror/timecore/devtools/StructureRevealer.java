@@ -1,12 +1,6 @@
 package ru.timeconqueror.timecore.devtools;
 
 import com.google.common.collect.ArrayListMultimap;
-import com.mojang.blaze3d.platform.GlStateManager;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.ActiveRenderInfo;
-import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -26,7 +20,6 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.fml.network.PacketDistributor;
 import org.jetbrains.annotations.Nullable;
-import org.lwjgl.opengl.GL11;
 import ru.timeconqueror.timecore.api.util.RandHelper;
 import ru.timeconqueror.timecore.mod.common.config.MainConfig;
 import ru.timeconqueror.timecore.mod.common.packet.InternalPacketManager;
@@ -88,7 +81,7 @@ public class StructureRevealer {
                     for (StructureStart start : starts) {
                         synchronized (start.getComponents()) {
                             for (StructurePiece component : start.getComponents()) {
-                                AxisAlignedBB boundingBox = AxisAlignedBB.func_216363_a(component.getBoundingBox());
+                                AxisAlignedBB boundingBox = AxisAlignedBB.toImmutable(component.getBoundingBox());
                                 for (UUID uuid : players) {
                                     NetworkUtils.getPlayer(uuid).ifPresent(player ->
                                             InternalPacketManager.INSTANCE.send(PacketDistributor.PLAYER.with(() -> player), new StructureRevealingS2CPacket(boundingBox, structure.getRegistryName())));
@@ -136,45 +129,45 @@ public class StructureRevealer {
         private final HashMap<ResourceLocation, Integer> structureColorMap = new HashMap<>();
         private boolean visibleThroughBlocks = false;
 
-        public void onWorldRender(RenderWorldLastEvent event) {
-            Tessellator tessellator = Tessellator.getInstance();
-            BufferBuilder buffer = tessellator.getBuffer();
-            buffer.begin(GL11.GL_TRIANGLE_STRIP, DefaultVertexFormats.POSITION_COLOR);
-
-            ActiveRenderInfo activeRenderInfo = Minecraft.getInstance().gameRenderer.getActiveRenderInfo();
-            Vec3d projectedView = activeRenderInfo.getProjectedView();
-
-            for (StructurePieceContainer container : trackedStructurePieces) {
-                DrawHelper.buildFilledBoundingBox(buffer, container.getBb().offset(-projectedView.x, -projectedView.y, -projectedView.z), getStructureColor(container.getStructureName()));
-            }
-
-            GlStateManager.disableCull();
-            GlStateManager.enableBlend();
-            GlStateManager.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
-            GlStateManager.alphaFunc(GL11.GL_GREATER, 0.001F);
-            GlStateManager.disableTexture();
-
-            if (visibleThroughBlocks) {
-                GlStateManager.disableDepthTest();
-            } else {
-                GlStateManager.depthMask(false);
-                GlStateManager.enablePolygonOffset();
-                GlStateManager.polygonOffset(-3.0F, -3.0F);
-            }
-
-            tessellator.draw();
-
-            if (visibleThroughBlocks) {
-                GlStateManager.enableDepthTest();
-            } else {
-                GlStateManager.depthMask(true);
-                GlStateManager.disablePolygonOffset();
-            }
-
-            GlStateManager.enableTexture();
-            GlStateManager.alphaFunc(GL11.GL_GREATER, 0.1F);
-            GlStateManager.enableCull();
-            GlStateManager.disableBlend();
+        public void onWorldRender(RenderWorldLastEvent event) {//FIXME change to the new render system
+//            Tessellator tessellator = Tessellator.getInstance();
+//            BufferBuilder buffer = tessellator.getBuffer();
+//            buffer.begin(GL11.GL_TRIANGLE_STRIP, DefaultVertexFormats.POSITION_COLOR);
+//
+//            ActiveRenderInfo activeRenderInfo = Minecraft.getInstance().gameRenderer.getActiveRenderInfo();
+//            Vec3d projectedView = activeRenderInfo.getProjectedView();
+//
+//            for (StructurePieceContainer container : trackedStructurePieces) {
+//                DrawHelper.buildFilledBoundingBox(buffer, container.getBb().offset(-projectedView.x, -projectedView.y, -projectedView.z), getStructureColor(container.getStructureName()));
+//            }
+//
+//            GlStateManager.disableCull();
+//            GlStateManager.enableBlend();
+//            GlStateManager.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
+//            GlStateManager.alphaFunc(GL11.GL_GREATER, 0.001F);
+//            GlStateManager.disableTexture();
+//
+//            if (visibleThroughBlocks) {
+//                GlStateManager.disableDepthTest();
+//            } else {
+//                GlStateManager.depthMask(false);
+//                GlStateManager.enablePolygonOffset();
+//                GlStateManager.polygonOffset(-3.0F, -3.0F);
+//            }
+//
+//            tessellator.draw();
+//
+//            if (visibleThroughBlocks) {
+//                GlStateManager.enableDepthTest();
+//            } else {
+//                GlStateManager.depthMask(true);
+//                GlStateManager.disablePolygonOffset();
+//            }
+//
+//            GlStateManager.enableTexture();
+//            GlStateManager.alphaFunc(GL11.GL_GREATER, 0.1F);
+//            GlStateManager.enableCull();
+//            GlStateManager.disableBlend();
         }
 
         public void onChunkUnload(ChunkEvent.Unload event) {

@@ -31,13 +31,24 @@ sourceSets {
     }
 }
 
+repositories {
+    flatDir {
+        dirs 'runtimeMods'
+    }
+    maven {
+        name = 'sponge'
+        url = 'https://repo.spongepowered.org/maven'
+    }
+    mavenCentral()
+}
+
 minecraft {
     // The mappings can be changed at any time, and must be in the following format.
     // snapshot_YYYYMMDD   Snapshot are built nightly.
     // stable_#            Stables are built at the discretion of the MCP team.
     // Use non-default mappings at your own risk. they may not always work.
     // Simply re-run your setup task after changing the mappings to update your workspace.
-    mappings channel: 'stable', version: '56-1.14.3'
+    mappings channel: 'snapshot', version: '20200710-1.15.1'
     // makeObfSourceJar = false // an Srg named sources jar is made by default. uncomment this to disable.
 
     accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
@@ -121,17 +132,6 @@ minecraft {
     }
 }
 
-repositories {
-    flatDir {
-        dirs 'runtimeMods'
-    }
-    maven {
-        name = 'sponge'
-        url = 'https://repo.spongepowered.org/maven'
-    }
-    mavenCentral()
-}
-
 configurations {
     // configuration that holds jars to include in the jar
     shade
@@ -141,9 +141,7 @@ dependencies {
     // Specify the version of Minecraft to use, If this is any group other then 'net.minecraft' it is assumed
     // that the dep is a ForgeGradle 'patcher' dependency. And it's patches will be applied.
     // The userdev artifact is a special name and will get all sorts of transformations applied to it.
-    minecraft 'net.minecraftforge:forge:1.14.4-28.2.3'
-
-//    implementation fg.deobf("mcp.mobius.waila:Hwyla:forge-1.10.6-B67_1.14.4")
+    minecraft 'net.minecraftforge:forge:1.15.2-31.2.0'
 
     file("runtimeMods").eachFile { file ->
         def splitPos = file.name.lastIndexOf("-")
@@ -220,30 +218,21 @@ jar {
 }
 
 // Example configuration to allow publishing using the maven-publish task
-// we define a custom artifact that is sourced from the reobfJar output task
-// and then declare that to be published
-// Note you'll need to add a repository here
-def reobfFile = file("$buildDir/reobfJar/output.jar")
-def reobfArtifact = artifacts.add('default', reobfFile) {
-    type 'jar'
-    builtBy 'reobfJar'
-}
-def devArtifact = artifacts.add('default', reobfFile) {
-    type 'jar'
-    classifier 'dev'
-    builtBy 'devJar'
-}
+// This is the preferred method to reobfuscate your jar file
+jar.finalizedBy('reobfJar')
+// However if you are in a multi-project build, dev time needs unobfed jar files, so you can delay the obfuscation until publishing by doing
+//publish.dependsOn('reobfJar')
+
 publishing {
     publications {
         mavenJava(MavenPublication) {
-            artifact reobfArtifact
-            artifact devArtifact
+            artifact jar
             artifact sourcesJar
         }
     }
     repositories {
         maven {
-            url "file:///${project.projectDir}/build/libs/"
+            url "file:///${project.projectDir}/maven"
         }
     }
 }
@@ -252,9 +241,4 @@ publishing {
 task sourcesJar(type: Jar) {
     from sourceSets.main.allJava
     classifier = 'sources'
-}
-
-task devJar(type: Jar) {
-    exclude '*.json'
-//    finalizedBy reobfJar
 }

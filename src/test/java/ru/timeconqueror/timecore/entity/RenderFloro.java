@@ -7,16 +7,13 @@ import ru.timeconqueror.timecore.client.render.model.TimeEntityModel;
 import ru.timeconqueror.timecore.client.render.model.TimeEntityRenderer;
 import ru.timeconqueror.timecore.registry.TEntities;
 
-import javax.annotation.Nullable;
-
 public class RenderFloro extends TimeEntityRenderer<EntityFloro, TimeEntityModel<EntityFloro>> {
     public RenderFloro(EntityRendererManager rendermanagerIn) {
         super(rendermanagerIn, TEntities.floroModel, 0.5F);
     }
 
-    @Nullable
     @Override
-    protected ResourceLocation getEntityTexture(EntityFloro entity) {
+    public ResourceLocation getEntityTexture(EntityFloro entity) {
         return new ResourceLocation(TimeCore.MODID, "textures/entity/floro.png");
     }
 }

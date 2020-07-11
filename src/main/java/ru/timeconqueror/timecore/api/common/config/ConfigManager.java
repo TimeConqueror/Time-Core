@@ -63,7 +63,7 @@ public abstract class ConfigManager extends TimeRegistry {
     }
 
     @SubscribeEvent
-    public final void onReload(ModConfig.ConfigReloading configEvent) {
+    public final void onReload(ModConfig.Reloading configEvent) {
         CONFIG_LIST.forEach(config -> {
             String path = validate(config.getRelativePath());
 

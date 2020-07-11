@@ -28,7 +28,7 @@ public class DrawHelper {
      * @param textureY    start texture y-point (y of left-top texture corner). Point description is mentioned above.
      * @param pointNumber in how much points texture must be divided. Point description is mentioned above.
      */
-    public static void drawTexturedRect(double x0, double y0, double width, double height, double zLevel, double textureX, double textureY, double pointNumber) {
+    public static void drawTexturedRect(double x0, double y0, float width, float height, double zLevel, float textureX, float textureY, float pointNumber) {
         drawTexturedRect(x0, y0, width, height, zLevel, textureX, textureY, width, height, pointNumber);
     }
 
@@ -49,8 +49,8 @@ public class DrawHelper {
      * @param textureHeight texture height in points. Point description is mentioned above.
      * @param pointNumber   in how much points texture must be divided. Point description is mentioned above.
      */
-    public static void drawTexturedRect(double x0, double y0, double width, double height, double zLevel, double textureX, double textureY, double textureWidth, double textureHeight, double pointNumber) {
-        double portionFactor = 1 / pointNumber;
+    public static void drawTexturedRect(double x0, double y0, double width, double height, double zLevel, float textureX, float textureY, float textureWidth, float textureHeight, float pointNumber) {
+        float portionFactor = 1 / pointNumber;
         drawTexturedRectP(x0, y0, width, height, zLevel, textureX, textureY, textureWidth, textureHeight, portionFactor);
     }
 
@@ -72,7 +72,7 @@ public class DrawHelper {
      * @param textureHeight       texture height in points. Point description is mentioned above.
      * @param texturePointPortion represents the percentage point to whole texture. Equals to 1 / point number.
      */
-    public static void drawTexturedRectP(double x0, double y0, double width, double height, double zLevel, double textureX, double textureY, double textureWidth, double textureHeight, double texturePointPortion) {
+    public static void drawTexturedRectP(double x0, double y0, double width, double height, double zLevel, float textureX, float textureY, float textureWidth, float textureHeight, float texturePointPortion) {
         bufferBuilder.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
         bufferBuilder.pos(x0, y0, zLevel).tex(textureX * texturePointPortion, textureY * texturePointPortion).endVertex();
         bufferBuilder.pos(x0, y0 + height, zLevel).tex(textureX * texturePointPortion, (textureY + textureHeight) * texturePointPortion).endVertex();
@@ -97,7 +97,7 @@ public class DrawHelper {
      * @param textureY            start texture y-point (y of left-top texture corner). Point description is mentioned above.
      * @param texturePointPortion represents the percentage point to whole texture. Equals to 1 / point number.
      */
-    public static void drawTexturedRectP(double x0, double y0, double width, double height, double zLevel, double textureX, double textureY, double texturePointPortion) {
+    public static void drawTexturedRectP(double x0, double y0, float width, float height, double zLevel, float textureX, float textureY, float texturePointPortion) {
         drawTexturedRectP(x0, y0, width, height, zLevel, textureX, textureY, width, height, texturePointPortion);
     }
 

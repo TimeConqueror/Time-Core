@@ -77,7 +77,7 @@ public class BoneOption {
     }
 
     @NotNull
-    static Vector3f calcCurrentVectorFor(Animation animation, @NotNull Pair<KeyFrame, KeyFrame> keyPair, float startX, float startY, float startZ, int existingTime) {
+    static Vector3f calcCurrentVectorFor(Animation animation, @NotNull Pair<KeyFrame, KeyFrame> keyPair, Vector3f defaultStartVec, int existingTime) {
         KeyFrame start = keyPair.getA();
         KeyFrame end = keyPair.getB();
 
@@ -87,7 +87,7 @@ public class BoneOption {
         int endTime;
 
         if (start == null) {
-            startVec = new Vector3f(startX, startY, startZ);
+            startVec = defaultStartVec;
             startTime = 0;
         } else {
             startVec = start.getVec();
@@ -118,20 +118,20 @@ public class BoneOption {
     public void apply(Animation animation, AnimationLayer layer, TimeModelRenderer piece, int existingTime) {
         Pair<KeyFrame, KeyFrame> keyPair = findKeyFrames(rotations, existingTime);
         if (keyPair != null) {
-            Vector3f rotateVec = calcCurrentVectorFor(animation, keyPair, 0, 0, 0, existingTime);
+            Vector3f rotateVec = calcCurrentVectorFor(animation, keyPair, new Vector3f(0, 0, 0), existingTime);
             AnimationUtils.applyRotation(piece, layer, rotateVec);
         }
 
         keyPair = findKeyFrames(positions, existingTime);
         if (keyPair != null) {
-            Vector3f posVec = calcCurrentVectorFor(animation, keyPair, piece.offsetX, piece.offsetY, piece.offsetZ, existingTime);
+            Vector3f posVec = calcCurrentVectorFor(animation, keyPair, piece.offset, existingTime);
             AnimationUtils.applyOffset(piece, layer, posVec);
         }
 
         keyPair = findKeyFrames(scales, existingTime);
         if (keyPair != null) {
             Vector3f currentScale = piece.getScaleFactor();
-            Vector3f scaleVec = calcCurrentVectorFor(animation, keyPair, currentScale.getX(), currentScale.getY(), currentScale.getZ(), existingTime);
+            Vector3f scaleVec = calcCurrentVectorFor(animation, keyPair, currentScale, existingTime);
             AnimationUtils.applyScale(piece, layer, scaleVec);
         }
     }

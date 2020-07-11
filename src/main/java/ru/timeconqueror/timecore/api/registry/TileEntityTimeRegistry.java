@@ -2,6 +2,7 @@ package ru.timeconqueror.timecore.api.registry;
 
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
+import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraftforge.api.distmarker.Dist;
@@ -12,6 +13,7 @@ import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 
 import java.util.ArrayList;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 /**
@@ -59,15 +61,15 @@ public abstract class TileEntityTimeRegistry extends WrappedForgeTimeRegistry<Ti
     /**
      * Method to register renderers for tileEntities.
      *
-     * @param tileEntityClass  tile entity class, for which you want to apply special renderer.
+     * @param tileEntityType   tile entity type, for which you want to apply special renderer.
      * @param rendererSupplier supplier, that should return instance of {@link TileEntityRenderer}.
-     *                         Here we use double supplier to hide from java client classes.
+     *                         Here we use supplier to hide from java client classes.
      *                         If we don't do it, then it will crash on server side.
      * @param <T>              any class inherited from TileEntity.
      */
-    public <T extends TileEntity> void regTileEntityRenderer(Class<T> tileEntityClass, Supplier<Supplier<TileEntityRenderer<T>>> rendererSupplier) {
+    public <T extends TileEntity> void regTileEntityRenderer(TileEntityType<T> tileEntityType, Supplier<Function<? super TileEntityRendererDispatcher, ? extends TileEntityRenderer<? super T>>> rendererSupplier) {
         if (FMLEnvironment.dist == Dist.CLIENT) {
-            Supplier<Runnable> runnable = () -> () -> ClientRegistry.bindTileEntitySpecialRenderer(tileEntityClass, rendererSupplier.get().get());
+            Supplier<Runnable> runnable = () -> () -> ClientRegistry.bindTileEntityRenderer(tileEntityType, rendererSupplier.get());
             rendererRegisterRunnables.add(runnable);
         }
     }
@@ -93,11 +95,11 @@ public abstract class TileEntityTimeRegistry extends WrappedForgeTimeRegistry<Ti
          * Method to register renderer for provided tile entity.
          *
          * @param rendererSupplier supplier, that should return instance of {@link TileEntityRenderer}.
-         *                         Here we use double supplier to hide from java client classes.
+         *                         Here we use supplier to hide from java client classes.
          *                         If we don't do it, then it will crash on server side.
          */
-        public TileEntityWrapper<T> regCustomRenderer(Supplier<Supplier<TileEntityRenderer<T>>> rendererSupplier) {
-            regTileEntityRenderer(tileEntityClass, rendererSupplier);
+        public TileEntityWrapper<T> regCustomRenderer(Supplier<Function<? super TileEntityRendererDispatcher, ? extends TileEntityRenderer<? super T>>> rendererSupplier) {
+            regTileEntityRenderer(retrieveTileEntityType(), rendererSupplier);
 
             return this;
         }

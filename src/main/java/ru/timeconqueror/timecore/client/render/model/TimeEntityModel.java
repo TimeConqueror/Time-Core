@@ -1,6 +1,8 @@
 package ru.timeconqueror.timecore.client.render.model;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.client.renderer.entity.model.EntityModel;
 import net.minecraft.entity.Entity;
 
@@ -9,8 +11,6 @@ public class TimeEntityModel<T extends Entity> extends EntityModel<T> {
 
     public TimeEntityModel(TimeModel model) {
         this.model = model;
-        boxList.addAll(model.boxList);
-        model.boxList.clear();
     }
 
     /**
@@ -25,22 +25,19 @@ public class TimeEntityModel<T extends Entity> extends EntityModel<T> {
         return this;
     }
 
-    /**
-     * Renders model with provided scale.
-     *
-     * @param initialScale controls initial scale settings of the model.
-     *                     Once you provided some number as initial scale,
-     *                     you should always provide this particular number,
-     *                     otherwise you'll see unexpected render behaviour.
-     */
     @Override
-    public void render(T entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float initialScale) {
+    public void render(MatrixStack matrixStackIn, IVertexBuilder bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha) {
         GlStateManager.translatef(0, 1.501F, 0);//Mojang, WHY???
-        model.render(initialScale);
+        model.render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
         GlStateManager.translatef(0, -1.501F, 0);
     }
 
     public TimeModel getBaseModel() {
         return model;
+    }
+
+    @Override
+    public void setRotationAngles(T entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
+
     }
 }

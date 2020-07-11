@@ -4,9 +4,8 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import net.minecraft.client.renderer.Vector3f;
+import net.minecraft.util.math.Vec2f;
 import ru.timeconqueror.timecore.client.render.JsonParsingException;
-
-import javax.vecmath.Vector2f;
 
 public class JsonUtils {
     public static Vector3f getVec3f(String name, JsonElement parent) throws JsonParsingException {
@@ -25,9 +24,9 @@ public class JsonUtils {
         return new Vector3f(arr.get(0).getAsFloat(), arr.get(1).getAsFloat(), arr.get(2).getAsFloat());
     }
 
-    public static Vector2f getVec2f(String name, JsonElement parent) throws JsonParsingException {
+    public static Vec2f getVec2f(String name, JsonElement parent) throws JsonParsingException {
         JsonArray arr = verifyArray(get(name, parent.getAsJsonObject()));
-        return new Vector2f(arr.get(0).getAsFloat(), arr.get(1).getAsFloat());
+        return new Vec2f(arr.get(0).getAsFloat(), arr.get(1).getAsFloat());
     }
 
     public static boolean getBoolean(String name, JsonElement parent) throws JsonParsingException {

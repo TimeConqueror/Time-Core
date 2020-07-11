@@ -14,8 +14,8 @@ public class KeyFrame {
         this.vec = vec;
     }
 
-    public static KeyFrame createIdleKeyFrame(int startTime, float modelIdleX, float modelIdleY, float modelIdleZ) {
-        return new KeyFrame(startTime, new Vector3f(modelIdleX, modelIdleY, modelIdleZ));
+    public static KeyFrame createIdleKeyFrame(int startTime, Vector3f modelIdleVec) {
+        return new KeyFrame(startTime, modelIdleVec);
     }
 
     public int getStartTime() {

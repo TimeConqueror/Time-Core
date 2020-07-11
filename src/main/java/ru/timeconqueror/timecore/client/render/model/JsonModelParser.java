@@ -5,44 +5,46 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.Vector3f;
 import net.minecraft.resources.IResource;
 import net.minecraft.util.JSONUtils;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.Vec2f;
 import org.jetbrains.annotations.NotNull;
 import ru.timeconqueror.timecore.api.util.CollectionUtils;
 import ru.timeconqueror.timecore.client.render.JsonParsingException;
 import ru.timeconqueror.timecore.util.JsonUtils;
 
-import javax.vecmath.Vector2f;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class JsonModelParser {
     private static final String[] ACCEPTABLE_FORMAT_VERSIONS = new String[]{"1.12.0"};
 
-    public List<TimeModel> parseJsonModel(@NotNull ResourceLocation fileLocation) throws JsonParsingException {
+    public List<TimeModel> parseJsonModel(@NotNull ResourceLocation fileLocation, Function<ResourceLocation, RenderType> renderType) throws JsonParsingException {
         try (final IResource resource = Minecraft.getInstance().getResourceManager().getResource(fileLocation)) {
             BufferedReader reader = new BufferedReader(new InputStreamReader(resource.getInputStream()));
 
             JsonObject json = JSONUtils.fromJson(reader, true/*isLenient*/);
-            return parseJsonModel(json);
+            return parseJsonModel(renderType, json);
 
         } catch (Throwable e) {
             throw new JsonParsingException(e);
         }
     }
 
-    private List<TimeModel> parseJsonModel(JsonObject object) throws JsonParsingException {
+    private List<TimeModel> parseJsonModel(Function<ResourceLocation, RenderType> renderType, JsonObject object) throws JsonParsingException {
         List<TimeModel> models = new ArrayList<>();
         for (Map.Entry<String, JsonElement> entry : object.entrySet()) {
             if (entry.getKey().equals("format_version")) {
                 String formatVersion = entry.getValue().getAsString();
                 checkFormatVersion(formatVersion);
             } else {
-                TimeModel model = parseSubModel(entry.getKey(), entry.getValue().getAsJsonArray());
+                TimeModel model = parseSubModel(renderType, entry.getKey(), entry.getValue().getAsJsonArray());
                 models.add(model);
             }
         }
@@ -50,7 +52,7 @@ public class JsonModelParser {
         return models;
     }
 
-    private TimeModel parseSubModel(String name, JsonArray subModelArr) throws JsonParsingException {
+    private TimeModel parseSubModel(Function<ResourceLocation, RenderType> renderType, String name, JsonArray subModelArr) throws JsonParsingException {
         JsonObject subModel = subModelArr.get(0).getAsJsonObject();
         JsonArray bones = subModel.get("bones").getAsJsonArray();
 
@@ -80,11 +82,11 @@ public class JsonModelParser {
             }
         }
 
-        return create(name, textureWidth, textureHeight, rootPieces);
+        return create(renderType, name, textureWidth, textureHeight, rootPieces);
     }
 
-    private TimeModel create(String name, int textureWidth, int textureHeight, List<RawModelBone> rootPieces) {
-        TimeModel model = new TimeModel(name, textureWidth, textureHeight);
+    private TimeModel create(Function<ResourceLocation, RenderType> renderType, String name, int textureWidth, int textureHeight, List<RawModelBone> rootPieces) {
+        TimeModel model = new TimeModel(renderType, name, textureWidth, textureHeight);
 
         model.setPieces(rootPieces.stream().map(rawModelBone -> rawModelBone.bake(model, null)).collect(Collectors.toList()));
 
@@ -107,7 +109,7 @@ public class JsonModelParser {
             for (JsonElement cube : bone.getAsJsonObject().get("cubes").getAsJsonArray()) {
                 Vector3f origin = JsonUtils.getVec3f("origin", cube);
                 Vector3f size = JsonUtils.getVec3f("size", cube);
-                Vector2f uv = JsonUtils.getVec2f("uv", cube);
+                Vec2f uv = JsonUtils.getVec2f("uv", cube);
 
                 if (cube.getAsJsonObject().has("rotation")) {
                     Vector3f rotation = JsonUtils.getVec3f("rotation", cube);
@@ -165,7 +167,6 @@ public class JsonModelParser {
             } else renderer.setRotationPoint(pivot.getX(), -pivot.getY(), pivot.getZ());
 
             if (children != null) {
-                renderer.childModels = new ArrayList<>(children.size());
                 for (RawModelBone child : children) {
                     renderer.childModels.add(child.bake(model, this));
                 }
@@ -178,9 +179,9 @@ public class JsonModelParser {
     public static class RawModelCube {
         private final Vector3f origin;
         private final Vector3f size;
-        private final Vector2f uv;
+        private final Vec2f uv;
 
-        private RawModelCube(Vector3f origin, Vector3f size, Vector2f uv) {
+        private RawModelCube(Vector3f origin, Vector3f size, Vec2f uv) {
             this.origin = origin;
             this.size = size;
             this.uv = uv;

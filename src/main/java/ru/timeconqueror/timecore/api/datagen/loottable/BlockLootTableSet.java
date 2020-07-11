@@ -3,6 +3,7 @@ package ru.timeconqueror.timecore.api.datagen.loottable;
 import net.minecraft.advancements.criterion.EnchantmentPredicate;
 import net.minecraft.advancements.criterion.ItemPredicate;
 import net.minecraft.advancements.criterion.MinMaxBounds;
+import net.minecraft.advancements.criterion.StatePropertiesPredicate;
 import net.minecraft.block.*;
 import net.minecraft.enchantment.Enchantments;
 import net.minecraft.item.Item;
@@ -10,6 +11,7 @@ import net.minecraft.item.Items;
 import net.minecraft.state.IProperty;
 import net.minecraft.state.properties.SlabType;
 import net.minecraft.util.IItemProvider;
+import net.minecraft.util.IStringSerializable;
 import net.minecraft.world.storage.loot.*;
 import net.minecraft.world.storage.loot.conditions.*;
 import net.minecraft.world.storage.loot.functions.*;
@@ -80,11 +82,11 @@ public abstract class BlockLootTableSet extends LootTableSet {
     }
 
     protected static LootTable.Builder droppingSlab(Block dropSlab) {
-        return LootTable.builder().addLootPool(LootPool.builder().rolls(ConstantRange.of(1)).addEntry(withExplosionDecay(ItemLootEntry.builder(dropSlab).acceptFunction(SetCount.builder(ConstantRange.of(2)).acceptCondition(BlockStateProperty.builder(dropSlab).with(SlabBlock.TYPE, SlabType.DOUBLE))))));
+        return LootTable.builder().addLootPool(LootPool.builder().rolls(ConstantRange.of(1)).addEntry(withExplosionDecay(ItemLootEntry.builder(dropSlab).acceptFunction(SetCount.builder(ConstantRange.of(2)).acceptCondition(BlockStateProperty.builder(dropSlab).fromProperties(StatePropertiesPredicate.Builder.newBuilder().withProp(SlabBlock.TYPE, SlabType.DOUBLE)))))));
     }
 
-    protected static <T extends Comparable<T>> LootTable.Builder droppingWhen(Block block, IProperty<T> property, T propertyVal) {
-        return LootTable.builder().addLootPool(withSurvivesExplosion(LootPool.builder().rolls(ConstantRange.of(1)).addEntry(ItemLootEntry.builder(block).acceptCondition(BlockStateProperty.builder(block).with(property, propertyVal)))));
+    protected static <T extends Comparable<T> & IStringSerializable> LootTable.Builder droppingWhen(Block block, IProperty<T> property, T propertyVal) {
+        return LootTable.builder().addLootPool(withSurvivesExplosion(LootPool.builder().rolls(ConstantRange.of(1)).addEntry(ItemLootEntry.builder(block).acceptCondition(BlockStateProperty.builder(block).fromProperties(StatePropertiesPredicate.Builder.newBuilder().withProp(property, propertyVal))))));
     }
 
     protected static LootTable.Builder droppingWithName(Block dropBlock) {
@@ -92,11 +94,11 @@ public abstract class BlockLootTableSet extends LootTableSet {
     }
 
     protected static LootTable.Builder droppingWithContents(Block dropBlock) {
-        return LootTable.builder().addLootPool(withSurvivesExplosion(LootPool.builder().rolls(ConstantRange.of(1)).addEntry(ItemLootEntry.builder(dropBlock).acceptFunction(CopyName.builder(CopyName.Source.BLOCK_ENTITY)).acceptFunction(CopyNbt.func_215881_a(CopyNbt.Source.BLOCK_ENTITY).func_216056_a("Lock", "BlockEntityTag.Lock").func_216056_a("LootTable", "BlockEntityTag.LootTable").func_216056_a("LootTableSeed", "BlockEntityTag.LootTableSeed")).acceptFunction(SetContents.func_215920_b().func_216075_a(DynamicLootEntry.func_216162_a(ShulkerBoxBlock.CONTENTS))))));
+        return LootTable.builder().addLootPool(withSurvivesExplosion(LootPool.builder().rolls(ConstantRange.of(1)).addEntry(ItemLootEntry.builder(dropBlock).acceptFunction(CopyName.builder(CopyName.Source.BLOCK_ENTITY)).acceptFunction(CopyNbt.builder(CopyNbt.Source.BLOCK_ENTITY).replaceOperation("Lock", "BlockEntityTag.Lock").replaceOperation("LootTable", "BlockEntityTag.LootTable").replaceOperation("LootTableSeed", "BlockEntityTag.LootTableSeed")).acceptFunction(SetContents.builder().addLootEntry(DynamicLootEntry.func_216162_a(ShulkerBoxBlock.CONTENTS))))));
     }
 
     protected static LootTable.Builder droppingWithPatterns(Block dropBlock) {
-        return LootTable.builder().addLootPool(withSurvivesExplosion(LootPool.builder().rolls(ConstantRange.of(1)).addEntry(ItemLootEntry.builder(dropBlock).acceptFunction(CopyName.builder(CopyName.Source.BLOCK_ENTITY)).acceptFunction(CopyNbt.func_215881_a(CopyNbt.Source.BLOCK_ENTITY).func_216056_a("Patterns", "BlockEntityTag.Patterns")))));
+        return LootTable.builder().addLootPool(withSurvivesExplosion(LootPool.builder().rolls(ConstantRange.of(1)).addEntry(ItemLootEntry.builder(dropBlock).acceptFunction(CopyName.builder(CopyName.Source.BLOCK_ENTITY)).acceptFunction(CopyNbt.builder(CopyNbt.Source.BLOCK_ENTITY).replaceOperation("Patterns", "BlockEntityTag.Patterns")))));
     }
 
     protected static LootTable.Builder droppingItemWithFortune(Block silkTouchDrop, Item fortuneDrop) {
@@ -120,9 +122,8 @@ public abstract class BlockLootTableSet extends LootTableSet {
      * used in vanilla for pumpkin and melon stems.
      */
     protected static LootTable.Builder droppingByAge(Block dropFrom, Item drop) {
-        return LootTable.builder().addLootPool(withExplosionDecay(LootPool.builder().rolls(ConstantRange.of(1)).addEntry(ItemLootEntry.builder(drop).acceptFunction(SetCount.builder(BinomialRange.of(3, 0.06666667F)).acceptCondition(BlockStateProperty.builder(dropFrom).with(StemBlock.AGE, 0))).acceptFunction(SetCount.builder(BinomialRange.of(3, 0.13333334F)).acceptCondition(BlockStateProperty.builder(dropFrom).with(StemBlock.AGE, 1))).acceptFunction(SetCount.builder(BinomialRange.of(3, 0.2F)).acceptCondition(BlockStateProperty.builder(dropFrom).with(StemBlock.AGE, 2))).acceptFunction(SetCount.builder(BinomialRange.of(3, 0.26666668F)).acceptCondition(BlockStateProperty.builder(dropFrom).with(StemBlock.AGE, 3))).acceptFunction(SetCount.builder(BinomialRange.of(3, 0.33333334F)).acceptCondition(BlockStateProperty.builder(dropFrom).with(StemBlock.AGE, 4))).acceptFunction(SetCount.builder(BinomialRange.of(3, 0.4F)).acceptCondition(BlockStateProperty.builder(dropFrom).with(StemBlock.AGE, 5))).acceptFunction(SetCount.builder(BinomialRange.of(3, 0.46666667F)).acceptCondition(BlockStateProperty.builder(dropFrom).with(StemBlock.AGE, 6))).acceptFunction(SetCount.builder(BinomialRange.of(3, 0.53333336F)).acceptCondition(BlockStateProperty.builder(dropFrom).with(StemBlock.AGE, 7))))));
+        return LootTable.builder().addLootPool(withExplosionDecay(LootPool.builder().rolls(ConstantRange.of(1)).addEntry(ItemLootEntry.builder(drop).acceptFunction(SetCount.builder(BinomialRange.of(3, 0.06666667F)).acceptCondition(BlockStateProperty.builder(dropFrom).fromProperties(StatePropertiesPredicate.Builder.newBuilder().withIntProp(StemBlock.AGE, 0)))).acceptFunction(SetCount.builder(BinomialRange.of(3, 0.13333334F)).acceptCondition(BlockStateProperty.builder(dropFrom).fromProperties(StatePropertiesPredicate.Builder.newBuilder().withIntProp(StemBlock.AGE, 1)))).acceptFunction(SetCount.builder(BinomialRange.of(3, 0.2F)).acceptCondition(BlockStateProperty.builder(dropFrom).fromProperties(StatePropertiesPredicate.Builder.newBuilder().withIntProp(StemBlock.AGE, 2)))).acceptFunction(SetCount.builder(BinomialRange.of(3, 0.26666668F)).acceptCondition(BlockStateProperty.builder(dropFrom).fromProperties(StatePropertiesPredicate.Builder.newBuilder().withIntProp(StemBlock.AGE, 3)))).acceptFunction(SetCount.builder(BinomialRange.of(3, 0.33333334F)).acceptCondition(BlockStateProperty.builder(dropFrom).fromProperties(StatePropertiesPredicate.Builder.newBuilder().withIntProp(StemBlock.AGE, 4)))).acceptFunction(SetCount.builder(BinomialRange.of(3, 0.4F)).acceptCondition(BlockStateProperty.builder(dropFrom).fromProperties(StatePropertiesPredicate.Builder.newBuilder().withIntProp(StemBlock.AGE, 5)))).acceptFunction(SetCount.builder(BinomialRange.of(3, 0.46666667F)).acceptCondition(BlockStateProperty.builder(dropFrom).fromProperties(StatePropertiesPredicate.Builder.newBuilder().withIntProp(StemBlock.AGE, 6)))).acceptFunction(SetCount.builder(BinomialRange.of(3, 0.53333336F)).acceptCondition(BlockStateProperty.builder(dropFrom).fromProperties(StatePropertiesPredicate.Builder.newBuilder().withIntProp(StemBlock.AGE, 7)))))));
     }
-
 
     protected static LootTable.Builder onlyWithShears(IItemProvider dropWithShears) {
         return LootTable.builder().addLootPool(LootPool.builder().rolls(ConstantRange.of(1)).acceptCondition(SHEARS).addEntry(ItemLootEntry.builder(dropWithShears)));
