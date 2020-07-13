@@ -6,10 +6,12 @@ import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.minecraftforge.fml.event.lifecycle.GatherDataEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import ru.timeconqueror.timecore.api.TimeMod;
+import ru.timeconqueror.timecore.api.datagen.DataGen;
 import ru.timeconqueror.timecore.client.resource.TimePackFinder;
 import ru.timeconqueror.timecore.util.I18nResolver;
 
@@ -34,12 +36,16 @@ public final class TimeCore extends TimeMod {
 
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::doClientStuff);
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::onDataEvent);
     }
 
     private void setup(final FMLCommonSetupEvent event) {
     }
 
     private void doClientStuff(final FMLClientSetupEvent event) {
-        System.out.println("hello!");
+    }
+
+    private void onDataEvent(GatherDataEvent event) {
+        DataGen.disableFileDeletion = true;
     }
 }

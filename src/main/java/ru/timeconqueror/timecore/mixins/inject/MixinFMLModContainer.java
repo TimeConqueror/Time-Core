@@ -21,7 +21,7 @@ public abstract class MixinFMLModContainer {
         FMLModContainer modContainer = (FMLModContainer) (Object) this;
         Object mod = modContainer.getMod();
         if (mod instanceof TimeMod) {
-            ModInitializer.setupAutoRegistries();
+            ModInitializer.run();
         }
 
         FMLJavaModLoadingContext.get().getModEventBus().post(new FMLModConstructedEvent(modContainer));

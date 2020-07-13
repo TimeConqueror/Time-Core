@@ -7,6 +7,7 @@ import net.minecraftforge.fml.loading.moddiscovery.ModAnnotation;
 import net.minecraftforge.fml.loading.moddiscovery.ModInfo;
 import net.minecraftforge.forgespi.language.ModFileScanData;
 import ru.timeconqueror.timecore.TimeCore;
+import ru.timeconqueror.timecore.devtools.gen.lang.LangGeneratorFacade;
 import ru.timeconqueror.timecore.registry.TimeAutoRegistrable;
 import ru.timeconqueror.timecore.registry.deferred.base.DeferredFMLImplForgeRegister;
 import ru.timeconqueror.timecore.registry.deferred.base.DeferredTimeRegister;
@@ -16,7 +17,17 @@ import ru.timeconqueror.timecore.util.reflection.UnlockedField;
 import java.lang.annotation.ElementType;
 
 public class ModInitializer {
-    public static void setupAutoRegistries() {
+    public static void run() {
+        setupAutoRegistries();
+        regModBusListeners();
+    }
+
+    private static void regModBusListeners() {
+        FMLJavaModLoadingContext.get().getModEventBus().register(LangGeneratorFacade.class);
+    }
+
+    private static void setupAutoRegistries() {
+
         for (ModInfo modInfo : ModList.get().getMods()) {
             if (modInfo.getModId().equals(ModLoadingContext.get().getActiveNamespace())) {
                 ModFileScanData scanData = modInfo.getOwningFile().getFile().getScanResult();

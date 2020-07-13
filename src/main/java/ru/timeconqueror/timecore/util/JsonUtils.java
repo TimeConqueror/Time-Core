@@ -1,13 +1,13 @@
 package ru.timeconqueror.timecore.util;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
+import com.google.gson.*;
 import net.minecraft.client.renderer.Vector3f;
 import net.minecraft.util.math.Vec2f;
 import ru.timeconqueror.timecore.client.render.JsonParsingException;
 
 public class JsonUtils {
+    public static final Gson GSON = new GsonBuilder().setPrettyPrinting().setLenient().create();
+
     public static Vector3f getVec3f(String name, JsonElement parent) throws JsonParsingException {
         return toVec3f(get(name, parent.getAsJsonObject()));
     }
