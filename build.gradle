@@ -19,7 +19,7 @@ apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
 apply plugin: 'org.spongepowered.mixin'
 
-version = '1.1.0.0'
+version = '1.15.2-1.1.0.0'
 group = 'ru.timeconqueror' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = 'TimeCore'
 
@@ -55,7 +55,7 @@ minecraft {
 
     // Default run configurations.
     // These can be tweaked, removed, or duplicated as needed.
-    def extraArgs = '--mixin mixins.timecore.json'.split(' ')
+    def extraArgs = Arrays.asList('--mixin mixins.timecore.json'.split(' '))
     runs {
         client {
             workingDirectory project.file('run')
@@ -66,10 +66,7 @@ minecraft {
             // Recommended logging level for the console
             property 'forge.logging.console.level', 'debug'
 
-            def newArgs = new ArrayList()
-            newArgs.addAll(args)
-            newArgs.addAll(extraArgs)
-            setArgs(newArgs)
+            setArgs(extraArgs)
 
             mods {
                 timecore {
@@ -91,10 +88,7 @@ minecraft {
             // Recommended logging level for the console
             //property 'forge.logging.console.level', 'debug'
 
-            def newArgs = new ArrayList()
-            newArgs.addAll(args)
-            newArgs.addAll(extraArgs)
-            setArgs(newArgs)
+            setArgs(extraArgs)
 
             mods {
                 timecore {
@@ -114,13 +108,10 @@ minecraft {
 //            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
 
             // Recommended logging level for the console
-//            property 'forge.logging.console.level', 'debug'
+            property 'forge.logging.console.level', 'debug'
 
-            args '--mod', 'timecore', '--all', '--output', file('src/generated/resources/')
-            def newArgs = new ArrayList()
-            newArgs.addAll(args)
-            newArgs.addAll(extraArgs)
-            setArgs(newArgs)
+            args '--mod', 'timecore', '--all', '--output', ("\"" + projectDir.path + "/src/main/resources/\"")
+            setArgs(extraArgs)
 
             mods {
                 timecore {
