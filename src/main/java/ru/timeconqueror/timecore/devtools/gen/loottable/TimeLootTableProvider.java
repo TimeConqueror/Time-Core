@@ -1,4 +1,4 @@
-package ru.timeconqueror.timecore.api.datagen.loottable;
+package ru.timeconqueror.timecore.devtools.gen.loottable;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;

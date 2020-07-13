@@ -1,4 +1,4 @@
-package ru.timeconqueror.timecore.api.datagen.loottable;
+package ru.timeconqueror.timecore.devtools.gen.loottable;
 
 import net.minecraft.advancements.criterion.EnchantmentPredicate;
 import net.minecraft.advancements.criterion.ItemPredicate;
