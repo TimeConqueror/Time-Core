@@ -15,7 +15,7 @@ import java.util.Map;
 import java.util.function.Function;
 
 public class LangSection<T> {
-    public static final LangSection<ItemGroup> CREATIVE_TABS = new LangSection<>("Creative Tabs", ItemGroup::getTranslationKey);
+    public static final LangSection<ItemGroup> ITEM_GROUPS = new LangSection<>("Creative Tabs", ItemGroup::getTranslationKey);
     public static final LangSection<Block> BLOCKS = new LangSection<>("Blocks", Block::getTranslationKey);
     public static final LangSection<Item> ITEMS = new LangSection<>("Items", Item::getTranslationKey);
     public static final LangSection<ArmorItem> ARMOR = new LangSection<ArmorItem>("Armor", Item::getTranslationKey)

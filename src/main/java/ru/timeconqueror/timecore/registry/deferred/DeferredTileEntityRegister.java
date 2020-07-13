@@ -26,14 +26,13 @@ public class DeferredTileEntityRegister extends DeferredFMLImplForgeRegister<Til
         return new TileEntityRegistrator<T>(name, typeSupplier);
     }
 
-
     public class TileEntityRegistrator<T extends TileEntity> extends Registrator {
         protected TileEntityRegistrator(String name, Supplier<TileEntityType<?>> sup) {
             super(name, sup);
         }
 
         public TileEntityRegistrator<T> regCustomRenderer(Function<? super TileEntityRendererDispatcher, ? extends TileEntityRenderer<? super T>> rendererFactory) {
-            addClientSetupTask(() -> ClientRegistry.bindTileEntityRenderer(endTyped().get(), rendererFactory));
+            runTaskOnClientSetup(() -> ClientRegistry.bindTileEntityRenderer(endTyped().get(), rendererFactory));
             return this;
         }
 

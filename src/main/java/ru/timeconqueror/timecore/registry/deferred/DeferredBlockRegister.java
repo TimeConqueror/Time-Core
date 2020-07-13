@@ -7,6 +7,7 @@ import net.minecraft.item.ItemGroup;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.RegistryObject;
+import net.minecraftforge.fml.event.lifecycle.GatherDataEvent;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.Nullable;
 import ru.timeconqueror.timecore.api.client.TimeClient;
@@ -14,6 +15,7 @@ import ru.timeconqueror.timecore.api.client.resource.BlockModel;
 import ru.timeconqueror.timecore.api.client.resource.BlockStateResource;
 import ru.timeconqueror.timecore.api.client.resource.location.BlockModelLocation;
 import ru.timeconqueror.timecore.api.client.resource.location.TextureLocation;
+import ru.timeconqueror.timecore.devtools.gen.lang.LangGeneratorFacade;
 import ru.timeconqueror.timecore.registry.ItemPropsFactory;
 import ru.timeconqueror.timecore.registry.TimeAutoRegistrable;
 import ru.timeconqueror.timecore.registry.deferred.DeferredItemRegister.ItemRegistrator;
@@ -136,7 +138,7 @@ public class DeferredBlockRegister extends DeferredFMLImplForgeRegister<Block> {
          * @param stateResourceSupplier factory, which should return new BlockStateResource instance every time it's called.
          */
         public BlockRegistrator<B> genState(Supplier<BlockStateResource> stateResourceSupplier) {
-            runOnlyForClient(() -> TimeClient.RESOURCE_HOLDER.addBlockStateResource(getRegistryObject().get(), stateResourceSupplier.get()));
+            runTaskOnClientSetup(() -> TimeClient.RESOURCE_HOLDER.addBlockStateResource(getRegistryObject().get(), stateResourceSupplier.get()));
 
             return this;
         }
@@ -181,6 +183,35 @@ public class DeferredBlockRegister extends DeferredFMLImplForgeRegister<Block> {
         public BlockRegistrator<B> genDefaultStateAndModel(TextureLocation textureLocation) {
             genModelWithRegistryKeyPath(() -> BlockModel.createCubeAllModel(textureLocation));
             genDefaultState(new BlockModelLocation(getRegistryKey().getNamespace(), getRegistryKey().getPath()));
+            return this;
+        }
+
+        /**
+         * Adds block entry to {@link LangGeneratorFacade}, which will place all entries in en_us.json file upon {@link GatherDataEvent}.
+         * Generator will generate entries only in {@code runData} launch mode.
+         *
+         * @param enName english localization name of block
+         */
+        public BlockRegistrator<B> genLangEntry(String enName) {
+            runTaskAfterRegistering(() -> LangGeneratorFacade.addBlockEntry(getRegistryObject().get(), enName));
+            return this;
+        }
+
+        /**
+         * Runs task for current registrator directly after registering object.
+         * Entry for {@link #getRegistryObject()} is already registered in this moment, so it can be retrieved inside this task.
+         */
+        public BlockRegistrator<B> doAfterRegistering(Consumer<BlockRegistrator<B>> task) {
+            runTaskAfterRegistering(() -> task.accept(this));
+            return this;
+        }
+
+        /**
+         * Runs task for current registrator  on client setup.
+         * Entry for {@link #getRegistryObject()} is already registered in this moment, so it can be retrieved inside this task.
+         */
+        public BlockRegistrator<B> doOnClientSetup(Consumer<BlockRegistrator<B>> task) {
+            runTaskOnClientSetup(() -> task.accept(this));
             return this;
         }
 

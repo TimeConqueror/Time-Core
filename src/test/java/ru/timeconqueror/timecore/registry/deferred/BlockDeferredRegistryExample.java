@@ -18,5 +18,6 @@ public class BlockDeferredRegistryExample {
     public static RegistryObject<TestCobbleBlock> TEST_COBBLE = REGISTER.regBlock("test_cobble", () -> new TestCobbleBlock(BLOCK_PROPS_CREATOR.create()))
             .genDefaultStateAndModel(new TextureLocation("minecraft", "block/cobblestone"))
             .regDefaultBlockItem(ItemGroup.MISC)
+//            .genLangEntry("Test Cobble")
             .endTyped();
 }

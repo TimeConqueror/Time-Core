@@ -1,7 +1,6 @@
 package ru.timeconqueror.timecore.registry.deferred.base;
 
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.registries.DeferredRegister;
@@ -22,17 +21,12 @@ public abstract class DeferredFMLImplForgeRegister<T extends IForgeRegistryEntry
 
     public DeferredFMLImplForgeRegister(IForgeRegistry<T> reg, String modid) {
         super(reg, modid);
-        this.deferredRegister = new DeferredRegister<>(reg, modid);
+        this.deferredRegister = DeferredRegister.create(reg, modid);
     }
 
     public void regToBus(IEventBus bus) {
         super.regToBus(bus);
         deferredRegister.register(bus);
-    }
-
-    @Override
-    protected EventPriority getRegPriority() {
-        return EventPriority.LOWEST;
     }
 
     public class Registrator {
@@ -43,7 +37,7 @@ public abstract class DeferredFMLImplForgeRegister<T extends IForgeRegistryEntry
         }
 
         /**
-         * End method which returns the final object, from which you can retrieve your registry entry.
+         * End method which returns the final object, so here you can retrieve your registry entry.
          */
         public RegistryObject<T> end() {
             return getRegistryObject();
@@ -62,7 +56,7 @@ public abstract class DeferredFMLImplForgeRegister<T extends IForgeRegistryEntry
         }
 
         protected Registrator runOnlyForClient(Runnable runnable) {
-            addClientSetupTask(runnable);
+            runTaskOnClientSetup(runnable);
             return this;
         }
     }
