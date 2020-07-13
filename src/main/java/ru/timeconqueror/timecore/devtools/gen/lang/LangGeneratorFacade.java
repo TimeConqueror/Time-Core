@@ -8,6 +8,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.event.lifecycle.GatherDataEvent;
 import ru.timeconqueror.timecore.util.EnvironmentUtils;
 
@@ -200,6 +201,6 @@ public class LangGeneratorFacade {
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void onDataEvent(GatherDataEvent event) {
-        GENERATOR.save(SECTIONS);
+        GENERATOR.save(ModLoadingContext.get().getActiveNamespace(), SECTIONS);
     }
 }

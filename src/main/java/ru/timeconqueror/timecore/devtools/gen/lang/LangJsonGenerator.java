@@ -3,6 +3,8 @@ package ru.timeconqueror.timecore.devtools.gen.lang;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
 import ru.timeconqueror.timecore.TimeCore;
 import ru.timeconqueror.timecore.api.util.Wrapper;
 import ru.timeconqueror.timecore.util.FileUtils;
@@ -20,10 +22,12 @@ public class LangJsonGenerator {
     private static final String START_MARK = "#MARK AUTO GEN START";
     private static final String END_MARK = "#MARK AUTO GEN END";
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().setLenient().create();
-    private final File outputFile = new File("../src/main/resources/assets/timecore/lang/en_us.json");
+    private static final Marker LOG_MARKER = MarkerManager.getMarker(LangJsonGenerator.class.getSimpleName());
 
-    public void save(HashMap<String, LangSection<?>> langSectionMap) {
-        TimeCore.LOGGER.debug("LangGenerator: Generating of lang entries is started.");
+    public void save(String modid, HashMap<String, LangSection<?>> langSectionMap) {
+        TimeCore.LOGGER.debug(LOG_MARKER, "Generating of lang entries is started.");
+
+        File outputFile = new File("../src/main/resources/assets/" + modid + "/lang/en_us.json");
 
         try {
             FileUtils.prepareFileForRead(outputFile);
@@ -94,7 +98,8 @@ public class LangJsonGenerator {
             e.printStackTrace();
         }
 
-        TimeCore.LOGGER.debug("LangGenerator: Generating of lang entries is finished.");
+        TimeCore.LOGGER.debug(LOG_MARKER, "Generating of lang entries is finished.");
+        TimeCore.LOGGER.debug(LOG_MARKER, "Results were saved in {}", outputFile.getAbsolutePath());
     }
 
     private void putAllEntries(Map<String, LangSection<?>> sectionMap, Map<String, String> out) {
