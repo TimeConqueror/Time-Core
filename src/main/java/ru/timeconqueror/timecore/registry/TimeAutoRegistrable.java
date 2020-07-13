@@ -15,7 +15,7 @@ import java.lang.annotation.Target;
  * <ul>
  *     <li>
  *         field:<br>
- *             If field has {@link DeferredTimeRegister} type, is static and has any access modifier, then it be registered with this annotation,
+ *             If field has {@link DeferredTimeRegister} type, is static and has any access modifier, then it will be registered with this annotation,
  *             otherwise exception will be thrown.<br>
  *             Extra annotation params will be ignored.
  *     </li>

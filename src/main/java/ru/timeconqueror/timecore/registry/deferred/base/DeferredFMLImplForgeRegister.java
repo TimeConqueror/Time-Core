@@ -1,19 +1,14 @@
 package ru.timeconqueror.timecore.registry.deferred.base;
 
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.RegistryObject;
-import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 import ru.timeconqueror.timecore.registry.TimeAutoRegistrable;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.function.Supplier;
 
 /**
@@ -24,8 +19,6 @@ import java.util.function.Supplier;
  */
 public abstract class DeferredFMLImplForgeRegister<T extends IForgeRegistryEntry<T>> extends DeferredForgeRegister<T> {
     protected final DeferredRegister<T> deferredRegister;
-
-    protected List<Runnable> clientOnlyRunnables = new ArrayList<>();
 
     public DeferredFMLImplForgeRegister(IForgeRegistry<T> reg, String modid) {
         super(reg, modid);
@@ -40,14 +33,6 @@ public abstract class DeferredFMLImplForgeRegister<T extends IForgeRegistryEntry
     @Override
     protected EventPriority getRegPriority() {
         return EventPriority.LOWEST;
-    }
-
-    protected void onRegEvent(RegistryEvent.Register<T> event) {
-        if (isOnClient()) {
-            clientOnlyRunnables.forEach(Runnable::run);
-        }
-
-        clientOnlyRunnables = null;
     }
 
     public class Registrator {
@@ -77,15 +62,8 @@ public abstract class DeferredFMLImplForgeRegister<T extends IForgeRegistryEntry
         }
 
         protected Registrator runOnlyForClient(Runnable runnable) {
-            if (isOnClient()) {
-                clientOnlyRunnables.add(runnable);
-            }
-
+            addClientSetupTask(runnable);
             return this;
         }
-    }
-
-    protected boolean isOnClient() {
-        return FMLEnvironment.dist == Dist.CLIENT;
     }
 }
