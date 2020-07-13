@@ -5,7 +5,6 @@ import net.minecraftforge.fml.ModLoadingContext;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import ru.timeconqueror.timecore.mixins.config.IConfigValueEditable;
 
 import java.util.ArrayList;
 import java.util.List;

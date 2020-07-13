@@ -1,4 +1,4 @@
-package ru.timeconqueror.timecore.mixins.inject.command;
+package ru.timeconqueror.timecore.mod.mixins.client.command;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;

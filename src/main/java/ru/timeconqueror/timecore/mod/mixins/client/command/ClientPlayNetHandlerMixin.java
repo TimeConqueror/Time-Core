@@ -1,4 +1,4 @@
-package ru.timeconqueror.timecore.mixins.inject.command;
+package ru.timeconqueror.timecore.mod.mixins.client.command;
 
 import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.CommandDispatcher;

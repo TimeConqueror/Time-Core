@@ -1,13 +1,12 @@
-package ru.timeconqueror.timecore.mixins.inject.config;
+package ru.timeconqueror.timecore.mod.mixins.config;
 
 import net.minecraftforge.common.ForgeConfigSpec;
 import org.spongepowered.asm.mixin.Implements;
 import org.spongepowered.asm.mixin.Interface;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
-import ru.timeconqueror.timecore.mixins.config.IConfigValueEditable;
+import ru.timeconqueror.timecore.api.common.config.IConfigValueEditable;
 
-//TODO move to TimeCore
 @Mixin(ForgeConfigSpec.ValueSpec.class)
 @Implements({@Interface(iface = IConfigValueEditable.class, prefix = "i$")})
 public abstract class MixinConfigValue {

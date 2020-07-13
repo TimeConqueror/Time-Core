@@ -1,6 +1,5 @@
-package ru.timeconqueror.timecore.mixins.config;
+package ru.timeconqueror.timecore.api.common.config;
 
-//TODO move to TimeCore
 public interface IConfigValueEditable {
     void addLineToComment(String addition);
 
