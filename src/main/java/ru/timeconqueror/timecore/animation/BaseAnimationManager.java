@@ -21,6 +21,7 @@ public abstract class BaseAnimationManager implements AnimationManager {
     private HashMap<String, Layer> layerMap;
     private List<Layer> layers;
 
+    //TODO add idle animation support
     public BaseAnimationManager(@Nullable AnimationSetting walkingAnimationSetting) {
         this.walkingAnimationSetting = walkingAnimationSetting;
     }

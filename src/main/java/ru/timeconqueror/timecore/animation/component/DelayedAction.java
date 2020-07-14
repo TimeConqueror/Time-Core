@@ -16,7 +16,7 @@ public class DelayedAction<T extends Entity, EXTRA_DATA> {
     private final String animationLayer;
     private final ResourceLocation id;
     private Predicate<AnimationWatcher> actionDelayPredicate = StandardDelayPredicates.onStart();
-    private BiConsumer<? super T, EXTRA_DATA> action = (entity, data) -> {
+    private BiConsumer<? super T, ? super EXTRA_DATA> action = (entity, data) -> {
     };
 
     public DelayedAction(ResourceLocation id, AnimationStarter animationStarter, String animationLayer) {
@@ -25,7 +25,7 @@ public class DelayedAction<T extends Entity, EXTRA_DATA> {
         this.animationLayer = animationLayer;
     }
 
-    public DelayedAction<T, EXTRA_DATA> setOnCall(BiConsumer<? super T, EXTRA_DATA> action) {
+    public DelayedAction<T, EXTRA_DATA> setOnCall(BiConsumer<? super T, ? super EXTRA_DATA> action) {
         this.action = action;
 
         return this;
@@ -37,7 +37,7 @@ public class DelayedAction<T extends Entity, EXTRA_DATA> {
         return this;
     }
 
-    public BiConsumer<? super T, EXTRA_DATA> getAction() {
+    public BiConsumer<? super T, ? super EXTRA_DATA> getAction() {
         return action;
     }
 
