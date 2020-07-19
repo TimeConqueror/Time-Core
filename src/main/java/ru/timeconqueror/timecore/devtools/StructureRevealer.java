@@ -1,6 +1,14 @@
 package ru.timeconqueror.timecore.devtools;
 
 import com.google.common.collect.ArrayListMultimap;
+import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.IVertexBuilder;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.ActiveRenderInfo;
+import net.minecraft.client.renderer.IRenderTypeBuffer;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.RenderTypeBuffers;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -21,6 +29,7 @@ import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.fml.network.PacketDistributor;
 import org.jetbrains.annotations.Nullable;
 import ru.timeconqueror.timecore.api.util.RandHelper;
+import ru.timeconqueror.timecore.client.render.TimeRenderType;
 import ru.timeconqueror.timecore.mod.common.config.MainConfig;
 import ru.timeconqueror.timecore.mod.common.packet.InternalPacketManager;
 import ru.timeconqueror.timecore.mod.common.packet.StructureRevealingS2CPacket;
@@ -129,45 +138,37 @@ public class StructureRevealer {
         private final HashMap<ResourceLocation, Integer> structureColorMap = new HashMap<>();
         private boolean visibleThroughBlocks = false;
 
-        public void onWorldRender(RenderWorldLastEvent event) {//FIXME change to the new render system
-//            Tessellator tessellator = Tessellator.getInstance();
-//            BufferBuilder buffer = tessellator.getBuffer();
-//            buffer.begin(GL11.GL_TRIANGLE_STRIP, DefaultVertexFormats.POSITION_COLOR);
-//
-//            ActiveRenderInfo activeRenderInfo = Minecraft.getInstance().gameRenderer.getActiveRenderInfo();
-//            Vec3d projectedView = activeRenderInfo.getProjectedView();
-//
-//            for (StructurePieceContainer container : trackedStructurePieces) {
-//                DrawHelper.buildFilledBoundingBox(buffer, container.getBb().offset(-projectedView.x, -projectedView.y, -projectedView.z), getStructureColor(container.getStructureName()));
-//            }
-//
-//            GlStateManager.disableCull();
-//            GlStateManager.enableBlend();
-//            GlStateManager.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
-//            GlStateManager.alphaFunc(GL11.GL_GREATER, 0.001F);
-//            GlStateManager.disableTexture();
-//
-//            if (visibleThroughBlocks) {
-//                GlStateManager.disableDepthTest();
-//            } else {
-//                GlStateManager.depthMask(false);
-//                GlStateManager.enablePolygonOffset();
-//                GlStateManager.polygonOffset(-3.0F, -3.0F);
-//            }
-//
-//            tessellator.draw();
-//
-//            if (visibleThroughBlocks) {
-//                GlStateManager.enableDepthTest();
-//            } else {
-//                GlStateManager.depthMask(true);
-//                GlStateManager.disablePolygonOffset();
-//            }
-//
-//            GlStateManager.enableTexture();
-//            GlStateManager.alphaFunc(GL11.GL_GREATER, 0.1F);
-//            GlStateManager.enableCull();
-//            GlStateManager.disableBlend();
+        //TODO add multidim support
+        public void onWorldRender(RenderWorldLastEvent event) {
+            ActiveRenderInfo activeRenderInfo = Minecraft.getInstance().gameRenderer.getActiveRenderInfo();
+            Vec3d projectedView = activeRenderInfo.getProjectedView();
+
+            RenderTypeBuffers renderTypeBuffers = Minecraft.getInstance().getRenderTypeBuffers();
+            IRenderTypeBuffer.Impl bufferSource = renderTypeBuffers.getBufferSource();
+            RenderType overlayRenderType = TimeRenderType.getOverlay(visibleThroughBlocks);
+            IVertexBuilder buffer = bufferSource.getBuffer(overlayRenderType);
+
+            MatrixStack matrixStack = event.getMatrixStack();
+            matrixStack.push();
+            matrixStack.translate(-projectedView.x, -projectedView.y, -projectedView.z);
+
+            RenderSystem.disableCull();
+            if (visibleThroughBlocks) {
+                RenderSystem.disableDepthTest();
+            }
+
+            for (StructurePieceContainer container : trackedStructurePieces) {
+                DrawHelper.drawFilledBoundingBox(matrixStack, buffer, container.getBb(), DrawHelper.withChangedAlpha(getStructureColor(container.getStructureName()), 0x33));
+            }
+
+            bufferSource.finish(overlayRenderType);
+
+            RenderSystem.enableCull();
+            if (visibleThroughBlocks) {
+                RenderSystem.enableDepthTest();
+            }
+
+            matrixStack.pop();
         }
 
         public void onChunkUnload(ChunkEvent.Unload event) {

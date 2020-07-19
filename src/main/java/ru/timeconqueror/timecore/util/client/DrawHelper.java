@@ -1,13 +1,17 @@
 package ru.timeconqueror.timecore.util.client;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.BufferBuilder;
+import net.minecraft.client.renderer.Matrix4f;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.math.AxisAlignedBB;
 import org.lwjgl.opengl.GL11;
+import ru.timeconqueror.timecore.api.util.Requirements;
 
+//FIXME change rendering of rectangles, get rid of tessellator and buffer builder
 public class DrawHelper {
     public static Tessellator tessellator = Tessellator.getInstance();
     public static BufferBuilder bufferBuilder = tessellator.getBuffer();
@@ -301,16 +305,65 @@ public class DrawHelper {
     }
 
     /**
-     * Adds filled bounding box render to buffer builder, which can be drawn later via {@link Tessellator#draw()}
-     * <p>
-     * Provided builder should have {@link DefaultVertexFormats#POSITION_COLOR} mode and .
+     * Returns color with changed alpha
+     *
+     * @param alpha should be in range from 0 to 255.
      */
-    public static void buildFilledBoundingBox(BufferBuilder builder, AxisAlignedBB bb, int argbColor) {
+    public static int withChangedAlpha(int argb, int alpha) {
+        Requirements.inRangeInclusive(alpha, 0, 255);
+        argb &= 0x00FFFFFF;
+        return argb | alpha << 24;
+    }
+
+    /**
+     * Adds filled bounding box to render buffer.
+     * <p>
+     * Provided builder should have {@link DefaultVertexFormats#POSITION_COLOR} mode and {@link GL11#GL_QUADS} render type.
+     */
+    public static void drawFilledBoundingBox(MatrixStack matrixStack, IVertexBuilder builder, AxisAlignedBB bb, int argbColor) {
         float red = getRed(argbColor) / 255F;
         float green = getGreen(argbColor) / 255F;
         float blue = getBlue(argbColor) / 255F;
         float alpha = getAlpha(argbColor) / 255F;
-        WorldRenderer.addChainedFilledBoxVertices(builder, bb.minX, bb.minY, bb.minZ, bb.maxX, bb.maxY, bb.maxZ, red, green, blue, alpha);
+
+        float minX = (float) bb.minX;
+        float minY = (float) bb.minY;
+        float minZ = (float) bb.minZ;
+        float maxX = (float) bb.maxX;
+        float maxY = (float) bb.maxY;
+        float maxZ = (float) bb.maxZ;
+
+        Matrix4f matrix = matrixStack.getLast().getMatrix();
+
+        builder.pos(matrix, minX, maxY, minZ).color(red, green, blue, alpha).endVertex();//4
+        builder.pos(matrix, maxX, maxY, minZ).color(red, green, blue, alpha).endVertex();//3
+        builder.pos(matrix, maxX, minY, minZ).color(red, green, blue, alpha).endVertex();//2
+        builder.pos(matrix, minX, minY, minZ).color(red, green, blue, alpha).endVertex();//1
+
+        builder.pos(matrix, maxX, maxY, minZ).color(red, green, blue, alpha).endVertex();//3
+        builder.pos(matrix, maxX, maxY, maxZ).color(red, green, blue, alpha).endVertex();//7
+        builder.pos(matrix, maxX, minY, maxZ).color(red, green, blue, alpha).endVertex();//6
+        builder.pos(matrix, maxX, minY, minZ).color(red, green, blue, alpha).endVertex();//2
+
+        builder.pos(matrix, minX, maxY, minZ).color(red, green, blue, alpha).endVertex();//4
+        builder.pos(matrix, minX, minY, minZ).color(red, green, blue, alpha).endVertex();//1
+        builder.pos(matrix, minX, minY, maxZ).color(red, green, blue, alpha).endVertex();//5
+        builder.pos(matrix, minX, maxY, maxZ).color(red, green, blue, alpha).endVertex();//8
+
+        builder.pos(matrix, minX, minY, maxZ).color(red, green, blue, alpha).endVertex();//5
+        builder.pos(matrix, minX, minY, minZ).color(red, green, blue, alpha).endVertex();//1
+        builder.pos(matrix, maxX, minY, minZ).color(red, green, blue, alpha).endVertex();//2
+        builder.pos(matrix, maxX, minY, maxZ).color(red, green, blue, alpha).endVertex();//6
+
+        builder.pos(matrix, maxX, maxY, minZ).color(red, green, blue, alpha).endVertex();//3
+        builder.pos(matrix, minX, maxY, minZ).color(red, green, blue, alpha).endVertex();//4
+        builder.pos(matrix, minX, maxY, maxZ).color(red, green, blue, alpha).endVertex();//8
+        builder.pos(matrix, maxX, maxY, maxZ).color(red, green, blue, alpha).endVertex();//7
+
+        builder.pos(matrix, minX, maxY, maxZ).color(red, green, blue, alpha).endVertex();//8
+        builder.pos(matrix, minX, minY, maxZ).color(red, green, blue, alpha).endVertex();//5
+        builder.pos(matrix, maxX, minY, maxZ).color(red, green, blue, alpha).endVertex();//6
+        builder.pos(matrix, maxX, maxY, maxZ).color(red, green, blue, alpha).endVertex();//7
     }
 
     public static class TexturedRect {

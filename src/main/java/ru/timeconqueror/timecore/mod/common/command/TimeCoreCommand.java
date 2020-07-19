@@ -12,7 +12,7 @@ public class TimeCoreCommand {
     }
 
     public static void registerClient(CommandDispatcher<CommandSource> dispatcher) {
-        LiteralCommandNode<CommandSource> tcCommand = dispatcher.register(Commands.literal("timecore").then(StructureRevealerSubCommand.ClientSubCommand.register()));
-        dispatcher.register(Commands.literal("tc").redirect(tcCommand));
+        LiteralCommandNode<CommandSource> tcCommand = dispatcher.register(Commands.literal("timecore_client").then(StructureRevealerSubCommand.ClientSubCommand.register()));
+        dispatcher.register(Commands.literal("tc_c").redirect(tcCommand));
     }
 }

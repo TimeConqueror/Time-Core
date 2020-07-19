@@ -13,13 +13,13 @@ import ru.timeconqueror.timecore.registry.TimeAutoRegistrable;
 @Mod.EventBusSubscriber
 public class CommandRegistrar {
     @SubscribeEvent
-    public static void register(FMLServerStartingEvent event) {
+    public static void onServerStart(FMLServerStartingEvent event) {
         CommandDispatcher<CommandSource> commandDispatcher = event.getCommandDispatcher();
         TimeCoreCommand.register(commandDispatcher);
     }
 
-    @SubscribeEvent
-    public static void registerClient(FMLClientSetupEvent event) {
+    @SubscribeEvent//TODO move to client commands event
+    public static void onClient(FMLClientSetupEvent event) {
         CommandDispatcher<CommandSource> commandDispatcher = ClientCommandManager.getClientDispatcher();
         TimeCoreCommand.registerClient(commandDispatcher);
     }
