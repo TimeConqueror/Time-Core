@@ -14,6 +14,6 @@ public class TileEntityDeferredRegistryExample {
     private static final DeferredTileEntityRegister REGISTER = new DeferredTileEntityRegister(TimeCore.MODID);
 
     public static RegistryObject<TileEntityType<DummyTileEntity>> TEST_TE_TYPE = REGISTER.regTileEntityType("test_tile", DummyTileEntity::new, () -> new Block[]{BlockCommonRegistryExample.TEST_BLOCK_WITH_TILE})
-            .regCustomRenderer(DummyTileEntityRenderer::new)
+            .regCustomRenderer(() -> DummyTileEntityRenderer::new)
             .endTyped();
 }

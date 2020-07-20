@@ -31,8 +31,8 @@ public class DeferredTileEntityRegister extends DeferredFMLImplForgeRegister<Til
             super(name, sup);
         }
 
-        public TileEntityRegistrator<T> regCustomRenderer(Function<? super TileEntityRendererDispatcher, ? extends TileEntityRenderer<? super T>> rendererFactory) {
-            runTaskOnClientSetup(() -> ClientRegistry.bindTileEntityRenderer(endTyped().get(), rendererFactory));
+        public TileEntityRegistrator<T> regCustomRenderer(Supplier<Function<? super TileEntityRendererDispatcher, ? extends TileEntityRenderer<? super T>>> rendererFactory) {
+            runTaskOnClientSetup(() -> ClientRegistry.bindTileEntityRenderer(endTyped().get(), rendererFactory.get()));
             return this;
         }
 
