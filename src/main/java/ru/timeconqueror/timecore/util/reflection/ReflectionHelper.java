@@ -189,11 +189,28 @@ public class ReflectionHelper {
         return null;
     }
 
+    /**
+     * Loads provided class. (so it calls static initializer)
+     *
+     * @param clazz class to be loaded.
+     * @throws RuntimeException if class isn't found
+     */
+    public static void initClass(Class<?> clazz) {
+        initClass(clazz.getName());
+    }
+
+    /**
+     * Loads class with provided name. (so it calls static initializer)
+     *
+     * @param className full name of class to be loaded
+     * @throws RuntimeException if class isn't found
+     */
     public static void initClass(String className) {
         try {
             Class.forName(className);
         } catch (ClassNotFoundException e) {
-            TimeCore.LOGGER.error("Can't load class" + className + ", because it wasn't found");
+            TimeCore.LOGGER.error("Can't load class" + className + ", because it is't found");
+            throw new RuntimeException();
         }
     }
 }

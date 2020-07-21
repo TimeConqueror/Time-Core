@@ -4,6 +4,7 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.client.renderer.ActiveRenderInfo;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.RenderType;
@@ -20,17 +21,23 @@ import ru.timeconqueror.timecore.client.render.TimeRenderType;
 import ru.timeconqueror.timecore.mod.mixins.accessor.client.ViewDistanceProvider;
 import ru.timeconqueror.timecore.util.client.DrawHelper;
 
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 
 public class StructureRenderer {
     private final Set<StructurePieceContainer> trackedStructurePieces = new HashSet<>();
-    private final HashMap<ResourceLocation, Integer> structureColorMap = new HashMap<>();
-    private boolean visibleThroughBlocks = false;
 
-    //TODO add multidim support
+    private final Map<ResourceLocation, Integer> structureColorMap;
+    private boolean visibleThroughBlocks;
+
+    public StructureRenderer() {
+        RevealerDataSaver.ClientSettings clientSettings = new RevealerDataSaver().restoreOnClient();
+        structureColorMap = clientSettings.getStructureColorMap();
+        visibleThroughBlocks = clientSettings.isVisibleThroughBlocks();
+    }
+
     public void onWorldRender(RenderWorldLastEvent event) {
         ActiveRenderInfo activeRenderInfo = Minecraft.getInstance().gameRenderer.getActiveRenderInfo();
         Vec3d projectedView = activeRenderInfo.getProjectedView();
@@ -49,16 +56,22 @@ public class StructureRenderer {
             RenderSystem.disableDepthTest();
         }
 
-        PlayerEntity player = Minecraft.getInstance().player;
-        int viewDistance = ((ViewDistanceProvider) Minecraft.getInstance().player.connection).getViewDistance() * 16;
+        ClientPlayerEntity player = Minecraft.getInstance().player;
+        int currentDimension = player.world.getDimension().getType().getId();
+        int viewDistance = ((ViewDistanceProvider) player.connection).getViewDistance() * 16 + 2 * 16 /*slight offset to not delete the structure info instantly*/;
         int viewDistanceSq = viewDistance * viewDistance;
 
         for (Iterator<StructurePieceContainer> iterator = trackedStructurePieces.iterator(); iterator.hasNext(); ) {
             StructurePieceContainer container = iterator.next();
 
+            if (container.getDimension() != currentDimension) {
+                iterator.remove();
+                continue;
+            }
+
             double shortestDistanceSq = getShortestDistanceSq(player, container.getBb());
             if (shortestDistanceSq > viewDistanceSq) {
-                iterator.remove();//auto deletion
+                iterator.remove();
             } else {
                 DrawHelper.drawFilledBoundingBox(matrixStack, buffer, container.getBb(), DrawHelper.withChangedAlpha(getStructureColor(container.getStructureName()), 0x33));
             }
@@ -74,20 +87,34 @@ public class StructureRenderer {
         matrixStack.pop();
     }
 
-    public void trackStructurePiece(ResourceLocation structureName, AxisAlignedBB bb) {
-        trackedStructurePieces.add(new StructurePieceContainer(structureName, bb));
+    public void trackStructurePiece(ResourceLocation structureName, AxisAlignedBB bb, int dimension) {
+        trackedStructurePieces.add(new StructurePieceContainer(structureName, bb, dimension));
     }
 
     public void setVisibleThroughBlocks(boolean visibleThroughBlocks) {
         this.visibleThroughBlocks = visibleThroughBlocks;
+        save();
     }
 
     public void setStructureColor(ResourceLocation structureName, int color) {
         structureColorMap.put(structureName, DrawHelper.opaquefy(color));
+        save();
     }
 
     private int getStructureColor(ResourceLocation structureName) {
-        return structureColorMap.computeIfAbsent(structureName, resourceLocation -> DrawHelper.opaquefy(RandHelper.RAND.nextInt()));
+        Integer color = structureColorMap.get(structureName);
+        if (color == null) {
+            color = DrawHelper.opaquefy(RandHelper.RAND.nextInt());
+            structureColorMap.put(structureName, color);
+
+            save();
+        }
+
+        return color;
+    }
+
+    private void save() {
+        new RevealerDataSaver().saveOnClient(new RevealerDataSaver.ClientSettings(structureColorMap, visibleThroughBlocks));
     }
 
     public void onClientLogin(ClientPlayerNetworkEvent.LoggedInEvent event) {

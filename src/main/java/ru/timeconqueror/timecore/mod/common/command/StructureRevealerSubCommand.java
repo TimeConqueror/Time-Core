@@ -14,7 +14,6 @@ import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.gen.feature.structure.Structure;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ru.timeconqueror.timecore.TimeCore;
 import ru.timeconqueror.timecore.common.command.argument.StructureArgument;
@@ -23,6 +22,8 @@ import ru.timeconqueror.timecore.devtools.StructureRevealer;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 public class StructureRevealerSubCommand {
@@ -60,58 +61,57 @@ public class StructureRevealerSubCommand {
     }
 
     private static int subscribe(CommandSource source, Collection<ServerPlayerEntity> players, Structure<?> structure) throws CommandSyntaxException {
-        StructureRevealer instance = checkRevealerActiveness();
+        doForRevealer(revealer -> {
+            for (ServerPlayerEntity player : players) {
+                revealer.subscribePlayerToStructure(player, structure);
+            }
 
-        for (ServerPlayerEntity player : players) {
-            instance.subscribePlayerToStructure(player, structure);
-        }
+            source.sendFeedback(new TranslationTextComponent(TimeCore.LANG_RESOLVER.commandKey("structure_revealer.subscribe.success"), players.stream().map(player -> player.getName().getString()).collect(Collectors.joining(",")), structure.getStructureName()), true);
 
-        source.sendFeedback(new TranslationTextComponent(TimeCore.LANG_RESOLVER.commandKey("structure_revealer.subscribe.success"), players.stream().map(player -> player.getName().getString()).collect(Collectors.joining(",")), structure.getStructureName()), true);
+        });
 
         return 1;
     }
 
     private static int unsubscribe(CommandSource source, Collection<ServerPlayerEntity> players, @Nullable Structure<?> structure) throws CommandSyntaxException {
-        StructureRevealer instance = checkRevealerActiveness();
-
-        if (structure == null) {
-            for (ServerPlayerEntity player : players) {
-                instance.unsubscribePlayerFromAllStructures(player);
+        doForRevealer(revealer -> {
+            if (structure == null) {
+                for (ServerPlayerEntity player : players) {
+                    revealer.unsubscribePlayerFromAllStructures(player);
+                }
+            } else {
+                for (ServerPlayerEntity player : players) {
+                    revealer.unsubscribePlayerFromStructure(player, structure);
+                }
             }
-        } else {
-            for (ServerPlayerEntity player : players) {
-                instance.unsubscribePlayerFromStructure(player, structure);
-            }
-        }
 
-        source.sendFeedback(new TranslationTextComponent(TimeCore.LANG_RESOLVER.commandKey("structure_revealer.unsubscribe.success")), true);
+            source.sendFeedback(new TranslationTextComponent(TimeCore.LANG_RESOLVER.commandKey("structure_revealer.unsubscribe.success")), true);
+        });
 
         return 1;
     }
 
     private static int getSubscriptions(ServerPlayerEntity player, CommandSource source) throws CommandSyntaxException {
-        StructureRevealer instance = checkRevealerActiveness();
+        doForRevealer(revealer -> {
+            List<ResourceLocation> subscriptions = revealer.getSubscriptions(player);
 
-        List<ResourceLocation> subscriptions = instance.getSubscriptions(player);
+            String listOut = subscriptions.stream()
+                    .map(ResourceLocation::toString)
+                    .collect(Collectors.joining(","));
 
-        String listOut = subscriptions.stream()
-                .map(ResourceLocation::toString)
-                .collect(Collectors.joining(","));
-
-        source.sendFeedback(new TranslationTextComponent("cmd." + TimeCore.MODID + ".structure_revealer.list", player).applyTextStyle(TextFormatting.AQUA)
-                .appendSibling(new StringTextComponent("\n"))
-                .appendSibling(new StringTextComponent(listOut)), false);
+            source.sendFeedback(new TranslationTextComponent("cmd." + TimeCore.MODID + ".structure_revealer.list", player).applyTextStyle(TextFormatting.AQUA)
+                    .appendSibling(new StringTextComponent("\n"))
+                    .appendSibling(new StringTextComponent(listOut)), false);
+        });
 
         return 1;
     }
 
-    @NotNull
-    private static StructureRevealer checkRevealerActiveness() throws CommandSyntaxException {
-        if (StructureRevealer.getInstance() == null) {
-            throw REVEALER_DEACTIVATED.create();
-        }
+    private static void doForRevealer(Consumer<StructureRevealer> action) throws CommandSyntaxException {
+        Optional<StructureRevealer> instance = StructureRevealer.getInstance();
 
-        return StructureRevealer.getInstance();
+        instance.ifPresent(action);
+        instance.orElseThrow(REVEALER_DEACTIVATED::create);
     }
 
     public static class ClientSubCommand {
@@ -135,14 +135,12 @@ public class StructureRevealerSubCommand {
         }
 
         public static int setStructureColor(Structure<?> structure, TextFormatting color) throws CommandSyntaxException {
-            StructureRevealer structureRevealer = checkRevealerActiveness();
-            structureRevealer.structureRenderer.setStructureColor(structure.getRegistryName(), color.getColor());
+            doForRevealer(revealer -> revealer.structureRenderer.setStructureColor(structure.getRegistryName(), color.getColor()));
             return -1;
         }
 
         public static int setVisibleThroughBlocks(boolean isVisibleThroughBlocks) throws CommandSyntaxException {
-            StructureRevealer structureRevealer = checkRevealerActiveness();
-            structureRevealer.structureRenderer.setVisibleThroughBlocks(isVisibleThroughBlocks);
+            doForRevealer(revealer -> revealer.structureRenderer.setVisibleThroughBlocks(isVisibleThroughBlocks));
 
             return -1;
         }

@@ -13,7 +13,9 @@ import org.apache.logging.log4j.Logger;
 import ru.timeconqueror.timecore.api.TimeMod;
 import ru.timeconqueror.timecore.api.datagen.DataGen;
 import ru.timeconqueror.timecore.client.resource.TimePackFinder;
+import ru.timeconqueror.timecore.devtools.StructureRevealer;
 import ru.timeconqueror.timecore.util.I18nResolver;
+import ru.timeconqueror.timecore.util.reflection.ReflectionHelper;
 
 @Mod(TimeCore.MODID)
 public final class TimeCore extends TimeMod {
@@ -40,6 +42,7 @@ public final class TimeCore extends TimeMod {
     }
 
     private void setup(final FMLCommonSetupEvent event) {
+        ReflectionHelper.initClass(StructureRevealer.class);
     }
 
     private void doClientStuff(final FMLClientSetupEvent event) {

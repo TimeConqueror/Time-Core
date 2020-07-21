@@ -6,18 +6,22 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
+import ru.timeconqueror.timecore.TimeCore;
 import ru.timeconqueror.timecore.api.common.packet.ITimePacket;
 import ru.timeconqueror.timecore.devtools.StructureRevealer;
 
+import java.util.Optional;
 import java.util.function.Supplier;
 
-public class StructureRevealingS2CPacket implements ITimePacket {
+public class S2CStructureRevealing implements ITimePacket {
     private final AxisAlignedBB bb;
     private final ResourceLocation structureName;
+    private final int dimension;
 
-    public StructureRevealingS2CPacket(AxisAlignedBB bb, ResourceLocation structureName) {
+    public S2CStructureRevealing(AxisAlignedBB bb, ResourceLocation structureName, int dimension) {
         this.bb = bb;
         this.structureName = structureName;
+        this.dimension = dimension;
     }
 
     @Override
@@ -25,7 +29,7 @@ public class StructureRevealingS2CPacket implements ITimePacket {
         return LogicalSide.CLIENT;
     }
 
-    public static class PacketHandler implements ITimePacketHandler<StructureRevealingS2CPacket> {
+    public static class PacketHandler implements ITimePacketHandler<S2CStructureRevealing> {
 
         public static void encodeAABB(AxisAlignedBB boundingBox, PacketBuffer bufferTo) {
             bufferTo.writeDouble(boundingBox.minX);
@@ -48,21 +52,24 @@ public class StructureRevealingS2CPacket implements ITimePacket {
         }
 
         @Override
-        public void encode(StructureRevealingS2CPacket packet, PacketBuffer buffer) {
+        public void encode(S2CStructureRevealing packet, PacketBuffer buffer) {
             encodeAABB(packet.bb, buffer);
             buffer.writeResourceLocation(packet.structureName);
+            buffer.writeInt(packet.dimension);
         }
 
         @Override
-        public @NotNull StructureRevealingS2CPacket decode(PacketBuffer buffer) {
-            return new StructureRevealingS2CPacket(decodeAABB(buffer), buffer.readResourceLocation());
+        public @NotNull S2CStructureRevealing decode(PacketBuffer buffer) {
+            return new S2CStructureRevealing(decodeAABB(buffer), buffer.readResourceLocation(), buffer.readInt());
         }
 
         @Override
-        public void onPacketReceived(StructureRevealingS2CPacket packet, Supplier<NetworkEvent.Context> contextSupplier) {
-            StructureRevealer instance = StructureRevealer.getInstance();
-            if (instance != null && instance.structureRenderer != null) {
-                instance.structureRenderer.trackStructurePiece(packet.structureName, packet.bb);
+        public void onPacketReceived(S2CStructureRevealing packet, Supplier<NetworkEvent.Context> contextSupplier) {
+            Optional<StructureRevealer> instance = StructureRevealer.getInstance();
+            if (instance.isPresent()) {
+                instance.get().structureRenderer.trackStructurePiece(packet.structureName, packet.bb, packet.dimension);
+            } else {
+                TimeCore.LOGGER.warn("Server has sent you a structure revealing packet, but structure revealer is turned off on client!");
             }
         }
     }

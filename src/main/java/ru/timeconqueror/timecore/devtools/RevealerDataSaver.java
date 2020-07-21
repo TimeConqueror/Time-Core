@@ -9,51 +9,92 @@ import net.minecraft.nbt.StringNBT;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.gen.feature.structure.Structure;
 import net.minecraftforge.registries.ForgeRegistries;
+import org.jetbrains.annotations.Nullable;
 import ru.timeconqueror.timecore.util.EnvironmentUtils;
 import ru.timeconqueror.timecore.util.FileUtils;
 import ru.timeconqueror.timecore.util.ObjectUtils;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Path;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 public class RevealerDataSaver {
-    private static final String SAVE_PATH = "TimeCore/debug/structures.nbt";
+    private static final String SERVER_SAVE_FILE = "TimeCore/debug/structure_revealer.nbt";
+    private static final String CLIENT_SAVE_FILE = "TimeCore/debug/structure_revealer.nbt";
 
-    void save(Multimap<UUID, Structure<?>> subscribedStructures) {
-        File saveFile = getPathToFile();
+    void saveOnServer(Multimap<UUID, Structure<?>> subscribedStructures) {
+        File saveFile = getServerPathToFile();
+        saveNBTToFile(serializeStructureInfo(subscribedStructures), saveFile);
+    }
 
-        ObjectUtils.runWithCatching(IOException.class, () -> {
-            FileUtils.prepareFileForWrite(saveFile);
+    void saveOnClient(ClientSettings clientSettings) {
+        File saveFile = geClientPathToFile();
+        saveNBTToFile(serializeClientSettings(clientSettings), saveFile);
+    }
 
-            CompoundNBT serialized = serialize(subscribedStructures);
+    ClientSettings restoreOnClient() {
+        File saveFile = geClientPathToFile();
 
-            CompressedStreamTools.write(serialized, saveFile);
+        CompoundNBT compoundNBT = restoreNBT(saveFile);
+
+        if (compoundNBT == null) {
+            return new ClientSettings(new HashMap<>(), false);
+        } else {
+            return deserializeClientSettings(compoundNBT);
+        }
+    }
+
+    Multimap<UUID, Structure<?>> restoreOnServer() {
+        File saveFile = getServerPathToFile();
+
+        CompoundNBT nbt = restoreNBT(saveFile);
+
+        if (nbt == null) {
+            return ArrayListMultimap.create();
+        } else {
+            return deserializeStructureInfo(nbt);
+        }
+    }
+
+    private File getServerPathToFile() {
+        return EnvironmentUtils.getWorldSaveDir().resolve(SERVER_SAVE_FILE).toFile();
+    }
+
+    private File geClientPathToFile() {
+        return EnvironmentUtils.getConfigDir().resolve(CLIENT_SAVE_FILE).toFile();
+    }
+
+    private CompoundNBT serializeClientSettings(ClientSettings clientSettings) {
+        Map<ResourceLocation, Integer> structureColorMap = clientSettings.structureColorMap;
+        boolean visibleThroughBlocks = clientSettings.visibleThroughBlocks;
+
+        CompoundNBT out = new CompoundNBT();
+
+        CompoundNBT structureMapNBT = new CompoundNBT();
+        structureColorMap.forEach((structureName, color) -> {
+            structureMapNBT.putInt(structureName.toString(), color);
         });
+
+        out.put("structure_colors", structureMapNBT);
+        out.putBoolean("visible_through_blocks", visibleThroughBlocks);
+
+        return out;
     }
 
-    Multimap<UUID, Structure<?>> restore() {
-        File saveFile = getPathToFile();
+    private ClientSettings deserializeClientSettings(CompoundNBT in) {
+        CompoundNBT structureMapNBT = in.getCompound("structure_colors");
+        Map<ResourceLocation, Integer> structureColorMap = new HashMap<>(structureMapNBT.size());
+        structureMapNBT.keySet().forEach(key -> structureColorMap.put(new ResourceLocation(key), structureMapNBT.getInt(key)));
 
-        return ObjectUtils.getWithCatching(IOException.class, () -> {
-            CompoundNBT nbt = CompressedStreamTools.read(saveFile);
+        boolean visibleThroughBlocks = in.getBoolean("visible_through_blocks");
 
-            if (nbt == null) {
-                return ArrayListMultimap.create();
-            } else {
-                return deserialize(nbt);
-            }
-        });
+        return new ClientSettings(structureColorMap, visibleThroughBlocks);
     }
 
-    private File getPathToFile() {
-        Path worldSaveDir = EnvironmentUtils.getWorldSaveDir();
-        return worldSaveDir.resolve(SAVE_PATH).toFile();
-    }
-
-    private CompoundNBT serialize(Multimap<UUID, Structure<?>> subscribedStructures) {
+    private CompoundNBT serializeStructureInfo(Multimap<UUID, Structure<?>> subscribedStructures) {
         CompoundNBT out = new CompoundNBT();
 
         subscribedStructures.keys().forEach(uuid -> {
@@ -74,7 +115,7 @@ public class RevealerDataSaver {
         return out;
     }
 
-    private Multimap<UUID, Structure<?>> deserialize(CompoundNBT in) {
+    private Multimap<UUID, Structure<?>> deserializeStructureInfo(CompoundNBT in) {
         Multimap<UUID, Structure<?>> out = ArrayListMultimap.create();
 
         for (String uuidString : in.keySet()) {
@@ -90,5 +131,35 @@ public class RevealerDataSaver {
         }
 
         return out;
+    }
+
+    private void saveNBTToFile(CompoundNBT compoundNBT, File saveFile) {
+        ObjectUtils.runWithCatching(IOException.class, () -> {
+            FileUtils.prepareFileForWrite(saveFile);
+            CompressedStreamTools.write(compoundNBT, saveFile);
+        });
+    }
+
+    @Nullable
+    private CompoundNBT restoreNBT(File saveFile) {
+        return ObjectUtils.getWithCatching(IOException.class, () -> CompressedStreamTools.read(saveFile));
+    }
+
+    public static class ClientSettings {
+        private final Map<ResourceLocation, Integer> structureColorMap;
+        private final boolean visibleThroughBlocks;
+
+        public ClientSettings(Map<ResourceLocation, Integer> structureColorMap, boolean visibleThroughBlocks) {
+            this.structureColorMap = structureColorMap;
+            this.visibleThroughBlocks = visibleThroughBlocks;
+        }
+
+        public Map<ResourceLocation, Integer> getStructureColorMap() {
+            return structureColorMap;
+        }
+
+        public boolean isVisibleThroughBlocks() {
+            return visibleThroughBlocks;
+        }
     }
 }

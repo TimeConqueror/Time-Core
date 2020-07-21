@@ -3,6 +3,7 @@ package ru.timeconqueror.timecore.util;
 import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.loading.FMLEnvironment;
+import net.minecraftforge.fml.loading.FMLPaths;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
 
 import java.nio.file.Path;
@@ -24,10 +25,6 @@ public class EnvironmentUtils {
         return true;//FIXME
     }
 
-    public static void runIfInDataMode(Runnable runnable) {//FIXME
-        runnable.run();
-    }
-
     public static Path getWorldSaveDir() {
         MinecraftServer server = ServerLifecycleHooks.getCurrentServer();
         if (server == null) {
@@ -35,5 +32,9 @@ public class EnvironmentUtils {
         }
 
         return server.getActiveAnvilConverter().getFile(server.getFolderName(), "").toPath();
+    }
+
+    public static Path getConfigDir() {
+        return FMLPaths.CONFIGDIR.get();
     }
 }
