@@ -8,10 +8,11 @@
   "mixins": [
     "MixinDirectoryCache",
     "MixinFMLModContainer",
+    "accessor.StructureAccessor",
     "config.MixinConfigValue"
   ],
   "client": [
-    "client.ViewDistanceProvider",
+    "accessor.client.ViewDistanceProvider",
     "client.command.ClientPlayerEntityMixin",
     "client.command.ClientPlayNetHandlerMixin"
   ]

@@ -22,8 +22,7 @@ import net.minecraftforge.fml.network.PacketDistributor;
 import ru.timeconqueror.timecore.mod.common.config.MainConfig;
 import ru.timeconqueror.timecore.mod.common.packet.InternalPacketManager;
 import ru.timeconqueror.timecore.mod.common.packet.StructureRevealingS2CPacket;
-import ru.timeconqueror.timecore.util.reflection.ReflectionHelper;
-import ru.timeconqueror.timecore.util.reflection.UnlockedMethod;
+import ru.timeconqueror.timecore.mod.mixins.accessor.StructureAccessor;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -33,7 +32,6 @@ import java.util.UUID;
 @Mod.EventBusSubscriber
 public class StructureRevealer {
     private static final Lazy<StructureRevealer> INSTANCE = Lazy.of(() -> MainConfig.INSTANCE.areDevFeaturesEnabled() ? new StructureRevealer() : null);
-    private static final UnlockedMethod<List<StructureStart>> M_GET_STARTS = ReflectionHelper.findObfMethod(Structure.class, "func_202371_a"/*getStarts*/, IWorld.class, int.class, int.class);
 
     /**
      * Structure renderer. Can be accessible only on client side. Will be null on dedicated server.
@@ -111,7 +109,7 @@ public class StructureRevealer {
 
             Collection<Structure<?>> structures = subscribedStructures.get(player.getUniqueID());
             for (Structure<?> structure : structures) {
-                List<StructureStart> starts = M_GET_STARTS.invoke(structure, world, pos.x, pos.z);
+                List<StructureStart> starts = ((StructureAccessor) structure).getStarts(world, pos.x, pos.z);
 
                 for (StructureStart start : starts) {
                     synchronized (start.getComponents()) {

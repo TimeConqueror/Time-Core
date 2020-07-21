@@ -14,9 +14,10 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
+import ru.timeconqueror.timecore.api.util.MathUtils;
 import ru.timeconqueror.timecore.api.util.RandHelper;
 import ru.timeconqueror.timecore.client.render.TimeRenderType;
-import ru.timeconqueror.timecore.mod.mixins.client.ViewDistanceProvider;
+import ru.timeconqueror.timecore.mod.mixins.accessor.client.ViewDistanceProvider;
 import ru.timeconqueror.timecore.util.client.DrawHelper;
 
 import java.util.HashMap;
@@ -49,7 +50,7 @@ public class StructureRenderer {
         }
 
         PlayerEntity player = Minecraft.getInstance().player;
-        int viewDistance = ((ViewDistanceProvider) Minecraft.getInstance().player.connection).getViewDistance();
+        int viewDistance = ((ViewDistanceProvider) Minecraft.getInstance().player.connection).getViewDistance() * 16;
         int viewDistanceSq = viewDistance * viewDistance;
 
         for (Iterator<StructurePieceContainer> iterator = trackedStructurePieces.iterator(); iterator.hasNext(); ) {
@@ -94,22 +95,10 @@ public class StructureRenderer {
     }
 
     private double getShortestDistanceSq(PlayerEntity player, AxisAlignedBB bb) {
-        double[] distancesSq = {
-                player.getDistanceSq(bb.minX, bb.minY, bb.minZ),//1 minX, minY, minZ
-                player.getDistanceSq(bb.maxX, bb.minY, bb.minZ),//2 maxX, minY, minZ
-                player.getDistanceSq(bb.maxX, bb.maxY, bb.minZ),//3 maxX, maxY, minZ
-                player.getDistanceSq(bb.minX, bb.maxY, bb.minZ),//4 minX, maxY, minZ
-                player.getDistanceSq(bb.minX, bb.minY, bb.maxZ),//5 minX, minY, maxZ
-                player.getDistanceSq(bb.maxX, bb.minY, bb.maxZ),//6 maxX, minY, maxZ
-                player.getDistanceSq(bb.maxX, bb.maxY, bb.maxZ),//7 maxX, maxY, maxZ
-                player.getDistanceSq(bb.minX, bb.maxY, bb.maxZ) //8 minX, maxY, maxZ
-        };
+        double x = MathUtils.coerceInRange(player.getPosX(), bb.minX, bb.maxX);
+        double y = MathUtils.coerceInRange(player.getPosY(), bb.minY, bb.maxY);
+        double z = MathUtils.coerceInRange(player.getPosZ(), bb.minZ, bb.maxZ);
 
-        double shortest = Integer.MAX_VALUE;
-        for (double v : distancesSq) {
-            if (v < shortest) shortest = v;
-        }
-
-        return shortest;
+        return player.getDistanceSq(x, y, z);
     }
 }
