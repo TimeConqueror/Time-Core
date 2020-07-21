@@ -21,7 +21,6 @@ public abstract class MixinConfigValue {
         comment += '\n' + addition;
     }
 
-
     public void i$setLangKey(String key) {
         this.langKey = key;
     }

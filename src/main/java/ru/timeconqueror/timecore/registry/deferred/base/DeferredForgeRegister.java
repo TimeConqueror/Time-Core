@@ -22,7 +22,7 @@ public abstract class DeferredForgeRegister<T extends IForgeRegistryEntry<T>> ex
     }
 
     protected void runTaskOnClientSetup(Runnable runnable) {
-        if (EnvironmentUtils.isOnClient()) {
+        if (EnvironmentUtils.isOnPhysicalClient()) {
             clientRunnables.add(runnable);
         }
     }

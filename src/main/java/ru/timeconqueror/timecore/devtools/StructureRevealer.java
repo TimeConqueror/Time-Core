@@ -1,45 +1,32 @@
 package ru.timeconqueror.timecore.devtools;
 
 import com.google.common.collect.ArrayListMultimap;
-import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.IVertexBuilder;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.ActiveRenderInfo;
-import net.minecraft.client.renderer.IRenderTypeBuffer;
-import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.RenderTypeBuffers;
+import com.google.common.collect.Multimap;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.ChunkPos;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.gen.feature.structure.Structure;
 import net.minecraft.world.gen.feature.structure.StructurePiece;
 import net.minecraft.world.gen.feature.structure.StructureStart;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.Lazy;
-import net.minecraftforge.event.world.ChunkEvent;
+import net.minecraftforge.event.world.ChunkWatchEvent;
+import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.fml.network.PacketDistributor;
-import org.jetbrains.annotations.Nullable;
-import ru.timeconqueror.timecore.api.util.RandHelper;
-import ru.timeconqueror.timecore.client.render.TimeRenderType;
 import ru.timeconqueror.timecore.mod.common.config.MainConfig;
 import ru.timeconqueror.timecore.mod.common.packet.InternalPacketManager;
 import ru.timeconqueror.timecore.mod.common.packet.StructureRevealingS2CPacket;
-import ru.timeconqueror.timecore.util.NetworkUtils;
-import ru.timeconqueror.timecore.util.client.DrawHelper;
 import ru.timeconqueror.timecore.util.reflection.ReflectionHelper;
 import ru.timeconqueror.timecore.util.reflection.UnlockedMethod;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
@@ -51,51 +38,87 @@ public class StructureRevealer {
     /**
      * Structure renderer. Can be accessible only on client side. Will be null on dedicated server.
      */
-    public final Renderer structureRenderer;
-    private final ArrayListMultimap<Structure<?>, UUID> subscribedStructures = ArrayListMultimap.create();
+    public final StructureRenderer structureRenderer;
+    private Multimap<UUID, Structure<?>> subscribedStructures = ArrayListMultimap.create();
 
     public StructureRevealer() {
         if (FMLEnvironment.dist == Dist.CLIENT) {
-            structureRenderer = new Renderer();
-            MinecraftForge.EVENT_BUS.addListener(structureRenderer::onWorldRender);//TODO move to FMLJavaModLoadingContext.get().getModEventBus()
-            MinecraftForge.EVENT_BUS.addListener(structureRenderer::onChunkUnload);//TODO move to FMLJavaModLoadingContext.get().getModEventBus()
+            structureRenderer = new StructureRenderer();
+            MinecraftForge.EVENT_BUS.addListener(structureRenderer::onWorldRender);
+            MinecraftForge.EVENT_BUS.addListener(structureRenderer::onClientLogin);
         } else {
             structureRenderer = null;
         }
     }
 
-    @SubscribeEvent
-    public static void onChunkLoadStatic(ChunkEvent.Load event) {
-        if (getInstance() != null && event.getWorld() != null && !event.getWorld().isRemote()) {
-            getInstance().onServerChunkLoad(event);
-        }
-    }
-
-    @Nullable
     public static StructureRevealer getInstance() {
         return INSTANCE.get();
     }
 
-    public void onServerChunkLoad(ChunkEvent.Load event) {
+    public void subscribePlayerToStructure(ServerPlayerEntity player, Structure<?> structure) {
+        if (!subscribedStructures.containsEntry(player.getUniqueID(), structure)) {
+            subscribedStructures.put(player.getUniqueID(), structure);
+            save();
+        }
+    }
+
+    public void unsubscribePlayerFromStructure(ServerPlayerEntity player, Structure<?> structure) {
+        subscribedStructures.remove(player.getUniqueID(), structure);
+        save();
+    }
+
+    public void unsubscribePlayerFromAllStructures(ServerPlayerEntity player) {
+        Collection<Structure<?>> structures = subscribedStructures.get(player.getUniqueID());
+        if (structures != null) {
+            structures.clear();
+
+            save();
+        }
+    }
+
+    public List<ResourceLocation> getSubscriptions(ServerPlayerEntity player) {
+        List<ResourceLocation> locations = new ArrayList<>();
+
+        subscribedStructures.get(player.getUniqueID()).forEach(structure -> locations.add(structure.getRegistryName()));
+
+        return locations;
+    }
+
+    @SubscribeEvent
+    public static void onChunkWatchStatic(ChunkWatchEvent.Watch event) {
+        if (canBeHandedOnServer(event.getWorld())) {
+            getInstance().onChunkWatch(event);
+        }
+    }
+
+    @SubscribeEvent
+    public static void onWorldLoad(WorldEvent.Load event) {
+        if (canBeHandedOnServer(event.getWorld())) {
+            getInstance().subscribedStructures = new RevealerDataSaver().restore();
+        }
+    }
+
+    private static boolean canBeHandedOnServer(IWorld world) {
+        return getInstance() != null && world != null && !world.isRemote();
+    }
+
+    private void onChunkWatch(ChunkWatchEvent.Watch event) {
         if (MainConfig.INSTANCE.areDevFeaturesEnabled()) {
             IWorld world = event.getWorld();
-            ChunkPos pos = event.getChunk().getPos();
+            ChunkPos pos = event.getPos();
 
-            for (Structure<?> structure : subscribedStructures.keySet()) {
-                List<UUID> players = subscribedStructures.get(structure);
+            ServerPlayerEntity player = event.getPlayer();
 
-                if (!players.isEmpty()) {
-                    List<StructureStart> starts = M_GET_STARTS.invoke(structure, world, pos.x, pos.z);
+            Collection<Structure<?>> structures = subscribedStructures.get(player.getUniqueID());
+            for (Structure<?> structure : structures) {
+                List<StructureStart> starts = M_GET_STARTS.invoke(structure, world, pos.x, pos.z);
 
-                    for (StructureStart start : starts) {
-                        synchronized (start.getComponents()) {
-                            for (StructurePiece component : start.getComponents()) {
-                                AxisAlignedBB boundingBox = AxisAlignedBB.toImmutable(component.getBoundingBox());
-                                for (UUID uuid : players) {
-                                    NetworkUtils.getPlayer(uuid).ifPresent(player ->
-                                            InternalPacketManager.INSTANCE.send(PacketDistributor.PLAYER.with(() -> player), new StructureRevealingS2CPacket(boundingBox, structure.getRegistryName())));
-                                }
-                            }
+                for (StructureStart start : starts) {
+                    synchronized (start.getComponents()) {
+                        for (StructurePiece component : start.getComponents()) {
+                            AxisAlignedBB boundingBox = AxisAlignedBB.toImmutable(component.getBoundingBox());
+
+                            InternalPacketManager.INSTANCE.send(PacketDistributor.PLAYER.with(() -> player), new StructureRevealingS2CPacket(boundingBox, structure.getRegistryName()));
                         }
                     }
                 }
@@ -103,103 +126,7 @@ public class StructureRevealer {
         }
     }
 
-    public void subscribePlayerToStructure(ServerPlayerEntity player, Structure<?> structure) {
-        if (!subscribedStructures.containsEntry(structure, player.getUniqueID())) {
-            subscribedStructures.put(structure, player.getUniqueID());
-        }
-    }
-
-    public void unsubscribePlayerFromStructure(ServerPlayerEntity player, Structure<?> structure) {
-        subscribedStructures.remove(structure, player.getUniqueID());
-    }
-
-    public void unsubscribePlayerFromAllStructures(ServerPlayerEntity player) {
-        for (Structure<?> structure : subscribedStructures.keySet()) {
-            List<UUID> subscribedPlayers = subscribedStructures.get(structure);
-            subscribedPlayers.removeIf(uuid -> uuid.equals(player.getUniqueID()));
-        }
-    }
-
-    public List<ResourceLocation> getSubscriptions(ServerPlayerEntity player) {
-        List<ResourceLocation> structures = new ArrayList<>();
-
-        for (Structure<?> structure : subscribedStructures.keySet()) {
-            List<UUID> subscribedPlayers = subscribedStructures.get(structure);
-            if (subscribedPlayers.contains(player.getUniqueID())) {
-                structures.add(structure.getRegistryName());
-            }
-        }
-
-        return structures;
-    }
-
-    public static class Renderer {
-        private final List<StructurePieceContainer> trackedStructurePieces = new ArrayList<>();
-        private final HashMap<ResourceLocation, Integer> structureColorMap = new HashMap<>();
-        private boolean visibleThroughBlocks = false;
-
-        //TODO add multidim support
-        public void onWorldRender(RenderWorldLastEvent event) {
-            ActiveRenderInfo activeRenderInfo = Minecraft.getInstance().gameRenderer.getActiveRenderInfo();
-            Vec3d projectedView = activeRenderInfo.getProjectedView();
-
-            RenderTypeBuffers renderTypeBuffers = Minecraft.getInstance().getRenderTypeBuffers();
-            IRenderTypeBuffer.Impl bufferSource = renderTypeBuffers.getBufferSource();
-            RenderType overlayRenderType = TimeRenderType.getOverlay(visibleThroughBlocks);
-            IVertexBuilder buffer = bufferSource.getBuffer(overlayRenderType);
-
-            MatrixStack matrixStack = event.getMatrixStack();
-            matrixStack.push();
-            matrixStack.translate(-projectedView.x, -projectedView.y, -projectedView.z);
-
-            RenderSystem.disableCull();
-            if (visibleThroughBlocks) {
-                RenderSystem.disableDepthTest();
-            }
-
-            for (StructurePieceContainer container : trackedStructurePieces) {
-                DrawHelper.drawFilledBoundingBox(matrixStack, buffer, container.getBb(), DrawHelper.withChangedAlpha(getStructureColor(container.getStructureName()), 0x33));
-            }
-
-            bufferSource.finish(overlayRenderType);
-
-            RenderSystem.enableCull();
-            if (visibleThroughBlocks) {
-                RenderSystem.enableDepthTest();
-            }
-
-            matrixStack.pop();
-        }
-
-        public void onChunkUnload(ChunkEvent.Unload event) {
-            if (event.getWorld().isRemote()) {
-                ChunkPos chunkPos = event.getChunk().getPos();
-                Vec3d chunkStart = new Vec3d(chunkPos.getXStart(), 0, chunkPos.getZStart());
-                Vec3d chunkEnd = new Vec3d(chunkPos.getXEnd(), 255, chunkPos.getZEnd());
-                trackedStructurePieces.removeIf(trackedStructurePiece -> trackedStructurePiece.getBb().intersects(chunkStart, chunkEnd));
-            }
-        }
-
-        public void trackStructurePiece(ResourceLocation structureName, AxisAlignedBB bb) {
-            for (StructurePieceContainer container : trackedStructurePieces) {
-                if (container.getBb().equals(bb)) {
-                    return;
-                }
-            }
-
-            trackedStructurePieces.add(new StructurePieceContainer(structureName, bb));
-        }
-
-        public void setVisibleThroughBlocks(boolean visibleThroughBlocks) {
-            this.visibleThroughBlocks = visibleThroughBlocks;
-        }
-
-        public void setStructureColor(ResourceLocation structureName, int color) {
-            structureColorMap.put(structureName, DrawHelper.opaquefy(color));
-        }
-
-        private int getStructureColor(ResourceLocation structureName) {
-            return structureColorMap.computeIfAbsent(structureName, resourceLocation -> DrawHelper.opaquefy(RandHelper.RAND.nextInt()));
-        }
+    private void save() {
+        new RevealerDataSaver().save(subscribedStructures);
     }
 }
