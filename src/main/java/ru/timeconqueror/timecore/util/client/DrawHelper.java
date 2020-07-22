@@ -13,7 +13,9 @@ import ru.timeconqueror.timecore.api.util.Requirements;
 
 //FIXME change rendering of rectangles, get rid of tessellator and buffer builder
 public class DrawHelper {
+    @Deprecated // will be changed to new system
     public static Tessellator tessellator = Tessellator.getInstance();
+    @Deprecated // will be changed to new system
     public static BufferBuilder bufferBuilder = tessellator.getBuffer();
 
     /**
@@ -32,6 +34,7 @@ public class DrawHelper {
      * @param textureY    start texture y-point (y of left-top texture corner). Point description is mentioned above.
      * @param pointNumber in how much points texture must be divided. Point description is mentioned above.
      */
+    @Deprecated // will be changed to new system
     public static void drawTexturedRect(double x0, double y0, float width, float height, double zLevel, float textureX, float textureY, float pointNumber) {
         drawTexturedRect(x0, y0, width, height, zLevel, textureX, textureY, width, height, pointNumber);
     }
@@ -53,6 +56,7 @@ public class DrawHelper {
      * @param textureHeight texture height in points. Point description is mentioned above.
      * @param pointNumber   in how much points texture must be divided. Point description is mentioned above.
      */
+    @Deprecated // will be changed to new system
     public static void drawTexturedRect(double x0, double y0, double width, double height, double zLevel, float textureX, float textureY, float textureWidth, float textureHeight, float pointNumber) {
         float portionFactor = 1 / pointNumber;
         drawTexturedRectP(x0, y0, width, height, zLevel, textureX, textureY, textureWidth, textureHeight, portionFactor);
@@ -76,6 +80,7 @@ public class DrawHelper {
      * @param textureHeight       texture height in points. Point description is mentioned above.
      * @param texturePointPortion represents the percentage point to whole texture. Equals to 1 / point number.
      */
+    @Deprecated // will be changed to new system
     public static void drawTexturedRectP(double x0, double y0, double width, double height, double zLevel, float textureX, float textureY, float textureWidth, float textureHeight, float texturePointPortion) {
         bufferBuilder.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
         bufferBuilder.pos(x0, y0, zLevel).tex(textureX * texturePointPortion, textureY * texturePointPortion).endVertex();
@@ -101,6 +106,7 @@ public class DrawHelper {
      * @param textureY            start texture y-point (y of left-top texture corner). Point description is mentioned above.
      * @param texturePointPortion represents the percentage point to whole texture. Equals to 1 / point number.
      */
+    @Deprecated // will be changed to new system
     public static void drawTexturedRectP(double x0, double y0, float width, float height, double zLevel, float textureX, float textureY, float texturePointPortion) {
         drawTexturedRectP(x0, y0, width, height, zLevel, textureX, textureY, width, height, texturePointPortion);
     }
@@ -124,6 +130,7 @@ public class DrawHelper {
      * @param endElement    element, that represents right rectangle part.
      * @param pointNumber   in how much points texture must be divided. Point description is mentioned above.
      */
+    @Deprecated // will be changed to new system
     public static void drawWidthExpandableTexturedRect(float x0, float y0, float requiredWidth, float zLevel, TexturedRect startElement, TexturedRect repeatElement, TexturedRect endElement, float pointNumber) {
         float startWidth = startElement.width;
         float endWidth = endElement.width;
@@ -164,6 +171,7 @@ public class DrawHelper {
      * @param height Represents coordinate length along the axis Y.
      * @param zLevel z-coordinate.
      */
+    @Deprecated // will be changed to new system
     public static void drawTexturedRect(double x0, double y0, double width, double height, double zLevel) {
         bufferBuilder.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
         bufferBuilder.pos(x0, y0, zLevel).tex(0, 0).endVertex();
