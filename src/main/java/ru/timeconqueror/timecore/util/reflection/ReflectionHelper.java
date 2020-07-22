@@ -12,12 +12,29 @@ import java.lang.reflect.Modifier;
 
 @Beta
 public class ReflectionHelper {
+    private static final UnlockedField<Field> fModifiers = findFieldUnsuppressed(Field.class, "modifiers");
+
     public static boolean isFinal(Field f) {
         return Modifier.isFinal(f.getModifiers());
     }
 
+    public static boolean isStatic(Field f) {
+        return Modifier.isStatic(f.getModifiers());
+    }
+
+    /**
+     * Removes {@code final} modifier from field.
+     */
     public static void unfinalize(Field f) throws IllegalAccessException {
-        f.setInt(f, f.getModifiers() & ~Modifier.FINAL);
+        if (isFinal(f)) {
+            if (isStatic(f)) {
+                Field modifiersField = fModifiers.getField();
+                modifiersField.setAccessible(true);
+                modifiersField.setInt(f, f.getModifiers() & ~Modifier.FINAL);
+            } else {
+                f.setInt(f, f.getModifiers() & ~Modifier.FINAL);
+            }
+        }
     }
 
     public static void setAccessible(Field f) {

@@ -9,6 +9,12 @@ import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import java.nio.file.Path;
 
 public class EnvironmentUtils {
+    /**
+     * Will be changed to true via reflection, if Minecraft is run in Data Mode.
+     */
+    @SuppressWarnings({"FieldMayBeFinal", "FieldCanBeLocal"})
+    private static boolean isInDataMode = false;
+
     public static boolean isOnPhysicalClient() {
         return FMLEnvironment.dist == Dist.CLIENT;
     }
@@ -22,7 +28,7 @@ public class EnvironmentUtils {
     }
 
     public static boolean isInDataMode() {
-        return true;//FIXME
+        return isInDataMode;
     }
 
     public static Path getWorldSaveDir() {
