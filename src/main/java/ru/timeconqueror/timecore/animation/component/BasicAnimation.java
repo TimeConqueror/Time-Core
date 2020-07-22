@@ -137,6 +137,16 @@ public class BasicAnimation implements Animation {
         return new BasicAnimation(loop, new ResourceLocation(id.getNamespace(), id.getPath() + "/reversed"), name + "/reversed", length, reversedOptions);
     }
 
+    @Override
+    public String toString() {
+        return "BasicAnimation{" +
+                "name=" + name +
+                ", id=" + id +
+                ", looped=" + loop +
+                ", length=" + length +
+                '}';
+    }
+
     public static class TransitionFactory extends Animation.TransitionFactory {
         public TransitionFactory(BasicAnimation source) {
             super(source);

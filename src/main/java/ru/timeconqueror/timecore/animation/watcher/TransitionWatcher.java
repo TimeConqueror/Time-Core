@@ -53,4 +53,18 @@ public class TransitionWatcher extends AnimationWatcher {
     public @Nullable Animation getDestination() {
         return destination;
     }
+
+    @Override
+    public String toString() {
+        return "TransitionWatcher{" +
+                "startTime=" + startTime +
+                ", animation=" + animation +
+                ", speed=" + speed +
+                ", transitionTime=" + transitionTime +
+                ", source=" + source +
+                ", sourceExistingTime=" + sourceExistingTime +
+                ", destAnimSpeedFactor=" + destAnimSpeedFactor +
+                ", destination=" + destination +
+                '}';
+    }
 }

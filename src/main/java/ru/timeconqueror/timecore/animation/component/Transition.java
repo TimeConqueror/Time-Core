@@ -225,6 +225,16 @@ public class Transition implements Animation {
         return destAnimation;
     }
 
+    @Override
+    public String toString() {
+        return "Transition{" +
+                "name='" + name + '\'' +
+                ", id=" + id +
+                ", transitionLength=" + transitionLength +
+                ", destAnimation=" + destAnimation +
+                '}';
+    }
+
     private static class TransitionFactory extends Animation.TransitionFactory {
 
         public TransitionFactory(Transition source) {

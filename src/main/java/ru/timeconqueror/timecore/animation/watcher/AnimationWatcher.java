@@ -72,6 +72,16 @@ public class AnimationWatcher {
         startTime.unfreeze();
     }
 
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() + "{" +
+                "startTime=" + startTime +
+                ", animation=" + animation +
+                ", speed=" + speed +
+                ", inited=" + inited +
+                '}';
+    }
+
     private static class FreezableTime {
         private long time;
         private long freezingTime = -1;
@@ -103,6 +113,14 @@ public class AnimationWatcher {
 
         public void set(long time) {
             this.time = time;
+        }
+
+        @Override
+        public String toString() {
+            return "FreezableTime{" +
+                    "startTime=" + time + "ms" +
+                    ", beingFrozen=" + (System.currentTimeMillis() - freezingTime) + "ms" +
+                    '}';
         }
     }
 }
