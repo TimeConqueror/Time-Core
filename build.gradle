@@ -31,17 +31,6 @@ sourceSets {
     }
 }
 
-repositories {
-    flatDir {
-        dirs 'runtimeMods'
-    }
-    maven {
-        name = 'sponge'
-        url = 'https://repo.spongepowered.org/maven'
-    }
-    mavenCentral()
-}
-
 minecraft {
     // The mappings can be changed at any time, and must be in the following format.
     // snapshot_YYYYMMDD   Snapshot are built nightly.
@@ -131,6 +120,21 @@ configurations {
     shade
 }
 
+repositories {
+    flatDir {
+        dirs 'runtimeMods'
+    }
+    maven {
+        name = 'sponge'
+        url = 'https://repo.spongepowered.org/maven'
+    }
+    mavenCentral()
+    maven {
+        name = "lxgaming"
+        url = "https://dl.bintray.com/lxgaming/maven"
+    }
+}
+
 dependencies {
     // Specify the version of Minecraft to use, If this is any group other then 'net.minecraft' it is assumed
     // that the dep is a ForgeGradle 'patcher' dependency. And it's patches will be applied.
@@ -150,14 +154,15 @@ dependencies {
         }
     }
 
-    //noinspection GroovyAssignabilityCheck
-    shade implementation('org.spongepowered:mixin:0.8-SNAPSHOT') {
-        // Mixin includes a lot of dependencies that are too up-to-date
-        exclude module: 'launchwrapper'
-        exclude module: 'guava'
-        exclude module: 'gson'
-        exclude module: 'commons-io'
-        exclude module: 'log4j-core'
+    shade compile("io.github.lxgaming:classloaderutils:1.0.0")
+    shade compile("org.ow2.asm:asm-analysis:6.2") {
+        transitive = false
+    }
+    shade compile("org.ow2.asm:asm-util:6.2") {
+        transitive = false
+    }
+    shade compile("org.spongepowered:mixin:0.8") {
+        transitive = false
     }
 
     implementation 'org.jetbrains:annotations:18.0.0'
@@ -187,6 +192,8 @@ jar {
     configurations.shade.each { dep ->
         from(project.zipTree(dep)) {
             exclude 'META-INF/*.RSA'
+            exclude 'META-INF/*.SF'
+            exclude("META-INF/services/cpw.mods.modlauncher.*")
         }
     }
 
@@ -204,6 +211,7 @@ jar {
                 "Implementation-Timestamp"   : new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
 
                 "TweakClass"                 : "org.spongepowered.asm.launch.MixinTweaker",
+                "TweakOrder"                 : 0,
                 "MixinConfigs"               : "mixins.timecore.json",
                 "ForceLoadAsMod"             : true,
                 "FMLCorePluginContainsFMLMod": "true"
