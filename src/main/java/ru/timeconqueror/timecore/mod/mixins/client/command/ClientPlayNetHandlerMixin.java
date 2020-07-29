@@ -30,7 +30,7 @@ public class ClientPlayNetHandlerMixin {
     }
 
     @Inject(method = "handleCommandList",
-            at = @At(value = "RETURN")
+            at = @At(value = "TAIL")
     )
     public void handleCommandList(SCommandListPacket packetIn, CallbackInfo ci) {
         CommandDispatcher<CommandSource> clientDispatcher = ClientCommandManager.getClientDispatcher();
