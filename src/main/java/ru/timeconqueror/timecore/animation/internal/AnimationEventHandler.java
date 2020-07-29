@@ -13,7 +13,7 @@ import ru.timeconqueror.timecore.api.animation.ActionManager;
 import ru.timeconqueror.timecore.api.animation.AnimationManager;
 import ru.timeconqueror.timecore.api.animation.AnimationProvider;
 import ru.timeconqueror.timecore.mod.common.packet.InternalPacketManager;
-import ru.timeconqueror.timecore.mod.common.packet.S2CSyncEntityAnimationsMsg;
+import ru.timeconqueror.timecore.mod.common.packet.S2CSyncAnimationsMsg;
 
 @Mod.EventBusSubscriber
 public class AnimationEventHandler {
@@ -39,7 +39,7 @@ public class AnimationEventHandler {
         if (target instanceof AnimationProvider<?>) {
             AnimationManager animationManager = ((AnimationProvider<?>) target).getActionManager().getAnimationManager();
             ServerAnimationManager<?> serverAnimationManager = (ServerAnimationManager<?>) animationManager;
-            InternalPacketManager.INSTANCE.send(PacketDistributor.PLAYER.with(() -> ((ServerPlayerEntity) event.getTarget())), new S2CSyncEntityAnimationsMsg(serverAnimationManager, target));
+            InternalPacketManager.INSTANCE.send(PacketDistributor.PLAYER.with(() -> ((ServerPlayerEntity) event.getTarget())), new S2CSyncAnimationsMsg(serverAnimationManager, target));
         }
     }
 }

@@ -17,19 +17,19 @@ import ru.timeconqueror.timecore.api.common.packet.ITimePacket;
 import java.util.Map;
 import java.util.function.Supplier;
 
-public class S2CSyncEntityAnimationsMsg implements ITimePacket {
+public class S2CSyncAnimationsMsg implements ITimePacket {
 	//server side only
 	private ServerAnimationManager<?> serverAnimationManager;
 	// client side only
 	private Map<String, AnimationWatcher> layerMap;
 	private final int entityId;
 
-	public S2CSyncEntityAnimationsMsg(ServerAnimationManager<?> animationManager, Entity entity) {
+	public S2CSyncAnimationsMsg(ServerAnimationManager<?> animationManager, Entity entity) {
 		this.serverAnimationManager = animationManager;
 		this.entityId = entity.getEntityId();
 	}
 
-	private S2CSyncEntityAnimationsMsg(Map<String, AnimationWatcher> layerMap, int entityId) {
+	private S2CSyncAnimationsMsg(Map<String, AnimationWatcher> layerMap, int entityId) {
 		this.layerMap = layerMap;
 		this.entityId = entityId;
 	}
@@ -39,25 +39,25 @@ public class S2CSyncEntityAnimationsMsg implements ITimePacket {
 		return LogicalSide.CLIENT;
 	}
 
-	public static class Handler implements ITimePacketHandler<S2CSyncEntityAnimationsMsg> {
+	public static class Handler implements ITimePacketHandler<S2CSyncAnimationsMsg> {
 
 		@Override
-		public void encode(S2CSyncEntityAnimationsMsg packet, PacketBuffer buffer) {
+		public void encode(S2CSyncAnimationsMsg packet, PacketBuffer buffer) {
 			buffer.writeInt(packet.entityId);
 			AnimationSerializer.serializeWatchers(packet.serverAnimationManager, buffer);
 		}
 
 		@NotNull
 		@Override
-		public S2CSyncEntityAnimationsMsg decode(PacketBuffer buffer) {
+		public S2CSyncAnimationsMsg decode(PacketBuffer buffer) {
 			int entityId = buffer.readInt();
 			Map<String, AnimationWatcher> layerMap = AnimationSerializer.deserializeWatchers(buffer);
 
-			return new S2CSyncEntityAnimationsMsg(layerMap, entityId);
+			return new S2CSyncAnimationsMsg(layerMap, entityId);
 		}
 
 		@Override
-		public void onPacketReceived(S2CSyncEntityAnimationsMsg packet, Supplier<NetworkEvent.Context> contextSupplier) {
+		public void onPacketReceived(S2CSyncAnimationsMsg packet, Supplier<NetworkEvent.Context> contextSupplier) {
 			World world = packet.getWorld(contextSupplier.get());
 
 			String errorMessage = null;
