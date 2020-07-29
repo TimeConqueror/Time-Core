@@ -27,7 +27,7 @@ import java.util.Map;
 import java.util.Set;
 
 public class StructureRenderer {
-    private final Set<StructurePieceContainer> trackedStructurePieces = new HashSet<>();
+    private final Set<StructureData> trackedStructurePieces = new HashSet<>();
 
     private final Map<ResourceLocation, Integer> structureColorMap;
     private boolean visibleThroughBlocks;
@@ -61,19 +61,19 @@ public class StructureRenderer {
         int viewDistance = ((ViewDistanceProvider) player.connection).getViewDistance() * 16 + 2 * 16 /*slight offset to not delete the structure info instantly*/;
         int viewDistanceSq = viewDistance * viewDistance;
 
-        for (Iterator<StructurePieceContainer> iterator = trackedStructurePieces.iterator(); iterator.hasNext(); ) {
-            StructurePieceContainer container = iterator.next();
+        for (Iterator<StructureData> iterator = trackedStructurePieces.iterator(); iterator.hasNext(); ) {
+            StructureData container = iterator.next();
 
-            if (container.getDimension() != currentDimension) {
+            if (container.getDimensionId() != currentDimension) {
                 iterator.remove();
                 continue;
             }
 
-            double shortestDistanceSq = getShortestDistanceSq(player, container.getBb());
+            double shortestDistanceSq = getShortestDistanceSq(player, container.getBoundingBox());
             if (shortestDistanceSq > viewDistanceSq) {
                 iterator.remove();
             } else {
-                DrawHelper.drawFilledBoundingBox(matrixStack, buffer, container.getBb(), DrawHelper.withChangedAlpha(getStructureColor(container.getStructureName()), 0x33));
+                DrawHelper.drawFilledBoundingBox(matrixStack, buffer, container.getBoundingBox(), DrawHelper.withChangedAlpha(getStructureColor(container.getStructureName()), 0x33));
             }
         }
 
@@ -87,8 +87,12 @@ public class StructureRenderer {
         matrixStack.pop();
     }
 
-    public void trackStructurePiece(ResourceLocation structureName, AxisAlignedBB bb, int dimension) {
-        trackedStructurePieces.add(new StructurePieceContainer(structureName, bb, dimension));
+    public void trackStructurePiece(StructureData structureData) {
+        trackedStructurePieces.add(structureData);
+    }
+
+    public Set<StructureData> getTrackedStructurePieces() {
+        return trackedStructurePieces;
     }
 
     public void setVisibleThroughBlocks(boolean visibleThroughBlocks) {

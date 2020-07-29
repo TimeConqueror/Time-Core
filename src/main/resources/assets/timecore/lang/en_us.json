@@ -1,5 +1,7 @@
 {
   "cmd.timecore.structure_revealer.deactivated": "Structure Revealer is deactivated on the server. You can activate it by enabling debug features in TimeCore config file.",
   "cmd.timecore.structure_revealer.subscribe.success": "Successfully subscribed %1$s to %2$s",
-  "cmd.timecore.structure_revealer.unsubscribe.success": "Successfully unsubscribed %1$s from %2$s"
+  "cmd.timecore.structure_revealer.unsubscribe.success": "Successfully unsubscribed %1$s from %2$s",
+  "cmd.timecore.structure_revealer.unsubscribe_from_all.success": "Successfully unsubscribed %1$s from all structures",
+  "cmd.timecore.structure_revealer.list": "Subscribed structures for %s:"
 }

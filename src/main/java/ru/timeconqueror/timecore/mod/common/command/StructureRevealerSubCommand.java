@@ -15,7 +15,6 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.gen.feature.structure.Structure;
 import org.jetbrains.annotations.Nullable;
-import ru.timeconqueror.timecore.TimeCore;
 import ru.timeconqueror.timecore.common.command.argument.StructureArgument;
 import ru.timeconqueror.timecore.devtools.StructureRevealer;
 
@@ -27,7 +26,7 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 public class StructureRevealerSubCommand {
-    public static final SimpleCommandExceptionType REVEALER_DEACTIVATED = new SimpleCommandExceptionType(new TranslationTextComponent(TimeCore.LANG_RESOLVER.commandKey("structure_revealer.deactivated")));
+    public static final SimpleCommandExceptionType REVEALER_DEACTIVATED = new SimpleCommandExceptionType(new TranslationTextComponent("cmd.timecore.structure_revealer.deactivated"));
 
     public static ArgumentBuilder<CommandSource, ?> register() {
         /*
@@ -49,13 +48,13 @@ public class StructureRevealerSubCommand {
                                         .executes(context -> unsubscribe(context.getSource(), EntityArgument.getPlayers(context, "player"), context.getArgument("structure", Structure.class)))
                                 ).executes(context -> unsubscribe(context.getSource(), Collections.singleton(context.getSource().asPlayer()), context.getArgument("structure", Structure.class)))
                         )
-                ).then(Commands.literal("unsubscribe_all")
+                ).then(Commands.literal("unsubscribe_from_all")
                         .then(Commands.argument("player", EntityArgument.players())
                                 .executes(context -> unsubscribe(context.getSource(), EntityArgument.getPlayers(context, "player"), null))
                         ).executes(context -> unsubscribe(context.getSource(), Collections.singleton(context.getSource().asPlayer()), null))
                 ).then(Commands.literal("get_subscriptions")
-                        .then(Commands.argument("player", EntityArgument.players())
-                                .executes(context -> getSubscriptions(context.getArgument("player", ServerPlayerEntity.class), context.getSource()))
+                        .then(Commands.argument("player", EntityArgument.player())
+                                .executes(context -> getSubscriptions(EntityArgument.getPlayer(context, "player"), context.getSource()))
                         ).executes(context -> getSubscriptions(context.getSource().asPlayer(), context.getSource()))
                 );
     }
@@ -66,7 +65,7 @@ public class StructureRevealerSubCommand {
                 revealer.subscribePlayerToStructure(player, structure);
             }
 
-            source.sendFeedback(new TranslationTextComponent(TimeCore.LANG_RESOLVER.commandKey("structure_revealer.subscribe.success"), players.stream().map(player -> player.getName().getString()).collect(Collectors.joining(",")), structure.getStructureName()), true);
+            source.sendFeedback(new TranslationTextComponent("cmd.timecore.structure_revealer.subscribe.success", playerNamesToString(players), structure.getStructureName()), true);
 
         });
 
@@ -75,20 +74,28 @@ public class StructureRevealerSubCommand {
 
     private static int unsubscribe(CommandSource source, Collection<ServerPlayerEntity> players, @Nullable Structure<?> structure) throws CommandSyntaxException {
         doForRevealer(revealer -> {
+            String names = playerNamesToString(players);
+
             if (structure == null) {
                 for (ServerPlayerEntity player : players) {
                     revealer.unsubscribePlayerFromAllStructures(player);
                 }
+
+                source.sendFeedback(new TranslationTextComponent("cmd.timecore.structure_revealer.unsubscribe_from_all.success", names), true);
             } else {
                 for (ServerPlayerEntity player : players) {
                     revealer.unsubscribePlayerFromStructure(player, structure);
                 }
-            }
 
-            source.sendFeedback(new TranslationTextComponent(TimeCore.LANG_RESOLVER.commandKey("structure_revealer.unsubscribe.success")), true);
+                source.sendFeedback(new TranslationTextComponent("cmd.timecore.structure_revealer.unsubscribe.success", names, structure.getRegistryName()), true);
+            }
         });
 
         return 1;
+    }
+
+    private static String playerNamesToString(Collection<ServerPlayerEntity> players) {
+        return players.stream().map(player -> player.getName().getString()).collect(Collectors.joining());
     }
 
     private static int getSubscriptions(ServerPlayerEntity player, CommandSource source) throws CommandSyntaxException {
@@ -99,7 +106,7 @@ public class StructureRevealerSubCommand {
                     .map(ResourceLocation::toString)
                     .collect(Collectors.joining(","));
 
-            source.sendFeedback(new TranslationTextComponent("cmd." + TimeCore.MODID + ".structure_revealer.list", player).applyTextStyle(TextFormatting.AQUA)
+            source.sendFeedback(new TranslationTextComponent("cmd.timecore.structure_revealer.list", player.getName()).applyTextStyle(TextFormatting.AQUA)
                     .appendSibling(new StringTextComponent("\n"))
                     .appendSibling(new StringTextComponent(listOut)), false);
         });

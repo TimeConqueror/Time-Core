@@ -7,7 +7,6 @@ import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.network.PacketDistributor;
 import ru.timeconqueror.timecore.animation.ServerAnimationManager;
 import ru.timeconqueror.timecore.api.animation.ActionManager;
 import ru.timeconqueror.timecore.api.animation.AnimationManager;
@@ -39,7 +38,7 @@ public class AnimationEventHandler {
         if (target instanceof AnimationProvider<?>) {
             AnimationManager animationManager = ((AnimationProvider<?>) target).getActionManager().getAnimationManager();
             ServerAnimationManager<?> serverAnimationManager = (ServerAnimationManager<?>) animationManager;
-            InternalPacketManager.INSTANCE.send(PacketDistributor.PLAYER.with(() -> ((ServerPlayerEntity) event.getTarget())), new S2CSyncAnimationsMsg(serverAnimationManager, target));
+            InternalPacketManager.sendToPlayer(((ServerPlayerEntity) event.getPlayer()), new S2CSyncAnimationsMsg(serverAnimationManager, target));
         }
     }
 }

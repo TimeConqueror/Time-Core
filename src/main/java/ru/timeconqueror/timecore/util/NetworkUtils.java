@@ -3,10 +3,8 @@ package ru.timeconqueror.timecore.util;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
-import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
-import ru.timeconqueror.timecore.TimeCore;
 
 import java.util.List;
 import java.util.Optional;
@@ -37,16 +35,10 @@ public class NetworkUtils {
 
     /**
      * Do provided action for each player, who is tracking this block position.
-     *
-     * @apiNote Only for logical server side!
      */
-    public static void forAllTracking(World world, BlockPos fromPos, Consumer<ServerPlayerEntity> action) {
-        if (!world.isRemote) {
-            ChunkPos chunkPos = new ChunkPos(fromPos);
-            ((ServerWorld) world).getChunkProvider().chunkManager.getTrackingPlayers(chunkPos, false).forEach(action);
-        } else {
-            TimeCore.LOGGER.error("The method #forAllTracking shouldn't be called on the client side.", new IllegalStateException());
-        }
+    public static void forAllTracking(ServerWorld world, BlockPos fromPos, Consumer<ServerPlayerEntity> action) {
+        ChunkPos chunkPos = new ChunkPos(fromPos);
+        world.getChunkProvider().chunkManager.getTrackingPlayers(chunkPos, false).forEach(action);
     }
 
     /**
