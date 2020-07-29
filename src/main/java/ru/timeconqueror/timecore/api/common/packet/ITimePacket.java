@@ -13,9 +13,9 @@ import java.util.function.Supplier;
 
 public interface ITimePacket {
 
-    @NotNull
+    @NotNull//TODO move to handler
     default World getWorld(NetworkEvent.Context ctx) {
-        return DistExecutor.runForDist(
+        return DistExecutor.runForDist(//TODO deprecated, switch to newer?
                 () -> () -> ObjectUtils.bypassClassChecking(Minecraft.getInstance().world),
                 () -> () -> ctx.getSender().world);
     }
@@ -23,6 +23,7 @@ public interface ITimePacket {
     /**
      * Should return the side, where packet can be read.
      */
+    @NotNull
     LogicalSide getReceptionSide();
 
     interface ITimePacketHandler<T extends ITimePacket> {

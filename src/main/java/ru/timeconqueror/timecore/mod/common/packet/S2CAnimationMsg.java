@@ -4,6 +4,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.network.NetworkEvent;
+import org.jetbrains.annotations.NotNull;
 import ru.timeconqueror.timecore.TimeCore;
 import ru.timeconqueror.timecore.api.animation.AnimationProvider;
 import ru.timeconqueror.timecore.api.common.packet.ITimePacket;
@@ -18,41 +19,36 @@ public abstract class S2CAnimationMsg implements ITimePacket {
         this(entity.getEntityId(), layerName);
     }
 
-    public S2CAnimationMsg(int entityId, String layerName) {
+    protected S2CAnimationMsg(int entityId, String layerName) {
         this.entityId = entityId;
         this.layerName = layerName;
     }
 
     @Override
-    public LogicalSide getReceptionSide() {
+    public @NotNull LogicalSide getReceptionSide() {
         return LogicalSide.CLIENT;
     }
 
-    protected static class Data {
-        protected int entityId;
-        protected String layerName;
-
-        public Data(S2CAnimationMsg msg) {
-            this(msg.entityId, msg.layerName);
-        }
-
-        public Data(int entityId, String layerName) {
-            this.entityId = entityId;
-            this.layerName = layerName;
-        }
-    }
-
     public abstract static class Handler<T extends S2CAnimationMsg> implements ITimePacketHandler<T> {
-        public void encodeBaseData(S2CAnimationMsg msg, PacketBuffer buffer) {
-            Data data = new Data(msg);
+        @Override
+        public final void encode(T packet, PacketBuffer buffer) {
+            buffer.writeInt(packet.entityId);
+            buffer.writeString(packet.layerName);
 
-            buffer.writeInt(data.entityId);
-            buffer.writeString(data.layerName);
+            encodeExtra(packet, buffer);
         }
 
-        public Data decodeBaseData(PacketBuffer buffer) {
-            return new Data(buffer.readInt(), buffer.readString());
+        @Override
+        public @NotNull
+        final T decode(PacketBuffer buffer) {
+            int entityId = buffer.readInt();
+            String layerName = buffer.readString();
+            return decodeWithExtraData(entityId, layerName, buffer);
         }
+
+        public abstract void encodeExtra(T packet, PacketBuffer buffer);
+
+        public abstract T decodeWithExtraData(int entityId, String layerName, PacketBuffer buffer);
 
         public abstract void onPacket(T packet, AnimationProvider<?> provider, String layerName, Supplier<NetworkEvent.Context> contextSupplier);
 

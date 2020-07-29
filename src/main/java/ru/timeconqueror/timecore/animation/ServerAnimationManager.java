@@ -36,7 +36,7 @@ public class ServerAnimationManager<T extends MobEntity> extends BaseAnimationMa
     }
 
     @Override
-    protected void onAnimationEnd(@Nullable TimeEntityModel<?> model, Layer layer, AnimationWatcher watcher, long currentTime) {
+    protected void onAnimationEnd(@Nullable TimeEntityModel<?> model, Layer layer, AnimationWatcher watcher) {
         proceedActions(watcher);
 
         actionManager.getActionWatchers().removeIf(actionWatcher -> actionWatcher.isBound(watcher.getAnimation()));

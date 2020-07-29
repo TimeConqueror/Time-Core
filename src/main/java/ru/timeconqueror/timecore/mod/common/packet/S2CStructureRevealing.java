@@ -25,7 +25,7 @@ public class S2CStructureRevealing implements ITimePacket {
     }
 
     @Override
-    public LogicalSide getReceptionSide() {
+    public @NotNull LogicalSide getReceptionSide() {
         return LogicalSide.CLIENT;
     }
 

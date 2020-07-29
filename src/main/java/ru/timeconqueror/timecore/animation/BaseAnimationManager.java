@@ -10,18 +10,14 @@ import ru.timeconqueror.timecore.api.animation.AnimationConstants;
 import ru.timeconqueror.timecore.api.animation.AnimationManager;
 import ru.timeconqueror.timecore.client.render.model.TimeEntityModel;
 
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.*;
 
 public abstract class BaseAnimationManager implements AnimationManager {
     @Nullable
     private final AnimationSetting walkingAnimationSetting;
-    private HashMap<String, Layer> layerMap;
+    private Map<String, Layer> layerMap;
     private List<Layer> layers;
 
-    //TODO add idle animation support
     public BaseAnimationManager(@Nullable AnimationSetting walkingAnimationSetting) {
         this.walkingAnimationSetting = walkingAnimationSetting;
     }
@@ -37,6 +33,11 @@ public abstract class BaseAnimationManager implements AnimationManager {
         Layer layer = layerMap.get(name);
         if (layer == null) throw new RuntimeException("There is no layer with name " + name);
         return layer;
+    }
+
+    @Override
+    public Set<String> getLayerNames() {
+        return layerMap.keySet();
     }
 
     @Override
@@ -76,9 +77,13 @@ public abstract class BaseAnimationManager implements AnimationManager {
     public void removeAnimation(String layerName, int transitionTime) {
         if (containsLayer(layerName)) {
             Layer layer = getLayer(layerName);
+            AnimationWatcher oldWatcher = layer.getAnimationWatcher();
+
             layer.removeAnimation(transitionTime);
 
-            onAnimationEnd(null, layer, layer.getAnimationWatcher(), System.currentTimeMillis());
+            if (oldWatcher != null) {
+                onAnimationEnd(null, layer, oldWatcher);
+            }
         } else {
             TimeCore.LOGGER.error("Can't find layer with name " + layerName);
         }
@@ -86,35 +91,11 @@ public abstract class BaseAnimationManager implements AnimationManager {
 
     @Override
     public void applyAnimations(TimeEntityModel<?> model) {
+        long currentTime = System.currentTimeMillis();
         for (Layer layer : layers) {
+            layer.update(this, model, currentTime);
+
             AnimationWatcher watcher = layer.getAnimationWatcher();
-
-            boolean paused = isGamePaused();
-            long currentTime = System.currentTimeMillis();
-
-            if (watcher != null) {
-                if (paused) {
-                    watcher.freeze();
-                } else {
-                    watcher.unfreeze();
-
-                    if (watcher.requiresInit()) {
-                        watcher.init(model);
-                    }
-
-                    if (watcher.isAnimationEnded(currentTime)) {
-                        onAnimationEnd(model, layer, watcher, currentTime);
-
-                        watcher = watcher.next();
-
-                        if (watcher != null && watcher.requiresInit()) {
-                            watcher.init(model);
-                        }
-                    }
-                }
-            }
-
-            layer.setAnimationWatcher(watcher); //here we update current watcher
 
             if (watcher != null && watcher.getAnimation() != null) {
                 applyAnimation(model, layer, watcher, currentTime);
@@ -126,16 +107,14 @@ public abstract class BaseAnimationManager implements AnimationManager {
 
     protected abstract boolean isGamePaused();
 
-    protected void onAnimationEnd(@Nullable TimeEntityModel<?> model, Layer layer, AnimationWatcher watcher, long currentTime) {
+    protected void onAnimationEnd(@Nullable TimeEntityModel<?> model, Layer layer, AnimationWatcher watcher) {
 
     }
 
-    void setLayers(HashMap<String, Layer> layers) {
+    void setLayers(LinkedHashMap<String, Layer> layers) {
         layerMap = layers;
 
-        this.layers = layers.values().stream()
-                .sorted(Comparator.comparingInt(Layer::getPriority))
-                .collect(Collectors.toList());
+        this.layers = new ArrayList<>(layers.values());
     }
 
     @Nullable

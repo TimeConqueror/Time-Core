@@ -32,36 +32,40 @@ public class AnimationAPI {
      *                              results in {@code data/timecore/animations/zombie_hit.json}.
      */
     public static Map<String, Animation> loadAndRegisterAnimations(ResourceLocation animationFileLocation) {
-        Map<String, Animation> animations = AnimationLoader.loadAnimations(animationFileLocation);
+	    Map<String, Animation> animations = AnimationLoader.loadAnimations(animationFileLocation);
 
-        for (Animation animation : animations.values()) {
-            AnimationRegistry.registerAnimation(animation);
-        }
+	    for (Animation animation : animations.values()) {
+		    AnimationRegistry.registerAnimation(animation);
+	    }
 
-        return animations;
+	    return animations;
     }
 
-    /**
-     * Registers the provided animation.
-     */
-    public static Animation register(Animation animation) {
-        return AnimationRegistry.registerAnimation(animation);
-    }
+	/**
+	 * Registers the provided animation.
+	 */
+	public static Animation register(Animation animation) {
+		return AnimationRegistry.registerAnimation(animation);
+	}
 
-    /**
-     * Returns the reversed version of this animation.
-     * It is slow, so you need to call this once.
-     * Don't forget about registering returned animation.
-     */
-    public static Animation reverse(Animation animation) {
-        return animation.reverse();
-    }
+	/**
+	 * Returns the reversed version of this animation.
+	 * It is slow, so you need to call this once.
+	 * Don't forget about registering returned animation.
+	 */
+	public static Animation reverse(Animation animation) {
+		return animation.reverse();
+	}
 
-    public static AnimationStarter createStarter(Animation animation) {
-        return new AnimationStarter(animation);
-    }
+	public static AnimationStarter createStarter(Animation animation) {
+		return new AnimationStarter(animation);
+	}
 
-    public static void removeAnimation(AnimationManager animationManager, String layerName) {
-        animationManager.removeAnimation(layerName);
-    }
+	public static void startAnimation(AnimationStarter animationStarter, AnimationManager animationManager, String layerName) {
+		animationStarter.startAt(animationManager, layerName);
+	}
+
+	public static void removeAnimation(AnimationManager animationManager, String layerName) {
+		animationManager.removeAnimation(layerName);
+	}
 }

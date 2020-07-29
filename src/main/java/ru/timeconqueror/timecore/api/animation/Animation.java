@@ -12,94 +12,107 @@ import ru.timeconqueror.timecore.client.render.model.TimeModelRenderer;
 import java.util.List;
 import java.util.function.Consumer;
 
-public interface Animation {
-    void apply(TimeEntityModel<?> model, AnimationLayer layer, int existingTime);
+public abstract class Animation {
+	public abstract void apply(TimeEntityModel<?> model, AnimationLayer layer, int existingTime);
 
-    /**
-     * Name of the animation, that is indicated in animation file.
-     */
-    String getName();
+	/**
+	 * Name of the animation, that is indicated in animation file.
+	 */
+	public abstract String getName();
 
-    /**
-     * By default contains the path to the file, from which this animation was parsed,
-     * merged with the animation name from the file.
-     */
-    ResourceLocation getId();
+	/**
+	 * By default contains the path to the file, from which this animation was parsed,
+	 * merged with the animation name from the file.
+	 */
+	public abstract ResourceLocation getId();
 
-    /**
-     * Length in ms
-     */
-    int getLength();
+	/**
+	 * Length in ms
+	 */
+	public abstract int getLength();
 
-    boolean isLooped();
+	public abstract boolean isLooped();
 
-    /**
-     * Should return the factory, that can handle your IAnimation implementation class
-     */
-    @NotNull
-    Animation.TransitionFactory getTransitionFactory();
+	/**
+	 * Should return the factory, that can handle your IAnimation implementation class
+	 */
+	@NotNull
+	public abstract Animation.TransitionFactory getTransitionFactory();
 
-    /**
-     * Proceeds some action for each bone.
-     *
-     * @param action action to call for every bone. Consumes bone name.
-     */
-    void forEachBone(Consumer<String> action);
+	/**
+	 * Proceeds some action for each bone.
+	 *
+	 * @param action action to call for every bone. Consumes bone name.
+	 */
+	public abstract void forEachBone(Consumer<String> action);
 
-    /**
-     * Returns the reversed version of this animation.
-     * It is slow, so you need to call this once.
-     * Don't forget about registering returned animation.
-     */
-    Animation reverse();
+	/**
+	 * Returns the reversed version of this animation.
+	 * It is slow, so you need to call this once.
+	 * Don't forget about registering returned animation.
+	 */
+	public abstract Animation reverse();
 
-    enum OptionType {
-        ROTATION,
-        POSITION,
-        SCALE
-    }
+	public enum OptionType {
+		ROTATION,
+		POSITION,
+		SCALE
+	}
 
-    abstract class TransitionFactory {
-        /**
-         * Animation, from which transition will start.
-         */
-        protected Animation source;
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) return true;
+		if (!(obj instanceof Animation)) return false;
+		Animation animation = (Animation) obj;
+		return getId().equals(animation.getId());
+	}
 
-        public TransitionFactory(Animation source) {
-            this.source = source;
-        }
+	@Override
+	public int hashCode() {
+		return getId().hashCode();
+	}
 
-        @SuppressWarnings("unchecked")
-        public <T> T getSourceTyped() {
-            return ((T) source);
-        }
+	public abstract static class TransitionFactory {
+		/**
+		 * Animation, from which transition will start.
+		 */
+		protected Animation source;
 
-        /**
-         * Returns list of bones with calculated change vectors.
-         * Returns null if list can't be created due to, for example, lack of bone option list.
-         * In this case transition will be created with more strong dependence to destination animation.
-         * <p>
-         * Will be called only when {@link #source} is a start animation.
-         *
-         * @param dest           animation, to which transition will lead.
-         * @param model          model, for which we apply animation.
-         * @param existingTime   source animation existing time
-         * @param transitionTime time of transition between source and destination animations.
-         */
-        @Nullable
-        public abstract List<Transition.TransitionBoneOption> createBoneOptions(Animation dest, TimeModel model, int existingTime, int transitionTime);
+		public TransitionFactory(Animation source) {
+			this.source = source;
+		}
 
-        /**
-         * Returns destination keyframe of provided type for transition animation.
-         * <p>
-         * Will be called only when {@link #source} is a destination animation.
-         *
-         * @param piece          piece for which destination keyframe should be calculated.
-         * @param boneName       name of bone/piece for which destination keyframe should be calculated.
-         * @param optionType     type of keyframe which should be calculated.
-         * @param transitionTime time of transition between source and destination animations.
-         */
-        @NotNull
+		@SuppressWarnings("unchecked")
+		public <T> T getSourceTyped() {
+			return ((T) source);
+		}
+
+		/**
+		 * Returns list of bones with calculated change vectors.
+		 * Returns null if list can't be created due to, for example, lack of bone option list.
+		 * In this case transition will be created with more strong dependence to destination animation.
+		 * <p>
+		 * Will be called only when {@link #source} is a start animation.
+		 *
+		 * @param dest           animation, to which transition will lead.
+		 * @param model          model, for which we apply animation.
+		 * @param existingTime   source animation existing time
+		 * @param transitionTime time of transition between source and destination animations.
+		 */
+		@Nullable
+		public abstract List<Transition.TransitionBoneOption> createBoneOptions(Animation dest, TimeModel model, int existingTime, int transitionTime);
+
+		/**
+		 * Returns destination keyframe of provided type for transition animation.
+		 * <p>
+		 * Will be called only when {@link #source} is a destination animation.
+		 *
+		 * @param piece          piece for which destination keyframe should be calculated.
+		 * @param boneName       name of bone/piece for which destination keyframe should be calculated.
+		 * @param optionType     type of keyframe which should be calculated.
+		 * @param transitionTime time of transition between source and destination animations.
+		 */
+		@NotNull
         public abstract KeyFrame getDestKeyFrame(TimeModelRenderer piece, String boneName, OptionType optionType, int transitionTime);
     }
 }

@@ -3,7 +3,6 @@ package ru.timeconqueror.timecore.mod.common.packet;
 import net.minecraft.entity.Entity;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.network.NetworkEvent;
-import org.jetbrains.annotations.NotNull;
 import ru.timeconqueror.timecore.TimeCore;
 import ru.timeconqueror.timecore.animation.AnimationStarter;
 import ru.timeconqueror.timecore.api.animation.Animation;
@@ -19,24 +18,22 @@ public class S2CStartAnimationMsg extends S2CAnimationMsg {
         this.animationData = animationData;
     }
 
-    public S2CStartAnimationMsg(int entityId, String layerName, AnimationStarter.AnimationData animationData) {
+    private S2CStartAnimationMsg(int entityId, String layerName, AnimationStarter.AnimationData animationData) {
         super(entityId, layerName);
         this.animationData = animationData;
     }
 
     public static class Handler extends S2CAnimationMsg.Handler<S2CStartAnimationMsg> {
         @Override
-        public void encode(S2CStartAnimationMsg packet, PacketBuffer buffer) {
+        public void encodeExtra(S2CStartAnimationMsg packet, PacketBuffer buffer) {
             AnimationStarter.AnimationData.encode(packet.animationData, buffer);
-            encodeBaseData(packet, buffer);
         }
 
-        @NotNull
         @Override
-        public S2CStartAnimationMsg decode(PacketBuffer buffer) {
+        public S2CStartAnimationMsg decodeWithExtraData(int entityId, String layerName, PacketBuffer buffer) {
             AnimationStarter.AnimationData animationData = AnimationStarter.AnimationData.decode(buffer);
-            Data data = decodeBaseData(buffer);
-            return new S2CStartAnimationMsg(data.entityId, data.layerName, animationData);
+
+            return new S2CStartAnimationMsg(entityId, layerName, animationData);
         }
 
         @Override

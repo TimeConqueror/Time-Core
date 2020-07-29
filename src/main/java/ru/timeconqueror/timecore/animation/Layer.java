@@ -7,9 +7,9 @@ import ru.timeconqueror.timecore.api.animation.Animation;
 import ru.timeconqueror.timecore.api.animation.AnimationLayer;
 import ru.timeconqueror.timecore.api.animation.BlendType;
 import ru.timeconqueror.timecore.api.util.MathUtils;
+import ru.timeconqueror.timecore.client.render.model.TimeEntityModel;
 
 public class Layer implements AnimationLayer {
-    private int priority;
     private String name;
 
     @Nullable
@@ -17,15 +17,10 @@ public class Layer implements AnimationLayer {
     private BlendType blendType;
     private float weight;
 
-    public Layer(String name, int priority, BlendType blendType, float weight) {
+    public Layer(String name, BlendType blendType, float weight) {
         this.name = name;
         this.weight = MathUtils.coerceInRange(weight, 0, 1);
         this.blendType = blendType;
-        this.priority = priority;
-    }
-
-    public int getPriority() {
-        return priority;
     }
 
     @Override
@@ -59,10 +54,14 @@ public class Layer implements AnimationLayer {
     }
 
     void setAnimation(AnimationStarter.AnimationData data) {
-        if (animationWatcher == null) {
-            animationWatcher = new TransitionWatcher(data.getTransitionTime(), data.getAnimation(), data.getSpeedFactor());
+        if (data.getTransitionTime() == 0) {
+            animationWatcher = new AnimationWatcher(data.getAnimation(), data.getSpeedFactor(), data.getNextAnimationData());
         } else {
-            animationWatcher = new TransitionWatcher(animationWatcher.getAnimation(), animationWatcher.getExistingTime(), data.getTransitionTime(), data.getAnimation(), data.getSpeedFactor());
+            if (animationWatcher == null) {
+                animationWatcher = new TransitionWatcher(data.getTransitionTime(), data);
+            } else {
+                animationWatcher = new TransitionWatcher(animationWatcher.getAnimation(), animationWatcher.getExistingTime(), data.getTransitionTime(), data);
+            }
         }
     }
 
@@ -72,17 +71,48 @@ public class Layer implements AnimationLayer {
                 animationWatcher = null;
             } else {
                 if (!(animationWatcher instanceof TransitionWatcher && ((TransitionWatcher) animationWatcher).getDestination() == null)) {
-                    animationWatcher = new TransitionWatcher(animationWatcher.getAnimation(), animationWatcher.getExistingTime(), transitionTime, null, -1);
+                    animationWatcher = new TransitionWatcher(animationWatcher.getAnimation(), animationWatcher.getExistingTime(), transitionTime, null);
                 }
             }
         }
     }
 
+    void update(BaseAnimationManager manager, TimeEntityModel<?> model, long currentTime) {
+        boolean paused = manager.isGamePaused();
+
+        AnimationWatcher watcher = getAnimationWatcher();
+
+        if (watcher != null) {
+            if (paused) {
+                watcher.freeze();
+            } else {
+                watcher.unfreeze();
+
+                if (watcher.requiresInit()) {
+                    watcher.init(model);
+                }
+
+                if (watcher.isAnimationEnded(currentTime)) {
+                    manager.onAnimationEnd(model, this, watcher);
+
+                    watcher = watcher.next();
+
+                    if (watcher != null && watcher.requiresInit()) {
+                        watcher.init(model);
+                    }
+
+                    setAnimationWatcher(watcher);//here we update current watcher
+                }
+            }
+        }
+    }
+
+    @Nullable
     public AnimationWatcher getAnimationWatcher() {
         return animationWatcher;
     }
 
-    void setAnimationWatcher(AnimationWatcher animationWatcher) {
+    public void setAnimationWatcher(@Nullable AnimationWatcher animationWatcher) {
         this.animationWatcher = animationWatcher;
     }
 
@@ -99,7 +129,6 @@ public class Layer implements AnimationLayer {
 
         Layer clone = (Layer) super.clone();
         clone.name = name;
-        clone.priority = priority;
         clone.blendType = blendType;
         clone.weight = weight;
 

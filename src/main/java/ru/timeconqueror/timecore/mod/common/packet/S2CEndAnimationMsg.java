@@ -3,7 +3,6 @@ package ru.timeconqueror.timecore.mod.common.packet;
 import net.minecraft.entity.Entity;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.network.NetworkEvent;
-import org.jetbrains.annotations.NotNull;
 import ru.timeconqueror.timecore.api.animation.AnimationManager;
 import ru.timeconqueror.timecore.api.animation.AnimationProvider;
 
@@ -31,19 +30,15 @@ public class S2CEndAnimationMsg extends S2CAnimationMsg {
         }
 
         @Override
-        public void encode(S2CEndAnimationMsg packet, PacketBuffer buffer) {
-            encodeBaseData(packet, buffer);
-
+        public void encodeExtra(S2CEndAnimationMsg packet, PacketBuffer buffer) {
             buffer.writeInt(packet.transitionTime);
         }
 
-        @NotNull
         @Override
-        public S2CEndAnimationMsg decode(PacketBuffer buffer) {
-            Data data = decodeBaseData(buffer);
-
+        public S2CEndAnimationMsg decodeWithExtraData(int entityId, String layerName, PacketBuffer buffer) {
             int transitionTime = buffer.readInt();
-            return new S2CEndAnimationMsg(data.entityId, data.layerName, transitionTime);
+
+            return new S2CEndAnimationMsg(entityId, layerName, transitionTime);
         }
     }
 }

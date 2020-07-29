@@ -14,14 +14,12 @@ import ru.timeconqueror.timecore.animation.AnimationManagerBuilder;
 import ru.timeconqueror.timecore.animation.AnimationStarter;
 import ru.timeconqueror.timecore.animation.component.DelayedAction;
 import ru.timeconqueror.timecore.animation.entityai.AnimatedMeleeAttackGoal;
-import ru.timeconqueror.timecore.animation.util.LayerReference;
 import ru.timeconqueror.timecore.animation.util.StandardDelayPredicates;
 import ru.timeconqueror.timecore.api.animation.ActionManager;
 import ru.timeconqueror.timecore.api.animation.AnimationProvider;
 import ru.timeconqueror.timecore.api.animation.BlendType;
 import ru.timeconqueror.timecore.registry.EntityCommonRegistryExample;
 
-@SuppressWarnings("EntityConstructor")
 public class EntityFloro extends MonsterEntity implements AnimationProvider<EntityFloro> {
     private static final DelayedAction<EntityFloro, Object> MELEE_ATTACK_ACTION = new DelayedAction<EntityFloro, Object>(new ResourceLocation(TimeCore.MODID, "floro/melee_attack"),
             new AnimationStarter(EntityCommonRegistryExample.FLORO_SHOOT), "attack")
@@ -30,14 +28,17 @@ public class EntityFloro extends MonsterEntity implements AnimationProvider<Enti
 
     private final ActionManager<EntityFloro> actionManager;
 
+    private static final String LAYER_WALKING = "walking";
+    private static final String LAYER_ATTACK = "attack";
+
     public EntityFloro(EntityType<? extends MonsterEntity> type, World worldIn) {
         super(type, worldIn);
 
         actionManager = new ActionManagerBuilder<EntityFloro>(
                 AnimationManagerBuilder.create()
-                        .addLayer(LayerReference.WALKING)
-                        .addWalkingAnimationHandling(new AnimationStarter(EntityCommonRegistryExample.FLORO_WALK).setSpeed(2.0F), "walking")
-                        .addLayer("attack", 1, BlendType.ADDING, 0.9F)
+                        .addLayer(LAYER_WALKING, BlendType.ADDING, 1F)
+                        .addLayer(LAYER_ATTACK, BlendType.ADDING, 0.9F)
+                        .addWalkingAnimationHandling(new AnimationStarter(EntityCommonRegistryExample.FLORO_WALK).setSpeed(2.0F), LAYER_WALKING)
         ).build(this, world);
     }
 
