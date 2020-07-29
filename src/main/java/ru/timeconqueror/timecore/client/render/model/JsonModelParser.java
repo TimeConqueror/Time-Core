@@ -5,7 +5,6 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.Vector3f;
 import net.minecraft.resources.IResource;
 import net.minecraft.util.JSONUtils;
@@ -19,40 +18,39 @@ import ru.timeconqueror.timecore.util.JsonUtils;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.*;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class JsonModelParser {
     private static final String[] ACCEPTABLE_FORMAT_VERSIONS = new String[]{"1.12.0"};
 
-    public List<TimeModel> parseJsonModel(@NotNull ResourceLocation fileLocation, Function<ResourceLocation, RenderType> renderType) throws JsonParsingException {
+    public List<TimeModelFactory> parseJsonModel(@NotNull ResourceLocation fileLocation) throws JsonParsingException {
         try (final IResource resource = Minecraft.getInstance().getResourceManager().getResource(fileLocation)) {
             BufferedReader reader = new BufferedReader(new InputStreamReader(resource.getInputStream()));
 
             JsonObject json = JSONUtils.fromJson(reader, true/*isLenient*/);
-            return parseJsonModel(renderType, json);
+            return parseJsonModel(json);
 
         } catch (Throwable e) {
             throw new JsonParsingException(e);
         }
     }
 
-    private List<TimeModel> parseJsonModel(Function<ResourceLocation, RenderType> renderType, JsonObject object) throws JsonParsingException {
-        List<TimeModel> models = new ArrayList<>();
+    private List<TimeModelFactory> parseJsonModel(JsonObject object) throws JsonParsingException {
+        List<TimeModelFactory> modelFactories = new ArrayList<>();
         for (Map.Entry<String, JsonElement> entry : object.entrySet()) {
             if (entry.getKey().equals("format_version")) {
                 String formatVersion = entry.getValue().getAsString();
                 checkFormatVersion(formatVersion);
             } else {
-                TimeModel model = parseSubModel(renderType, entry.getKey(), entry.getValue().getAsJsonArray());
-                models.add(model);
+                TimeModelFactory modelFactory = parseSubModel(entry.getKey(), entry.getValue().getAsJsonArray());
+                modelFactories.add(modelFactory);
             }
         }
 
-        return models;
+        return modelFactories;
     }
 
-    private TimeModel parseSubModel(Function<ResourceLocation, RenderType> renderType, String name, JsonArray subModelArr) throws JsonParsingException {
+    private TimeModelFactory parseSubModel(String name, JsonArray subModelArr) throws JsonParsingException {
         JsonObject subModel = subModelArr.get(0).getAsJsonObject();
         JsonArray bones = subModel.get("bones").getAsJsonArray();
 
@@ -82,15 +80,16 @@ public class JsonModelParser {
             }
         }
 
-        return create(renderType, name, textureWidth, textureHeight, rootPieces);
+        return create(name, textureWidth, textureHeight, rootPieces);
     }
 
-    private TimeModel create(Function<ResourceLocation, RenderType> renderType, String name, int textureWidth, int textureHeight, List<RawModelBone> rootPieces) {
-        TimeModel model = new TimeModel(renderType, name, textureWidth, textureHeight);
+    private TimeModelFactory create(String name, int textureWidth, int textureHeight, List<RawModelBone> rootPieces) {
+        return renderTypeProvider -> {
+            TimeModel model = new TimeModel(renderTypeProvider, name, textureWidth, textureHeight);
+            model.setPieces(rootPieces.stream().map(rawModelBone -> rawModelBone.bake(model, null)).collect(Collectors.toList()));
 
-        model.setPieces(rootPieces.stream().map(rawModelBone -> rawModelBone.bake(model, null)).collect(Collectors.toList()));
-
-        return model;
+            return model;
+        };
     }
 
     private RawModelBone parseBone(JsonElement bone) throws JsonParsingException {
@@ -163,7 +162,11 @@ public class JsonModelParser {
                 boxesOut.add(cube.bake(model, this));
             }
 
-            TimeModelRenderer renderer = new TimeModelRenderer(model, rotationAngles, name, boxesOut, neverRender);
+            Vector3f rotationAnglesRadians = new Vector3f(rotationAngles.getX() * (float) Math.PI / 180,
+                    rotationAngles.getY() * (float) Math.PI / 180,
+                    rotationAngles.getZ() * (float) Math.PI / 180);
+
+            TimeModelRenderer renderer = new TimeModelRenderer(model, rotationAnglesRadians, name, boxesOut, neverRender);
             if (parent != null) {
                 renderer.setRotationPoint(pivot.getX() - parent.pivot.getX(), -(pivot.getY() - parent.pivot.getY()), pivot.getZ() - parent.pivot.getZ());
             } else renderer.setRotationPoint(pivot.getX(), -pivot.getY(), pivot.getZ());

@@ -14,7 +14,7 @@ import java.util.List;
 public class TimeModelRenderer extends ModelRenderer {
     private final Vector3f scaleFactor = new Vector3f(1, 1, 1);
     public List<TimeModelBox> cubes;
-    public Vector3f offset;
+    public Vector3f offset = new Vector3f();
     public Vector3f startRotationAngles;
     private final String name;
 

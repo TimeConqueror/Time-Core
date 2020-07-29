@@ -1,7 +1,6 @@
 package ru.timeconqueror.timecore.client.render.model;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.client.renderer.entity.model.EntityModel;
 import net.minecraft.entity.Entity;
@@ -27,9 +26,7 @@ public class TimeEntityModel<T extends Entity> extends EntityModel<T> {
 
     @Override
     public void render(MatrixStack matrixStackIn, IVertexBuilder bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha) {
-        GlStateManager.translatef(0, 1.501F, 0);//Mojang, WHY???
         model.render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
-        GlStateManager.translatef(0, -1.501F, 0);
     }
 
     public TimeModel getBaseModel() {

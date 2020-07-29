@@ -17,7 +17,6 @@ import ru.timeconqueror.timecore.animation.entityai.AnimatedMeleeAttackGoal;
 import ru.timeconqueror.timecore.animation.util.StandardDelayPredicates;
 import ru.timeconqueror.timecore.api.animation.ActionManager;
 import ru.timeconqueror.timecore.api.animation.AnimationProvider;
-import ru.timeconqueror.timecore.api.animation.BlendType;
 import ru.timeconqueror.timecore.registry.EntityCommonRegistryExample;
 
 public class EntityFloro extends MonsterEntity implements AnimationProvider<EntityFloro> {
@@ -36,9 +35,9 @@ public class EntityFloro extends MonsterEntity implements AnimationProvider<Enti
 
         actionManager = new ActionManagerBuilder<EntityFloro>(
                 AnimationManagerBuilder.create()
-                        .addLayer(LAYER_WALKING, BlendType.ADDING, 1F)
-                        .addLayer(LAYER_ATTACK, BlendType.ADDING, 0.9F)
-                        .addWalkingAnimationHandling(new AnimationStarter(EntityCommonRegistryExample.FLORO_WALK).setSpeed(2.0F), LAYER_WALKING)
+//                        .addLayer(LAYER_WALKING, BlendType.ADDING, 1F)
+//                        .addLayer(LAYER_ATTACK, BlendType.ADDING, 0.9F)
+//                        .addWalkingAnimationHandling(new AnimationStarter(EntityCommonRegistryExample.FLORO_WALK).setSpeed(2.0F), LAYER_WALKING)
         ).build(this, world);
     }
 

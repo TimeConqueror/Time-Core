@@ -17,4 +17,11 @@ public abstract class TimeEntityRenderer<T extends LivingEntity & AnimationProvi
         entity.getActionManager().getAnimationManager().applyAnimations(getEntityModel());
         super.render(entity, entityYaw, partialTicks, matrixStack, buffer, packedLight);
     }
+
+    @Override
+    protected void preRenderCallback(T entitylivingbaseIn, MatrixStack matrixStackIn, float partialTickTime) {
+        super.preRenderCallback(entitylivingbaseIn, matrixStackIn, partialTickTime);
+
+        matrixStackIn.translate(0, 1.501F, 0);//Mojang, WTF???
+    }
 }
