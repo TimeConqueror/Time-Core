@@ -10,7 +10,7 @@ import ru.timeconqueror.timecore.api.animation.AnimationProvider;
 
 import java.util.Objects;
 import java.util.function.BiConsumer;
-
+//FIXME fix
 public class AnimatedMeleeAttackGoal<T extends CreatureEntity & AnimationProvider<T>> extends MeleeAttackGoal {
     public static final BiConsumer<CreatureEntity, Object> BASIC_MELEE_ATTACK_ACTION = (entity, data) -> {
         entity.swingArm(Hand.MAIN_HAND);

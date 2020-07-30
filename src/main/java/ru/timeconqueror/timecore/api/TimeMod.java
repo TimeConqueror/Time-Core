@@ -1,6 +1,5 @@
 package ru.timeconqueror.timecore.api;
 
-import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.ModLoadingContext;
 import ru.timeconqueror.timecore.api.client.resource.location.TextureLocation;
 
@@ -21,13 +20,6 @@ public abstract class TimeMod {
      */
     public String getModID() {
         return modID;
-    }
-
-    /**
-     * Creates ResourceLocation with bound mod id.
-     */
-    public ResourceLocation rl(String path) {
-        return new ResourceLocation(modID, path);
     }
 
     public TextureLocation texture(String path) {

@@ -29,10 +29,13 @@ public class JsonAnimationParser {
     private static final String[] ACCEPTABLE_FORMAT_VERSIONS = new String[]{"1.8.0"};
 
     public Map<String, Animation> parseAnimations(@NotNull ResourceLocation fileLocation) throws JsonParsingException {
+        String s = ResourceUtils.asDataSubpath(fileLocation.getNamespace() + "/" + fileLocation.getPath());
+        System.out.println(s);
+
         try (final InputStream inputStream = ResourceUtils.getStream(ResourceUtils.asDataSubpath(fileLocation.getNamespace() + "/" + fileLocation.getPath()))) {
             BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
 
-            JsonObject json = JSONUtils.fromJson(reader, true/*isLenient*/);
+            JsonObject json = JSONUtils.fromJson(reader, true);
             return parseAnimation(fileLocation, json);
 
         } catch (Throwable e) {

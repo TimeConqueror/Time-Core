@@ -1,6 +1,7 @@
 package ru.timeconqueror.timecore;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod;
@@ -37,6 +38,13 @@ public final class TimeCore extends TimeMod {
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::doClientStuff);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::onDataEvent);
+    }
+
+    /**
+     * Creates ResourceLocation with bound mod id.
+     */
+    public static ResourceLocation rl(String path) {
+        return new ResourceLocation(MODID, path);
     }
 
     private void setup(final FMLCommonSetupEvent event) {

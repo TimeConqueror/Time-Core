@@ -6,6 +6,10 @@ import ru.timeconqueror.timecore.api.animation.BlendType;
 import ru.timeconqueror.timecore.client.render.model.TimeModelRenderer;
 
 public class AnimationUtils {
+    public static float milliSecondsToTicks(int milliSeconds) {
+        return milliSeconds / 1000F * 20;
+    }
+
     public static void applyRotation(TimeModelRenderer piece, AnimationLayer layer, Vector3f rotationIn) {
         BlendType blendType = layer.getBlendType();
         rotationIn.mul(layer.getWeight());

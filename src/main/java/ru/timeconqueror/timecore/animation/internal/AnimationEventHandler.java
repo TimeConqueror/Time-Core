@@ -11,6 +11,7 @@ import ru.timeconqueror.timecore.animation.ServerAnimationManager;
 import ru.timeconqueror.timecore.api.animation.ActionManager;
 import ru.timeconqueror.timecore.api.animation.AnimationManager;
 import ru.timeconqueror.timecore.api.animation.AnimationProvider;
+import ru.timeconqueror.timecore.api.common.event.LivingUpdateEndEvent;
 import ru.timeconqueror.timecore.mod.common.packet.InternalPacketManager;
 import ru.timeconqueror.timecore.mod.common.packet.S2CSyncAnimationsMsg;
 
@@ -26,7 +27,13 @@ public class AnimationEventHandler {
                 //needed for animation ticking on server side.
                 ((AnimationProvider<?>) entityLiving).getActionManager().getAnimationManager().applyAnimations(null);
             }
+        }
+    }
 
+    public static void onEntityTickEnd(LivingUpdateEndEvent event) {
+        LivingEntity entityLiving = event.getEntityLiving();
+
+        if (entityLiving instanceof AnimationProvider<?>) {
             ActionManager<?> actionManager = ((AnimationProvider<?>) entityLiving).getActionManager();
             actionManager.onTick();
         }

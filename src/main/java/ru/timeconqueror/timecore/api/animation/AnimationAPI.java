@@ -50,7 +50,7 @@ public class AnimationAPI {
 
 	/**
 	 * Returns the reversed version of this animation.
-	 * It is slow, so you need to call this once.
+	 * This method is resource-intensive, so it's better to call this once and store the result somewher.
 	 * Don't forget about registering returned animation.
 	 */
 	public static Animation reverse(Animation animation) {
