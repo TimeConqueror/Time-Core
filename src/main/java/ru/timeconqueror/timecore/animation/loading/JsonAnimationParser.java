@@ -22,6 +22,7 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class JsonAnimationParser {
@@ -77,24 +78,28 @@ public class JsonAnimationParser {
     }
 
     private BoneOption parseAnimationBone(String boneName, JsonObject boneJson) throws JsonParsingException {
-        List<KeyFrame> rotationFrames = parseKeyFrameArr("rotation", boneJson);
-        List<KeyFrame> positionFrames = parseKeyFrameArr("position", boneJson);
+        List<KeyFrame> rotationFrames = parseKeyFrameArr("rotation", boneJson, vec -> {
+            vec.set(vec.getX() * (float) Math.PI / 180, vec.getY() * (float) Math.PI / 180, vec.getZ() * (float) Math.PI / 180);
+            return vec;
+        });
+        List<KeyFrame> positionFrames = parseKeyFrameArr("position", boneJson, vector3f -> vector3f);
         if (positionFrames != null) {
             positionFrames.forEach(keyFrame -> keyFrame.getVec().setY(-keyFrame.getVec().getY()));
         }
-        List<KeyFrame> scaleFrames = parseKeyFrameArr("scale", boneJson);
+        List<KeyFrame> scaleFrames = parseKeyFrameArr("scale", boneJson, vector3f -> vector3f);
 
         return new BoneOption(boneName, rotationFrames, positionFrames, scaleFrames);
     }
 
     @Nullable
-    private List<KeyFrame> parseKeyFrameArr(String optionName, JsonObject boneJson) throws JsonParsingException {
+    private List<KeyFrame> parseKeyFrameArr(String optionName, JsonObject boneJson, Function<Vector3f, Vector3f> processor) throws JsonParsingException {
         List<KeyFrame> keyFrames = new ArrayList<>();
 
         if (boneJson.has(optionName)) {
             JsonElement frameContainerJson = boneJson.get(optionName);
             if (frameContainerJson.isJsonArray()) {
                 Vector3f vec = JsonUtils.toVec3f(frameContainerJson);
+                vec = processor.apply(vec);
                 keyFrames.add(new KeyFrame(0, vec));
 
             } else if (frameContainerJson.isJsonObject()) {
@@ -109,6 +114,7 @@ public class JsonAnimationParser {
                     }
 
                     Vector3f vec = JsonUtils.toVec3f(keyEntry.getValue());
+                    vec = processor.apply(vec);
 
                     keyFrames.add(new KeyFrame((int) (time * 1000), vec));
                 }

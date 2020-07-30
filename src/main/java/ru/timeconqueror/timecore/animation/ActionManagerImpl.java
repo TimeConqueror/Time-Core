@@ -8,7 +8,6 @@ import ru.timeconqueror.timecore.animation.watcher.AnimationWatcher;
 import ru.timeconqueror.timecore.api.animation.ActionManager;
 import ru.timeconqueror.timecore.api.animation.Animation;
 import ru.timeconqueror.timecore.api.animation.AnimationManager;
-import ru.timeconqueror.timecore.api.util.MathUtils;
 
 import java.util.HashSet;
 import java.util.Objects;
@@ -59,9 +58,7 @@ public class ActionManagerImpl<T extends MobEntity> implements ActionManager<T> 
                     // floats of movement can be almost the same (like 0 and 0.000000001), so entity moves a very short distance, which is invisible for eyes.
                     // this can be because of converting coords to bytes to send them to client.
                     // so checking if it's more than 1/256 of the block will fix the issue
-                    boolean posChanged = MathUtils.calcDifference(entity.getPosX(), entity.prevPosX) >= 1 / 256F
-                            || MathUtils.calcDifference(entity.getPosY(), entity.prevPosY) >= 1 / 256F
-                            || MathUtils.calcDifference(entity.getPosZ(), entity.prevPosZ) >= 1 / 256F;
+                    boolean posChanged = entity.limbSwingAmount >= 1 / 256F;
 
                     if (posChanged) {
                         walkingAnimationSetting.getAnimationStarter().startAt(animationManager, walkingAnimationSetting.getLayerName());
