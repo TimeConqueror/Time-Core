@@ -35,8 +35,6 @@ public class TimeModelRenderer extends ModelRenderer {
             if (!this.cubes.isEmpty() || !this.childModels.isEmpty()) {
                 matrixStackIn.push();
 
-                matrixStackIn.translate(offset.getX() * scaleFactor.getX(), offset.getY() * scaleFactor.getY(), offset.getZ() * scaleFactor.getZ());
-
                 this.translateRotate(matrixStackIn);
 
                 matrixStackIn.scale(scaleFactor.getX(), scaleFactor.getY(), scaleFactor.getZ());
@@ -52,6 +50,13 @@ public class TimeModelRenderer extends ModelRenderer {
         }
 
         resetData();
+    }
+
+    @Override
+    public void translateRotate(MatrixStack matrixStackIn) {
+        matrixStackIn.translate(offset.getX() * (1 / 16F) * scaleFactor.getX(), offset.getY() * (1 / 16F) * scaleFactor.getY(), offset.getZ() * (1 / 16F) * scaleFactor.getZ());
+
+        super.translateRotate(matrixStackIn);
     }
 
     private void doRender(MatrixStack.Entry matrixEntryIn, IVertexBuilder bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha) {
