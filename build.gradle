@@ -13,13 +13,14 @@ buildscript {
         classpath 'org.spongepowered:mixingradle:0.7-SNAPSHOT'
     }
 }
+
 apply plugin: 'net.minecraftforge.gradle'
 // Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
 apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
 apply plugin: 'org.spongepowered.mixin'
 
-version = '1.15.2-1.1.0.1'
+version = '1.15.2-2.0.0.0'
 group = 'ru.timeconqueror' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = 'TimeCore'
 
@@ -154,14 +155,13 @@ dependencies {
         }
     }
 
-    shade compile("io.github.lxgaming:classloaderutils:1.0.0")
-    shade compile("org.ow2.asm:asm-analysis:6.2") {
+    compile("org.ow2.asm:asm-analysis:6.2") {
         transitive = false
     }
-    shade compile("org.ow2.asm:asm-util:6.2") {
+    compile("org.ow2.asm:asm-util:6.2") {
         transitive = false
     }
-    shade compile("org.spongepowered:mixin:0.8") {
+    compile("org.spongepowered:mixin:0.8") {
         transitive = false
     }
 
@@ -197,24 +197,17 @@ jar {
         }
     }
 
-    rename 'LICENSE.txt', 'LICENSE-MIXINS.txt'
-    from('LICENSE.md')
-
     manifest {
         attributes([
                 "Specification-Title"        : "timecore",
                 "Specification-Vendor"       : "Time_Conqueror",
                 "Specification-Version"      : "1", // We are version 1 of ourselves
                 "Implementation-Title"       : project.name,
-                "Implementation-Version"     : "${version}",
+                "Implementation-Version"     : version,
                 "Implementation-Vendor"      : "Time_Conqueror",
                 "Implementation-Timestamp"   : new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
 
-                "TweakClass"                 : "org.spongepowered.asm.launch.MixinTweaker",
-                "TweakOrder"                 : 0,
-                "MixinConfigs"               : "mixins.timecore.json",
-                "ForceLoadAsMod"             : true,
-                "FMLCorePluginContainsFMLMod": "true"
+                "MixinConfigs"               : "mixins.timecore.json"
         ])
     }
 }
@@ -233,6 +226,9 @@ publishing {
         }
     }
     repositories {
+        maven {
+            url "file:///C:\\IJ Projects\\Maven"
+        }
         maven {
             url "file:///${project.projectDir}/maven"
         }

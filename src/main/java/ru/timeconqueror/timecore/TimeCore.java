@@ -11,6 +11,7 @@ import net.minecraftforge.fml.event.lifecycle.GatherDataEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.spongepowered.asm.mixin.MixinEnvironment;
 import ru.timeconqueror.timecore.api.TimeMod;
 import ru.timeconqueror.timecore.api.datagen.DataGen;
 import ru.timeconqueror.timecore.client.resource.TimePackFinder;
@@ -25,6 +26,8 @@ public final class TimeCore extends TimeMod {
 
     public TimeCore() {
         INSTANCE = this;
+
+        checkForMixinBootstrap();
 
         DistExecutor.runWhenOn(Dist.CLIENT, () -> () -> {
             Minecraft mc = Minecraft.getInstance();
@@ -56,5 +59,15 @@ public final class TimeCore extends TimeMod {
 
     private void onDataEvent(GatherDataEvent event) {
         DataGen.disableFileDeletion = true;
+    }
+
+    private static void checkForMixinBootstrap() {
+        try {
+            if (MixinEnvironment.getCurrentEnvironment().getPhase() != MixinEnvironment.Phase.DEFAULT) {
+                throw new IllegalArgumentException("Mixins are not initialized ");
+            }
+        } catch (NoClassDefFoundError e) {
+            throw new IllegalStateException("TimeCore requires MixinBootstrap Mod to be loaded.");
+        }
     }
 }

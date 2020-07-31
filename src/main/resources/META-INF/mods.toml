@@ -43,7 +43,6 @@ Simplifies modding, adds efficient obj model loader for entities and more!
     ordering="NONE"
     # Side this dependency is applied on - BOTH, CLIENT or SERVER
     side="BOTH"
-# Here's another dependency
 [[dependencies.timecore]]
     modId="minecraft"
     mandatory=true
