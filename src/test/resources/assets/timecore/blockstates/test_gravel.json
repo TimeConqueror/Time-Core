@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "timecore:block/test_gravel"
+    }
+  }
+}

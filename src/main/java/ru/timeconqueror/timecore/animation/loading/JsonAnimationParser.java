@@ -30,7 +30,6 @@ public class JsonAnimationParser {
 
     public Map<String, Animation> parseAnimations(@NotNull ResourceLocation fileLocation) throws JsonParsingException {
         String s = ResourceUtils.asDataSubpath(fileLocation.getNamespace() + "/" + fileLocation.getPath());
-        System.out.println(s);
 
         try (final InputStream inputStream = ResourceUtils.getStream(ResourceUtils.asDataSubpath(fileLocation.getNamespace() + "/" + fileLocation.getPath()))) {
             BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));

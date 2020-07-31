@@ -20,4 +20,8 @@ public class BlockDeferredRegistryExample {
             .regDefaultBlockItem(ItemGroup.MISC)
 //            .genLangEntry("Test Cobble")
             .endTyped();
+
+    public static RegistryObject<Block> TEST_GRAVEL = REGISTER.regBlock("test_gravel", () -> new Block(BLOCK_PROPS_CREATOR.create()))
+            .regDefaultBlockItem(ItemGroup.MISC)
+            .endTyped();
 }
