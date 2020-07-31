@@ -28,20 +28,13 @@ import ru.timeconqueror.timecore.api.animation.BlendType;
 import java.util.EnumSet;
 
 /**
- * How tasks work:
- * If flags, from which mutex consists of, are disabled, then tasks with this mutex won't be run.
+ * How vanilla tasks work:
+ * If flags, from which task's mutex consists of, are disabled, then tasks with this mutex won't be run.
  * <p>
  * If task has higher priority (lower number), than system will check if current task with lower priority is interruptible.
  * If it is so, then it will be finished, and new task will task its place
  * <p>
  * If task has a lower priority (higher number), it's checked by system if it can work in parallel (if mutex isn't the same).
- * <p>
- * How mutex works:
- * If combination of numbers, that are power of two, completely coincides with the other tasks' ones
- * they can't work in parallel
- * Example:
- * task with mutex 1 | 2 | 4 (7) cannot be run in parallel with task with mutex 1 | 2 | 4 (7)
- * task with mutex 1 | 2 | 4 (7) can be run in parallel with task with mutex 1 | 2 (3)
  */
 public class FloroEntity extends MonsterEntity implements IRangedAttackMob, AnimationProvider<FloroEntity> {
     private static final DataParameter<Boolean> HIDDEN = EntityDataManager.createKey(FloroEntity.class, DataSerializers.BOOLEAN);
@@ -157,12 +150,6 @@ public class FloroEntity extends MonsterEntity implements IRangedAttackMob, Anim
         }
 
         super.livingTick();//this method should be the last, because here we update AI task. If it is before our own code, then disabling control flags won't work
-        if (!isServerWorld()) {
-//            System.out.printf("limbSwingAmount: %f\n", limbSwingAmount);
-            System.out.println("X diff: " + Math.abs(prevPosX - getPosX()));
-            System.out.println("Y diff: " + Math.abs(prevPosY - getPosY()));
-            System.out.println("Z diff: " + Math.abs(prevPosZ - getPosZ()));
-        }
     }
 
     @Override
