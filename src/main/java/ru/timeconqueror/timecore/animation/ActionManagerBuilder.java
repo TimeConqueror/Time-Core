@@ -1,5 +1,6 @@
 package ru.timeconqueror.timecore.animation;
 
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
@@ -9,7 +10,7 @@ import ru.timeconqueror.timecore.util.SingleUseBuilder;
 
 import java.util.Objects;
 
-public class ActionManagerBuilder<T extends MobEntity & AnimationProvider<T>> extends SingleUseBuilder {
+public class ActionManagerBuilder<T extends LivingEntity & AnimationProvider<T>> extends SingleUseBuilder {
     private final AnimationManagerBuilder animationManagerBuilder;
 
     public ActionManagerBuilder(AnimationManagerBuilder animationManagerBuilder) {

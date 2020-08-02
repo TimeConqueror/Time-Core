@@ -1,7 +1,7 @@
 package ru.timeconqueror.timecore.animation;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.MobEntity;
+import net.minecraft.entity.LivingEntity;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.fml.network.PacketDistributor;
@@ -12,7 +12,7 @@ import ru.timeconqueror.timecore.mod.common.packet.InternalPacketManager;
 import ru.timeconqueror.timecore.mod.common.packet.S2CEndAnimationMsg;
 import ru.timeconqueror.timecore.mod.common.packet.S2CStartAnimationMsg;
 
-public class ServerAnimationManager<T extends MobEntity> extends BaseAnimationManager {
+public class ServerAnimationManager<T extends LivingEntity> extends BaseAnimationManager {
     private ActionManagerImpl<T> actionManager;
 
     public ServerAnimationManager(@Nullable AnimationSetting walkingAnimationStarter) {

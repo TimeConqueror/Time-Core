@@ -6,7 +6,7 @@ import ru.timeconqueror.timecore.animation.AnimationStarter;
 import ru.timeconqueror.timecore.animation.loading.AnimationLoader;
 
 import java.util.Map;
-
+//ToDO make allbuilders with Entity generic type
 public class AnimationAPI {
     /**
      * Only for animation files with the single animation!!!

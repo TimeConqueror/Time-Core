@@ -1,7 +1,7 @@
 package ru.timeconqueror.timecore.animation;
 
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.MobEntity;
+import net.minecraft.entity.LivingEntity;
 import ru.timeconqueror.timecore.TimeCore;
 import ru.timeconqueror.timecore.animation.component.DelayedAction;
 import ru.timeconqueror.timecore.animation.watcher.AnimationWatcher;
@@ -13,7 +13,7 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
-public class ActionManagerImpl<T extends MobEntity> implements ActionManager<T> {
+public class ActionManagerImpl<T extends LivingEntity> implements ActionManager<T> {
     private final Set<ActionWatcher<T, ?>> actionWatchers = new HashSet<>();
     private final BaseAnimationManager animationManager;
     private final T entity;
