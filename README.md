@@ -1,7 +1,7 @@
 # TimeCore
 
 <br>
-&#x1F534; <span>**Requires MixinBootstrap as a dependency**</span>
+&#x1F534; <span>Requires MixinBootstrap as a dependency</span>
 
 ## Provided features (1.15.2+):
 * JSON-Based Entity Animations - Easy-to-use system that allows you to play complex entity animations, which are parsed from JSON. More info here: (click)
@@ -25,7 +25,7 @@
 
 2. Add this dependency in the `dependencies` closure:
 ```groovy
-implementation group: 'ru.timeconqueror', name: 'TimeCore', version: '1.15.2-2.0.0.+', classifier:'deobf-20200710', changing: true
+implementation group: 'ru.timeconqueror', name: 'TimeCore', version: '1.15.2-2.0.0.+', changing: true
 ```
 
 3. Add this string as a `Program Argument`:
