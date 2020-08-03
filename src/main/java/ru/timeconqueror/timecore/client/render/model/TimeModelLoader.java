@@ -5,14 +5,12 @@ import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.ResourceLocation;
-import ru.timeconqueror.timecore.TimeCore;
 
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class TimeModelLoader {
-    public static final List<TimeModel> BROKEN_MODEL = loadJsonModels(new ResourceLocation(TimeCore.MODID, "models/entity/broken.json"), RenderType::getEntityCutoutNoCull);
 
     /**
      * Loads single json model to be used in {@link TileEntityRenderer} or smth like that.
@@ -30,8 +28,7 @@ public class TimeModelLoader {
     public static TimeModel loadJsonModel(ResourceLocation location, Function<ResourceLocation, RenderType> renderTypeProvider) {
         List<TimeModel> timeModels = loadJsonModels(location, renderTypeProvider);
         if (timeModels.size() != 1) {
-            TimeCore.LOGGER.error("Can't load model " + location.toString() + " due to the file contains more than one model. Use #loadJsonModels method instead.");
-            return BROKEN_MODEL.get(0);
+            throw new RuntimeException("Can't load model" + location.toString() + " due to the file contains more than one model. Use #loadJsonModels method instead.");
         }
 
         return timeModels.get(0);
@@ -57,10 +54,8 @@ public class TimeModelLoader {
                     .map(timeModelFactory -> timeModelFactory.create(renderTypeProvider))
                     .collect(Collectors.toList());
         } catch (Throwable e) {
-            TimeCore.LOGGER.error("Can't load model " + location.toString(), e);
+            throw new RuntimeException("Can't load model " + location.toString(), e);
         }
-
-        return BROKEN_MODEL;
     }
 
     /**
