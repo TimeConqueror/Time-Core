@@ -31,6 +31,7 @@ import java.lang.annotation.Target;
  *
  * <b><font color="yellow">
  * WARNING: Annotated class with {@code target==Target.INSTANCE} must contain nullary constructor or exception will be thrown.
+ * Currently work only for JAVA classes //FIXME
  * </b>
  */
 @Target({ElementType.TYPE, ElementType.FIELD})
