@@ -8,7 +8,7 @@ import ru.timeconqueror.timecore.api.client.resource.location.TextureLocation;
  * <p>
  * Your main mod class should extend this if you want to apply such features as auto-registry.
  */
-public abstract class TimeMod {
+public abstract class TimeMod {//TODO move to interface
     private final String modID;
 
     public TimeMod() {

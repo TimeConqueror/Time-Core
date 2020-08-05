@@ -1,5 +1,6 @@
 package ru.timeconqueror.timecore.mod.misc;
 
+import net.minecraftforge.fml.ModContainer;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -8,6 +9,7 @@ import net.minecraftforge.fml.loading.moddiscovery.ModInfo;
 import net.minecraftforge.forgespi.language.ModFileScanData;
 import ru.timeconqueror.timecore.TimeCore;
 import ru.timeconqueror.timecore.devtools.gen.lang.LangGeneratorFacade;
+import ru.timeconqueror.timecore.devtools.kotlin.KotlinAutomaticEventSubscriber;
 import ru.timeconqueror.timecore.registry.TimeAutoRegistrable;
 import ru.timeconqueror.timecore.registry.deferred.base.DeferredFMLImplForgeRegister;
 import ru.timeconqueror.timecore.registry.deferred.base.DeferredTimeRegister;
@@ -16,10 +18,19 @@ import ru.timeconqueror.timecore.util.reflection.UnlockedField;
 
 import java.lang.annotation.ElementType;
 
+import static net.minecraftforge.fml.Logging.LOADING;
+
 public class ModInitializer {
-    public static void run() {
+    public static void run(String modId, ModContainer modContainer, ModFileScanData scanResults, Class<?> modClass) {
+        runKotlinAutomaticEventSubscriber(modId, modContainer, scanResults, modClass);
         setupAutoRegistries();
         regModBusListeners();
+    }
+
+    private static void runKotlinAutomaticEventSubscriber(String modId, ModContainer modContainer, ModFileScanData scanResults, Class<?> modClass) {
+        TimeCore.LOGGER.debug(LOADING, "Injecting Automatic event subscribers for {}", modId);
+        KotlinAutomaticEventSubscriber.inject(modContainer, scanResults, modClass.getClassLoader());
+        TimeCore.LOGGER.debug(LOADING, "Completed Automatic event subscribers for {}", modId);
     }
 
     private static void regModBusListeners() {
