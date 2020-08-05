@@ -1,28 +1,14 @@
 package ru.timeconqueror.timecore.api;
 
-import net.minecraftforge.fml.ModLoadingContext;
-import ru.timeconqueror.timecore.api.client.resource.location.TextureLocation;
-
 /**
  * Base mod class needed for TimeCore features.
  * <p>
- * Your main mod class should extend this if you want to apply such features as auto-registry.
+ * Your main mod class should extend this if you want to apply all auto-subscribing features, such as:
+ * <ul>
+ *     <li>Auto-Registries</li>
+ *     <li>Event Subscriber for Kotlin objects and companions</li>
+ *     <li>etc.</li>
+ * </ul>
  */
-public abstract class TimeMod {//TODO move to interface
-    private final String modID;
-
-    public TimeMod() {
-        modID = ModLoadingContext.get().getActiveNamespace();
-    }
-
-    /**
-     * Returns mod id of this mod instance.
-     */
-    public String getModID() {
-        return modID;
-    }
-
-    public TextureLocation texture(String path) {
-        return new TextureLocation(modID, path);
-    }
+public interface TimeMod {
 }

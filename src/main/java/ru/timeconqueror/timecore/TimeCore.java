@@ -19,7 +19,7 @@ import ru.timeconqueror.timecore.devtools.StructureRevealer;
 import ru.timeconqueror.timecore.util.reflection.ReflectionHelper;
 
 @Mod(TimeCore.MODID)
-public final class TimeCore extends TimeMod {
+public final class TimeCore implements TimeMod {
     public static final String MODID = "timecore";
     public static final Logger LOGGER = LogManager.getLogger(MODID);
     public static TimeCore INSTANCE = null;
