@@ -142,16 +142,18 @@ dependencies {
     // The userdev artifact is a special name and will get all sorts of transformations applied to it.
     minecraft 'net.minecraftforge:forge:1.15.2-31.2.31'
 
-    file("runtimeMods").eachFile { file ->
-        def splitPos = file.name.lastIndexOf("-")
-        def modartifact = file.name.substring(0, splitPos)
-        def modversion = file.name.substring(splitPos + 1, file.name.length() - 4)
-        def modreference = "lib:$modartifact:$modversion"
+    if (file("runtimeMods").exists()) {
+        file("runtimeMods").eachFile { file ->
+            def splitPos = file.name.lastIndexOf("-")
+            def modartifact = file.name.substring(0, splitPos)
+            def modversion = file.name.substring(splitPos + 1, file.name.length() - 4)
+            def modreference = "lib:$modartifact:$modversion"
 
-        dependencies {
-            runtimeOnly fg.deobf(project.dependencies.create(modreference) {
-                transitive = false
-            })
+            dependencies {
+                runtimeOnly fg.deobf(project.dependencies.create(modreference) {
+                    transitive = false
+                })
+            }
         }
     }
 
