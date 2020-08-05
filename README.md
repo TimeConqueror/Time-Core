@@ -21,6 +21,7 @@
     maven {
         name = "TimeConqueror's Maven"
         url = "https://raw.githubusercontent.com/TimeConqueror/maven/master"
+        artifactUrls 'https://github.com/TimeConqueror/maven/blob/master/' //fallback url
     }
     maven {
         name = 'sponge'
