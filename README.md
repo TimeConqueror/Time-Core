@@ -31,7 +31,7 @@
 
 2. Add this dependency in the `dependencies` closure:
 ```groovy
-implementation group: 'ru.timeconqueror', name: 'TimeCore', version: '1.15.2-2.0.0.+', changing: true
+implementation group: 'ru.timeconqueror', name: 'TimeCore', version: '1.15.2-2.1.0.+', classifier: 'dev', changing: true
 ```
 
 3. Add this string as a `JVM Argument`:

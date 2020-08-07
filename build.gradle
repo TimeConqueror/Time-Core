@@ -194,13 +194,9 @@ dependencies {
 
 // Example for how to get properties into the manifest for reading by the runtime..
 jar {
-    configurations.shade.each { dep ->
-        from(project.zipTree(dep)) {
-            exclude 'META-INF/*.RSA'
-            exclude 'META-INF/*.SF'
-            exclude("META-INF/services/cpw.mods.modlauncher.*")
-        }
-    }
+    from sourceSets.main.output
+
+    from { configurations.shade.collect { it.isDirectory() ? it : zipTree(it) } }
 
     manifest {
         attributes([
@@ -215,18 +211,45 @@ jar {
                 "MixinConfigs"               : "mixins.timecore.json"
         ])
     }
+
+    finalizedBy('reobfJar')
 }
 
-// Example configuration to allow publishing using the maven-publish task
-// This is the preferred method to reobfuscate your jar file
-jar.finalizedBy('reobfJar')
-// However if you are in a multi-project build, dev time needs unobfed jar files, so you can delay the obfuscation until publishing by doing
-//publish.dependsOn('reobfJar')
+reobf.create('devJar')
+
+task devJar(type: Jar) {
+    from sourceSets.main.output
+
+    classifier = 'dev'
+
+    manifest {
+        attributes([
+                "Specification-Title"        : "timecore",
+                "Specification-Vendor"       : "Time_Conqueror",
+                "Specification-Version"      : "1", // We are version 1 of ourselves
+                "Implementation-Title"       : project.name,
+                "Implementation-Version"     : version,
+                "Implementation-Vendor"      : "Time_Conqueror",
+                "Implementation-Timestamp"   : new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
+
+                "MixinConfigs"               : "mixins.timecore.json"
+        ])
+    }
+
+    finalizedBy('reobfDevJar')
+}
+
+// Create source attachment for dev jar
+task sourcesJar(type: Jar) {
+    from sourceSets.main.allJava
+    classifier = 'sources'
+}
 
 publishing {
     publications {
-        mavenJava(MavenPublication) {
+        mavenJava(MavenPublication) {p ->
             artifact jar
+            artifact devJar
             artifact sourcesJar
         }
     }
@@ -238,10 +261,4 @@ publishing {
             url "file:///${project.projectDir}/maven"
         }
     }
-}
-
-// Create source attachment for dev jar
-task sourcesJar(type: Jar) {
-    from sourceSets.main.allJava
-    classifier = 'sources'
 }
