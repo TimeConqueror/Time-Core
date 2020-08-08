@@ -248,6 +248,9 @@ task sourcesJar(type: Jar) {
     classifier = 'sources'
 }
 
+def mavenLink1 = "C:\\IJ Projects\\Maven"
+def mavenLink2 = "${project.projectDir}/maven"
+
 publishing {
     publications {
         mavenJava(MavenPublication) {p ->
@@ -258,10 +261,24 @@ publishing {
     }
     repositories {
         maven {
-            url "file:///C:\\IJ Projects\\Maven"
+            url mavenLink1
         }
         maven {
-            url "file:///${project.projectDir}/maven"
+            url mavenLink2
         }
     }
 }
+
+task deobfPublishedDevJar(type: Exec) {
+    workingDir "gradle"
+
+    def mavenLinks = [mavenLink1, mavenLink2]
+    def mappings = ["1.15.1-snapshot_20200710"]
+
+    mavenLinks.forEach { mavenPath ->
+        mappings.forEach { mapping ->
+            commandLine 'java', '-jar', 'BON-2.4.0.15-all.jar', '--inputJar', "$mavenPath/ru/timeconqueror/$archivesBaseName/$version/$archivesBaseName-$version-dev.jar", '--outputJar', "$mavenPath/ru/timeconqueror/$archivesBaseName/$version/$archivesBaseName-$version-dev-deobf-${mapping}.jar", '--mappingsVer', "$mapping"
+        }
+    }
+}
+publish.finalizedBy(deobfPublishedDevJar)
