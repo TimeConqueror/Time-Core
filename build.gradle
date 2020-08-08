@@ -281,9 +281,12 @@ task deobfPublishedDevJar(type: Exec) {
     def mappings = ["1.15.1-snapshot_20200710"]
 
     mavenLinks.forEach { mavenPath ->
-        mappings.forEach { mapping ->
-            commandLine 'java', '-jar', 'BON-2.4.0.15-all.jar', '--inputJar', "$mavenPath/ru/timeconqueror/$archivesBaseName/$version/$archivesBaseName-$version-dev.jar", '--outputJar', "$mavenPath/ru/timeconqueror/$archivesBaseName/$version/$archivesBaseName-$version-dev-deobf-${mapping}.jar", '--mappingsVer', "$mapping"
+        if(file(mavenPath).exists()) {
+            mappings.forEach { mapping ->
+                commandLine 'java', '-jar', 'BON-2.4.0.15-all.jar', '--inputJar', "$mavenPath/ru/timeconqueror/$archivesBaseName/$version/$archivesBaseName-$version-dev.jar", '--outputJar', "$mavenPath/ru/timeconqueror/$archivesBaseName/$version/$archivesBaseName-$version-dev-deobf-${mapping}.jar", '--mappingsVer', "$mapping"
+            }
         }
     }
 }
 publish.finalizedBy(deobfPublishedDevJar)
+publishToMavenLocal.finalizedBy(deobfPublishedDevJar)
