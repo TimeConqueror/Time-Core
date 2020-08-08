@@ -1,0 +1,18 @@
+ext.updateConfigs = new Runnable() {
+    @Override
+    void run() {
+        file "python/data.properties" withReader {
+            def prop = new Properties()
+            prop.load(it)
+            ext.dataProps = new ConfigSlurper().parse prop
+        }
+
+        file "build.properties" withReader {
+            def prop = new Properties()
+            prop.load(it)
+            ext.buildProps = new ConfigSlurper().parse prop
+        }
+    }
+}
+
+updateConfigs.run()

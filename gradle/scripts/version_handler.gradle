@@ -1,0 +1,31 @@
+import java.util.function.Supplier
+
+apply from: 'gradle/scripts/configs.gradle'
+
+ext.versionGetter = new Supplier<String>() {
+    @Override
+    String get() {
+        def version = "1.15.2-${buildProps.timecore.release_version}"
+
+        if(buildProps.version_type == "build"){
+            version += ".build"
+
+            if(dataProps.timecore.release_version != buildProps.timecore.release_version){//if that's a new manually typed version
+                version += "1"
+            } else {
+                version += "${dataProps.timecore.build_version}"
+            }
+        }
+
+        return version
+    }
+}
+
+task incrementBuild(type:Exec) {
+    onlyIf {buildProps.version_type == "build"}
+
+    workingDir "python/scripts"
+
+    commandLine 'python', 'increment_build_version.py'
+}
+jar.finalizedBy(incrementBuild)

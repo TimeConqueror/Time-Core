@@ -24,7 +24,10 @@ apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
 apply plugin: 'org.spongepowered.mixin'
 
-version = '1.15.2-2.1.0.0'
+apply from: 'gradle/scripts/configs.gradle'
+apply from: 'gradle/scripts/version_handler.gradle'
+
+version = versionGetter.get()
 group = 'ru.timeconqueror' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = 'TimeCore'
 
