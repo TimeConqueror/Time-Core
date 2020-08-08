@@ -287,7 +287,7 @@ task deobfPublishedDevJar(type: Exec) {
                     commandLine 'java', '-jar', 'BON-2.4.0.15-all.jar', '--inputJar', "$mavenPath/ru/timeconqueror/$archivesBaseName/$version/$archivesBaseName-$version-dev.jar", '--outputJar', "$mavenPath/ru/timeconqueror/$archivesBaseName/$version/$archivesBaseName-$version-dev-deobf-${mapping}.jar", '--mappingsVer', "$mapping"
                 }
             }
-        } catch (URISyntaxException e){
+        } catch (Throwable e){
             println("Can't process $mavenPath")
         }
     }
