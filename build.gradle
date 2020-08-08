@@ -273,6 +273,11 @@ task deobfPublishedDevJar(type: Exec) {
     workingDir "gradle"
 
     def mavenLinks = [mavenLink1, mavenLink2]
+    if(file("com/github/TimeConqueror/").exists()){
+        println("I'm on jitpack!")
+        mavenLinks.add("")
+    }
+
     def mappings = ["1.15.1-snapshot_20200710"]
 
     mavenLinks.forEach { mavenPath ->
