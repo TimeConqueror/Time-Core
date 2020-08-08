@@ -70,4 +70,5 @@ public final class TimeCore implements TimeMod {
             throw new IllegalStateException("TimeCore requires MixinBootstrap Mod to be loaded.");
         }
     }
+
 }
