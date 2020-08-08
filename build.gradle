@@ -248,7 +248,7 @@ task sourcesJar(type: Jar) {
     classifier = 'sources'
 }
 
-def mavenLink1 = "C:\\IJ Projects\\Maven"
+def mavenLink1 = "C:/IJ Projects/Maven"
 def mavenLink2 = "${project.projectDir}/maven"
 
 publishing {
@@ -281,10 +281,14 @@ task deobfPublishedDevJar(type: Exec) {
     def mappings = ["1.15.1-snapshot_20200710"]
 
     mavenLinks.forEach { mavenPath ->
-        if(file(mavenPath).exists()) {
-            mappings.forEach { mapping ->
-                commandLine 'java', '-jar', 'BON-2.4.0.15-all.jar', '--inputJar', "$mavenPath/ru/timeconqueror/$archivesBaseName/$version/$archivesBaseName-$version-dev.jar", '--outputJar', "$mavenPath/ru/timeconqueror/$archivesBaseName/$version/$archivesBaseName-$version-dev-deobf-${mapping}.jar", '--mappingsVer', "$mapping"
+        try {
+            if(file(mavenPath).exists()) {
+                mappings.forEach { mapping ->
+                    commandLine 'java', '-jar', 'BON-2.4.0.15-all.jar', '--inputJar', "$mavenPath/ru/timeconqueror/$archivesBaseName/$version/$archivesBaseName-$version-dev.jar", '--outputJar', "$mavenPath/ru/timeconqueror/$archivesBaseName/$version/$archivesBaseName-$version-dev-deobf-${mapping}.jar", '--mappingsVer', "$mapping"
+                }
             }
+        } catch (URISyntaxException e){
+            println("Can't process $mavenPath")
         }
     }
 }
