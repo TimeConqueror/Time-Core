@@ -22,8 +22,8 @@ import ru.timeconqueror.timecore.animation.util.StandardDelayPredicates;
 import ru.timeconqueror.timecore.animation_example.registry.Animations;
 import ru.timeconqueror.timecore.api.animation.ActionManager;
 import ru.timeconqueror.timecore.api.animation.AnimationAPI;
-import ru.timeconqueror.timecore.api.animation.AnimationProvider;
 import ru.timeconqueror.timecore.api.animation.BlendType;
+import ru.timeconqueror.timecore.api.animation.EntityAnimationProvider;
 
 import java.util.EnumSet;
 
@@ -36,7 +36,7 @@ import java.util.EnumSet;
  * <p>
  * If task has a lower priority (higher number), it's checked by system if it can work in parallel (if mutex isn't the same).
  */
-public class FloroEntity extends MonsterEntity implements IRangedAttackMob, AnimationProvider<FloroEntity> {
+public class FloroEntity extends MonsterEntity implements IRangedAttackMob, EntityAnimationProvider<FloroEntity> {
     private static final DataParameter<Boolean> HIDDEN = EntityDataManager.createKey(FloroEntity.class, DataSerializers.BOOLEAN);
 
     private static final DelayedAction<FloroEntity, AnimatedRangedAttackGoal.ActionData> RANGED_ATTACK_ACTION;
