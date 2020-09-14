@@ -9,6 +9,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.Arrays;
 
 @Beta
 public class ReflectionHelper {
@@ -81,6 +82,7 @@ public class ReflectionHelper {
      * @param clazz     The class to find the field on.
      * @param fieldName The name of the field to find.
      * @return The field with the specified name in the given class or null if the field is not found.
+     * @see #findFieldUnsuppressed(Class, String)
      */
     @Nullable
     public static <T> UnlockedField<T> findField(Class<?> clazz, String fieldName) {
@@ -102,7 +104,7 @@ public class ReflectionHelper {
      *
      * @param clazz     The class to find the field on.
      * @param fieldName The name of the field to find.
-     * @return The field with the specified name in the given class or null if the field is not found.
+     * @return The field with the specified name in the given class or throws an exception.
      * @see #findField(Class, String)
      */
     public static <T> UnlockedField<T> findFieldUnsuppressed(Class<?> clazz, String fieldName) {
@@ -148,6 +150,7 @@ public class ReflectionHelper {
      * @param methodName The name of the method to find.
      * @param params     The parameter classes of the method to find.
      * @return The method with the specified name in the given class or null if the method is not found.
+     * @see #findMethodUnsuppressed(Class, String, Class[])
      */
     @Nullable
     public static <T> UnlockedMethod<T> findMethod(Class<?> clazz, String methodName, Class<?>... params) {
@@ -159,6 +162,27 @@ public class ReflectionHelper {
         }
 
         return null;
+    }
+
+    /**
+     * Finds a method with the specified name and params in the given class and makes it accessible.
+     * Note: for performance, store the returned value and avoid calling this repeatedly.
+     * <p>
+     * Throws {@link RuntimeException} if the field is not found.
+     *
+     * @param clazz      The class to find the field on.
+     * @param methodName The name of the method to find.
+     * @param params     The parameter classes of the method to find.
+     * @return The field with the specified name in the given class or throws an exception.
+     * @see #findMethod(Class, String, Class[])
+     */
+    public static <T> UnlockedMethod<T> findMethodUnsuppressed(Class<?> clazz, String methodName, Class<?>... params) {
+        try {
+            Method method = clazz.getDeclaredMethod(methodName, params);
+            return new UnlockedMethod<>(method);
+        } catch (Throwable e) {
+            throw new RuntimeException("Can't retrieve method " + methodName + " with params " + Arrays.toString(params) + " from class " + clazz, e);
+        }
     }
 
     /**
@@ -175,7 +199,7 @@ public class ReflectionHelper {
      * @return The method with the specified name in the given class or null if the method is not found.
      */
     @Nullable
-    public static <T> UnlockedMethod<T> findObfMethod(Class<?> clazz, String srgName, Class<?>... params) {
+    public static <T> UnlockedMethod<T> findObfMethod(Class<?> clazz, String srgName, Class<?> returnedType, Class<?>... params) {
         try {
             Method method = ObfuscationReflectionHelper.findMethod(clazz, srgName, params);
             return new UnlockedMethod<>(method);
@@ -226,7 +250,7 @@ public class ReflectionHelper {
         try {
             Class.forName(className);
         } catch (ClassNotFoundException e) {
-            TimeCore.LOGGER.error("Can't load class" + className + ", because it is't found");
+            TimeCore.LOGGER.error("Can't load class" + className + ", because it isn't found");
             throw new RuntimeException();
         }
     }
