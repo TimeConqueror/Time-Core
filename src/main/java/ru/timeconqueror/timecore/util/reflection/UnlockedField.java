@@ -1,6 +1,7 @@
 package ru.timeconqueror.timecore.util.reflection;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 
