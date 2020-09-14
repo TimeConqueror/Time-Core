@@ -13,7 +13,7 @@ import java.util.Arrays;
 
 @Beta
 public class ReflectionHelper {
-    private static final UnlockedField<Field> fModifiers = findFieldUnsuppressed(Field.class, "modifiers");
+    private static final UnlockedField<Field> F_MODIFIERS = findFieldUnsuppressed(Field.class, "modifiers");
 
     public static boolean isFinal(Field f) {
         return Modifier.isFinal(f.getModifiers());
@@ -29,7 +29,7 @@ public class ReflectionHelper {
     public static void unfinalize(Field f) throws IllegalAccessException {
         if (isFinal(f)) {
             if (isStatic(f)) {
-                Field modifiersField = fModifiers.getField();
+                Field modifiersField = F_MODIFIERS.getField();
                 modifiersField.setAccessible(true);
                 modifiersField.setInt(f, f.getModifiers() & ~Modifier.FINAL);
             } else {
