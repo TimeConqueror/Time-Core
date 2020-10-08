@@ -5,6 +5,7 @@ import ru.timeconqueror.timecore.animation.action.ActionManagerImpl;
 import ru.timeconqueror.timecore.api.animation.AnimatedObject;
 import ru.timeconqueror.timecore.api.animation.AnimationConstants;
 import ru.timeconqueror.timecore.api.animation.BlendType;
+import ru.timeconqueror.timecore.api.animation.builders.IAnimationManagerBuilder;
 import ru.timeconqueror.timecore.util.SingleUseBuilder;
 
 import java.util.LinkedHashMap;

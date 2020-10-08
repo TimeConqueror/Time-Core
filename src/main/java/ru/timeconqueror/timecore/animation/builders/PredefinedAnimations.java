@@ -4,6 +4,7 @@ import org.jetbrains.annotations.Nullable;
 import ru.timeconqueror.timecore.animation.AnimationStarter;
 import ru.timeconqueror.timecore.animation.PredefinedAnimation;
 import ru.timeconqueror.timecore.api.animation.AnimationManager;
+import ru.timeconqueror.timecore.api.animation.builders.IPredefinedAnimations;
 
 import java.util.HashSet;
 import java.util.Set;

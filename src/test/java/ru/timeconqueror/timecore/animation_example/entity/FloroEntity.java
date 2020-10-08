@@ -15,7 +15,6 @@ import org.jetbrains.annotations.NotNull;
 import ru.timeconqueror.timecore.TimeCore;
 import ru.timeconqueror.timecore.animation.AnimationStarter;
 import ru.timeconqueror.timecore.animation.AnimationSystem;
-import ru.timeconqueror.timecore.animation.builders.AnimationSystemBuilder;
 import ru.timeconqueror.timecore.animation.component.DelayedAction;
 import ru.timeconqueror.timecore.animation.entityai.AnimatedRangedAttackGoal;
 import ru.timeconqueror.timecore.animation.util.StandardDelayPredicates;
@@ -24,6 +23,7 @@ import ru.timeconqueror.timecore.api.animation.ActionManager;
 import ru.timeconqueror.timecore.api.animation.AnimatedObject;
 import ru.timeconqueror.timecore.api.animation.AnimationAPI;
 import ru.timeconqueror.timecore.api.animation.BlendType;
+import ru.timeconqueror.timecore.api.animation.builders.AnimationSystemBuilder;
 
 import java.util.EnumSet;
 
@@ -71,9 +71,7 @@ public class FloroEntity extends MonsterEntity implements IRangedAttackMob, Anim
             builder.addLayer(LAYER_SHOWING, BlendType.OVERRIDE, 1F);
             builder.addLayer(LAYER_WALKING, BlendType.ADDING, 1F);
             builder.addLayer(LAYER_ATTACK, BlendType.ADDING, 0.9F);
-        }, predefinedAnimations -> {
-            predefinedAnimations.setWalkingAnimation(new AnimationStarter(Animations.floroWalk).setSpeed(3F), LAYER_WALKING);
-        });
+        }, predefinedAnimations -> predefinedAnimations.setWalkingAnimation(new AnimationStarter(Animations.floroWalk).setSpeed(3F), LAYER_WALKING));
     }
 
     @Override

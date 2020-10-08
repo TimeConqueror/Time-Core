@@ -1,4 +1,4 @@
-package ru.timeconqueror.timecore.animation.builders;
+package ru.timeconqueror.timecore.api.animation.builders;
 
 import ru.timeconqueror.timecore.api.animation.BlendType;
 

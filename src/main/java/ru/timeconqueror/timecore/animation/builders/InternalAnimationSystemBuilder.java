@@ -9,21 +9,17 @@ import ru.timeconqueror.timecore.animation.EnumAnimatedObjectType;
 import ru.timeconqueror.timecore.animation.action.ActionManagerImpl;
 import ru.timeconqueror.timecore.animation.action.EntityActionManager;
 import ru.timeconqueror.timecore.animation.action.TileEntityActionManager;
-import ru.timeconqueror.timecore.animation.builders.IPredefinedAnimations.IEntityPredefinedAnimations;
 import ru.timeconqueror.timecore.animation.builders.PredefinedAnimations.Builder;
 import ru.timeconqueror.timecore.animation.builders.PredefinedAnimations.EntityPredefinedAnimations;
 import ru.timeconqueror.timecore.api.animation.AnimatedObject;
+import ru.timeconqueror.timecore.api.animation.builders.IAnimationManagerBuilder;
+import ru.timeconqueror.timecore.api.animation.builders.IPredefinedAnimations;
+import ru.timeconqueror.timecore.api.animation.builders.IPredefinedAnimations.IEntityPredefinedAnimations;
 
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-public abstract class AnimationSystemBuilder {
-
-    public static <T extends Entity & AnimatedObject<T>> AnimationSystem<T> forEntity(T entity, World world, Consumer<IAnimationManagerBuilder> animationManagerTuner) {
-        return forEntity(entity, world, animationManagerTuner, predefinedAnimations -> {
-        });
-    }
-
+public abstract class InternalAnimationSystemBuilder {
     public static <T extends Entity & AnimatedObject<T>> AnimationSystem<T> forEntity(
             T entity,
             World world,
