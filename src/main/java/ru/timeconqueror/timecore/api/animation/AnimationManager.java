@@ -2,7 +2,7 @@ package ru.timeconqueror.timecore.api.animation;
 
 import org.jetbrains.annotations.NotNull;
 import ru.timeconqueror.timecore.animation.AnimationStarter;
-import ru.timeconqueror.timecore.client.render.model.TimeEntityModel;
+import ru.timeconqueror.timecore.client.render.model.TimeModel;
 
 import java.util.Set;
 
@@ -39,7 +39,7 @@ public interface AnimationManager {
 	 *              on client: model of the bound entity;<p>
 	 *              on server: null
 	 */
-	void applyAnimations(TimeEntityModel<?> model);
+	void applyAnimations(TimeModel model);
 
 	/**
 	 * Sets animation data to start new animation in the layer with provided name.

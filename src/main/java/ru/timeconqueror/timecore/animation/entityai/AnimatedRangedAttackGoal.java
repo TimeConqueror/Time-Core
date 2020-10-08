@@ -8,12 +8,12 @@ import net.minecraft.util.math.MathHelper;
 import ru.timeconqueror.timecore.animation.AnimationStarter.AnimationData;
 import ru.timeconqueror.timecore.animation.component.DelayedAction;
 import ru.timeconqueror.timecore.animation.util.AnimationUtils;
-import ru.timeconqueror.timecore.api.animation.AnimationProvider;
+import ru.timeconqueror.timecore.api.animation.AnimatedObject;
 
 import java.util.EnumSet;
 import java.util.function.BiConsumer;
 
-public class AnimatedRangedAttackGoal<T extends MobEntity & AnimationProvider<T>> extends Goal {
+public class AnimatedRangedAttackGoal<T extends MobEntity & AnimatedObject<T>> extends Goal {
     public static final BiConsumer<IRangedAttackMob, ActionData> STANDARD_RUNNER =
             (entity, actionData) -> entity.attackEntityWithRangedAttack(actionData.getAttackTarget(), actionData.getDistanceFactor());
 
@@ -96,7 +96,7 @@ public class AnimatedRangedAttackGoal<T extends MobEntity & AnimationProvider<T>
             float f = MathHelper.sqrt(d0) / this.attackRadius;
             float distanceFactor = MathHelper.clamp(f, 0.1F, 1.0F);
 
-            entity.getActionManager().enableAction(attackAction, new ActionData(distanceFactor, attackTarget));
+            entity.getSystem().getActionManager().enableAction(attackAction, new ActionData(distanceFactor, attackTarget));
 
             this.rangedAttackTime = MathHelper.ceil(this.attackInterval);
         } else if (this.rangedAttackTime < 0) {

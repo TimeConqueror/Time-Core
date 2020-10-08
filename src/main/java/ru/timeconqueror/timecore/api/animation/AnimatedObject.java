@@ -1,12 +1,12 @@
 package ru.timeconqueror.timecore.api.animation;
 
-import net.minecraft.entity.Entity;
 import org.jetbrains.annotations.NotNull;
-import ru.timeconqueror.timecore.client.render.model.TimeEntityRenderer;
+import ru.timeconqueror.timecore.animation.AnimationSystem;
+import ru.timeconqueror.timecore.animation.renderer.AnimatedLivingEntityRenderer;
 
 /**
  * An interface for entities to provide animation stuff.
- * You also need to use {@link TimeEntityRenderer} for animations to work.
+ * You also need to use {@link AnimatedLivingEntityRenderer} for animations to work.
  * <br>
  * Example of implementing:
  * <blockquote><pre>
@@ -20,7 +20,7 @@ import ru.timeconqueror.timecore.client.render.model.TimeEntityRenderer;
  *                 new AnimationManagerBuilder(true)
  *                         .addWalkingAnimationHandling(new AnimationStarter(TEntities.FLORO_WALK).setSpeed(2.0F), "walking")
  *                         .addLayer("attack", 1, BlendType.ADDING, 0.9F)
- *         ).build(this, world);
+ *         ).forEntity(this, world);
  *     }
  *
  *     public @NotNull ActionController<EntityFloro> getActionController() {
@@ -29,12 +29,20 @@ import ru.timeconqueror.timecore.client.render.model.TimeEntityRenderer;
  * }
  * </pre></blockquote>
  *
- * @see TimeEntityRenderer
+ * @see AnimatedLivingEntityRenderer
  */
-public interface AnimationProvider<T extends Entity> {
+public interface AnimatedObject<T extends AnimatedObject<T>> {
     /**
      * The entry point for accessing animation stuff.
      */
     @NotNull
-    ActionManager<T> getActionManager();
+    AnimationSystem<T> getSystem();
+
+    default ActionManager<T> getActionManager() {
+        return getSystem().getActionManager();
+    }
+
+    default AnimationManager getAnimationManager() {
+        return getSystem().getAnimationManager();
+    }
 }

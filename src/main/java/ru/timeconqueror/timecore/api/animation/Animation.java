@@ -5,7 +5,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ru.timeconqueror.timecore.animation.component.KeyFrame;
 import ru.timeconqueror.timecore.animation.component.Transition;
-import ru.timeconqueror.timecore.client.render.model.TimeEntityModel;
 import ru.timeconqueror.timecore.client.render.model.TimeModel;
 import ru.timeconqueror.timecore.client.render.model.TimeModelRenderer;
 
@@ -13,7 +12,7 @@ import java.util.List;
 import java.util.function.Consumer;
 
 public abstract class Animation {
-	public abstract void apply(TimeEntityModel<?> model, AnimationLayer layer, int existingTime);
+	public abstract void apply(TimeModel model, AnimationLayer layer, int existingTime);
 
 	/**
 	 * Name of the animation, that is indicated in animation file.

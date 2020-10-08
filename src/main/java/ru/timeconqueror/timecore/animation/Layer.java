@@ -7,7 +7,7 @@ import ru.timeconqueror.timecore.api.animation.Animation;
 import ru.timeconqueror.timecore.api.animation.AnimationLayer;
 import ru.timeconqueror.timecore.api.animation.BlendType;
 import ru.timeconqueror.timecore.api.util.MathUtils;
-import ru.timeconqueror.timecore.client.render.model.TimeEntityModel;
+import ru.timeconqueror.timecore.client.render.model.TimeModel;
 
 public class Layer implements AnimationLayer {
     private String name;
@@ -77,7 +77,7 @@ public class Layer implements AnimationLayer {
         }
     }
 
-    void update(BaseAnimationManager manager, TimeEntityModel<?> model, long currentTime) {
+    void update(BaseAnimationManager manager, TimeModel model, long currentTime) {
         boolean paused = manager.isGamePaused();
 
         AnimationWatcher watcher = getAnimationWatcher();
@@ -122,7 +122,7 @@ public class Layer implements AnimationLayer {
     }
 
     @Override
-    protected Layer clone() throws CloneNotSupportedException {
+    public Layer clone() throws CloneNotSupportedException {
         if (this.animationWatcher != null) {
             throw new CloneNotSupportedException("Can't clone this layer, it's already in work.");
         }

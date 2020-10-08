@@ -13,17 +13,17 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import ru.timeconqueror.timecore.TimeCore;
-import ru.timeconqueror.timecore.animation.ActionManagerBuilder;
-import ru.timeconqueror.timecore.animation.AnimationManagerBuilder;
 import ru.timeconqueror.timecore.animation.AnimationStarter;
+import ru.timeconqueror.timecore.animation.AnimationSystem;
+import ru.timeconqueror.timecore.animation.builders.AnimationSystemBuilder;
 import ru.timeconqueror.timecore.animation.component.DelayedAction;
 import ru.timeconqueror.timecore.animation.entityai.AnimatedRangedAttackGoal;
 import ru.timeconqueror.timecore.animation.util.StandardDelayPredicates;
 import ru.timeconqueror.timecore.animation_example.registry.Animations;
 import ru.timeconqueror.timecore.api.animation.ActionManager;
+import ru.timeconqueror.timecore.api.animation.AnimatedObject;
 import ru.timeconqueror.timecore.api.animation.AnimationAPI;
 import ru.timeconqueror.timecore.api.animation.BlendType;
-import ru.timeconqueror.timecore.api.animation.EntityAnimationProvider;
 
 import java.util.EnumSet;
 
@@ -36,7 +36,7 @@ import java.util.EnumSet;
  * <p>
  * If task has a lower priority (higher number), it's checked by system if it can work in parallel (if mutex isn't the same).
  */
-public class FloroEntity extends MonsterEntity implements IRangedAttackMob, EntityAnimationProvider<FloroEntity> {
+public class FloroEntity extends MonsterEntity implements IRangedAttackMob, AnimatedObject<FloroEntity> {
     private static final DataParameter<Boolean> HIDDEN = EntityDataManager.createKey(FloroEntity.class, DataSerializers.BOOLEAN);
 
     private static final DelayedAction<FloroEntity, AnimatedRangedAttackGoal.ActionData> RANGED_ATTACK_ACTION;
@@ -60,20 +60,20 @@ public class FloroEntity extends MonsterEntity implements IRangedAttackMob, Enti
                 .setOnCall((floroEntity, nothing) -> floroEntity.setHidden(true));
     }
 
-    private final ActionManager<FloroEntity> actionManager;
+    private final AnimationSystem<FloroEntity> animationSystem;
     //server side only
     private boolean isHiding = false;
 
     public FloroEntity(EntityType<? extends FloroEntity> type, World world) {
         super(type, world);
 
-        actionManager = ActionManagerBuilder.<FloroEntity>create(
-                AnimationManagerBuilder.create()
-                        .addLayer(LAYER_SHOWING, BlendType.OVERRIDE, 1F)
-                        .addLayer(LAYER_WALKING, BlendType.ADDING, 1F)
-                        .addLayer(LAYER_ATTACK, BlendType.ADDING, 0.9F)
-                        .addWalkingAnimationHandling(new AnimationStarter(Animations.floroWalk).setSpeed(3F), LAYER_WALKING)
-        ).build(this, world);
+        animationSystem = AnimationSystemBuilder.forEntity(this, world, builder -> {
+            builder.addLayer(LAYER_SHOWING, BlendType.OVERRIDE, 1F);
+            builder.addLayer(LAYER_WALKING, BlendType.ADDING, 1F);
+            builder.addLayer(LAYER_ATTACK, BlendType.ADDING, 0.9F);
+        }, predefinedAnimations -> {
+            predefinedAnimations.setWalkingAnimation(new AnimationStarter(Animations.floroWalk).setSpeed(3F), LAYER_WALKING);
+        });
     }
 
     @Override
@@ -198,9 +198,8 @@ public class FloroEntity extends MonsterEntity implements IRangedAttackMob, Enti
     }
 
 
-    @Override
-    public @NotNull ActionManager<FloroEntity> getActionManager() {
-        return actionManager;
+    public @NotNull AnimationSystem<FloroEntity> getSystem() {
+        return animationSystem;
     }
 
     @Override
@@ -220,10 +219,11 @@ public class FloroEntity extends MonsterEntity implements IRangedAttackMob, Enti
 
         @Override
         public void startExecuting() {
+            ActionManager<FloroEntity> actionManager = getActionManager();
             if (isHidden()) {
-                getActionManager().enableAction(REVEALING_ACTION, null);
+                actionManager.enableAction(REVEALING_ACTION, null);
             } else {
-                getActionManager().disableAction(HIDING_ACTION);
+                actionManager.disableAction(HIDING_ACTION);
             }
         }
 
@@ -266,8 +266,9 @@ public class FloroEntity extends MonsterEntity implements IRangedAttackMob, Enti
 
         @Override
         public void tick() {
-            if (!getActionManager().isActionEnabled(HIDING_ACTION) && ticksExisted % (12 * 20) == 0) {
-                getActionManager().enableAction(HIDING_ACTION, null);
+            ActionManager<FloroEntity> actionManager = getActionManager();
+            if (!actionManager.isActionEnabled(HIDING_ACTION) && ticksExisted % (12 * 20) == 0) {
+                actionManager.enableAction(HIDING_ACTION, null);
             }
         }
 

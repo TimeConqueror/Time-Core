@@ -8,19 +8,13 @@ import ru.timeconqueror.timecore.animation.watcher.TransitionWatcher;
 import ru.timeconqueror.timecore.api.animation.Animation;
 import ru.timeconqueror.timecore.api.animation.AnimationConstants;
 import ru.timeconqueror.timecore.api.animation.AnimationManager;
-import ru.timeconqueror.timecore.client.render.model.TimeEntityModel;
+import ru.timeconqueror.timecore.client.render.model.TimeModel;
 
 import java.util.*;
 
 public abstract class BaseAnimationManager implements AnimationManager {
-    @Nullable
-    private final AnimationSetting walkingAnimationSetting;
     private Map<String, Layer> layerMap;
     private List<Layer> layers;
-
-    public BaseAnimationManager(@Nullable AnimationSetting walkingAnimationSetting) {
-        this.walkingAnimationSetting = walkingAnimationSetting;
-    }
 
     @Override
     public boolean containsLayer(String name) {
@@ -90,7 +84,7 @@ public abstract class BaseAnimationManager implements AnimationManager {
     }
 
     @Override
-    public void applyAnimations(TimeEntityModel<?> model) {
+    public void applyAnimations(TimeModel model) {
         long currentTime = System.currentTimeMillis();
         for (Layer layer : layers) {
             layer.update(this, model, currentTime);
@@ -103,22 +97,17 @@ public abstract class BaseAnimationManager implements AnimationManager {
         }
     }
 
-    protected abstract void applyAnimation(TimeEntityModel<?> model, Layer layer, AnimationWatcher watcher, long currentTime);
+    protected abstract void applyAnimation(TimeModel model, Layer layer, AnimationWatcher watcher, long currentTime);
 
     protected abstract boolean isGamePaused();
 
-    protected void onAnimationEnd(@Nullable TimeEntityModel<?> model, Layer layer, AnimationWatcher watcher) {
+    protected void onAnimationEnd(@Nullable TimeModel model, Layer layer, AnimationWatcher watcher) {
 
     }
 
-    void setLayers(LinkedHashMap<String, Layer> layers) {
+    public void buildLayers(LinkedHashMap<String, Layer> layers) {
         layerMap = layers;
 
         this.layers = new ArrayList<>(layers.values());
-    }
-
-    @Nullable
-    public AnimationSetting getWalkingAnimationSetting() {
-        return walkingAnimationSetting;
     }
 }

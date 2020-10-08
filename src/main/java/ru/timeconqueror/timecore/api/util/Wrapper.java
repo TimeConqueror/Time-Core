@@ -4,7 +4,7 @@ package ru.timeconqueror.timecore.api.util;
  * Provides ability to set variable created outside of lambda function from this lambda.
  * <br>Example:<br>
  * <blockquote><pre>
- * LambdaWrapper&lt;Boolean&gt; passed = new LambdaWrapper<>(false);
+ * Wrapper&lt;Boolean&gt; passed = new Wrapper<>(false);
  *
  * someMethod(it -> {
  *     passed.set(true);

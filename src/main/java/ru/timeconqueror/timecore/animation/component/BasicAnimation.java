@@ -8,7 +8,6 @@ import ru.timeconqueror.timecore.TimeCore;
 import ru.timeconqueror.timecore.api.animation.Animation;
 import ru.timeconqueror.timecore.api.animation.AnimationLayer;
 import ru.timeconqueror.timecore.api.util.Pair;
-import ru.timeconqueror.timecore.client.render.model.TimeEntityModel;
 import ru.timeconqueror.timecore.client.render.model.TimeModel;
 import ru.timeconqueror.timecore.client.render.model.TimeModelRenderer;
 
@@ -40,17 +39,16 @@ public class BasicAnimation extends Animation {
         this.options = options;
     }
 
-    public void apply(TimeEntityModel<?> model, AnimationLayer layer, int existingTime) {
-        TimeModel baseModel = model.getBaseModel();
+    public void apply(TimeModel model, AnimationLayer layer, int existingTime) {
         if (options != null) {
             if (existingTime <= length) {
                 options.forEach((s, boneOption) -> {
-                    TimeModelRenderer piece = baseModel.getPiece(boneOption.getName());
+                    TimeModelRenderer piece = model.getPiece(boneOption.getName());
 
                     if (piece != null) {
                         boneOption.apply(this, layer, piece, existingTime);
                     } else {
-                        TimeCore.LOGGER.error("Can't find bone with name " + boneOption.getName() + " in animation " + getName() + " applied for model " + baseModel.getName());
+                        TimeCore.LOGGER.error("Can't find bone with name " + boneOption.getName() + " in animation " + getName() + " applied for model " + model.getName());
                     }
                 });
             }

@@ -1,6 +1,5 @@
 package ru.timeconqueror.timecore.animation.component;
 
-import net.minecraft.entity.Entity;
 import net.minecraft.util.ResourceLocation;
 import ru.timeconqueror.timecore.animation.AnimationStarter;
 import ru.timeconqueror.timecore.animation.util.StandardDelayPredicates;
@@ -12,7 +11,7 @@ import java.util.function.BiConsumer;
 import java.util.function.Predicate;
 
 //TODO add multiple runnables with single or continuing action and merge delay predicates with runnable
-public class DelayedAction<T extends Entity, EXTRA_DATA> {
+public class DelayedAction<T, EXTRA_DATA> {
     private final AnimationStarter animationStarter;
     private final String animationLayer;
     private final ResourceLocation id;

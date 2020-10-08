@@ -1,25 +1,20 @@
 package ru.timeconqueror.timecore.mod.common.packet;
 
-import net.minecraft.entity.Entity;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.network.NetworkEvent;
 import ru.timeconqueror.timecore.TimeCore;
 import ru.timeconqueror.timecore.animation.AnimationStarter;
+import ru.timeconqueror.timecore.api.animation.AnimatedObject;
 import ru.timeconqueror.timecore.api.animation.Animation;
-import ru.timeconqueror.timecore.api.animation.AnimationProvider;
+import ru.timeconqueror.timecore.mod.common.packet.animation.CodecSupplier;
 
 import java.util.function.Supplier;
 
 public class S2CStartAnimationMsg extends S2CAnimationMsg {
     private final AnimationStarter.AnimationData animationData;
 
-    public S2CStartAnimationMsg(Entity entity, String layerName, AnimationStarter.AnimationData animationData) {
-        super(entity, layerName);
-        this.animationData = animationData;
-    }
-
-    private S2CStartAnimationMsg(int entityId, String layerName, AnimationStarter.AnimationData animationData) {
-        super(entityId, layerName);
+    public S2CStartAnimationMsg(CodecSupplier codecSupplier, String layerName, AnimationStarter.AnimationData animationData) {
+        super(codecSupplier, layerName);
         this.animationData = animationData;
     }
 
@@ -30,14 +25,14 @@ public class S2CStartAnimationMsg extends S2CAnimationMsg {
         }
 
         @Override
-        public S2CStartAnimationMsg decodeWithExtraData(int entityId, String layerName, PacketBuffer buffer) {
+        public S2CStartAnimationMsg decodeWithExtraData(CodecSupplier codecSupplier, String layerName, PacketBuffer buffer) {
             AnimationStarter.AnimationData animationData = AnimationStarter.AnimationData.decode(buffer);
 
-            return new S2CStartAnimationMsg(entityId, layerName, animationData);
+            return new S2CStartAnimationMsg(codecSupplier, layerName, animationData);
         }
 
         @Override
-        public void onPacket(S2CStartAnimationMsg packet, AnimationProvider<?> provider, String layerName, Supplier<NetworkEvent.Context> contextSupplier) {
+        public void onPacket(S2CStartAnimationMsg packet, AnimatedObject<?> provider, String layerName, Supplier<NetworkEvent.Context> contextSupplier) {
             AnimationStarter animationStarter = AnimationStarter.fromAnimationData(packet.animationData);
             Animation animation = animationStarter.getData().getAnimation();
 

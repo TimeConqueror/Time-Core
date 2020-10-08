@@ -1,30 +1,28 @@
 package ru.timeconqueror.timecore.animation;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.LivingEntity;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.loading.FMLEnvironment;
-import net.minecraftforge.fml.network.PacketDistributor;
 import org.jetbrains.annotations.Nullable;
+import ru.timeconqueror.timecore.animation.action.ActionManagerImpl;
 import ru.timeconqueror.timecore.animation.watcher.AnimationWatcher;
-import ru.timeconqueror.timecore.client.render.model.TimeEntityModel;
-import ru.timeconqueror.timecore.mod.common.packet.InternalPacketManager;
-import ru.timeconqueror.timecore.mod.common.packet.S2CEndAnimationMsg;
-import ru.timeconqueror.timecore.mod.common.packet.S2CStartAnimationMsg;
+import ru.timeconqueror.timecore.api.animation.AnimatedObject;
+import ru.timeconqueror.timecore.client.render.model.TimeModel;
 
-public class ServerAnimationManager<T extends LivingEntity> extends BaseAnimationManager {
+public class ServerAnimationManager<T extends AnimatedObject<T>> extends BaseAnimationManager {
     private ActionManagerImpl<T> actionManager;
+    private final NetworkDispatcher<T> networkDispatcher;
 
-    public ServerAnimationManager(@Nullable AnimationSetting walkingAnimationStarter) {
-        super(walkingAnimationStarter);
+    public ServerAnimationManager(NetworkDispatcher<T> networkDispatcher) {
+        this.networkDispatcher = networkDispatcher;
     }
 
-    void setActionManager(ActionManagerImpl<T> actionManager) {
+    public void setActionManager(ActionManagerImpl<T> actionManager) {
         this.actionManager = actionManager;
     }
 
     @Override
-    protected void applyAnimation(TimeEntityModel<?> model, Layer layer, AnimationWatcher watcher, long currentTime) {
+    protected void applyAnimation(TimeModel model, Layer layer, AnimationWatcher watcher, long currentTime) {
         proceedActions(watcher);
     }
 
@@ -32,11 +30,11 @@ public class ServerAnimationManager<T extends LivingEntity> extends BaseAnimatio
     protected void onAnimationSet(AnimationStarter.AnimationData data, Layer layer) {
         super.onAnimationSet(data, layer);
 
-        InternalPacketManager.INSTANCE.send(PacketDistributor.TRACKING_ENTITY.with(() -> actionManager.getEntity()), new S2CStartAnimationMsg(actionManager.getEntity(), layer.getName(), data));
+        networkDispatcher.sendSetAnimationPacket(actionManager, data, layer);
     }
 
     @Override
-    protected void onAnimationEnd(@Nullable TimeEntityModel<?> model, Layer layer, AnimationWatcher watcher) {
+    protected void onAnimationEnd(@Nullable TimeModel model, Layer layer, AnimationWatcher watcher) {
         proceedActions(watcher);
 
         actionManager.getActionWatchers().removeIf(actionWatcher -> actionWatcher.isBound(watcher.getAnimation()));
@@ -46,7 +44,7 @@ public class ServerAnimationManager<T extends LivingEntity> extends BaseAnimatio
         for (ActionManagerImpl.ActionWatcher<T, ?> actionWatcher : actionManager.getActionWatchers()) {
             if (actionWatcher.isBound(watcher.getAnimation())) {
                 if (actionWatcher.shouldBeExecuted(watcher)) {
-                    actionWatcher.runAction(actionManager.getEntity());
+                    actionWatcher.runAction(actionManager.getBoundObject());
                 }
             }
         }
@@ -56,7 +54,7 @@ public class ServerAnimationManager<T extends LivingEntity> extends BaseAnimatio
     public void removeAnimation(String layerName, int transitionTime) {
         super.removeAnimation(layerName, transitionTime);
 
-        InternalPacketManager.INSTANCE.send(PacketDistributor.TRACKING_ENTITY.with(() -> actionManager.getEntity()), new S2CEndAnimationMsg(actionManager.getEntity(), layerName, transitionTime));
+        networkDispatcher.sendRemoveAnimationPacket(actionManager, layerName, transitionTime);
     }
 
     @Override

@@ -8,9 +8,9 @@ import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import ru.timeconqueror.timecore.animation.ServerAnimationManager;
-import ru.timeconqueror.timecore.api.animation.ActionManager;
+import ru.timeconqueror.timecore.animation.action.EntityActionManager;
+import ru.timeconqueror.timecore.api.animation.AnimatedObject;
 import ru.timeconqueror.timecore.api.animation.AnimationManager;
-import ru.timeconqueror.timecore.api.animation.AnimationProvider;
 import ru.timeconqueror.timecore.api.common.event.LivingUpdateEndEvent;
 import ru.timeconqueror.timecore.mod.common.packet.InternalPacketManager;
 import ru.timeconqueror.timecore.mod.common.packet.S2CSyncAnimationsMsg;
@@ -22,10 +22,10 @@ public class AnimationEventHandler {
     public static void onEntityTick(LivingEvent.LivingUpdateEvent event) {
         LivingEntity entityLiving = event.getEntityLiving();
 
-        if (entityLiving instanceof AnimationProvider<?>) {
+        if (entityLiving instanceof AnimatedObject<?>) {
             if (entityLiving.isServerWorld()) {
                 //needed for animation ticking on server side.
-                ((AnimationProvider<?>) entityLiving).getActionManager().getAnimationManager().applyAnimations(null);
+                ((AnimatedObject<?>) entityLiving).getSystem().getAnimationManager().applyAnimations(null);
             }
         }
     }
@@ -33,8 +33,8 @@ public class AnimationEventHandler {
     public static void onEntityTickEnd(LivingUpdateEndEvent event) {
         LivingEntity entityLiving = event.getEntityLiving();
 
-        if (entityLiving instanceof AnimationProvider<?>) {
-            ActionManager<?> actionManager = ((AnimationProvider<?>) entityLiving).getActionManager();
+        if (entityLiving instanceof AnimatedObject<?>) {
+            EntityActionManager<?> actionManager = (EntityActionManager<?>) (((AnimatedObject<?>) entityLiving).getSystem().getActionManager());
             actionManager.onTick();
         }
     }
@@ -42,8 +42,8 @@ public class AnimationEventHandler {
     @SubscribeEvent
     public static void onPlayerStartTracking(PlayerEvent.StartTracking event) {
         Entity target = event.getTarget();
-        if (target instanceof AnimationProvider<?>) {
-            AnimationManager animationManager = ((AnimationProvider<?>) target).getActionManager().getAnimationManager();
+        if (target instanceof AnimatedObject<?>) {
+            AnimationManager animationManager = ((AnimatedObject<?>) target).getSystem().getActionManager().getAnimationManager();
             ServerAnimationManager<?> serverAnimationManager = (ServerAnimationManager<?>) animationManager;
             InternalPacketManager.sendToPlayer(((ServerPlayerEntity) event.getPlayer()), new S2CSyncAnimationsMsg(serverAnimationManager, target));
         }

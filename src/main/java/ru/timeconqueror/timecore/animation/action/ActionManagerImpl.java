@@ -1,26 +1,23 @@
-package ru.timeconqueror.timecore.animation;
+package ru.timeconqueror.timecore.animation.action;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
-import ru.timeconqueror.timecore.TimeCore;
+import ru.timeconqueror.timecore.animation.BaseAnimationManager;
 import ru.timeconqueror.timecore.animation.component.DelayedAction;
 import ru.timeconqueror.timecore.animation.watcher.AnimationWatcher;
 import ru.timeconqueror.timecore.api.animation.ActionManager;
 import ru.timeconqueror.timecore.api.animation.Animation;
-import ru.timeconqueror.timecore.api.animation.AnimationManager;
 
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
-public class ActionManagerImpl<T extends LivingEntity> implements ActionManager<T> {
+public class ActionManagerImpl<T> implements ActionManager<T> {
     private final Set<ActionWatcher<T, ?>> actionWatchers = new HashSet<>();
     private final BaseAnimationManager animationManager;
-    private final T entity;
+    private final T boundObject;
 
-    public ActionManagerImpl(BaseAnimationManager animationManager, T entity) {
+    public ActionManagerImpl(BaseAnimationManager animationManager, T boundObject) {
         this.animationManager = animationManager;
-        this.entity = entity;
+        this.boundObject = boundObject;
     }
 
     @Override
@@ -49,32 +46,7 @@ public class ActionManagerImpl<T extends LivingEntity> implements ActionManager<
     }
 
     @Override
-    public void onTick() {
-        if (entity.world.isRemote) {
-            AnimationSetting walkingAnimationSetting = animationManager.getWalkingAnimationSetting();
-
-            if (walkingAnimationSetting != null) {
-                if (animationManager.containsLayer(walkingAnimationSetting.getLayerName())) {
-                    // floats of movement can be almost the same (like 0 and 0.000000001), so entity moves a very short distance, which is invisible for eyes.
-                    // this can be because of converting coords to bytes to send them to client.
-                    // so checking if it's more than 1/256 of the block will fix the issue
-                    boolean posChanged = Math.abs(entity.getPosX() - entity.prevPosX) >= 1 / 256F
-                            || Math.abs(entity.getPosZ() - entity.prevPosZ) >= 1 / 256F;
-
-                    if (posChanged) {
-                        walkingAnimationSetting.getAnimationStarter().startAt(animationManager, walkingAnimationSetting.getLayerName());
-                    } else {
-                        animationManager.removeAnimation(walkingAnimationSetting.getLayerName());
-                    }
-                } else {
-                    TimeCore.LOGGER.error("Walking animation for entity {} is set up to be displayed on layer '{}', but this layer doesn't exist.", entity.getClass(), walkingAnimationSetting.getLayerName());
-                }
-            }
-        }
-    }
-
-    @Override
-    public AnimationManager getAnimationManager() {
+    public BaseAnimationManager getAnimationManager() {
         return animationManager;
     }
 
@@ -82,11 +54,11 @@ public class ActionManagerImpl<T extends LivingEntity> implements ActionManager<
         return actionWatchers;
     }
 
-    public T getEntity() {
-        return entity;
+    public T getBoundObject() {
+        return boundObject;
     }
 
-    public static class ActionWatcher<T extends Entity, EXTRA_DATA> {
+    public static class ActionWatcher<T, EXTRA_DATA> {
         private final DelayedAction<T, EXTRA_DATA> action;
         private final EXTRA_DATA actionData;
         private boolean done;

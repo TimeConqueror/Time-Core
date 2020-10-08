@@ -1,9 +1,8 @@
 package ru.timeconqueror.timecore.api.animation;
 
-import net.minecraft.entity.Entity;
 import ru.timeconqueror.timecore.animation.component.DelayedAction;
 
-public interface ActionManager<T extends Entity> {
+public interface ActionManager<T> {
     <EXTRA_DATA> void enableAction(DelayedAction<T, EXTRA_DATA> action, EXTRA_DATA actionData);
 
     boolean isActionEnabled(DelayedAction<T, ?> action);
@@ -15,5 +14,5 @@ public interface ActionManager<T extends Entity> {
 
     AnimationManager getAnimationManager();
 
-    void onTick();
+//    void onTick();
 }

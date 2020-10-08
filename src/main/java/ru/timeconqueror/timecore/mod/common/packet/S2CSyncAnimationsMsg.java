@@ -11,7 +11,7 @@ import ru.timeconqueror.timecore.animation.BaseAnimationManager;
 import ru.timeconqueror.timecore.animation.ServerAnimationManager;
 import ru.timeconqueror.timecore.animation.util.AnimationSerializer;
 import ru.timeconqueror.timecore.animation.watcher.AnimationWatcher;
-import ru.timeconqueror.timecore.api.animation.AnimationProvider;
+import ru.timeconqueror.timecore.api.animation.AnimatedObject;
 import ru.timeconqueror.timecore.api.common.packet.ITimePacket;
 
 import java.util.Map;
@@ -65,13 +65,13 @@ public class S2CSyncAnimationsMsg implements ITimePacket {
 			Entity entity = world.getEntityByID(packet.entityId);
 			if (entity == null) {
 				errorMessage = "Client received an animation, but entity wasn't found on client.";
-			} else if (!(entity instanceof AnimationProvider<?>)) {
-				errorMessage = "Provided entity id belongs to entity, which is not an inheritor of " + AnimationProvider.class;
+			} else if (!(entity instanceof AnimatedObject<?>)) {
+				errorMessage = "Provided entity id belongs to entity, which is not an inheritor of " + AnimatedObject.class;
 			}
 
 			if (errorMessage == null) {
 				Map<String, AnimationWatcher> layerMap = packet.layerMap;
-				BaseAnimationManager animationManager = (BaseAnimationManager) ((AnimationProvider<?>) entity).getActionManager().getAnimationManager();
+				BaseAnimationManager animationManager = (BaseAnimationManager) ((AnimatedObject<?>) entity).getActionManager().getAnimationManager();
 
 				layerMap.forEach((name, watcher) -> animationManager.getLayer(name).setAnimationWatcher(watcher));
 			} else {

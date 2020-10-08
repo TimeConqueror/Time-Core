@@ -9,7 +9,7 @@ import ru.timeconqueror.timecore.animation.component.Transition;
 import ru.timeconqueror.timecore.animation.util.WatcherSerializer;
 import ru.timeconqueror.timecore.api.animation.Animation;
 import ru.timeconqueror.timecore.api.util.Requirements;
-import ru.timeconqueror.timecore.client.render.model.TimeEntityModel;
+import ru.timeconqueror.timecore.client.render.model.TimeModel;
 
 import java.util.Objects;
 
@@ -38,11 +38,11 @@ public class TransitionWatcher extends AnimationWatcher {
     }
 
     @Override
-    public void init(TimeEntityModel<?> model) {
+    public void init(TimeModel model) {
         super.init(model);
 
         if (model != null) {
-            animation = Transition.create(source, sourceExistingTime, getDestination(), model.getBaseModel(), transitionTime);
+            animation = Transition.create(source, sourceExistingTime, getDestination(), model, transitionTime);
         } else {
             animation = Transition.createForServer(source, getDestination(), transitionTime);
         }

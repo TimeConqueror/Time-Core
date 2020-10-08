@@ -1,26 +1,21 @@
 package ru.timeconqueror.timecore.mod.common.packet;
 
-import net.minecraft.entity.Entity;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
-import ru.timeconqueror.timecore.TimeCore;
-import ru.timeconqueror.timecore.api.animation.AnimationProvider;
+import ru.timeconqueror.timecore.api.animation.AnimatedObject;
 import ru.timeconqueror.timecore.api.common.packet.ITimePacket;
+import ru.timeconqueror.timecore.mod.common.packet.animation.CodecSupplier;
 
 import java.util.function.Supplier;
 
 public abstract class S2CAnimationMsg implements ITimePacket {
-    protected final int entityId;
     protected final String layerName;
+    protected final CodecSupplier codecSupplier;
 
-    public S2CAnimationMsg(Entity entity, String layerName) {
-        this(entity.getEntityId(), layerName);
-    }
-
-    protected S2CAnimationMsg(int entityId, String layerName) {
-        this.entityId = entityId;
+    protected S2CAnimationMsg(CodecSupplier codecSupplier, String layerName) {
+        this.codecSupplier = codecSupplier;
         this.layerName = layerName;
     }
 
@@ -32,7 +27,8 @@ public abstract class S2CAnimationMsg implements ITimePacket {
     public abstract static class Handler<T extends S2CAnimationMsg> implements ITimePacketHandler<T> {
         @Override
         public final void encode(T packet, PacketBuffer buffer) {
-            buffer.writeInt(packet.entityId);
+            packet.codecSupplier.toBuffer(buffer);
+
             buffer.writeString(packet.layerName);
 
             encodeExtra(packet, buffer);
@@ -41,33 +37,24 @@ public abstract class S2CAnimationMsg implements ITimePacket {
         @Override
         public @NotNull
         final T decode(PacketBuffer buffer) {
-            int entityId = buffer.readInt();
+            CodecSupplier codecSupplier = CodecSupplier.fromBuffer(buffer);
+
             String layerName = buffer.readString();
-            return decodeWithExtraData(entityId, layerName, buffer);
+            return decodeWithExtraData(codecSupplier, layerName, buffer);
         }
 
         public abstract void encodeExtra(T packet, PacketBuffer buffer);
 
-        public abstract T decodeWithExtraData(int entityId, String layerName, PacketBuffer buffer);
+        public abstract T decodeWithExtraData(CodecSupplier codecSupplier, String layerName, PacketBuffer buffer);
 
-        public abstract void onPacket(T packet, AnimationProvider<?> provider, String layerName, Supplier<NetworkEvent.Context> contextSupplier);
+        public abstract void onPacket(T packet, AnimatedObject<?> provider, String layerName, Supplier<NetworkEvent.Context> contextSupplier);
 
         @Override
         public void onPacketReceived(T packet, Supplier<NetworkEvent.Context> contextSupplier) {
-            String errorMessage = null;
+            AnimatedObject<?> animatedObject = packet.codecSupplier.construct(packet, contextSupplier);
 
-            Entity entity = packet.getWorld(contextSupplier.get()).getEntityByID(packet.entityId);
-            if (entity == null) {
-                errorMessage = "Client received an animation, but entity wasn't found on client.";
-            } else if (!(entity instanceof AnimationProvider<?>)) {
-                errorMessage = "Provided entity id belongs to entity, which is not an inheritor of " + AnimationProvider.class;
-            }
-
-            if (errorMessage == null) {
-                onPacket(packet, ((AnimationProvider<?>) entity), packet.layerName, contextSupplier);
-            } else {
-                TimeCore.LOGGER.error(errorMessage);
-            }
+            onPacket(packet, animatedObject, packet.layerName, contextSupplier);
         }
     }
+
 }

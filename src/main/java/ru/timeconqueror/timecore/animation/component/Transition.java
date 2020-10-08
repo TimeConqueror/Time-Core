@@ -9,7 +9,6 @@ import ru.timeconqueror.timecore.animation.util.AnimationUtils;
 import ru.timeconqueror.timecore.api.animation.Animation;
 import ru.timeconqueror.timecore.api.animation.AnimationLayer;
 import ru.timeconqueror.timecore.api.util.Pair;
-import ru.timeconqueror.timecore.client.render.model.TimeEntityModel;
 import ru.timeconqueror.timecore.client.render.model.TimeModel;
 import ru.timeconqueror.timecore.client.render.model.TimeModelRenderer;
 
@@ -22,8 +21,7 @@ public class Transition extends Animation {
         private final ResourceLocation id = new ResourceLocation(TimeCore.MODID, "internal/" + getName());
 
         @Override
-        public void apply(TimeEntityModel<?> model, AnimationLayer layer, int existingTime) {
-
+        public void apply(TimeModel model, AnimationLayer layer, int existingTime) {
         }
 
         @Override
@@ -53,7 +51,6 @@ public class Transition extends Animation {
 
         @Override
         public void forEachBone(Consumer<String> action) {
-
         }
 
         @Override
@@ -168,17 +165,16 @@ public class Transition extends Animation {
     }
 
     @Override
-    public void apply(TimeEntityModel<?> model, AnimationLayer layer, int existingTime) {
-        TimeModel baseModel = model.getBaseModel();
+    public void apply(TimeModel model, AnimationLayer layer, int existingTime) {
         if (options != null) {
             if (existingTime <= transitionLength) {
                 options.forEach(boneOption -> {
-                    TimeModelRenderer piece = baseModel.getPiece(boneOption.name);
+                    TimeModelRenderer piece = model.getPiece(boneOption.name);
 
                     if (piece != null) {
                         boneOption.apply(piece, layer, existingTime);
                     } else {
-                        TimeCore.LOGGER.error("Can't find bone with name " + boneOption.name + " for transition " + getName() + " applied for model " + baseModel.getName());
+                        TimeCore.LOGGER.error("Can't find bone with name " + boneOption.name + " for transition " + getName() + " applied for model " + model.getName());
                     }
                 });
             }
