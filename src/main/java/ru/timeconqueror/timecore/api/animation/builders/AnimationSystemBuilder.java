@@ -4,6 +4,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import ru.timeconqueror.timecore.animation.AnimationSystem;
+import ru.timeconqueror.timecore.animation.builders.InternalAnimationSystemBuilder;
 import ru.timeconqueror.timecore.api.animation.AnimatedObject;
 
 import java.util.function.Consumer;
@@ -26,7 +27,7 @@ public class AnimationSystemBuilder {
             World world,
             Consumer<IAnimationManagerBuilder> animationManagerTuner,
             Consumer<IPredefinedAnimations.IEntityPredefinedAnimations> predefinedAnimationsTuner) {
-        return AnimationSystemBuilder.forEntity(entity, world, animationManagerTuner, predefinedAnimationsTuner);
+        return InternalAnimationSystemBuilder.forEntity(entity, world, animationManagerTuner, predefinedAnimationsTuner);
     }
 
     public static <T extends TileEntity & AnimatedObject<T>> AnimationSystem<T> forTileEntity(T tileEntity, World world) {
@@ -47,6 +48,6 @@ public class AnimationSystemBuilder {
             Consumer<IAnimationManagerBuilder> animationManagerTuner,
             Consumer<IPredefinedAnimations> predefinedAnimationsTuner
     ) {
-        return AnimationSystemBuilder.forTileEntity(tileEntity, world, animationManagerTuner, predefinedAnimationsTuner);
+        return InternalAnimationSystemBuilder.forTileEntity(tileEntity, world, animationManagerTuner, predefinedAnimationsTuner);
     }
 }

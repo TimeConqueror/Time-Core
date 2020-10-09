@@ -1,4 +1,4 @@
-package ru.timeconqueror.timecore.animation_example.entity;
+package ru.timeconqueror.timecore.animation_example.entity_example.entity;
 
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.goal.*;
@@ -18,7 +18,7 @@ import ru.timeconqueror.timecore.animation.AnimationSystem;
 import ru.timeconqueror.timecore.animation.component.DelayedAction;
 import ru.timeconqueror.timecore.animation.entityai.AnimatedRangedAttackGoal;
 import ru.timeconqueror.timecore.animation.util.StandardDelayPredicates;
-import ru.timeconqueror.timecore.animation_example.registry.Animations;
+import ru.timeconqueror.timecore.animation_example.entity_example.registry.EntityAnimations;
 import ru.timeconqueror.timecore.api.animation.ActionManager;
 import ru.timeconqueror.timecore.api.animation.AnimatedObject;
 import ru.timeconqueror.timecore.api.animation.AnimationAPI;
@@ -48,14 +48,14 @@ public class FloroEntity extends MonsterEntity implements IRangedAttackMob, Anim
     private static final String LAYER_ATTACK = "attack";
 
     static {
-        RANGED_ATTACK_ACTION = new DelayedAction<FloroEntity, AnimatedRangedAttackGoal.ActionData>(TimeCore.rl("floro/shoot"), new AnimationStarter(Animations.floroShoot).setSpeed(1.5F), "attack")
+        RANGED_ATTACK_ACTION = new DelayedAction<FloroEntity, AnimatedRangedAttackGoal.ActionData>(TimeCore.rl("floro/shoot"), new AnimationStarter(EntityAnimations.floroShoot).setSpeed(1.5F), "attack")
                 .setDelayPredicate(StandardDelayPredicates.whenPassed(0.5F))
                 .setOnCall(AnimatedRangedAttackGoal.STANDARD_RUNNER);
 
-        REVEALING_ACTION = new DelayedAction<FloroEntity, Object>(TimeCore.rl("floro/reveal"), new AnimationStarter(Animations.floroReveal).setTransitionTime(0), LAYER_SHOWING)
+        REVEALING_ACTION = new DelayedAction<FloroEntity, Object>(TimeCore.rl("floro/reveal"), new AnimationStarter(EntityAnimations.floroReveal).setTransitionTime(0), LAYER_SHOWING)
                 .setDelayPredicate(StandardDelayPredicates.onEnd())
                 .setOnCall((floroEntity, o) -> floroEntity.setHidden(false));
-        HIDING_ACTION = new DelayedAction<FloroEntity, Void>(TimeCore.rl("floro/hiding"), new AnimationStarter(Animations.floroHide).setNextAnimation(AnimationAPI.createStarter(Animations.floroHidden).setTransitionTime(0)), LAYER_SHOWING)
+        HIDING_ACTION = new DelayedAction<FloroEntity, Void>(TimeCore.rl("floro/hiding"), new AnimationStarter(EntityAnimations.floroHide).setNextAnimation(AnimationAPI.createStarter(EntityAnimations.floroHidden).setTransitionTime(0)), LAYER_SHOWING)
                 .setDelayPredicate(StandardDelayPredicates.onEnd())
                 .setOnCall((floroEntity, nothing) -> floroEntity.setHidden(true));
     }
@@ -71,7 +71,7 @@ public class FloroEntity extends MonsterEntity implements IRangedAttackMob, Anim
             builder.addLayer(LAYER_SHOWING, BlendType.OVERRIDE, 1F);
             builder.addLayer(LAYER_WALKING, BlendType.ADDING, 1F);
             builder.addLayer(LAYER_ATTACK, BlendType.ADDING, 0.9F);
-        }, predefinedAnimations -> predefinedAnimations.setWalkingAnimation(new AnimationStarter(Animations.floroWalk).setSpeed(3F), LAYER_WALKING));
+        }, predefinedAnimations -> predefinedAnimations.setWalkingAnimation(new AnimationStarter(EntityAnimations.floroWalk).setSpeed(3F), LAYER_WALKING));
     }
 
     @Override
@@ -171,7 +171,7 @@ public class FloroEntity extends MonsterEntity implements IRangedAttackMob, Anim
     }
 
     private void startHiddenAnimation() {
-        AnimationAPI.createStarter(Animations.floroHidden).setTransitionTime(0)
+        AnimationAPI.createStarter(EntityAnimations.floroHidden).setTransitionTime(0)
                 .startAt(getActionManager().getAnimationManager(), LAYER_SHOWING);
     }
 

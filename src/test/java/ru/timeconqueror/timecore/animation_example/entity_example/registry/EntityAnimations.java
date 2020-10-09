@@ -1,4 +1,4 @@
-package ru.timeconqueror.timecore.animation_example.registry;
+package ru.timeconqueror.timecore.animation_example.entity_example.registry;
 
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -8,7 +8,7 @@ import ru.timeconqueror.timecore.api.animation.Animation;
 import ru.timeconqueror.timecore.api.animation.AnimationAPI;
 
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
-public class Animations {
+public class EntityAnimations {
     public static Animation floroWalk;
     public static Animation floroShoot;
     public static Animation floroReveal;

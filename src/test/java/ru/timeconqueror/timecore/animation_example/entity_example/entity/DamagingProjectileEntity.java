@@ -1,4 +1,4 @@
-package ru.timeconqueror.timecore.animation_example.entity;
+package ru.timeconqueror.timecore.animation_example.entity_example.entity;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;

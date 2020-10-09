@@ -1,4 +1,4 @@
-package ru.timeconqueror.timecore.animation_example.registry;
+package ru.timeconqueror.timecore.animation_example.entity_example.registry;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.SpriteRenderer;
@@ -15,8 +15,8 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import ru.timeconqueror.timecore.TimeCore;
 import ru.timeconqueror.timecore.animation_example.client.render.RenderFloro;
-import ru.timeconqueror.timecore.animation_example.entity.FloroDirtProjectileEntity;
-import ru.timeconqueror.timecore.animation_example.entity.FloroEntity;
+import ru.timeconqueror.timecore.animation_example.entity_example.entity.FloroDirtProjectileEntity;
+import ru.timeconqueror.timecore.animation_example.entity_example.entity.FloroEntity;
 import ru.timeconqueror.timecore.client.render.model.TimeEntityModel;
 import ru.timeconqueror.timecore.client.render.model.TimeModelLoader;
 
