@@ -6,5 +6,7 @@ public interface IPredefinedAnimations {
     interface IEntityPredefinedAnimations extends IPredefinedAnimations {//TODO add idle animation
 
         void setWalkingAnimation(AnimationStarter walkingAnimationStarter, String layerName);
+
+        void setIdleAnimation(AnimationStarter idleAnimationStarter, String layerName);
     }
 }

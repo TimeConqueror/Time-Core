@@ -1,7 +1,9 @@
 package ru.timeconqueror.timecore.animation.builders;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ru.timeconqueror.timecore.animation.AnimationStarter;
+import ru.timeconqueror.timecore.animation.Layer;
 import ru.timeconqueror.timecore.animation.PredefinedAnimation;
 import ru.timeconqueror.timecore.api.animation.AnimationManager;
 import ru.timeconqueror.timecore.api.animation.builders.IPredefinedAnimations;
@@ -14,16 +16,38 @@ public class PredefinedAnimations implements IPredefinedAnimations {
         return new PredefinedAnimation(layerName, starter);
     }
 
+    public static boolean areLayersEqual(@NotNull PredefinedAnimation anim1, @NotNull PredefinedAnimation anim2) {
+        return anim1.getLayerName().equals(anim2.getLayerName());
+    }
+
+    public static boolean areAnimationsEqual(@NotNull PredefinedAnimation anim, Layer layer) {
+        return anim.getAnimationStarter().getData().getAnimation().equals(layer.getCurrentAnimation());
+    }
+
     public static class EntityPredefinedAnimations extends PredefinedAnimations implements IEntityPredefinedAnimations {
+        @Nullable
         private PredefinedAnimation walking;
+        @Nullable
+        private PredefinedAnimation idle;
 
         @Nullable
         public PredefinedAnimation getWalkingAnimation() {
             return walking;
         }
 
+        @Nullable
+        public PredefinedAnimation getIdleAnimation() {
+            return idle;
+        }
+
+        @Override
         public void setWalkingAnimation(AnimationStarter walkingAnimationStarter, String layerName) {
             walking = create(walkingAnimationStarter, layerName);
+        }
+
+        @Override
+        public void setIdleAnimation(AnimationStarter idleAnimationStarter, String layerName) {
+            this.idle = create(idleAnimationStarter, layerName);
         }
     }
 

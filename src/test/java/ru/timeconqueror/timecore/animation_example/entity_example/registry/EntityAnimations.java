@@ -14,6 +14,7 @@ public class EntityAnimations {
     public static Animation floroReveal;
     public static Animation floroHidden;
     public static Animation floroHide;
+    public static Animation floroIdle;
 
     @SubscribeEvent
     public static void registerAnimations(FMLCommonSetupEvent event) {
@@ -21,6 +22,7 @@ public class EntityAnimations {
         floroShoot = AnimationAPI.loadAndRegisterAnimation(TimeCore.rl("animations/floro.shoot.json"));
         floroReveal = AnimationAPI.loadAndRegisterAnimation(TimeCore.rl("animations/floro.showing.json"));
         floroHidden = AnimationAPI.loadAndRegisterAnimation(TimeCore.rl("animations/floro.hidden.json"));
+        floroIdle = AnimationAPI.loadAndRegisterAnimation(TimeCore.rl("animations/floro.idle.json"));
         floroHide = AnimationAPI.register(AnimationAPI.reverse(floroReveal));
     }
 }
