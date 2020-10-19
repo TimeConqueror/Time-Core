@@ -8,7 +8,7 @@ import ru.timeconqueror.timecore.animation.util.WatcherSerializer;
 import ru.timeconqueror.timecore.api.animation.Animation;
 import ru.timeconqueror.timecore.api.animation.AnimationConstants;
 import ru.timeconqueror.timecore.api.util.Requirements;
-import ru.timeconqueror.timecore.client.render.model.TimeModel;
+import ru.timeconqueror.timecore.client.render.model.ITimeModel;
 
 import javax.annotation.OverridingMethodsMustInvokeSuper;
 import java.util.Objects;
@@ -41,7 +41,7 @@ public class AnimationWatcher {
 	}
 
 	@OverridingMethodsMustInvokeSuper
-	public void init(TimeModel model) {
+	public void init(ITimeModel model) {
 		inited = true;
 	}
 

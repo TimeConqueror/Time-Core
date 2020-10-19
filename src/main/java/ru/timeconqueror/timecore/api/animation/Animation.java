@@ -5,14 +5,14 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ru.timeconqueror.timecore.animation.component.KeyFrame;
 import ru.timeconqueror.timecore.animation.component.Transition;
-import ru.timeconqueror.timecore.client.render.model.TimeModel;
+import ru.timeconqueror.timecore.client.render.model.ITimeModel;
 import ru.timeconqueror.timecore.client.render.model.TimeModelRenderer;
 
 import java.util.List;
 import java.util.function.Consumer;
 
 public abstract class Animation {
-	public abstract void apply(TimeModel model, AnimationLayer layer, int existingTime);
+	public abstract void apply(ITimeModel model, AnimationLayer layer, int existingTime);
 
 	/**
 	 * Name of the animation, that is indicated in animation file.
@@ -99,7 +99,7 @@ public abstract class Animation {
 		 * @param transitionTime time of transition between source and destination animations.
 		 */
 		@Nullable
-		public abstract List<Transition.TransitionBoneOption> createBoneOptions(Animation dest, TimeModel model, int existingTime, int transitionTime);
+		public abstract List<Transition.TransitionBoneOption> createBoneOptions(Animation dest, ITimeModel model, int existingTime, int transitionTime);
 
 		/**
 		 * Returns destination keyframe of provided type for transition animation.

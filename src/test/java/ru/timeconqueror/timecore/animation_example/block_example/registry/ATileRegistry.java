@@ -4,6 +4,8 @@ import net.minecraft.block.Block;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.fml.common.Mod;
@@ -26,6 +28,7 @@ public class ATileRegistry {
             .regCustomRenderer(() -> TERHeatCube::new)
             .endTyped();
 
+    @OnlyIn(Dist.CLIENT)
     public static TimeModel heatCubeModel;
 
     @SubscribeEvent

@@ -13,7 +13,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
-public class TimeModel extends Model {
+
+public class TimeModel extends Model implements ITimeModel {
     private final String name;
     private List<TimeModelRenderer> pieces;
     private Map<String, TimeModelRenderer> pieceMap;
@@ -27,6 +28,7 @@ public class TimeModel extends Model {
         this.textureHeight = textureHeight;
     }
 
+    @Override
     public String getName() {
         return name;
     }
@@ -37,7 +39,8 @@ public class TimeModel extends Model {
      * Should only be called once and before first render frame,
      * otherwise you'll see unexpected render behaviour.
      */
-    public TimeModel setScaleMultiplier(float scaleMultiplier) {
+    @Override
+    public ITimeModel setScaleMultiplier(float scaleMultiplier) {
         this.scaleMultiplier = scaleMultiplier;
 
         return this;
@@ -56,10 +59,12 @@ public class TimeModel extends Model {
         }
     }
 
+    @Override
     public List<TimeModelRenderer> getPieces() {
         return pieces;
     }
 
+    @Override
     public void setPieces(List<TimeModelRenderer> pieces) {
         this.pieces = pieces;
         this.pieceMap = new HashMap<>();
@@ -82,6 +87,7 @@ public class TimeModel extends Model {
         }
     }
 
+    @Override
     @Nullable
     public TimeModelRenderer getPiece(String pieceName) {
         return pieceMap.get(pieceName);

@@ -8,7 +8,7 @@ import ru.timeconqueror.timecore.TimeCore;
 import ru.timeconqueror.timecore.api.animation.Animation;
 import ru.timeconqueror.timecore.api.animation.AnimationLayer;
 import ru.timeconqueror.timecore.api.util.Pair;
-import ru.timeconqueror.timecore.client.render.model.TimeModel;
+import ru.timeconqueror.timecore.client.render.model.ITimeModel;
 import ru.timeconqueror.timecore.client.render.model.TimeModelRenderer;
 
 import java.util.*;
@@ -39,7 +39,7 @@ public class BasicAnimation extends Animation {
         this.options = options;
     }
 
-    public void apply(TimeModel model, AnimationLayer layer, int existingTime) {
+    public void apply(ITimeModel model, AnimationLayer layer, int existingTime) {
         if (options != null) {
             if (existingTime <= length) {
                 options.forEach((s, boneOption) -> {
@@ -156,7 +156,7 @@ public class BasicAnimation extends Animation {
         }
 
         @Override
-        public @Nullable List<Transition.TransitionBoneOption> createBoneOptions(Animation dest, TimeModel model, int existingTime, int transitionTime) {
+        public @Nullable List<Transition.TransitionBoneOption> createBoneOptions(Animation dest, ITimeModel model, int existingTime, int transitionTime) {
             BasicAnimation source = getSourceTyped();
             if (source.getOptions() == null || source.getOptions().isEmpty()) {
                 return null;

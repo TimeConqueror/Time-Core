@@ -6,9 +6,9 @@ import net.minecraft.client.renderer.entity.model.EntityModel;
 import net.minecraft.entity.Entity;
 
 public class TimeEntityModel<T extends Entity> extends EntityModel<T> {
-    private final TimeModel model;
+    private final ITimeModel model;
 
-    public TimeEntityModel(TimeModel model) {
+    public TimeEntityModel(ITimeModel model) {
         this.model = model;
     }
 
@@ -29,7 +29,7 @@ public class TimeEntityModel<T extends Entity> extends EntityModel<T> {
         model.render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
     }
 
-    public TimeModel getBaseModel() {
+    public ITimeModel getBaseModel() {
         return model;
     }
 

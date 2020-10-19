@@ -7,7 +7,7 @@ import org.jetbrains.annotations.Nullable;
 import ru.timeconqueror.timecore.animation.action.ActionManagerImpl;
 import ru.timeconqueror.timecore.animation.watcher.AnimationWatcher;
 import ru.timeconqueror.timecore.api.animation.AnimatedObject;
-import ru.timeconqueror.timecore.client.render.model.TimeModel;
+import ru.timeconqueror.timecore.client.render.model.ITimeModel;
 
 public class ServerAnimationManager<T extends AnimatedObject<T>> extends BaseAnimationManager {
     private ActionManagerImpl<T> actionManager;
@@ -22,7 +22,7 @@ public class ServerAnimationManager<T extends AnimatedObject<T>> extends BaseAni
     }
 
     @Override
-    protected void applyAnimation(TimeModel model, Layer layer, AnimationWatcher watcher, long currentTime) {
+    protected void applyAnimation(ITimeModel model, Layer layer, AnimationWatcher watcher, long currentTime) {
         proceedActions(watcher);
     }
 
@@ -34,7 +34,7 @@ public class ServerAnimationManager<T extends AnimatedObject<T>> extends BaseAni
     }
 
     @Override
-    protected void onAnimationEnd(@Nullable TimeModel model, Layer layer, AnimationWatcher watcher) {
+    protected void onAnimationEnd(@Nullable ITimeModel model, Layer layer, AnimationWatcher watcher) {
         proceedActions(watcher);
 
         actionManager.getActionWatchers().removeIf(actionWatcher -> actionWatcher.isBound(watcher.getAnimation()));

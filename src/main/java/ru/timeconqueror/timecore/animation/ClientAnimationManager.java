@@ -4,11 +4,11 @@ import net.minecraft.client.Minecraft;
 import ru.timeconqueror.timecore.animation.watcher.AnimationWatcher;
 import ru.timeconqueror.timecore.api.animation.Animation;
 import ru.timeconqueror.timecore.api.util.MathUtils;
-import ru.timeconqueror.timecore.client.render.model.TimeModel;
+import ru.timeconqueror.timecore.client.render.model.ITimeModel;
 
 public class ClientAnimationManager extends BaseAnimationManager {
     @Override
-    protected void applyAnimation(TimeModel model, Layer layer, AnimationWatcher watcher, long currentTime) {
+    protected void applyAnimation(ITimeModel model, Layer layer, AnimationWatcher watcher, long currentTime) {
         Animation animation = watcher.getAnimation();
         animation.apply(model, layer, MathUtils.coerceInRange(watcher.getExistingTime(currentTime), 0, watcher.getAnimation().getLength()));
     }

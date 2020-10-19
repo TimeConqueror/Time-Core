@@ -7,6 +7,7 @@ import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import ru.timeconqueror.timecore.api.animation.AnimatedObject;
+import ru.timeconqueror.timecore.client.render.model.ITimeModel;
 import ru.timeconqueror.timecore.client.render.model.TimeModel;
 
 public abstract class AnimatedTileEntityRenderer<T extends TileEntity & AnimatedObject<T>> extends TileEntityRenderer<T> {
@@ -36,7 +37,7 @@ public abstract class AnimatedTileEntityRenderer<T extends TileEntity & Animated
 
     protected abstract ResourceLocation getTexture(T tileEntityIn);
 
-    public TimeModel getModel() {
+    public ITimeModel getModel() {
         return model;
     }
 }

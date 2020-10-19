@@ -9,7 +9,7 @@ import ru.timeconqueror.timecore.animation.util.AnimationUtils;
 import ru.timeconqueror.timecore.api.animation.Animation;
 import ru.timeconqueror.timecore.api.animation.AnimationLayer;
 import ru.timeconqueror.timecore.api.util.Pair;
-import ru.timeconqueror.timecore.client.render.model.TimeModel;
+import ru.timeconqueror.timecore.client.render.model.ITimeModel;
 import ru.timeconqueror.timecore.client.render.model.TimeModelRenderer;
 
 import java.util.ArrayList;
@@ -21,7 +21,7 @@ public class Transition extends Animation {
         private final ResourceLocation id = new ResourceLocation(TimeCore.MODID, "internal/" + getName());
 
         @Override
-        public void apply(TimeModel model, AnimationLayer layer, int existingTime) {
+        public void apply(ITimeModel model, AnimationLayer layer, int existingTime) {
         }
 
         @Override
@@ -60,7 +60,7 @@ public class Transition extends Animation {
     };
     private static final Animation.TransitionFactory IDLE_END_TRANSITION_FACTORY = new Animation.TransitionFactory(DUMMY_ANIMATION) {
         @Override
-        public @Nullable List<TransitionBoneOption> createBoneOptions(Animation dest, TimeModel model, int existingTime, int transitionTime) {
+        public @Nullable List<TransitionBoneOption> createBoneOptions(Animation dest, ITimeModel model, int existingTime, int transitionTime) {
             throw new UnsupportedOperationException("Idle End Transition Factory shouldn't be used with source animation");
         }
 
@@ -91,7 +91,7 @@ public class Transition extends Animation {
         this.destAnimation = destAnimation;
     }
 
-    private static Animation createFromIdleState(@NotNull Animation dest, TimeModel model, int transitionTime) {
+    private static Animation createFromIdleState(@NotNull Animation dest, ITimeModel model, int transitionTime) {
         Transition transition = new Transition(transitionTime, "idle_to_" + dest.getName(), dest);
 
         Animation.TransitionFactory transitionFactory = dest.getTransitionFactory();
@@ -122,7 +122,7 @@ public class Transition extends Animation {
         return transition;
     }
 
-    private static Animation createToIdleState(@Nullable Animation source, TimeModel model, int existingTime, int transitionTime) {
+    private static Animation createToIdleState(@Nullable Animation source, ITimeModel model, int existingTime, int transitionTime) {
         Transition transition = new Transition(transitionTime, (source != null ? source.getName() : "idle") + "_to_idle", null);
 
         if (source != null) {
@@ -134,7 +134,7 @@ public class Transition extends Animation {
     }
 
     @NotNull
-    public static Animation create(@Nullable Animation source, int sourceExistingTime, @Nullable Animation dest, TimeModel model, int transitionTime) {
+    public static Animation create(@Nullable Animation source, int sourceExistingTime, @Nullable Animation dest, ITimeModel model, int transitionTime) {
         if (dest == null) {
             return createToIdleState(source, model, source != null ? sourceExistingTime : 0, transitionTime);
         } else if (source == null) {
@@ -150,7 +150,7 @@ public class Transition extends Animation {
         return new Transition(transitionTime, sourceName + "_to_" + destName, dest);
     }
 
-    private static Animation create(@NotNull Animation source, @NotNull Animation dest, TimeModel model, int existingTime, int transitionTime) {
+    private static Animation create(@NotNull Animation source, @NotNull Animation dest, ITimeModel model, int existingTime, int transitionTime) {
         Animation.TransitionFactory sourceTFactory = source.getTransitionFactory();
 
         List<TransitionBoneOption> options = sourceTFactory.createBoneOptions(dest, model, existingTime, transitionTime);
@@ -165,7 +165,7 @@ public class Transition extends Animation {
     }
 
     @Override
-    public void apply(TimeModel model, AnimationLayer layer, int existingTime) {
+    public void apply(ITimeModel model, AnimationLayer layer, int existingTime) {
         if (options != null) {
             if (existingTime <= transitionLength) {
                 options.forEach(boneOption -> {
@@ -247,7 +247,7 @@ public class Transition extends Animation {
         }
 
         @Override
-        public java.util.@Nullable List<Transition.TransitionBoneOption> createBoneOptions(Animation dest, TimeModel model, int existingTime, int transitionTime) {
+        public java.util.@Nullable List<Transition.TransitionBoneOption> createBoneOptions(Animation dest, ITimeModel model, int existingTime, int transitionTime) {
             Transition source = getSourceTyped();
             if (source.options == null || source.options.isEmpty()) {
                 return null;

@@ -8,7 +8,7 @@ import ru.timeconqueror.timecore.animation.watcher.TransitionWatcher;
 import ru.timeconqueror.timecore.api.animation.Animation;
 import ru.timeconqueror.timecore.api.animation.AnimationConstants;
 import ru.timeconqueror.timecore.api.animation.AnimationManager;
-import ru.timeconqueror.timecore.client.render.model.TimeModel;
+import ru.timeconqueror.timecore.client.render.model.ITimeModel;
 
 import java.util.*;
 
@@ -84,7 +84,7 @@ public abstract class BaseAnimationManager implements AnimationManager {
     }
 
     @Override
-    public void applyAnimations(TimeModel model) {
+    public void applyAnimations(ITimeModel model) {
         long currentTime = System.currentTimeMillis();
         for (Layer layer : layers) {
             layer.update(this, model, currentTime);
@@ -97,11 +97,11 @@ public abstract class BaseAnimationManager implements AnimationManager {
         }
     }
 
-    protected abstract void applyAnimation(TimeModel model, Layer layer, AnimationWatcher watcher, long currentTime);
+    protected abstract void applyAnimation(ITimeModel model, Layer layer, AnimationWatcher watcher, long currentTime);
 
     protected abstract boolean isGamePaused();
 
-    protected void onAnimationEnd(@Nullable TimeModel model, Layer layer, AnimationWatcher watcher) {
+    protected void onAnimationEnd(@Nullable ITimeModel model, Layer layer, AnimationWatcher watcher) {
 
     }
 

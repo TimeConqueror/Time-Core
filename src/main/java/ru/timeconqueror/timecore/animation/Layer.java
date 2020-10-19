@@ -7,7 +7,7 @@ import ru.timeconqueror.timecore.api.animation.Animation;
 import ru.timeconqueror.timecore.api.animation.AnimationLayer;
 import ru.timeconqueror.timecore.api.animation.BlendType;
 import ru.timeconqueror.timecore.api.util.MathUtils;
-import ru.timeconqueror.timecore.client.render.model.TimeModel;
+import ru.timeconqueror.timecore.client.render.model.ITimeModel;
 
 public class Layer implements AnimationLayer {
     private String name;
@@ -77,7 +77,7 @@ public class Layer implements AnimationLayer {
         }
     }
 
-    void update(BaseAnimationManager manager, TimeModel model, long currentTime) {
+    void update(BaseAnimationManager manager, ITimeModel model, long currentTime) {
         boolean paused = manager.isGamePaused();
 
         AnimationWatcher watcher = getAnimationWatcher();
