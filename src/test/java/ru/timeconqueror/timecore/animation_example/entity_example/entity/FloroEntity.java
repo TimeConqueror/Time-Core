@@ -67,14 +67,21 @@ public class FloroEntity extends MonsterEntity implements IRangedAttackMob, Anim
     public FloroEntity(EntityType<? extends FloroEntity> type, World world) {
         super(type, world);
 
+        // For presentation
+//        animationSystem = AnimationSystemBuilder.forEntity(this, world, builder -> {
+//            builder.addLayer(LAYER_SHOWING, BlendType.OVERRIDE, 0F);
+//            builder.addLayer(LAYER_WALKING, BlendType.ADDING, 1F);
+//            builder.addLayer(LAYER_ATTACK, BlendType.ADDING, 0.9F);
+//        }, predefinedAnimations -> {
+//            predefinedAnimations.setWalkingAnimation(new AnimationStarter(EntityAnimations.floroWalk).setSpeed(3F), LAYER_WALKING);
+//            predefinedAnimations.setIdleAnimation(new AnimationStarter(EntityAnimations.floroIdle), LAYER_WALKING);
+//        });
+
         animationSystem = AnimationSystemBuilder.forEntity(this, world, builder -> {
-            builder.addLayer(LAYER_SHOWING, BlendType.OVERRIDE, 0F);
+            builder.addLayer(LAYER_SHOWING, BlendType.OVERRIDE, 1F);
             builder.addLayer(LAYER_WALKING, BlendType.ADDING, 1F);
             builder.addLayer(LAYER_ATTACK, BlendType.ADDING, 0.9F);
-        }, predefinedAnimations -> {
-            predefinedAnimations.setWalkingAnimation(new AnimationStarter(EntityAnimations.floroWalk).setSpeed(3F), LAYER_WALKING);
-            predefinedAnimations.setIdleAnimation(new AnimationStarter(EntityAnimations.floroIdle), LAYER_WALKING);
-        });
+        }, predefinedAnimations -> predefinedAnimations.setWalkingAnimation(new AnimationStarter(EntityAnimations.floroWalk).setSpeed(3F), LAYER_WALKING));
     }
 
     @Override

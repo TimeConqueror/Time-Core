@@ -1,4 +1,4 @@
-package ru.timeconqueror.timecore.animation_example.client.render;
+package ru.timeconqueror.timecore.animation_example.entity_example.client.render;
 
 import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.util.ResourceLocation;
