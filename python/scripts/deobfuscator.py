@@ -25,7 +25,7 @@ mappings_list = [mappings for mappings in mappings_list if not mappings.strip() 
 for path in paths:
     path = path.strip()
     for mappings in mappings_list:
-    mappings = mappings.strip()
+        mappings = mappings.strip()
         os.system("java -jar ../BON-2.4.0.15-all.jar " +
                   "--inputJar \"" + path + "\" "
                   "--outputJar \"" + path.replace(".jar", "") + "-deobf-" + mappings + ".jar\" " +
