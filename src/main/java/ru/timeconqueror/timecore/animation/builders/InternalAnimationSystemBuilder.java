@@ -26,7 +26,7 @@ public abstract class InternalAnimationSystemBuilder {
             Consumer<IAnimationManagerBuilder> animationManagerTuner,
             Consumer<IEntityPredefinedAnimations> predefinedAnimationsTuner
     ) {
-        return create(EnumAnimatedObjectType.ENTITY, entity, world, animationManagerTuner, (animationManager) -> {
+        return create(EnumAnimatedObjectType.ENTITY, world, animationManagerTuner, (animationManager) -> {
             Builder<EntityPredefinedAnimations> predefinedAnimsBuilder = Builder.of(new EntityPredefinedAnimations());
             predefinedAnimationsTuner.accept(predefinedAnimsBuilder.getInner());
             EntityPredefinedAnimations validatedPredefines = predefinedAnimsBuilder.validate(animationManager);
@@ -41,7 +41,7 @@ public abstract class InternalAnimationSystemBuilder {
             Consumer<IAnimationManagerBuilder> animationManagerTuner,
             Consumer<IPredefinedAnimations> predefinedAnimationsTuner
     ) {
-        return create(EnumAnimatedObjectType.TILE_ENTITY, tileEntity, world, animationManagerTuner, (animationManager) -> {
+        return create(EnumAnimatedObjectType.TILE_ENTITY, world, animationManagerTuner, (animationManager) -> {
             Builder<PredefinedAnimations> predefinedAnimsBuilder = Builder.of(new PredefinedAnimations());
             predefinedAnimationsTuner.accept(predefinedAnimsBuilder.getInner());
             PredefinedAnimations validatedPredefines = predefinedAnimsBuilder.validate(animationManager);
@@ -52,7 +52,6 @@ public abstract class InternalAnimationSystemBuilder {
 
     private static <T extends AnimatedObject<T>> AnimationSystem<T> create(
             EnumAnimatedObjectType type,
-            T object,
             World world,
             Consumer<? super BaseAnimationManagerBuilder> animationManagerTuner,
             Function<BaseAnimationManager, ? extends ActionManagerImpl<T>> actionManagerBuilderFactory

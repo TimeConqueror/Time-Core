@@ -20,6 +20,4 @@ public class AnimationSystem<T extends AnimatedObject<T>> {
     public AnimationManager getAnimationManager() {
         return animationManager;
     }
-
-
 }
