@@ -26,7 +26,7 @@ public class FloroDirtProjectileEntity extends DamagingProjectileEntity implemen
     }
 
     @Override
-    protected float getGravityVelocity() {
+    protected float getGravity() {
         return 0.032F;
     }
 

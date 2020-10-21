@@ -24,8 +24,8 @@ public class TimeModel extends Model implements ITimeModel {
     public TimeModel(Function<ResourceLocation, RenderType> renderTypeIn, String name, int textureWidth, int textureHeight) {
         super(renderTypeIn);
         this.name = name;
-        this.textureWidth = textureWidth;
-        this.textureHeight = textureHeight;
+        this.texWidth = textureWidth;
+        this.texHeight = textureHeight;
     }
 
     @Override
@@ -36,27 +36,14 @@ public class TimeModel extends Model implements ITimeModel {
     /**
      * Sets custom scale for the model.
      * <p>
-     * Should only be called once and before first render frame,
-     * otherwise you'll see unexpected render behaviour.
+     * Should only be called once and before first renderToBuffer frame,
+     * otherwise you'll see unexpected renderToBuffer behaviour.
      */
     @Override
     public ITimeModel setScaleMultiplier(float scaleMultiplier) {
         this.scaleMultiplier = scaleMultiplier;
 
         return this;
-    }
-
-    @Override
-    public void render(MatrixStack matrixStackIn, IVertexBuilder bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha) {
-        if (pieces != null) {
-            matrixStackIn.scale(scaleMultiplier, scaleMultiplier, scaleMultiplier);
-
-            for (TimeModelRenderer piece : pieces) {
-                piece.render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
-            }
-
-            matrixStackIn.scale(1 / scaleMultiplier, 1 / scaleMultiplier, 1 / scaleMultiplier);
-        }
     }
 
     @Override
@@ -77,7 +64,7 @@ public class TimeModel extends Model implements ITimeModel {
     private void addRendererToMap(TimeModelRenderer renderer) {
         pieceMap.put(renderer.getName(), renderer);
 
-        List<ModelRenderer> children = renderer.childModels;
+        List<ModelRenderer> children = renderer.children;
         if (children != null) {
             for (ModelRenderer child : children) {
                 if (child instanceof TimeModelRenderer) {
@@ -91,5 +78,18 @@ public class TimeModel extends Model implements ITimeModel {
     @Nullable
     public TimeModelRenderer getPiece(String pieceName) {
         return pieceMap.get(pieceName);
+    }
+
+    @Override
+    public void renderToBuffer(MatrixStack matrixStackIn, IVertexBuilder bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha) {
+        if (pieces != null) {
+            matrixStackIn.scale(scaleMultiplier, scaleMultiplier, scaleMultiplier);
+
+            for (TimeModelRenderer piece : pieces) {
+                piece.render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
+            }
+
+            matrixStackIn.scale(1 / scaleMultiplier, 1 / scaleMultiplier, 1 / scaleMultiplier);
+        }
     }
 }

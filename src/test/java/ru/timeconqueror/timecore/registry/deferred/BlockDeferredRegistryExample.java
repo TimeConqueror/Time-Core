@@ -13,15 +13,15 @@ import ru.timeconqueror.timecore.registry.TimeAutoRegistrable;
 public class BlockDeferredRegistryExample {
     @TimeAutoRegistrable
     private static final DeferredBlockRegister REGISTER = new DeferredBlockRegister(TimeCore.MODID);
-    private static final BlockPropsFactory BLOCK_PROPS_CREATOR = new BlockPropsFactory(() -> Block.Properties.create(Material.ROCK));
+    private static final BlockPropsFactory BLOCK_PROPS_CREATOR = new BlockPropsFactory(() -> Block.Properties.of(Material.STONE));
 
     public static RegistryObject<TestCobbleBlock> TEST_COBBLE = REGISTER.regBlock("test_cobble", () -> new TestCobbleBlock(BLOCK_PROPS_CREATOR.create()))
             .genDefaultStateAndModel(new TextureLocation("minecraft", "block/cobblestone"))
-            .regDefaultBlockItem(ItemGroup.MISC)
+            .regDefaultBlockItem(ItemGroup.TAB_MISC)
 //            .genLangEntry("Test Cobble")
             .endTyped();
 
     public static RegistryObject<Block> TEST_GRAVEL = REGISTER.regBlock("test_gravel", () -> new Block(BLOCK_PROPS_CREATOR.create()))
-            .regDefaultBlockItem(ItemGroup.MISC)
+            .regDefaultBlockItem(ItemGroup.TAB_MISC)
             .endTyped();
 }

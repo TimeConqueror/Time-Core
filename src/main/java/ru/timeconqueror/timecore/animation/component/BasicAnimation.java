@@ -1,7 +1,7 @@
 package ru.timeconqueror.timecore.animation.component;
 
-import net.minecraft.client.renderer.Vector3f;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.vector.Vector3f;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ru.timeconqueror.timecore.TimeCore;
@@ -26,7 +26,7 @@ public class BasicAnimation extends Animation {
 
     /**
      * Unmodifiable map of bone options.
-     * Key - bone name.
+     * Key - bone location.
      */
     @Nullable
     private final Map<String, BoneOption> options;
@@ -48,7 +48,7 @@ public class BasicAnimation extends Animation {
                     if (piece != null) {
                         boneOption.apply(this, layer, piece, existingTime);
                     } else {
-                        TimeCore.LOGGER.error("Can't find bone with name " + boneOption.getName() + " in animation " + getName() + " applied for model " + model.getName());
+                        TimeCore.LOGGER.error("Can't find bone with location " + boneOption.getName() + " in animation " + getName() + " applied for model " + model.getName());
                     }
                 });
             }
@@ -223,7 +223,7 @@ public class BasicAnimation extends Animation {
     @Override
     public String toString() {
         return "BasicAnimation{" +
-                "name=" + name +
+                "location=" + name +
                 ", id=" + id +
                 ", looped=" + loop +
                 ", length=" + length +

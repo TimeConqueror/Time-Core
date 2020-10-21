@@ -30,7 +30,7 @@ import java.util.LinkedHashMap;
  * Example:
  * <blockquote>
  * <pre>
- *  entity.timecore.test_entity.name=Test Entity
+ *  entity.timecore.test_entity.location=Test Entity
  *
  *  #MARK AUTO GEN START
  *  <- (here generator will create all its entries) ->
@@ -57,8 +57,8 @@ public class LangGeneratorFacade {
      * Adds item entry to {@link LangSection#ITEMS}, which will be processed by generator on {@link GatherDataEvent}.
      * Generator will generate entries only in {@code runData} launch mode.
      *
-     * @param item   item for which english name will be added to file
-     * @param enName english localization name of item
+     * @param item   item for which english location will be added to file
+     * @param enName english localization location of item
      */
     public static void addItemEntry(Item item, String enName) {
         if (shouldSave()) {
@@ -70,8 +70,8 @@ public class LangGeneratorFacade {
      * Adds block entry to {@link LangSection#BLOCKS}, which will be processed by generator on {@link GatherDataEvent}.
      * Generator will generate entries only in {@code runData} launch mode.
      *
-     * @param block  block for which english name will be added to file
-     * @param enName english localization name of block
+     * @param block  block for which english location will be added to file
+     * @param enName english localization location of block
      */
     public static void addBlockEntry(Block block, String enName) {
         if (shouldSave()) {
@@ -83,8 +83,8 @@ public class LangGeneratorFacade {
      * Adds entity entry to {@link LangSection#ENTITIES}, which will be processed by generator on {@link GatherDataEvent}.
      * Generator will generate entries only in {@code runData} launch mode.
      *
-     * @param entityEntry entry of entity for which english name will be added to file
-     * @param enName      english localization name of entity
+     * @param entityEntry entry of entity for which english location will be added to file
+     * @param enName      english localization location of entity
      */
     public static void addEntityEntry(EntityType<?> entityEntry, String enName) {
         if (shouldSave()) {
@@ -96,8 +96,8 @@ public class LangGeneratorFacade {
      * Adds item group entry to {@link LangSection#ITEM_GROUPS}, which will be processed by generator on {@link GatherDataEvent}.
      * Generator will generate entries only in {@code runData} launch mode.
      *
-     * @param itemGroup item group for which english name will be added to file
-     * @param enName    english localization name of item group
+     * @param itemGroup item group for which english location will be added to file
+     * @param enName    english localization location of item group
      */
     public static void addItemGroupEntry(ItemGroup itemGroup, String enName) {
         if (shouldSave()) {
@@ -112,14 +112,14 @@ public class LangGeneratorFacade {
      * This method is only for common armor stuff names, like the "Diamond Helmet", where equipment slot ("Helmet") is the last word.<br>
      * The last word, which represents the equipment slot, will be framed automatically.<br>
      * <p>
-     * For uncommon names see {@link #addArmorEntry(ArmorItem, String)} to set name directly.
+     * For uncommon names see {@link #addArmorEntry(ArmorItem, String)} to set location directly.
      *
-     * @param item           armor item for which english name will be added to file
-     * @param materialEnName the english name of material, will be the first word in the full name
+     * @param item           armor item for which english location will be added to file
+     * @param materialEnName the english location of material, will be the first word in the full location
      */
     public static void addArmorEntryByMaterial(ArmorItem item, String materialEnName) {
         if (shouldSave()) {
-            EquipmentSlotType equipmentSlot = item.getEquipmentSlot();
+            EquipmentSlotType equipmentSlot = item.getSlot();
 
             String fullLocalizedName;
             switch (equipmentSlot) {
@@ -151,8 +151,8 @@ public class LangGeneratorFacade {
      * <p>
      * For common names see {@link #addArmorEntryByMaterial(ArmorItem, String)}
      *
-     * @param item   armor item for which english name will be added to file
-     * @param enName english localization name of item
+     * @param item   armor item for which english location will be added to file
+     * @param enName english localization location of item
      */
     public static void addArmorEntry(ArmorItem item, String enName) {
         if (shouldSave()) {
@@ -165,7 +165,7 @@ public class LangGeneratorFacade {
      * Generator will generate entries only in {@code runData} launch mode.
      *
      * @param key    full localization key of this thing
-     * @param enName english localization name of this thing
+     * @param enName english localization location of this thing
      */
     public static void addMiscEntry(String key, String enName) {
         if (!shouldSave()) return;
@@ -182,7 +182,7 @@ public class LangGeneratorFacade {
      */
     public static <T> LangSection<T> addSection(LangSection<T> langSection) {
         if (SECTIONS.put(langSection.getName(), langSection) != null) {
-            throw new IllegalArgumentException("Lang section with name " + langSection.getName() + " already exists.");
+            throw new IllegalArgumentException("Lang section with location " + langSection.getName() + " already exists.");
         }
 
         return langSection;

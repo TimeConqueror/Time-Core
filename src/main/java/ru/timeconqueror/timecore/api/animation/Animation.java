@@ -21,7 +21,7 @@ public abstract class Animation {
 
 	/**
 	 * By default contains the path to the file, from which this animation was parsed,
-	 * merged with the animation name from the file.
+	 * merged with the animation location from the file.
 	 */
 	public abstract ResourceLocation getId();
 
@@ -41,7 +41,7 @@ public abstract class Animation {
 	/**
 	 * Proceeds some action for each bone.
 	 *
-	 * @param action action to call for every bone. Consumes bone name.
+	 * @param action action to call for every bone. Consumes bone location.
 	 */
 	public abstract void forEachBone(Consumer<String> action);
 
@@ -107,7 +107,7 @@ public abstract class Animation {
 		 * Will be called only when {@link #source} is a destination animation.
 		 *
 		 * @param piece          piece for which destination keyframe should be calculated.
-		 * @param boneName       name of bone/piece for which destination keyframe should be calculated.
+		 * @param boneName       location of bone/piece for which destination keyframe should be calculated.
 		 * @param optionType     type of keyframe which should be calculated.
 		 * @param transitionTime time of transition between source and destination animations.
 		 */

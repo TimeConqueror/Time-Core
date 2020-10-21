@@ -16,7 +16,7 @@ public interface ITimeModel {
 
     ITimeModel setScaleMultiplier(float scaleMultiplier);
 
-    void render(MatrixStack matrixStackIn, IVertexBuilder bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha);
+    void renderToBuffer(MatrixStack matrixStackIn, IVertexBuilder bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha);
 
     List<TimeModelRenderer> getPieces();
 

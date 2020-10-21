@@ -87,7 +87,7 @@ public class RevealerDataSaver {
     private ClientSettings deserializeClientSettings(CompoundNBT in) {
         CompoundNBT structureMapNBT = in.getCompound("structure_colors");
         Map<ResourceLocation, Integer> structureColorMap = new HashMap<>(structureMapNBT.size());
-        structureMapNBT.keySet().forEach(key -> structureColorMap.put(new ResourceLocation(key), structureMapNBT.getInt(key)));
+        structureMapNBT.getAllKeys().forEach(key -> structureColorMap.put(new ResourceLocation(key), structureMapNBT.getInt(key)));
 
         boolean visibleThroughBlocks = in.getBoolean("visible_through_blocks");
 
@@ -118,7 +118,7 @@ public class RevealerDataSaver {
     private Multimap<UUID, Structure<?>> deserializeStructureInfo(CompoundNBT in) {
         Multimap<UUID, Structure<?>> out = ArrayListMultimap.create();
 
-        for (String uuidString : in.keySet()) {
+        for (String uuidString : in.getAllKeys()) {
             ListNBT structures = (ListNBT) in.get(uuidString);
 
             UUID uuid = UUID.fromString(uuidString);
@@ -126,7 +126,7 @@ public class RevealerDataSaver {
             for (int i = 0, structuresSize = structures.size(); i < structuresSize; i++) {
                 String name = structures.getString(i);
                 ResourceLocation rl = new ResourceLocation(name);
-                out.put(uuid, ((Structure<?>) ForgeRegistries.FEATURES.getValue(rl)));
+                out.put(uuid, ForgeRegistries.STRUCTURE_FEATURES.getValue(rl));
             }
         }
 

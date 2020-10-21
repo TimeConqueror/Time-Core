@@ -15,7 +15,7 @@ import java.util.function.BiConsumer;
 
 public class AnimatedRangedAttackGoal<T extends MobEntity & AnimatedObject<T>> extends Goal {
     public static final BiConsumer<IRangedAttackMob, ActionData> STANDARD_RUNNER =
-            (entity, actionData) -> entity.attackEntityWithRangedAttack(actionData.getAttackTarget(), actionData.getDistanceFactor());
+            (entity, actionData) -> entity.performRangedAttack(actionData.getAttackTarget(), actionData.getDistanceFactor());
 
     private final T entity;
     private LivingEntity attackTarget;
@@ -33,7 +33,7 @@ public class AnimatedRangedAttackGoal<T extends MobEntity & AnimatedObject<T>> e
         this.attackRadius = maxAttackDistance;
         this.maxAttackDistance = maxAttackDistance * maxAttackDistance;
         this.attackAction = attackAction;
-        this.setMutexFlags(EnumSet.of(Goal.Flag.MOVE, Goal.Flag.LOOK));
+        this.setFlags(EnumSet.of(Goal.Flag.MOVE, Goal.Flag.LOOK));
 
         AnimationData data = attackAction.getAnimationStarter().getData();
         this.attackInterval = AnimationUtils.milliSecondsToTicks(data.getAnimation().getLength()) * data.getSpeedFactor();
@@ -43,8 +43,9 @@ public class AnimatedRangedAttackGoal<T extends MobEntity & AnimatedObject<T>> e
      * Returns whether execution should begin. You can also read and cache any state necessary for execution in this
      * method as well.
      */
-    public boolean shouldExecute() {
-        LivingEntity livingentity = this.entity.getAttackTarget();
+    @Override
+    public boolean canUse() {
+        LivingEntity livingentity = this.entity.getTarget();
         if (livingentity != null && livingentity.isAlive()) {
             this.attackTarget = livingentity;
             return true;
@@ -56,14 +57,16 @@ public class AnimatedRangedAttackGoal<T extends MobEntity & AnimatedObject<T>> e
     /**
      * Returns whether an in-progress EntityAIBase should continue executing
      */
-    public boolean shouldContinueExecuting() {
-        return this.shouldExecute() || !this.entity.getNavigator().noPath();
+    @Override
+    public boolean canContinueToUse() {
+        return this.canUse() || !this.entity.getNavigation().isDone();
     }
 
     /**
      * Reset the task's internal state. Called when this task is interrupted by another one
      */
-    public void resetTask() {
+    @Override
+    public void stop() {
         this.attackTarget = null;
         this.seeTime = 0;
         this.rangedAttackTime = -1;
@@ -72,9 +75,10 @@ public class AnimatedRangedAttackGoal<T extends MobEntity & AnimatedObject<T>> e
     /**
      * Keep ticking a continuous task that has already been started
      */
+    @Override
     public void tick() {
-        double d0 = this.entity.getDistanceSq(this.attackTarget.getPosX(), this.attackTarget.getPosY(), this.attackTarget.getPosZ());
-        boolean flag = this.entity.getEntitySenses().canSee(this.attackTarget);
+        double d0 = this.entity.distanceToSqr(this.attackTarget.getX(), this.attackTarget.getY(), this.attackTarget.getZ());
+        boolean flag = this.entity.getSensing().canSee(this.attackTarget);
         if (flag) {
             ++this.seeTime;
         } else {
@@ -82,12 +86,12 @@ public class AnimatedRangedAttackGoal<T extends MobEntity & AnimatedObject<T>> e
         }
 
         if (!(d0 > (double) this.maxAttackDistance) && this.seeTime >= 5) {
-            this.entity.getNavigator().clearPath();
+            this.entity.getNavigation().stop();
         } else {
-            this.entity.getNavigator().tryMoveToEntityLiving(this.attackTarget, this.entityMoveSpeed);
+            this.entity.getNavigation().moveTo(this.attackTarget, this.entityMoveSpeed);
         }
 
-        this.entity.getLookController().setLookPositionWithEntity(this.attackTarget, 30.0F, 30.0F);
+        this.entity.getLookControl().setLookAt(this.attackTarget, 30.0F, 30.0F);
         if (--this.rangedAttackTime == 0) {
             if (!flag) {
                 return;

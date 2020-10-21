@@ -40,22 +40,22 @@ public class StructureRevealerSubCommand {
                         .then(Commands.argument("structure", StructureArgument.create())
                                 .then(Commands.argument("player", EntityArgument.players())
                                         .executes(context -> subscribe(context.getSource(), EntityArgument.getPlayers(context, "player"), context.getArgument("structure", Structure.class)))
-                                ).executes(context -> subscribe(context.getSource(), Collections.singleton(context.getSource().asPlayer()), context.getArgument("structure", Structure.class)))
+                                ).executes(context -> subscribe(context.getSource(), Collections.singleton(context.getSource().getPlayerOrException()), context.getArgument("structure", Structure.class)))
                         )
                 ).then(Commands.literal("unsubscribe")
                         .then(Commands.argument("structure", StructureArgument.create())
                                 .then(Commands.argument("player", EntityArgument.players())
                                         .executes(context -> unsubscribe(context.getSource(), EntityArgument.getPlayers(context, "player"), context.getArgument("structure", Structure.class)))
-                                ).executes(context -> unsubscribe(context.getSource(), Collections.singleton(context.getSource().asPlayer()), context.getArgument("structure", Structure.class)))
+                                ).executes(context -> unsubscribe(context.getSource(), Collections.singleton(context.getSource().getPlayerOrException()), context.getArgument("structure", Structure.class)))
                         )
                 ).then(Commands.literal("unsubscribe_from_all")
                         .then(Commands.argument("player", EntityArgument.players())
                                 .executes(context -> unsubscribe(context.getSource(), EntityArgument.getPlayers(context, "player"), null))
-                        ).executes(context -> unsubscribe(context.getSource(), Collections.singleton(context.getSource().asPlayer()), null))
+                        ).executes(context -> unsubscribe(context.getSource(), Collections.singleton(context.getSource().getPlayerOrException()), null))
                 ).then(Commands.literal("get_subscriptions")
                         .then(Commands.argument("player", EntityArgument.player())
                                 .executes(context -> getSubscriptions(EntityArgument.getPlayer(context, "player"), context.getSource()))
-                        ).executes(context -> getSubscriptions(context.getSource().asPlayer(), context.getSource()))
+                        ).executes(context -> getSubscriptions(context.getSource().getPlayerOrException(), context.getSource()))
                 );
     }
 
@@ -65,7 +65,7 @@ public class StructureRevealerSubCommand {
                 revealer.subscribePlayerToStructure(player, structure);
             }
 
-            source.sendFeedback(new TranslationTextComponent("cmd.timecore.structure_revealer.subscribe.success", playerNamesToString(players), structure.getStructureName()), true);
+            source.sendSuccess(new TranslationTextComponent("cmd.timecore.structure_revealer.subscribe.success", playerNamesToString(players), structure.getRegistryName()), true);
 
         });
 
@@ -81,13 +81,13 @@ public class StructureRevealerSubCommand {
                     revealer.unsubscribePlayerFromAllStructures(player);
                 }
 
-                source.sendFeedback(new TranslationTextComponent("cmd.timecore.structure_revealer.unsubscribe_from_all.success", names), true);
+                source.sendSuccess(new TranslationTextComponent("cmd.timecore.structure_revealer.unsubscribe_from_all.success", names), true);
             } else {
                 for (ServerPlayerEntity player : players) {
                     revealer.unsubscribePlayerFromStructure(player, structure);
                 }
 
-                source.sendFeedback(new TranslationTextComponent("cmd.timecore.structure_revealer.unsubscribe.success", names, structure.getRegistryName()), true);
+                source.sendSuccess(new TranslationTextComponent("cmd.timecore.structure_revealer.unsubscribe.success", names, structure.getRegistryName()), true);
             }
         });
 
@@ -106,9 +106,9 @@ public class StructureRevealerSubCommand {
                     .map(ResourceLocation::toString)
                     .collect(Collectors.joining(","));
 
-            source.sendFeedback(new TranslationTextComponent("cmd.timecore.structure_revealer.list", player.getName()).applyTextStyle(TextFormatting.AQUA)
-                    .appendSibling(new StringTextComponent("\n"))
-                    .appendSibling(new StringTextComponent(listOut)), false);
+            source.sendSuccess(new TranslationTextComponent("cmd.timecore.structure_revealer.list", player.getName()).withStyle(TextFormatting.AQUA)
+                    .append(new StringTextComponent("\n"))
+                    .append(new StringTextComponent(listOut)), false);
         });
 
         return 1;

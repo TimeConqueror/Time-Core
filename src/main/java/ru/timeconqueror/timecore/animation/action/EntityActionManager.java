@@ -16,7 +16,7 @@ public class EntityActionManager<T extends Entity> extends ActionManagerImpl<T> 
 
     public void onTick() {
         T entity = getBoundObject();
-        if (entity.world.isRemote) {
+        if (entity.level.isClientSide()) {
             BaseAnimationManager animationManager = getAnimationManager();
 
             PredefinedAnimation predefinedWalkingAnim = predefinedAnimations.getWalkingAnimation();
@@ -25,8 +25,8 @@ public class EntityActionManager<T extends Entity> extends ActionManagerImpl<T> 
             // floats of movement can be almost the same (like 0 and 0.000000001), so entity moves a very short distance, which is invisible for eyes.
             // this can be because of converting coords to bytes to send them to client.
             // so checking if it's more than 1/256 of the block will fix the issue
-            boolean posChanged = Math.abs(entity.getPosX() - entity.prevPosX) >= 1 / 256F
-                    || Math.abs(entity.getPosZ() - entity.prevPosZ) >= 1 / 256F;
+            boolean posChanged = Math.abs(entity.getX() - entity.xo) >= 1 / 256F
+                    || Math.abs(entity.getZ() - entity.zo) >= 1 / 256F;
 
             if (posChanged) {
                 // if there is no walking anim or the idle and walking anim's layers aren't the same

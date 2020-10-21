@@ -1,8 +1,8 @@
 package ru.timeconqueror.timecore.util;
 
 import com.google.gson.*;
-import net.minecraft.client.renderer.Vector3f;
-import net.minecraft.util.math.Vec2f;
+import net.minecraft.util.math.vector.Vector2f;
+import net.minecraft.util.math.vector.Vector3f;
 import ru.timeconqueror.timecore.client.render.JsonParsingException;
 
 public class JsonUtils {
@@ -24,9 +24,9 @@ public class JsonUtils {
         return new Vector3f(arr.get(0).getAsFloat(), arr.get(1).getAsFloat(), arr.get(2).getAsFloat());
     }
 
-    public static Vec2f getVec2f(String name, JsonElement parent) throws JsonParsingException {
+    public static Vector2f getVec2f(String name, JsonElement parent) throws JsonParsingException {
         JsonArray arr = verifyArray(get(name, parent.getAsJsonObject()));
-        return new Vec2f(arr.get(0).getAsFloat(), arr.get(1).getAsFloat());
+        return new Vector2f(arr.get(0).getAsFloat(), arr.get(1).getAsFloat());
     }
 
     public static boolean getBoolean(String name, JsonElement parent) throws JsonParsingException {

@@ -10,10 +10,10 @@ import ru.timeconqueror.timecore.client.command.ClientCommandManager;
 
 @Mixin(ClientPlayerEntity.class)
 public class ClientPlayerEntityMixin {
-    @Inject(method = "sendChatMessage", at = @At(value = "HEAD"), cancellable = true)
+    @Inject(method = "chat", at = @At(value = "HEAD"), cancellable = true)
     public void onSendChatMessage(String message, CallbackInfo ci) {
         if (message.startsWith("/")) {
-            if (ClientCommandManager.handleCommand(Minecraft.getInstance().player.getCommandSource(), message)) {
+            if (ClientCommandManager.handleCommand(Minecraft.getInstance().player.createCommandSourceStack(), message)) {
                 ci.cancel();
             }
         }

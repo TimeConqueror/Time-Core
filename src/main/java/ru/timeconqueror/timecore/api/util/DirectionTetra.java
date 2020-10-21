@@ -60,19 +60,19 @@ public enum DirectionTetra implements IStringSerializable {
     }
 
     public BlockPos getOffsetBlockPos(BlockPos center) {
-        return center.add(getOffsetX(), 0, getOffsetZ());
+        return center.offset(getOffsetX(), 0, getOffsetZ());
     }
 
     @NotNull
     @Override
-    public String getName() {
+    public String getSerializedName() {
         return name;
     }
 
     @Override
     public String toString() {
         return "DirectionTetra{" +
-                "name='" + name + '\'' +
+                "location='" + name + '\'' +
                 '}';
     }
 }

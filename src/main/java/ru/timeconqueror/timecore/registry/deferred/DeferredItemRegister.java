@@ -33,7 +33,7 @@ public class DeferredItemRegister extends DeferredFMLImplForgeRegister<Item> {
      * Adds a new supplier to the list of entries to be registered, and returns a Item Registrator to do some special stuff upon registering.
      * All methods in {@link ItemRegistrator} are optional.
      *
-     * @param name The new item's name, it will automatically have the modid prefixed.
+     * @param name The new item's location, it will automatically have the modid prefixed.
      * @param sup  A factory for the new item, it should return a new instance every time it is called.
      * @return A ItemRegistrator for adding some extra stuff.
      * @see ItemRegistrator
@@ -113,7 +113,7 @@ public class DeferredItemRegister extends DeferredFMLImplForgeRegister<Item> {
          * Adds item entry to {@link LangGeneratorFacade}, which will place all entries in en_us.json file upon {@link GatherDataEvent}.
          * Generator will generate entries only in {@code runData} launch mode.
          *
-         * @param enName english localization name of item
+         * @param enName english localization location of item
          */
         public ItemRegistrator<I> genLangEntry(String enName) {
             runTaskAfterRegistering(() -> LangGeneratorFacade.addItemEntry(getRegistryObject().get(), enName));
@@ -127,9 +127,9 @@ public class DeferredItemRegister extends DeferredFMLImplForgeRegister<Item> {
          * This method is only for common armor stuff names, like the "Diamond Helmet", where equipment slot ("Helmet") is the last word.<br>
          * The last word, which represents the equipment slot, will be framed automatically.<br>
          * <p>
-         * For uncommon names see {@link #genArmorLangEntry(String)} to set name directly.
+         * For uncommon names see {@link #genArmorLangEntry(String)} to set location directly.
          *
-         * @param materialEnName the english name of material, will be the first word in the full name
+         * @param materialEnName the english location of material, will be the first word in the full location
          * @throws IllegalArgumentException if it is called for Items, that don't extend {@link ArmorItem}
          */
         public ItemRegistrator<I> genArmorLangEntryByMaterial(String materialEnName) {
@@ -152,7 +152,7 @@ public class DeferredItemRegister extends DeferredFMLImplForgeRegister<Item> {
          * <p>
          * For common names see {@link #genArmorLangEntryByMaterial(String)}
          *
-         * @param enName english localization name of item
+         * @param enName english localization location of item
          * @throws IllegalArgumentException if it is called for Items, that don't extend {@link ArmorItem}
          */
         public ItemRegistrator<I> genArmorLangEntry(String enName) {

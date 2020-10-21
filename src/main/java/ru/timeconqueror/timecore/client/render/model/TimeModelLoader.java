@@ -19,7 +19,7 @@ public class TimeModelLoader {
      * If you want to load model for an entity, then use {@link #loadJsonEntityModel(ResourceLocation, Function)}
      *
      * @param location           location of file, example: {@code new ResourceLocation(TimeCore.MODID, "models/entity/broken.json")}
-     * @param renderTypeProvider render type, which determines the settings of how model will be rendered.
+     * @param renderTypeProvider renderToBuffer type, which determines the settings of how model will be rendered.
      *                           See static functions in {@link RenderType}.
      * @return single model, which is parsed from the file with provided {@code location}
      * @see #loadJsonEntityModel(ResourceLocation, Function)
@@ -41,7 +41,7 @@ public class TimeModelLoader {
      * If you want to load model for an entity, then use {@link #loadJsonEntityModel(ResourceLocation, Function)}
      *
      * @param location           location of file, example: {@code new ResourceLocation(TimeCore.MODID, "models/entity/broken.json")}
-     * @param renderTypeProvider render type, which determines the settings of how model will be rendered.
+     * @param renderTypeProvider renderToBuffer type, which determines the settings of how model will be rendered.
      *                           See static functions in {@link RenderType}.
      * @return list of models from the file with provided {@code location}
      * @see #loadJsonEntityModel(ResourceLocation, Function)
@@ -60,7 +60,7 @@ public class TimeModelLoader {
 
     /**
      * Loads single json entity model to be used in {@link EntityRenderer}.
-     * It binds model to the {@link RenderType#getEntityCutoutNoCull(ResourceLocation)} render type, which is the default type for living entities.
+     * It binds model to the {@link RenderType#entityCutoutNoCull(ResourceLocation)} renderToBuffer type, which is the default type for living entities.
      * <font color=yellow>Won't be loaded if file contains multiple models.</font>
      *
      * @param location location of file, example: {@code new ResourceLocation(TimeCore.MODID, "models/entity/broken.json")}
@@ -69,7 +69,7 @@ public class TimeModelLoader {
      * @see RenderType
      */
     public static <T extends Entity> TimeEntityModel<T> loadJsonEntityModel(ResourceLocation location) {
-        return new TimeEntityModel<>(loadJsonModel(location, RenderType::getEntityCutoutNoCull));
+        return new TimeEntityModel<>(loadJsonModel(location, RenderType::entityCutoutNoCull));
     }
 
     /**
@@ -77,7 +77,7 @@ public class TimeModelLoader {
      * <font color=yellow>Won't be loaded if file contains multiple models.</font>
      *
      * @param location           location of file, example: {@code new ResourceLocation(TimeCore.MODID, "models/entity/broken.json")}
-     * @param renderTypeProvider render type, which determines the settings of how model will be rendered.
+     * @param renderTypeProvider renderToBuffer type, which determines the settings of how model will be rendered.
      *                           See static functions in {@link RenderType}.
      * @return single entity model, which is parsed from the file with provided {@code location}
      * @see #loadJsonEntityModel(ResourceLocation)

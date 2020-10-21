@@ -1,6 +1,5 @@
 package ru.timeconqueror.timecore.mod.mixins;
 
-import net.minecraftforge.fml.LifecycleEventProvider;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.javafmlmod.FMLModContainer;
 import net.minecraftforge.forgespi.language.ModFileScanData;
@@ -27,7 +26,7 @@ public abstract class MixinFMLModContainer {
     @Inject(method = "constructMod",
             at = @At(value = "TAIL")
     )
-    public void fmlModConstructingHook(LifecycleEventProvider.LifecycleEvent event, CallbackInfo ci) {
+    public void fmlModConstructingHook(CallbackInfo ci) {
         FMLModContainer modContainer = (FMLModContainer) (Object) this;
         Object mod = getMod();
         String modId = modContainer.getModId();

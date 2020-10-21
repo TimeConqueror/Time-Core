@@ -15,6 +15,6 @@ public class ClientAnimationManager extends BaseAnimationManager {
 
     @Override
     public boolean isGamePaused() {
-        return Minecraft.getInstance().isGamePaused();
+        return Minecraft.getInstance().isPaused();
     }
 }

@@ -13,7 +13,7 @@ import ru.timeconqueror.timecore.animation_example.block_example.registry.ATileR
 import javax.annotation.Nullable;
 
 public class HeatCubeBlock extends Block {
-    private static final VoxelShape SHAPE = Block.makeCuboidShape(2, 0, 2, 14, 12, 14);
+    private static final VoxelShape SHAPE = Block.box(2, 0, 2, 14, 12, 14);
 
     public HeatCubeBlock(Properties properties) {
         super(properties);
@@ -25,7 +25,7 @@ public class HeatCubeBlock extends Block {
     }
 
     @Override
-    public BlockRenderType getRenderType(BlockState state) {
+    public BlockRenderType getRenderShape(BlockState state) {
         return BlockRenderType.ENTITYBLOCK_ANIMATED;
     }
 
@@ -40,8 +40,8 @@ public class HeatCubeBlock extends Block {
         return ATileRegistry.HEAT_CUBE_TILE.get().create();
     }
 
-    @Override
-    public boolean isNormalCube(BlockState p_220081_1_, IBlockReader p_220081_2_, BlockPos p_220081_3_) {
-        return super.isNormalCube(p_220081_1_, p_220081_2_, p_220081_3_);
-    }
+//    @Override
+//    public boolean isNormalCube(BlockState p_220081_1_, IBlockReader p_220081_2_, BlockPos p_220081_3_) {
+//        return super.isNormalCube(p_220081_1_, p_220081_2_, p_220081_3_);
+//    }
 }

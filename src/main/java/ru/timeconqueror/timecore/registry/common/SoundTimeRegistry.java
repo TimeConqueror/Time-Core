@@ -21,9 +21,9 @@ import ru.timeconqueror.timecore.registry.common.base.ForgeTimeRegistry;
 public abstract class SoundTimeRegistry extends ForgeTimeRegistry<SoundEvent> {
 
     /**
-     * Method to create sound from name.
+     * Method to create sound from location.
      *
-     * @param name sound name.
+     * @param name sound location.
      *             It will be used as a part of registry key. Should NOT contain mod ID, because it will be bound automatically.
      */
     public static TimeSound createSound(String name) {
@@ -43,6 +43,6 @@ public abstract class SoundTimeRegistry extends ForgeTimeRegistry<SoundEvent> {
      * Should be called in {@link #register()} method.
      */
     public void regSound(TimeSound sound) {
-        regEntry(sound, sound.name().getPath());
+        regEntry(sound, sound.location().getPath());
     }
 }

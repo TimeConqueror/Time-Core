@@ -34,7 +34,7 @@ public final class TimeCore implements TimeMod {
 
             //noinspection ConstantConditions
             if (mc != null) {//it's null in runData
-                mc.getResourcePackList().addPackFinder(new TimePackFinder());
+                mc.getResourcePackRepository().addPackFinder(new TimePackFinder());
             }
         });
 

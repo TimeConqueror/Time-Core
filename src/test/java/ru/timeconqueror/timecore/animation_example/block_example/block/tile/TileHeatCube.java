@@ -20,7 +20,7 @@ public class TileHeatCube extends TileEntity implements AnimatedObject<TileHeatC
 
     @Override
     public void onLoad() {
-        animationSystem = AnimationSystemBuilder.forTileEntity(this, world);
+        animationSystem = AnimationSystemBuilder.forTileEntity(this, level);
     }
 
     @Override
@@ -30,7 +30,7 @@ public class TileHeatCube extends TileEntity implements AnimatedObject<TileHeatC
 
     @Override
     public void tick() {
-        if (getWorld().isRemote) {
+        if (getLevel().isClientSide) {
             new AnimationStarter(TileAnimations.heatCubeIdle).setIgnorable(true).startAt(getAnimationManager(), AnimationConstants.MAIN_LAYER_NAME);
         }
     }

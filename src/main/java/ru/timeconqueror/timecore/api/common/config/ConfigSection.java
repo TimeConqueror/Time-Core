@@ -11,7 +11,7 @@ public abstract class ConfigSection {
     /**
      * Determines the section in config file and also is used as a part of lang keys.
      * <br>
-     * <font color=yellow>If it's a {@link Config}, it will be also used as a name for the config file.</font>
+     * <font color=yellow>If it's a {@link Config}, it will be also used as a location for the config file.</font>
      */
     @NotNull
     private final String key;

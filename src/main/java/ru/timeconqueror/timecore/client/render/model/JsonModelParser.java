@@ -5,11 +5,11 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.Vector3f;
 import net.minecraft.resources.IResource;
 import net.minecraft.util.JSONUtils;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.Vec2f;
+import net.minecraft.util.math.vector.Vector2f;
+import net.minecraft.util.math.vector.Vector3f;
 import org.jetbrains.annotations.NotNull;
 import ru.timeconqueror.timecore.api.util.CollectionUtils;
 import ru.timeconqueror.timecore.client.render.JsonParsingException;
@@ -27,7 +27,7 @@ public class JsonModelParser {
         try (final IResource resource = Minecraft.getInstance().getResourceManager().getResource(fileLocation)) {
             BufferedReader reader = new BufferedReader(new InputStreamReader(resource.getInputStream()));
 
-            JsonObject json = JSONUtils.fromJson(reader, true/*isLenient*/);
+            JsonObject json = JSONUtils.parse(reader, true/*isLenient*/);
             return parseJsonModel(json);
 
         } catch (Throwable e) {
@@ -108,7 +108,7 @@ public class JsonModelParser {
             for (JsonElement cube : bone.getAsJsonObject().get("cubes").getAsJsonArray()) {
                 Vector3f origin = JsonUtils.getVec3f("origin", cube);
                 Vector3f size = JsonUtils.getVec3f("size", cube);
-                Vec2f uv = JsonUtils.getVec2f("uv", cube);
+                Vector2f uv = JsonUtils.getVec2f("uv", cube);
 
                 if (cube.getAsJsonObject().has("rotation") || cube.getAsJsonObject().has("inflate") || cube.getAsJsonObject().has("mirror")) {
                     Vector3f rotation = JsonUtils.getVec3f("rotation", cube, new Vector3f(0, 0, 0));
@@ -163,18 +163,18 @@ public class JsonModelParser {
                 boxesOut.add(cube.bake(model, this));
             }
 
-            Vector3f rotationAnglesRadians = new Vector3f(rotationAngles.getX() * (float) Math.PI / 180,
-                    rotationAngles.getY() * (float) Math.PI / 180,
-                    rotationAngles.getZ() * (float) Math.PI / 180);
+            Vector3f rotationAnglesRadians = new Vector3f(rotationAngles.x() * (float) Math.PI / 180,
+                    rotationAngles.y() * (float) Math.PI / 180,
+                    rotationAngles.z() * (float) Math.PI / 180);
 
             TimeModelRenderer renderer = new TimeModelRenderer(model, rotationAnglesRadians, name, boxesOut, neverRender);
             if (parent != null) {
-                renderer.setRotationPoint(pivot.getX() - parent.pivot.getX(), -(pivot.getY() - parent.pivot.getY()), pivot.getZ() - parent.pivot.getZ());
-            } else renderer.setRotationPoint(pivot.getX(), -pivot.getY(), pivot.getZ());
+                renderer.setPos(pivot.x() - parent.pivot.x(), -(pivot.y() - parent.pivot.y()), pivot.z() - parent.pivot.z());
+            } else renderer.setPos(pivot.x(), -pivot.y(), pivot.z());
 
             if (children != null) {
                 for (RawModelBone child : children) {
-                    renderer.childModels.add(child.bake(model, this));
+                    renderer.children.add(child.bake(model, this));
                 }
             }
 
@@ -185,17 +185,17 @@ public class JsonModelParser {
     public static class RawModelCube {
         private final Vector3f origin;
         private final Vector3f size;
-        private final Vec2f uv;
+        private final Vector2f uv;
 
-        private RawModelCube(Vector3f origin, Vector3f size, Vec2f uv) {
+        private RawModelCube(Vector3f origin, Vector3f size, Vector2f uv) {
             this.origin = origin;
             this.size = size;
             this.uv = uv;
         }
 
         private TimeModelBox bake(TimeModel model, RawModelBone bone) {
-            origin.set(origin.getX() - bone.pivot.getX(), -(origin.getY() + size.getY() - bone.pivot.getY()), origin.getZ() - bone.pivot.getZ());
-            return new TimeModelBox(origin, size, uv, bone.inflate, bone.mirror, model.textureWidth, model.textureHeight);
+            origin.set(origin.x() - bone.pivot.x(), -(origin.y() + size.y() - bone.pivot.y()), origin.z() - bone.pivot.z());
+            return new TimeModelBox(origin, size, uv, bone.inflate, bone.mirror, model.texWidth, model.texHeight);
         }
     }
 }

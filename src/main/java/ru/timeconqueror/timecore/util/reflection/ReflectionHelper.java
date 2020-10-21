@@ -57,10 +57,10 @@ public class ReflectionHelper {
     }
 
     /**
-     * Creates class from given name.
+     * Creates class from given location.
      *
-     * @param name the fully qualified name of the desired class.
-     * @return class from given name or null if class isn't found.
+     * @param name the fully qualified location of the desired class.
+     * @return class from given location or null if class isn't found.
      */
     @Nullable
     public static Class<?> createClass(String name) {
@@ -74,14 +74,14 @@ public class ReflectionHelper {
     }
 
     /**
-     * Finds a field with the specified name in the given class and makes it accessible.
+     * Finds a field with the specified location in the given class and makes it accessible.
      * Note: for performance, store the returned value and avoid calling this repeatedly.
      * <p>
      * Returns null if the field is not found and prints error stacktrace.
      *
      * @param clazz     The class to find the field on.
-     * @param fieldName The name of the field to find.
-     * @return The field with the specified name in the given class or null if the field is not found.
+     * @param fieldName The location of the field to find.
+     * @return The field with the specified location in the given class or null if the field is not found.
      * @see #findFieldUnsuppressed(Class, String)
      */
     @Nullable
@@ -97,14 +97,14 @@ public class ReflectionHelper {
     }
 
     /**
-     * Finds a field with the specified name in the given class and makes it accessible.
+     * Finds a field with the specified location in the given class and makes it accessible.
      * Note: for performance, store the returned value and avoid calling this repeatedly.
      * <p>
      * Throws {@link RuntimeException} if the field is not found.
      *
      * @param clazz     The class to find the field on.
-     * @param fieldName The name of the field to find.
-     * @return The field with the specified name in the given class or throws an exception.
+     * @param fieldName The location of the field to find.
+     * @return The field with the specified location in the given class or throws an exception.
      * @see #findField(Class, String)
      */
     public static <T> UnlockedField<T> findFieldUnsuppressed(Class<?> clazz, String fieldName) {
@@ -119,14 +119,14 @@ public class ReflectionHelper {
     /**
      * Only for fields, which come from vanilla minecraft!
      * <p>
-     * Finds a field with the specified name in the given class and makes it accessible.
+     * Finds a field with the specified location in the given class and makes it accessible.
      * Note: for performance, store the returned value and avoid calling this repeatedly.
      * <p>
      * Returns null if the field is not found and prints error stacktrace.
      *
      * @param clazz   The class to find the field on.
-     * @param srgName The searge obfuscated name of the field to find.
-     * @return The field with the specified name in the given class or null if the field is not found.
+     * @param srgName The searge obfuscated location of the field to find.
+     * @return The field with the specified location in the given class or null if the field is not found.
      */
     @Nullable
     public static <T, C> UnlockedField<T> findObfField(Class<C> clazz, String srgName) {
@@ -141,15 +141,15 @@ public class ReflectionHelper {
     }
 
     /**
-     * Finds a method with the specified name and params in the given class and makes it accessible.
+     * Finds a method with the specified location and params in the given class and makes it accessible.
      * Note: for performance, store the returned value and avoid calling this repeatedly.
      * <p>
      * Returns null if the method is not found and prints error stacktrace.
      *
      * @param clazz      The class to find the field on.
-     * @param methodName The name of the method to find.
+     * @param methodName The location of the method to find.
      * @param params     The parameter classes of the method to find.
-     * @return The method with the specified name in the given class or null if the method is not found.
+     * @return The method with the specified location in the given class or null if the method is not found.
      * @see #findMethodUnsuppressed(Class, String, Class[])
      */
     @Nullable
@@ -165,15 +165,15 @@ public class ReflectionHelper {
     }
 
     /**
-     * Finds a method with the specified name and params in the given class and makes it accessible.
+     * Finds a method with the specified location and params in the given class and makes it accessible.
      * Note: for performance, store the returned value and avoid calling this repeatedly.
      * <p>
      * Throws {@link RuntimeException} if the field is not found.
      *
      * @param clazz      The class to find the field on.
-     * @param methodName The name of the method to find.
+     * @param methodName The location of the method to find.
      * @param params     The parameter classes of the method to find.
-     * @return The field with the specified name in the given class or throws an exception.
+     * @return The field with the specified location in the given class or throws an exception.
      * @see #findMethod(Class, String, Class[])
      */
     public static <T> UnlockedMethod<T> findMethodUnsuppressed(Class<?> clazz, String methodName, Class<?>... params) {
@@ -188,15 +188,15 @@ public class ReflectionHelper {
     /**
      * Only for methods, which come from vanilla minecraft!
      * <p>
-     * Finds a method with the specified name and params in the given class and makes it accessible.
+     * Finds a method with the specified location and params in the given class and makes it accessible.
      * Note: for performance, store the returned value and avoid calling this repeatedly.
      * <p>
      * Returns null if the method is not found and prints error stacktrace.
      *
      * @param clazz   The class to find the field on.
-     * @param srgName The searge obfuscated name of the method to find.
+     * @param srgName The searge obfuscated location of the method to find.
      * @param params  The parameter classes of the method to find.
-     * @return The method with the specified name in the given class or null if the method is not found.
+     * @return The method with the specified location in the given class or null if the method is not found.
      */
     @Nullable
     public static <T> UnlockedMethod<T> findObfMethod(Class<?> clazz, String srgName, Class<?> returnedType, Class<?>... params) {
@@ -241,9 +241,9 @@ public class ReflectionHelper {
     }
 
     /**
-     * Loads class with provided name. (so it calls static initializer)
+     * Loads class with provided location. (so it calls static initializer)
      *
-     * @param className full name of class to be loaded
+     * @param className full location of class to be loaded
      * @throws RuntimeException if class isn't found
      */
     public static void initClass(String className) {

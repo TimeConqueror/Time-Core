@@ -18,7 +18,7 @@ public class BaseAnimationManagerBuilder extends SingleUseBuilder implements IAn
         verifyNotUsed();
         Layer prev = animationLayers.put(name, new Layer(name, blendType, weight));
         if (prev != null)
-            throw new IllegalArgumentException("Layer with name " + name + " already exist in provided animation manager.");
+            throw new IllegalArgumentException("Layer with location " + name + " already exist in provided animation manager.");
     }
 
     @Override
@@ -32,7 +32,7 @@ public class BaseAnimationManagerBuilder extends SingleUseBuilder implements IAn
         try {
             Layer prev = animationLayers.put(layer.getName(), layer.clone());
             if (prev != null)
-                throw new IllegalArgumentException("Layer with name " + layer.getName() + " already exist in provided animation manager.");
+                throw new IllegalArgumentException("Layer with location " + layer.getName() + " already exist in provided animation manager.");
         } catch (CloneNotSupportedException e) {
             throw new RuntimeException(e);
         }

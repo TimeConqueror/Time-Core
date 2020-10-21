@@ -21,7 +21,7 @@ public class DeferredTileEntityRegister extends DeferredFMLImplForgeRegister<Til
 
     public <T extends TileEntity> TileEntityRegistrator<T> regTileEntityType(String name, Supplier<T> tileEntityFactory, Supplier<Block[]> validBlocksSupplier) {
         Supplier<TileEntityType<?>> typeSupplier = () ->
-                TileEntityType.Builder.create(tileEntityFactory, validBlocksSupplier.get())
+                TileEntityType.Builder.of(tileEntityFactory, validBlocksSupplier.get())
                         .build(null /*forge doesn't have support for it*/);
         return new TileEntityRegistrator<T>(name, typeSupplier);
     }

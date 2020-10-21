@@ -7,5 +7,5 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 @Mixin(ClientPlayNetHandler.class)
 public interface ViewDistanceProvider {
     @Accessor
-    int getViewDistance();
+    int getServerChunkRadius();
 }

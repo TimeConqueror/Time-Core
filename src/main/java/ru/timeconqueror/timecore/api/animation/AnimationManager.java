@@ -9,13 +9,13 @@ import java.util.Set;
 public interface AnimationManager {
 
 	/**
-	 * Returns true, if this animation manager contains the layer with provided name,
+	 * Returns true, if this animation manager contains the layer with provided location,
 	 * otherwise returns false.
 	 */
 	boolean containsLayer(String name);
 
 	/**
-	 * Returns layer object by its name.
+	 * Returns layer object by its location.
 	 *
 	 * @throws RuntimeException if layer is not found,
 	 *                          so you should check existing of the layer in {@link #containsLayer(String)} firstly.
@@ -25,7 +25,7 @@ public interface AnimationManager {
 
 	/**
 	 * Returns all layer names.
-	 * Can be used for iterating throw the layers by their name in {@link #getLayer(String)}
+	 * Can be used for iterating throw the layers by their location in {@link #getLayer(String)}
 	 */
 	Set<String> getLayerNames();
 
@@ -42,24 +42,24 @@ public interface AnimationManager {
 	void applyAnimations(ITimeModel model);
 
 	/**
-	 * Sets animation data to start new animation in the layer with provided name.
+	 * Sets animation data to start new animation in the layer with provided location.
 	 *
 	 * @see AnimationStarter#startAt(AnimationManager, String)
 	 */
 	void setAnimation(AnimationStarter animationStarter, String layerName);
 
 	/**
-	 * Removes animation from the layer with provided name.
-	 * Transition name is default here: {@link AnimationConstants#BASIC_TRANSITION_TIME}
+	 * Removes animation from the layer with provided location.
+	 * Transition location is default here: {@link AnimationConstants#BASIC_TRANSITION_TIME}
 	 *
-	 * @param layerName name of the layer, where you need to remove animation.
+	 * @param layerName location of the layer, where you need to remove animation.
 	 */
 	void removeAnimation(String layerName);
 
 	/**
-	 * Removes animation from the layer with provided name.
+	 * Removes animation from the layer with provided location.
 	 *
-	 * @param layerName      name of the layer, where you need to remove animation.
+	 * @param layerName      location of the layer, where you need to remove animation.
 	 * @param transitionTime time of transition to the idle state.
 	 *                       If this value is bigger than 0, then transition will be created, which will smoothly end current animation.
 	 */

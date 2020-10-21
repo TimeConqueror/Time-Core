@@ -42,7 +42,7 @@ public class DeferredBlockRegister extends DeferredFMLImplForgeRegister<Block> {
      * Adds a new supplier to the list of entries to be registered, and returns a Block Registrator to do some special stuff upon registering.
      * All methods in {@link BlockRegistrator} are optional.
      *
-     * @param name The new block's name, it will automatically have the modid prefixed.
+     * @param name The new block's location, it will automatically have the modid prefixed.
      * @param sup  A factory for the new block, it should return a new instance every time it is called.
      * @return A BlockRegistrator for adding some extra stuff.
      * @see BlockRegistrator
@@ -64,7 +64,7 @@ public class DeferredBlockRegister extends DeferredFMLImplForgeRegister<Block> {
 
         /**
          * Registers the default item block for this block. (which will place the block upon clicking)
-         * It will be with the same registry name as block has.
+         * It will be with the same registry location as block has.
          * It will also generate default item model automatically based on the block one.
          *
          * @param group creative tab in which item will be placed. Can be null, which means that item will be placed nowhere.
@@ -75,7 +75,7 @@ public class DeferredBlockRegister extends DeferredFMLImplForgeRegister<Block> {
 
         /**
          * Registers the default item block for this block. (which will place the block upon clicking)
-         * It will be with the same registry name as block has.
+         * It will be with the same registry location as block has.
          * It will also generate default item model automatically based on the block one.
          *
          * @param group              creative tab in which item will be placed. Can be null, which means that item will be placed nowhere.
@@ -87,19 +87,19 @@ public class DeferredBlockRegister extends DeferredFMLImplForgeRegister<Block> {
 
         /**
          * Registers the default item block for this block. (which will place the block upon clicking)
-         * It will be with the same registry name as block has.
+         * It will be with the same registry location as block has.
          * This method doesn't generate item model automatically, so if you want to generate it, do it by yourselves in {@code itemSettings} consumer.
          *
          * @param group        creative tab in which item will be placed. Can be null, which means that item will be placed nowhere.
          * @param itemSettings extra stuff, that you can do for that item, like generating item model.
          */
         public BlockRegistrator<B> regDefaultBlockItem(@Nullable ItemGroup group, Consumer<ItemRegistrator> itemSettings) {
-            return regDefaultBlockItem(new Item.Properties().group(group), itemSettings);
+            return regDefaultBlockItem(new Item.Properties().tab(group), itemSettings);
         }
 
         /**
          * Registers the default item block for this block. (which will place the block upon clicking)
-         * It will be with the same registry name as block has.
+         * It will be with the same registry location as block has.
          * This method doesn't generate item model automatically, so if you want to generate it, do it by yourselves in {@code itemSettings} consumer.
          *
          * @param props        properties, that will be inserted in the item. Can also be created with {@link ItemPropsFactory}
@@ -111,7 +111,7 @@ public class DeferredBlockRegister extends DeferredFMLImplForgeRegister<Block> {
 
         /**
          * Registers the item for this block.
-         * It will be with the same registry name as block has.
+         * It will be with the same registry location as block has.
          *
          * @param itemSupplier item factory, should return new item instance every time it's called.
          * @param itemSettings extra stuff, that you can do for that item, like generating item model.
@@ -190,7 +190,7 @@ public class DeferredBlockRegister extends DeferredFMLImplForgeRegister<Block> {
          * Adds block entry to {@link LangGeneratorFacade}, which will place all entries in en_us.json file upon {@link GatherDataEvent}.
          * Generator will generate entries only in {@code runData} launch mode.
          *
-         * @param enName english localization name of block
+         * @param enName english localization location of block
          */
         public BlockRegistrator<B> genLangEntry(String enName) {
             runTaskAfterRegistering(() -> LangGeneratorFacade.addBlockEntry(getRegistryObject().get(), enName));

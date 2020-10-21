@@ -59,7 +59,7 @@ public abstract class InternalAnimationSystemBuilder {
         BaseAnimationManagerBuilder animationManagerBuilder = new BaseAnimationManagerBuilder();
         animationManagerTuner.accept(animationManagerBuilder);
 
-        BaseAnimationManager animationManager = animationManagerBuilder.build(!world.isRemote, type);
+        BaseAnimationManager animationManager = animationManagerBuilder.build(!world.isClientSide(), type);
 
         ActionManagerImpl<T> actionManager = actionManagerBuilderFactory.apply(animationManager);
 

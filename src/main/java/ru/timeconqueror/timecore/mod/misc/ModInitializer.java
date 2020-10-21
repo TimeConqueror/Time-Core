@@ -80,7 +80,7 @@ public class ModInitializer {
                                 if (field.isStatic()) {
                                     field.set(containerClass, instance);
                                 } else {
-                                    throw new IllegalStateException("Field with name " + instanceFieldName + " in class " + containerClass + " should be static!");
+                                    throw new IllegalStateException("Field with location " + instanceFieldName + " in class " + containerClass + " should be static!");
                                 }
                             }
                         }

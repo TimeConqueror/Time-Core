@@ -10,7 +10,7 @@ public class RenderHelper {
     /**
      * Binds texture for its later rendering.
      */
-    public static void bindTexture(ResourceLocation rl) {
-        textureManager.bindTexture(rl);
+    public static void bind(ResourceLocation rl) {
+        textureManager.bind(rl);
     }
 }

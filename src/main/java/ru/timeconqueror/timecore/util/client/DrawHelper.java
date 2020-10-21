@@ -4,10 +4,10 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.Matrix4f;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.vector.Matrix4f;
 import org.lwjgl.opengl.GL11;
 import ru.timeconqueror.timecore.api.util.Requirements;
 
@@ -16,7 +16,7 @@ public class DrawHelper {
     @Deprecated // will be changed to new system
     public static Tessellator tessellator = Tessellator.getInstance();
     @Deprecated // will be changed to new system
-    public static BufferBuilder bufferBuilder = tessellator.getBuffer();
+    public static BufferBuilder bufferBuilder = tessellator.getBuilder();
 
     /**
      * Draws textured rectangle.
@@ -83,11 +83,11 @@ public class DrawHelper {
     @Deprecated // will be changed to new system
     public static void drawTexturedRectP(double x0, double y0, double width, double height, double zLevel, float textureX, float textureY, float textureWidth, float textureHeight, float texturePointPortion) {
         bufferBuilder.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
-        bufferBuilder.pos(x0, y0, zLevel).tex(textureX * texturePointPortion, textureY * texturePointPortion).endVertex();
-        bufferBuilder.pos(x0, y0 + height, zLevel).tex(textureX * texturePointPortion, (textureY + textureHeight) * texturePointPortion).endVertex();
-        bufferBuilder.pos(x0 + width, y0 + height, zLevel).tex((textureX + textureWidth) * texturePointPortion, (textureY + textureHeight) * texturePointPortion).endVertex();
-        bufferBuilder.pos(x0 + width, y0, zLevel).tex((textureX + textureWidth) * texturePointPortion, textureY * texturePointPortion).endVertex();
-        tessellator.draw();
+        bufferBuilder.vertex(x0, y0, zLevel).uv(textureX * texturePointPortion, textureY * texturePointPortion).endVertex();
+        bufferBuilder.vertex(x0, y0 + height, zLevel).uv(textureX * texturePointPortion, (textureY + textureHeight) * texturePointPortion).endVertex();
+        bufferBuilder.vertex(x0 + width, y0 + height, zLevel).uv((textureX + textureWidth) * texturePointPortion, (textureY + textureHeight) * texturePointPortion).endVertex();
+        bufferBuilder.vertex(x0 + width, y0, zLevel).uv((textureX + textureWidth) * texturePointPortion, textureY * texturePointPortion).endVertex();
+        tessellator.end();
     }
 
     /**
@@ -174,11 +174,11 @@ public class DrawHelper {
     @Deprecated // will be changed to new system
     public static void drawTexturedRect(double x0, double y0, double width, double height, double zLevel) {
         bufferBuilder.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
-        bufferBuilder.pos(x0, y0, zLevel).tex(0, 0).endVertex();
-        bufferBuilder.pos(x0, y0 + height, zLevel).tex(0, 1).endVertex();
-        bufferBuilder.pos(x0 + width, y0 + height, zLevel).tex(1, 1).endVertex();
-        bufferBuilder.pos(x0 + width, y0, zLevel).tex(1, 0).endVertex();
-        tessellator.draw();
+        bufferBuilder.vertex(x0, y0, zLevel).uv(0, 0).endVertex();
+        bufferBuilder.vertex(x0, y0 + height, zLevel).uv(0, 1).endVertex();
+        bufferBuilder.vertex(x0 + width, y0 + height, zLevel).uv(1, 1).endVertex();
+        bufferBuilder.vertex(x0 + width, y0, zLevel).uv(1, 0).endVertex();
+        tessellator.end();
     }
 
     /**
@@ -189,8 +189,8 @@ public class DrawHelper {
      * @param y     start y-coordinate (top)
      * @param color HTML color. Example: 0xFF0000 -> red.
      */
-    public static void drawString(FontRenderer fontRendererIn, String text, float x, float y, int color) {
-        fontRendererIn.drawString(text, x, y, color);
+    public static void drawString(MatrixStack stack, FontRenderer fontRendererIn, String text, float x, float y, int color) {
+        fontRendererIn.draw(stack, text, x, y, color);
     }
 
     /**
@@ -201,8 +201,8 @@ public class DrawHelper {
      * @param y     start y-coordinate (top)
      * @param color HTML color. Example: 0xFF0000 -> red.
      */
-    public static void drawStringWithShadow(FontRenderer fontRendererIn, String text, float x, float y, int color) {
-        fontRendererIn.drawStringWithShadow(text, x, y, color);
+    public static void drawStringWithShadow(MatrixStack stack, FontRenderer fontRendererIn, String text, float x, float y, int color) {
+        fontRendererIn.drawShadow(stack, text, x, y, color);
     }
 
     /**
@@ -213,8 +213,8 @@ public class DrawHelper {
      * @param y     start y-coordinate (top)
      * @param color HTML color. Example: 0xFF0000 -> red.
      */
-    public static void drawXCenteredString(FontRenderer fontRendererIn, String text, float x, float y, int color) {
-        drawString(fontRendererIn, text, x - fontRendererIn.getStringWidth(text) / 2F, y, color);
+    public static void drawXCenteredString(MatrixStack stack, FontRenderer fontRendererIn, String text, float x, float y, int color) {
+        drawString(stack, fontRendererIn, text, x - fontRendererIn.width(text) / 2F, y, color);
     }
 
     /**
@@ -225,8 +225,8 @@ public class DrawHelper {
      * @param y     start y-coordinate (top)
      * @param color HTML color. Example: 0xFF0000 -> red.
      */
-    public static void drawXCenteredStringWithShadow(FontRenderer fontRendererIn, String text, float x, float y, int color) {
-        drawStringWithShadow(fontRendererIn, text, x - fontRendererIn.getStringWidth(text) / 2F, y, color);
+    public static void drawXCenteredStringWithShadow(MatrixStack stack, FontRenderer fontRendererIn, String text, float x, float y, int color) {
+        drawStringWithShadow(stack, fontRendererIn, text, x - fontRendererIn.width(text) / 2F, y, color);
     }
 
     /**
@@ -237,8 +237,8 @@ public class DrawHelper {
      * @param y     center y-coordinate
      * @param color HTML color. Example: 0xFF0000 -> red.
      */
-    public static void drawYCenteredString(FontRenderer fontRendererIn, String text, float x, float y, int color) {
-        drawString(fontRendererIn, text, x, y - fontRendererIn.FONT_HEIGHT / 2F, color);
+    public static void drawYCenteredString(MatrixStack stack, FontRenderer fontRendererIn, String text, float x, float y, int color) {
+        drawString(stack, fontRendererIn, text, x, y - fontRendererIn.lineHeight / 2F, color);
     }
 
     /**
@@ -249,8 +249,8 @@ public class DrawHelper {
      * @param y     center y-coordinate
      * @param color HTML color. Example: 0xFF0000 -> red.
      */
-    public static void drawYCenteredStringWithShadow(FontRenderer fontRendererIn, String text, float x, float y, int color) {
-        drawStringWithShadow(fontRendererIn, text, x, y - fontRendererIn.FONT_HEIGHT / 2F, color);
+    public static void drawYCenteredStringWithShadow(MatrixStack stack, FontRenderer fontRendererIn, String text, float x, float y, int color) {
+        drawStringWithShadow(stack, fontRendererIn, text, x, y - fontRendererIn.lineHeight / 2F, color);
     }
 
     /**
@@ -261,8 +261,8 @@ public class DrawHelper {
      * @param y     center y-coordinate
      * @param color HTML color. Example: 0xFF0000 -> red.
      */
-    public static void drawXYCenteredString(FontRenderer fontRendererIn, String text, float x, float y, int color) {
-        drawString(fontRendererIn, text, x - fontRendererIn.getStringWidth(text) / 2F, y - fontRendererIn.FONT_HEIGHT / 2F, color);
+    public static void drawXYCenteredString(MatrixStack stack, FontRenderer fontRendererIn, String text, float x, float y, int color) {
+        drawString(stack, fontRendererIn, text, x - fontRendererIn.width(text) / 2F, y - fontRendererIn.lineHeight / 2F, color);
     }
 
     /**
@@ -273,8 +273,8 @@ public class DrawHelper {
      * @param y     center y-coordinate
      * @param color HTML color. Example: 0xFF0000 -> red.
      */
-    public static void drawXYCenteredStringWithShadow(FontRenderer fontRendererIn, String text, float x, float y, int color) {
-        drawStringWithShadow(fontRendererIn, text, x - fontRendererIn.getStringWidth(text) / 2F, y - fontRendererIn.FONT_HEIGHT / 2F, color);
+    public static void drawXYCenteredStringWithShadow(MatrixStack stack, FontRenderer fontRendererIn, String text, float x, float y, int color) {
+        drawStringWithShadow(stack, fontRendererIn, text, x - fontRendererIn.width(text) / 2F, y - fontRendererIn.lineHeight / 2F, color);
     }
 
     /**
@@ -324,9 +324,9 @@ public class DrawHelper {
     }
 
     /**
-     * Adds filled bounding box to render buffer.
+     * Adds filled bounding box to renderToBuffer buffer.
      * <p>
-     * Provided builder should have {@link DefaultVertexFormats#POSITION_COLOR} mode and {@link GL11#GL_QUADS} render type.
+     * Provided builder should have {@link DefaultVertexFormats#POSITION_COLOR} mode and {@link GL11#GL_QUADS} renderToBuffer type.
      */
     public static void drawFilledBoundingBox(MatrixStack matrixStack, IVertexBuilder builder, AxisAlignedBB bb, int argbColor) {
         float red = getRed(argbColor) / 255F;
@@ -341,37 +341,37 @@ public class DrawHelper {
         float maxY = (float) bb.maxY;
         float maxZ = (float) bb.maxZ;
 
-        Matrix4f matrix = matrixStack.getLast().getMatrix();
+        Matrix4f matrix = matrixStack.last().pose();
 
-        builder.pos(matrix, minX, maxY, minZ).color(red, green, blue, alpha).endVertex();//4
-        builder.pos(matrix, maxX, maxY, minZ).color(red, green, blue, alpha).endVertex();//3
-        builder.pos(matrix, maxX, minY, minZ).color(red, green, blue, alpha).endVertex();//2
-        builder.pos(matrix, minX, minY, minZ).color(red, green, blue, alpha).endVertex();//1
+        builder.vertex(matrix, minX, maxY, minZ).color(red, green, blue, alpha).endVertex();//4
+        builder.vertex(matrix, maxX, maxY, minZ).color(red, green, blue, alpha).endVertex();//3
+        builder.vertex(matrix, maxX, minY, minZ).color(red, green, blue, alpha).endVertex();//2
+        builder.vertex(matrix, minX, minY, minZ).color(red, green, blue, alpha).endVertex();//1
 
-        builder.pos(matrix, maxX, maxY, minZ).color(red, green, blue, alpha).endVertex();//3
-        builder.pos(matrix, maxX, maxY, maxZ).color(red, green, blue, alpha).endVertex();//7
-        builder.pos(matrix, maxX, minY, maxZ).color(red, green, blue, alpha).endVertex();//6
-        builder.pos(matrix, maxX, minY, minZ).color(red, green, blue, alpha).endVertex();//2
+        builder.vertex(matrix, maxX, maxY, minZ).color(red, green, blue, alpha).endVertex();//3
+        builder.vertex(matrix, maxX, maxY, maxZ).color(red, green, blue, alpha).endVertex();//7
+        builder.vertex(matrix, maxX, minY, maxZ).color(red, green, blue, alpha).endVertex();//6
+        builder.vertex(matrix, maxX, minY, minZ).color(red, green, blue, alpha).endVertex();//2
 
-        builder.pos(matrix, minX, maxY, minZ).color(red, green, blue, alpha).endVertex();//4
-        builder.pos(matrix, minX, minY, minZ).color(red, green, blue, alpha).endVertex();//1
-        builder.pos(matrix, minX, minY, maxZ).color(red, green, blue, alpha).endVertex();//5
-        builder.pos(matrix, minX, maxY, maxZ).color(red, green, blue, alpha).endVertex();//8
+        builder.vertex(matrix, minX, maxY, minZ).color(red, green, blue, alpha).endVertex();//4
+        builder.vertex(matrix, minX, minY, minZ).color(red, green, blue, alpha).endVertex();//1
+        builder.vertex(matrix, minX, minY, maxZ).color(red, green, blue, alpha).endVertex();//5
+        builder.vertex(matrix, minX, maxY, maxZ).color(red, green, blue, alpha).endVertex();//8
 
-        builder.pos(matrix, minX, minY, maxZ).color(red, green, blue, alpha).endVertex();//5
-        builder.pos(matrix, minX, minY, minZ).color(red, green, blue, alpha).endVertex();//1
-        builder.pos(matrix, maxX, minY, minZ).color(red, green, blue, alpha).endVertex();//2
-        builder.pos(matrix, maxX, minY, maxZ).color(red, green, blue, alpha).endVertex();//6
+        builder.vertex(matrix, minX, minY, maxZ).color(red, green, blue, alpha).endVertex();//5
+        builder.vertex(matrix, minX, minY, minZ).color(red, green, blue, alpha).endVertex();//1
+        builder.vertex(matrix, maxX, minY, minZ).color(red, green, blue, alpha).endVertex();//2
+        builder.vertex(matrix, maxX, minY, maxZ).color(red, green, blue, alpha).endVertex();//6
 
-        builder.pos(matrix, maxX, maxY, minZ).color(red, green, blue, alpha).endVertex();//3
-        builder.pos(matrix, minX, maxY, minZ).color(red, green, blue, alpha).endVertex();//4
-        builder.pos(matrix, minX, maxY, maxZ).color(red, green, blue, alpha).endVertex();//8
-        builder.pos(matrix, maxX, maxY, maxZ).color(red, green, blue, alpha).endVertex();//7
+        builder.vertex(matrix, maxX, maxY, minZ).color(red, green, blue, alpha).endVertex();//3
+        builder.vertex(matrix, minX, maxY, minZ).color(red, green, blue, alpha).endVertex();//4
+        builder.vertex(matrix, minX, maxY, maxZ).color(red, green, blue, alpha).endVertex();//8
+        builder.vertex(matrix, maxX, maxY, maxZ).color(red, green, blue, alpha).endVertex();//7
 
-        builder.pos(matrix, minX, maxY, maxZ).color(red, green, blue, alpha).endVertex();//8
-        builder.pos(matrix, minX, minY, maxZ).color(red, green, blue, alpha).endVertex();//5
-        builder.pos(matrix, maxX, minY, maxZ).color(red, green, blue, alpha).endVertex();//6
-        builder.pos(matrix, maxX, maxY, maxZ).color(red, green, blue, alpha).endVertex();//7
+        builder.vertex(matrix, minX, maxY, maxZ).color(red, green, blue, alpha).endVertex();//8
+        builder.vertex(matrix, minX, minY, maxZ).color(red, green, blue, alpha).endVertex();//5
+        builder.vertex(matrix, maxX, minY, maxZ).color(red, green, blue, alpha).endVertex();//6
+        builder.vertex(matrix, maxX, maxY, maxZ).color(red, green, blue, alpha).endVertex();//7
     }
 
     public static class TexturedRect {

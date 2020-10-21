@@ -24,7 +24,7 @@ public class AnimationAPI {
 
     /**
      * Creates a map of all animations in the file with provided path and registers all retrieved animations.
-     * Key in this map is the name of the animation, that is indicated in the file.
+     * Key in this map is the location of the animation, that is indicated in the file.
      *
      * @param animationFileLocation path to the file, should contain path to the file location under the data/ folder.
 	 *                              Example:

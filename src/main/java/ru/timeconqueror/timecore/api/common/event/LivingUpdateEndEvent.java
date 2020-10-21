@@ -22,7 +22,7 @@ public class LivingUpdateEndEvent extends LivingEvent {
     public LivingUpdateEndEvent(LivingEntity entity) {
         super(entity);
 
-        dist = entity.world.isRemote ? LogicalSide.CLIENT : LogicalSide.SERVER;
+        dist = entity.level.isClientSide ? LogicalSide.CLIENT : LogicalSide.SERVER;
     }
 
     public LogicalSide getLogicalSide() {

@@ -19,7 +19,7 @@ public class NetworkUtils {
     public static List<ServerPlayerEntity> getPlayersNearby(BlockPos fromPos, double distanceIn) {
         List<ServerPlayerEntity> players = ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayers();
         return players.stream().filter(player -> {
-            double distanceSq = player.getDistanceSq(fromPos.getX(), fromPos.getY(), fromPos.getZ());
+            double distanceSq = player.distanceToSqr(fromPos.getX(), fromPos.getY(), fromPos.getZ());
             return distanceIn * distanceIn <= distanceSq;
         }).collect(Collectors.toList());
     }
@@ -38,7 +38,7 @@ public class NetworkUtils {
      */
     public static void forAllTracking(ServerWorld world, BlockPos fromPos, Consumer<ServerPlayerEntity> action) {
         ChunkPos chunkPos = new ChunkPos(fromPos);
-        world.getChunkProvider().chunkManager.getTrackingPlayers(chunkPos, false).forEach(action);
+        world.getChunkSource().chunkMap.getPlayers(chunkPos, false).forEach(action);
     }
 
     /**
@@ -47,6 +47,6 @@ public class NetworkUtils {
      * @apiNote Only for logical server side!
      */
     public static Optional<ServerPlayerEntity> getPlayer(UUID uuid) {
-        return Optional.ofNullable(ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayerByUUID(uuid));
+        return Optional.ofNullable(ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayer(uuid));
     }
 }

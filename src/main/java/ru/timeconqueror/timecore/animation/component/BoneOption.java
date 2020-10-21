@@ -1,6 +1,6 @@
 package ru.timeconqueror.timecore.animation.component;
 
-import net.minecraft.client.renderer.Vector3f;
+import net.minecraft.util.math.vector.Vector3f;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ru.timeconqueror.timecore.animation.util.AnimationUtils;
@@ -108,9 +108,9 @@ public class BoneOption {
     static Vector3f interpolate(Vector3f start, Vector3f end, int startTime, int endTime, int existingTime) {
         float factor = endTime - startTime == 0 ? 1 : (existingTime - startTime) / (float) (endTime - startTime);
 
-        float outX = MathUtils.interpolate(factor, start.getX(), end.getX());
-        float outY = MathUtils.interpolate(factor, start.getY(), end.getY());
-        float outZ = MathUtils.interpolate(factor, start.getZ(), end.getZ());
+        float outX = MathUtils.interpolate(factor, start.x(), end.x());
+        float outY = MathUtils.interpolate(factor, start.y(), end.y());
+        float outZ = MathUtils.interpolate(factor, start.z(), end.z());
 
         return new Vector3f(outX, outY, outZ);
     }

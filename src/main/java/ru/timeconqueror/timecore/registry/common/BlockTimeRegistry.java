@@ -60,7 +60,7 @@ public abstract class BlockTimeRegistry extends WrappedForgeTimeRegistry<Block> 
      * You also don't need to think about registry side for some methods, it will do this for you.
      *
      * @param block block to register
-     * @param name  block name. Will be used as a part of registry and translation keys. Should NOT contain mod ID, because it will be bound automatically.
+     * @param name  block location. Will be used as a part of registry and translation keys. Should NOT contain mod ID, because it will be bound automatically.
      * @return {@link BlockWrapper} to provide extra register options, like blockstate, model and itemblock registering.
      */
     public BlockWrapper regBlock(Block block, String name) {
@@ -78,7 +78,7 @@ public abstract class BlockTimeRegistry extends WrappedForgeTimeRegistry<Block> 
 
         /**
          * Registers the default item block for this block. (which will place the block upon clicking)
-         * It will be with the same registry name as block has.
+         * It will be with the same registry location as block has.
          * It will also generate default item model automatically based on the block one.
          *
          * @param group creative tab in which item will be placed. Can be null, which means that item will be placed nowhere.
@@ -89,7 +89,7 @@ public abstract class BlockTimeRegistry extends WrappedForgeTimeRegistry<Block> 
 
         /**
          * Registers the default item block for this block. (which will place the block upon clicking)
-         * It will be with the same registry name as block has.
+         * It will be with the same registry location as block has.
          * It will also generate default item model automatically based on the block one.
          *
          * @param group              creative tab in which item will be placed. Can be null, which means that item will be placed nowhere.
@@ -101,7 +101,7 @@ public abstract class BlockTimeRegistry extends WrappedForgeTimeRegistry<Block> 
 
         /**
          * Registers the default item block for this block. (which will place the block upon clicking)
-         * It will be with the same registry name as block has.
+         * It will be with the same registry location as block has.
          * This method doesn't generate item model automatically, so if you want to generate it, do it by yourselves in {@code itemSettings} consumer.
          *
          * @param group             creative tab in which item will be placed. Can be null, which means that item will be placed nowhere.
@@ -111,12 +111,12 @@ public abstract class BlockTimeRegistry extends WrappedForgeTimeRegistry<Block> 
          *                          For details see {@link ItemModel}
          */
         public BlockWrapper regDefaultBlockItem(@Nullable ItemGroup group, Supplier<ItemModel> itemModelSupplier) {
-            return regDefaultBlockItem(new Item.Properties().group(group), itemModelSupplier);
+            return regDefaultBlockItem(new Item.Properties().tab(group), itemModelSupplier);
         }
 
         /**
          * Registers the default item block for this block. (which will place the block upon clicking)
-         * It will be with the same registry name as block has.
+         * It will be with the same registry location as block has.
          * This method doesn't generate item model automatically, so if you want to generate it, do it by yourselves in {@code itemSettings} consumer.
          *
          * @param props             properties, that will be inserted in the item. Can also be created with {@link ItemPropsFactory}
@@ -131,7 +131,7 @@ public abstract class BlockTimeRegistry extends WrappedForgeTimeRegistry<Block> 
 
         /**
          * Registers the item for this block.
-         * It will be with the same registry name as block has.
+         * It will be with the same registry location as block has.
          *
          * @param itemSupplier      item factory, should return new item instance every time it's called.
          * @param itemModelSupplier supplier that returns model to be used for itemblock.

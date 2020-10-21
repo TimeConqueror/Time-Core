@@ -1,10 +1,10 @@
 package ru.timeconqueror.timecore.client.render.model;
 
-import net.minecraft.client.renderer.Vector3f;
 import net.minecraft.client.renderer.model.ModelRenderer.PositionTextureVertex;
 import net.minecraft.client.renderer.model.ModelRenderer.TexturedQuad;
 import net.minecraft.util.Direction;
-import net.minecraft.util.math.Vec2f;
+import net.minecraft.util.math.vector.Vector2f;
+import net.minecraft.util.math.vector.Vector3f;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,24 +20,24 @@ public class TimeModelBox {
      * @param uv      The starting point in the texture foo.png (x -> horizontal, y -> vertical) for that cube.
      * @param inflate scale factor /Expands the cube, without expanding the UV mapping - useful for making armor look worn, and not part of the entity.
      */
-    public TimeModelBox(Vector3f origin, Vector3f size, Vec2f uv, float inflate, boolean mirror, int textureWidth, int textureHeight) {
-        int width = (int) size.getX();
-        int height = (int) size.getY();
-        int depth = (int) size.getZ();
+    public TimeModelBox(Vector3f origin, Vector3f size, Vector2f uv, float inflate, boolean mirror, int textureWidth, int textureHeight) {
+        int width = (int) size.x();
+        int height = (int) size.y();
+        int depth = (int) size.z();
 
-        size.set(size.getX() == 0 ? 0.008F : size.getX(), size.getY() == 0 ? 0.008F : size.getY(), size.getZ() == 0 ? 0.008F : size.getZ());
-        float x1 = origin.getX();
-        float y1 = origin.getY();
-        float z1 = origin.getZ();
+        size.set(size.x() == 0 ? 0.008F : size.x(), size.y() == 0 ? 0.008F : size.y(), size.z() == 0 ? 0.008F : size.z());
+        float x1 = origin.x();
+        float y1 = origin.y();
+        float z1 = origin.z();
 
         int texU = (int) uv.x;
         int texV = (int) uv.y;
 
         List<TexturedQuad> quads = new ArrayList<>(6);
 
-        float x2 = x1 + size.getX();
-        float y2 = y1 + size.getY();
-        float z2 = z1 + size.getZ();
+        float x2 = x1 + size.x();
+        float y2 = y1 + size.y();
+        float z2 = z1 + size.z();
 
         this.pos1 = new Vector3f(x1, y1, z1);
         this.pos2 = new Vector3f(x2, y2, z2);

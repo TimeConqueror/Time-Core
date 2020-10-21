@@ -15,13 +15,13 @@ public abstract class AnimatedLivingEntityRenderer<T extends LivingEntity & Anim
 
     @Override
     public void render(T entity, float entityYaw, float partialTicks, MatrixStack matrixStack, IRenderTypeBuffer buffer, int packedLight) {
-        entity.getSystem().getAnimationManager().applyAnimations(getEntityModel().getBaseModel());
+        entity.getSystem().getAnimationManager().applyAnimations(getModel().getBaseModel());
         super.render(entity, entityYaw, partialTicks, matrixStack, buffer, packedLight);
     }
 
     @Override
-    protected void preRenderCallback(T entitylivingbaseIn, MatrixStack matrixStackIn, float partialTickTime) {
-        super.preRenderCallback(entitylivingbaseIn, matrixStackIn, partialTickTime);
+    protected void scale(T entitylivingbaseIn, MatrixStack matrixStackIn, float partialTickTime) {
+        super.scale(entitylivingbaseIn, matrixStackIn, partialTickTime);
 
         matrixStackIn.translate(0, 1.501F, 0);//Mojang, WTF???
     }

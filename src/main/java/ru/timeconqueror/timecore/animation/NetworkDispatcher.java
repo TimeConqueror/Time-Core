@@ -31,8 +31,8 @@ public abstract class NetworkDispatcher<T extends AnimatedObject<T>> {
             @Override
             protected PacketDistributor.PacketTarget getPacketTarget(T boundObject) {
                 return PacketDistributor.TRACKING_CHUNK.with(() -> {
-                    World world = boundObject.getWorld();
-                    return world.getChunkAt(boundObject.getPos());
+                    World world = boundObject.getLevel();
+                    return world.getChunkAt(boundObject.getBlockPos());
                 });
             }
 

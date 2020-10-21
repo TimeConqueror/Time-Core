@@ -5,7 +5,9 @@ import com.google.gson.JsonObject;
 import net.minecraft.advancements.ICriterionTrigger;
 import net.minecraft.advancements.PlayerAdvancements;
 import net.minecraft.advancements.criterion.CriterionInstance;
+import net.minecraft.advancements.criterion.EntityPredicate;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.loot.ConditionArrayParser;
 import net.minecraft.util.ResourceLocation;
 
 import java.util.*;
@@ -22,7 +24,7 @@ public abstract class TimeSimpleTrigger<I, T extends TimeSimpleTrigger.TimeCrite
     }
 
     @Override
-    public void addListener(PlayerAdvancements advancements, Listener<T> listener) {
+    public void addPlayerListener(PlayerAdvancements advancements, Listener<T> listener) {
         PerPlayerListenerSet<I, T> listeners = this.listenerSets.get(advancements);
 
         if (listeners == null) {
@@ -34,7 +36,7 @@ public abstract class TimeSimpleTrigger<I, T extends TimeSimpleTrigger.TimeCrite
     }
 
     @Override
-    public void removeListener(PlayerAdvancements advancements, Listener<T> listener) {
+    public void removePlayerListener(PlayerAdvancements advancements, Listener<T> listener) {
         PerPlayerListenerSet<I, T> listenerSet = listenerSets.get(advancements);
         if (listenerSet != null) {
             listenerSet.remove(listener);
@@ -45,18 +47,18 @@ public abstract class TimeSimpleTrigger<I, T extends TimeSimpleTrigger.TimeCrite
     }
 
     @Override
-    public void removeAllListeners(PlayerAdvancements advancements) {
+    public void removePlayerListeners(PlayerAdvancements advancements) {
         listenerSets.remove(advancements);
     }
 
     @Override
-    public abstract T deserializeInstance(JsonObject json, JsonDeserializationContext context);
+    public abstract T createInstance(JsonObject json, ConditionArrayParser conditions);
 
     public abstract PerPlayerListenerSet<I, T> createListenerSet(PlayerAdvancements advancements);
 
     /**
      * Note: when you extend TimeCriterionInstance,
-     * you should specify full path to TimeSimpleTrigger.TimeCriterionInstance to prevent compile errors, like here:
+     * you should specify full path to TimeSimpleTrigger.TimeCriterionInstance to prevent renderToBuffer errors, like here:
      * <blockquote><code>
      * public static class Instance extends <b>TimeSimpleTrigger.</b>TimeCriterionInstance<BlockActivatedInfo>
      * </></>
@@ -64,8 +66,8 @@ public abstract class TimeSimpleTrigger<I, T extends TimeSimpleTrigger.TimeCrite
      * @param <I>
      */
     public abstract static class TimeCriterionInstance<I> extends CriterionInstance {
-        public TimeCriterionInstance(ResourceLocation criterionIn) {
-            super(criterionIn);
+        public TimeCriterionInstance(ResourceLocation criterionIn, EntityPredicate.AndPredicate playerCondition) {
+            super(criterionIn, playerCondition);
         }
 
         public abstract boolean test(ServerPlayerEntity player, I info);
@@ -95,7 +97,7 @@ public abstract class TimeSimpleTrigger<I, T extends TimeSimpleTrigger.TimeCrite
             List<Listener<T>> list = null;
 
             for (Listener<T> listener : this.listeners) {
-                if (listener.getCriterionInstance().test(player, info)) {
+                if (listener.getTriggerInstance().test(player, info)) {
                     if (list == null) {
                         list = new ArrayList<>();
                     }
@@ -106,7 +108,7 @@ public abstract class TimeSimpleTrigger<I, T extends TimeSimpleTrigger.TimeCrite
 
             if (list != null) {
                 for (ICriterionTrigger.Listener<T> listener1 : list) {
-                    listener1.grantCriterion(this.playerAdvancements);
+                    listener1.run(this.playerAdvancements);
                 }
             }
         }

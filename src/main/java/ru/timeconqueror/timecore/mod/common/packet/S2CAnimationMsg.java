@@ -29,7 +29,7 @@ public abstract class S2CAnimationMsg implements ITimePacket {
         public final void encode(T packet, PacketBuffer buffer) {
             packet.codecSupplier.toBuffer(buffer);
 
-            buffer.writeString(packet.layerName);
+            buffer.writeUtf(packet.layerName);
 
             encodeExtra(packet, buffer);
         }
@@ -39,7 +39,7 @@ public abstract class S2CAnimationMsg implements ITimePacket {
         final T decode(PacketBuffer buffer) {
             CodecSupplier codecSupplier = CodecSupplier.fromBuffer(buffer);
 
-            String layerName = buffer.readString();
+            String layerName = buffer.readUtf();
             return decodeWithExtraData(codecSupplier, layerName, buffer);
         }
 

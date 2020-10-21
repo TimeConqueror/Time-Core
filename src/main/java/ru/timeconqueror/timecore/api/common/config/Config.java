@@ -18,7 +18,7 @@ public abstract class Config extends ConfigSection {
 
     /**
      * @param type    <i>please, see description in ModConfig.Type</i>
-     * @param key     used as a name for the config file (see {@link #getRelativePath()}). Also determines the section in config file and is used as a part of lang keys.
+     * @param key     used as a location for the config file (see {@link #getRelativePath()}). Also determines the section in config file and is used as a part of lang keys.
      * @param comment used to provide a comment that can be seen above this section in the config file.
      */
     public Config(@NotNull ModConfig.Type type, @NotNull String key, @Nullable String comment) {

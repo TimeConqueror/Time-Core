@@ -34,36 +34,36 @@ public class ClientCommandManager {
 
             //Catch clauses copied from Commands#handleCommand
         } catch (CommandException e) {
-            source.sendErrorMessage(e.getComponent());
+            source.sendFailure(e.getComponent());
         } catch (CommandSyntaxException e) {
-            source.sendErrorMessage(TextComponentUtils.toTextComponent(e.getRawMessage()));
+            source.sendFailure(TextComponentUtils.fromMessage(e.getRawMessage()));
             if (e.getInput() != null && e.getCursor() >= 0) {
                 int k = Math.min(e.getInput().length(), e.getCursor());
-                ITextComponent itextcomponent1 = new StringTextComponent("").applyTextStyle(TextFormatting.GRAY).applyTextStyle((style) -> style.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, command)));
+                IFormattableTextComponent itextcomponent1 = new StringTextComponent("").withStyle(TextFormatting.GRAY).withStyle((style) -> style.withClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, command)));
                 if (k > 10) {
-                    itextcomponent1.appendText("...");
+                    itextcomponent1.append("...");
                 }
 
-                itextcomponent1.appendText(e.getInput().substring(Math.max(0, k - 10), k));
+                itextcomponent1.append(e.getInput().substring(Math.max(0, k - 10), k));
                 if (k < e.getInput().length()) {
-                    ITextComponent itextcomponent2 = (new StringTextComponent(e.getInput().substring(k))).applyTextStyles(TextFormatting.RED, TextFormatting.UNDERLINE);
-                    itextcomponent1.appendSibling(itextcomponent2);
+                    ITextComponent itextcomponent2 = (new StringTextComponent(e.getInput().substring(k))).withStyle(TextFormatting.RED, TextFormatting.UNDERLINE);
+                    itextcomponent1.append(itextcomponent2);
                 }
 
-                itextcomponent1.appendSibling((new TranslationTextComponent("command.context.here")).applyTextStyles(TextFormatting.RED, TextFormatting.ITALIC));
-                source.sendErrorMessage(itextcomponent1);
+                itextcomponent1.append((new TranslationTextComponent("command.context.here")).withStyle(TextFormatting.RED, TextFormatting.ITALIC));
+                source.sendFailure(itextcomponent1);
             }
         } catch (Exception e) {
-            ITextComponent itextcomponent = new StringTextComponent(e.getMessage() == null ? e.getClass().getName() : e.getMessage());
+            IFormattableTextComponent itextcomponent = new StringTextComponent(e.getMessage() == null ? e.getClass().getName() : e.getMessage());
             if (TimeCore.LOGGER.isDebugEnabled()) {
                 StackTraceElement[] astacktraceelement = e.getStackTrace();
 
                 for (int j = 0; j < Math.min(astacktraceelement.length, 3); ++j) {
-                    itextcomponent.appendText("\n\n").appendText(astacktraceelement[j].getMethodName()).appendText("\n ").appendText(astacktraceelement[j].getFileName()).appendText(":").appendText(String.valueOf(astacktraceelement[j].getLineNumber()));
+                    itextcomponent.append("\n\n").append(astacktraceelement[j].getMethodName()).append("\n ").append(astacktraceelement[j].getFileName()).append(":").append(String.valueOf(astacktraceelement[j].getLineNumber()));
                 }
             }
 
-            source.sendErrorMessage((new TranslationTextComponent("command.failed")).applyTextStyle((style) -> style.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, itextcomponent))));
+            source.sendFailure((new TranslationTextComponent("command.failed")).withStyle((style) -> style.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, itextcomponent))));
         }
 
         return true;
@@ -102,8 +102,8 @@ public class ClientCommandManager {
     private static boolean searchByLiterals(ParseResults<CommandSource> parseResults) {
 //        String[] commandPath = parseResults.getReader().getString().substring(1).split(" ");
 //        CommandNode<S> node = root;
-//        for (final String name : commandPath) {
-//            node = node.getChild(name);
+//        for (final String location : commandPath) {
+//            node = node.getChild(location);
 //            if (node == null) {
 //                return null;
 //            }

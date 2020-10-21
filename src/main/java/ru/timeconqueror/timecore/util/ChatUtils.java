@@ -13,7 +13,7 @@ public class ChatUtils {
      */
     public static void sendMessageToAllNearby(BlockPos fromPos, ITextComponent msg, double distanceIn) {
         for (ServerPlayerEntity player : NetworkUtils.getPlayersNearby(fromPos, distanceIn)) {
-            player.sendMessage(msg);
+            player.sendMessage(msg, player.getUUID());
         }
     }
 
@@ -21,7 +21,7 @@ public class ChatUtils {
      * Changes format (usually color) of provided message.
      */
     public static <T extends ITextComponent> T format(T msg, TextFormatting format) {
-        msg.getStyle().setColor(format);
+        msg.getStyle().withColor(format);
         return msg;
     }
 }

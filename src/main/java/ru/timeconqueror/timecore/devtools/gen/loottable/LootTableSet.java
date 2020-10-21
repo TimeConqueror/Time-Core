@@ -1,9 +1,9 @@
 package ru.timeconqueror.timecore.devtools.gen.loottable;
 
 import com.google.common.collect.Maps;
+import net.minecraft.loot.LootParameterSet;
+import net.minecraft.loot.LootTable;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.storage.loot.LootParameterSet;
-import net.minecraft.world.storage.loot.LootTable;
 
 import java.util.Map;
 import java.util.function.BiConsumer;

@@ -8,7 +8,7 @@ public class TimeSound extends SoundEvent {
         super(name);
     }
 
-    public ResourceLocation name() {
-        return name;
+    public ResourceLocation location() {
+        return location;
     }
 }

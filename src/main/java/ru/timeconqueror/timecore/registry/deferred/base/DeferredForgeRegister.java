@@ -1,5 +1,6 @@
 package ru.timeconqueror.timecore.registry.deferred.base;
 
+import com.google.common.reflect.TypeToken;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -43,11 +44,11 @@ public abstract class DeferredForgeRegister<T extends IForgeRegistryEntry<T>> ex
 
     @Override
     public void regToBus(IEventBus bus) {
-        bus.addListener(EventPriority.LOWEST, this::onAllRegEvent);
+        bus.addGenericListener(IForgeRegistryEntry.class, EventPriority.LOWEST, this::onAllRegEvent);
         bus.addListener(EventPriority.LOWEST, this::onClientInit);
     }
 
-    private void onAllRegEvent(RegistryEvent.Register<?> event) {
+    private void onAllRegEvent(RegistryEvent.Register<? extends IForgeRegistryEntry<?>> event) {
         if (event.getGenericType() == registry.getRegistrySuperType()) {
             onRegEvent(((RegistryEvent.Register<T>) event));
         }

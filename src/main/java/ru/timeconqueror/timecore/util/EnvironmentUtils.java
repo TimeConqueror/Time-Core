@@ -1,6 +1,7 @@
 package ru.timeconqueror.timecore.util;
 
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.MinecraftServerHooks;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.fml.loading.FMLPaths;
@@ -37,7 +38,7 @@ public class EnvironmentUtils {
             throw new IllegalStateException("Server can't be got due to it hasn't started yet.");
         }
 
-        return server.getActiveAnvilConverter().getFile(server.getFolderName(), "").toPath();
+        return MinecraftServerHooks.getStorageSource(server).getWorldDir();
     }
 
     public static Path getConfigDir() {

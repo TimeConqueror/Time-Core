@@ -33,7 +33,7 @@ public abstract class ItemTimeRegistry extends WrappedForgeTimeRegistry<Item> {
      * Method to register provided item automatically.
      *
      * @param item item to register
-     * @param name item name. Will be used as a part of registry and translation keys. Should NOT contain mod ID, because it will be bound automatically.
+     * @param name item location. Will be used as a part of registry and translation keys. Should NOT contain mod ID, because it will be bound automatically.
      * @return {@link ItemWrapper} to provide extra register options.
      */
     public ItemWrapper regItem(Item item, String name) {

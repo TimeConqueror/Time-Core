@@ -10,7 +10,6 @@
     "MixinDirectoryCache",
     "MixinFMLModContainer",
     "MixinLivingEntity",
-    "accessor.StructureAccessor",
     "config.MixinConfigValue"
   ],
   "client": [

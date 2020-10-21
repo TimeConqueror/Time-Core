@@ -14,9 +14,9 @@ public class ABlockRegistry {
     @TimeAutoRegistrable
     private static final DeferredBlockRegister REGISTER = new DeferredBlockRegister(TimeCore.MODID);
 
-    private static final BlockPropsFactory PROPS_CREATOR = new BlockPropsFactory(() -> Block.Properties.create(Material.ROCK).notSolid());
+    private static final BlockPropsFactory PROPS_CREATOR = new BlockPropsFactory(() -> Block.Properties.of(Material.STONE).noOcclusion());
 
     public static RegistryObject<HeatCubeBlock> HEAT_CUBE = REGISTER.regBlock("heat_cube", () -> new HeatCubeBlock(PROPS_CREATOR.create()))
-            .regDefaultBlockItem(ItemGroup.MISC)
+            .regDefaultBlockItem(ItemGroup.TAB_MISC)
             .endTyped();
 }

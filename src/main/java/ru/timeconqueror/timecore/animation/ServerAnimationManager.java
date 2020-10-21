@@ -59,6 +59,6 @@ public class ServerAnimationManager<T extends AnimatedObject<T>> extends BaseAni
 
     @Override
     public boolean isGamePaused() {
-        return FMLEnvironment.dist == Dist.CLIENT && Minecraft.getInstance().isGamePaused();
+        return FMLEnvironment.dist == Dist.CLIENT && Minecraft.getInstance().isPaused();
     }
 }

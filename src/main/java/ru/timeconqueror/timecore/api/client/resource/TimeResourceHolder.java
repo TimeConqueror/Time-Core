@@ -35,7 +35,7 @@ public class TimeResourceHolder {
     public void addItemModel(Item item, ItemModel model) {
         ResourceLocation registryName = item.getRegistryName();
 
-        if (!ObjectUtils.checkIfNotNull(registryName, "Can't register model location for the item without a registry name.")) {
+        if (!ObjectUtils.checkIfNotNull(registryName, "Can't register model location for the item without a registry location.")) {
             return;
         }
 
@@ -52,7 +52,7 @@ public class TimeResourceHolder {
     public void addBlockStateResource(Block block, BlockStateResource blockStateResource) {
         ResourceLocation registryName = block.getRegistryName();
 
-        if (!ObjectUtils.checkIfNotNull(registryName, "Can't register blockstate location for the block without a registry name.")) {
+        if (!ObjectUtils.checkIfNotNull(registryName, "Can't register blockstate location for the block without a registry location.")) {
             return;
         }
 
@@ -69,7 +69,7 @@ public class TimeResourceHolder {
     public void addBlockModel(Block block, BlockModel model) {
         ResourceLocation registryName = block.getRegistryName();
 
-        if (!ObjectUtils.checkIfNotNull(registryName, "Can't register model location for the block without a registry name.")) {
+        if (!ObjectUtils.checkIfNotNull(registryName, "Can't register model location for the block without a registry location.")) {
             return;
         }
 

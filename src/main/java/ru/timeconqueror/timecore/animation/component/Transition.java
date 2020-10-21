@@ -1,7 +1,7 @@
 package ru.timeconqueror.timecore.animation.component;
 
-import net.minecraft.client.renderer.Vector3f;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.vector.Vector3f;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ru.timeconqueror.timecore.TimeCore;
@@ -174,7 +174,7 @@ public class Transition extends Animation {
                     if (piece != null) {
                         boneOption.apply(piece, layer, existingTime);
                     } else {
-                        TimeCore.LOGGER.error("Can't find bone with name " + boneOption.name + " for transition " + getName() + " applied for model " + model.getName());
+                        TimeCore.LOGGER.error("Can't find bone with location " + boneOption.name + " for transition " + getName() + " applied for model " + model.getName());
                     }
                 });
             }
@@ -224,7 +224,7 @@ public class Transition extends Animation {
     @Override
     public String toString() {
         return "Transition{" +
-                "name='" + name + '\'' +
+                "location='" + name + '\'' +
                 ", id=" + id +
                 ", transitionLength=" + transitionLength +
                 ", destAnimation=" + destAnimation +

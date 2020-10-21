@@ -28,7 +28,7 @@ public class AnimationSerializer {
 			buffer.writeBoolean(hasWatcher);
 
 			if (hasWatcher) {
-				buffer.writeString(name);
+				buffer.writeUtf(name);
 				serializeWatcher(animationWatcher, buffer);
 			}
 		}
@@ -42,7 +42,7 @@ public class AnimationSerializer {
 		for (int i = 0; i < layerCount; i++) {
 			boolean hasWatcher = buffer.readBoolean();
 			if (hasWatcher) {
-				String layerName = buffer.readString(Short.MAX_VALUE);
+				String layerName = buffer.readUtf();
 				AnimationWatcher watcher = deserializeWatcher(buffer);
 				layerMap.put(layerName, watcher);
 			}

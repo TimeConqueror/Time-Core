@@ -16,8 +16,8 @@ public interface ITimePacket {
     @NotNull//TODO move to handler
     default World getWorld(NetworkEvent.Context ctx) {
         return DistExecutor.runForDist(//TODO deprecated, switch to newer?
-                () -> () -> ObjectUtils.bypassClassChecking(Minecraft.getInstance().world),
-                () -> () -> ctx.getSender().world);
+                () -> () -> ObjectUtils.bypassClassChecking(Minecraft.getInstance().level),
+                () -> () -> ctx.getSender().level);
     }
 
     /**

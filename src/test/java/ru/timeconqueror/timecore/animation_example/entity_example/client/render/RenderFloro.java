@@ -14,7 +14,7 @@ public class RenderFloro extends AnimatedLivingEntityRenderer<FloroEntity, TimeE
     }
 
     @Override
-    public ResourceLocation getEntityTexture(FloroEntity entity) {
+    public ResourceLocation getTextureLocation(FloroEntity entity) {
         return new ResourceLocation(TimeCore.MODID, "textures/entity/floro.png");
     }
 }

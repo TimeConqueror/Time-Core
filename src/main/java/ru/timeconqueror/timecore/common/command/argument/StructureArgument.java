@@ -22,8 +22,7 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 public class StructureArgument implements ArgumentType<Structure<?>> {
-    public static final List<String> EXAMPLES = Lists.newArrayList(Feature.WOODLAND_MANSION.getRegistryName().toString(), Feature.IGLOO.getRegistryName().toString());
-    public static final SimpleCommandExceptionType IS_FEATURE = new SimpleCommandExceptionType(new TranslationTextComponent("argument." + TimeCore.MODID + ".structure.is_feature"));
+    public static final List<String> EXAMPLES = Lists.newArrayList(Structure.WOODLAND_MANSION.getRegistryName().toString(), Structure.IGLOO.getRegistryName().toString());
     public static final SimpleCommandExceptionType UNKNOWN = new SimpleCommandExceptionType(new TranslationTextComponent("argument." + TimeCore.MODID + ".structure.unknown"));
 
     public static StructureArgument create() {
@@ -34,20 +33,17 @@ public class StructureArgument implements ArgumentType<Structure<?>> {
     public Structure<?> parse(StringReader reader) throws CommandSyntaxException {
         ResourceLocation structureName = ResourceLocation.read(reader);
 
-        Feature<?> feature = ForgeRegistries.FEATURES.getValue(structureName);
+        Structure<?> structure = ForgeRegistries.STRUCTURE_FEATURES.getValue(structureName);
 
-        if (feature != null) {
-            if (feature instanceof Structure<?>) {
-                return (Structure<?>) feature;
-            } else throw IS_FEATURE.createWithContext(reader);
+        if (structure != null) {
+            return structure;
         } else throw UNKNOWN.createWithContext(reader);
     }
 
     @Override
     public <S> CompletableFuture<Suggestions> listSuggestions(CommandContext<S> context, SuggestionsBuilder builder) {
-        return ISuggestionProvider.func_212476_a/*suggest*/(ForgeRegistries.FEATURES.getValues().stream()
-                .filter(feature -> feature instanceof Structure<?>)
-                .map(ForgeRegistryEntry::getRegistryName), builder);
+        return ISuggestionProvider.suggest(ForgeRegistries.STRUCTURE_FEATURES.getValues().stream()
+                .map(structure -> structure.getRegistryName().toString()), builder);
     }
 
     @Override

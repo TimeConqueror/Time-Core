@@ -6,9 +6,9 @@ import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.ChunkPos;
-import net.minecraft.world.World;
-import net.minecraft.world.dimension.DimensionType;
+import net.minecraft.util.math.SectionPos;
 import net.minecraft.world.gen.feature.structure.Structure;
+import net.minecraft.world.gen.feature.structure.StructureManager;
 import net.minecraft.world.gen.feature.structure.StructurePiece;
 import net.minecraft.world.gen.feature.structure.StructureStart;
 import net.minecraft.world.server.ChunkManager;
@@ -23,9 +23,9 @@ import ru.timeconqueror.timecore.mod.common.config.MainConfig;
 import ru.timeconqueror.timecore.mod.common.packet.InternalPacketManager;
 import ru.timeconqueror.timecore.mod.common.packet.S2CSRClearPiecesMsg;
 import ru.timeconqueror.timecore.mod.common.packet.S2CSRSendSinglePieceMsg;
-import ru.timeconqueror.timecore.mod.mixins.accessor.StructureAccessor;
 
 import java.util.*;
+import java.util.stream.Stream;
 
 public class StructureRevealer {
     private static final StructureRevealer INSTANCE = MainConfig.INSTANCE.areDevFeaturesEnabled() ? new StructureRevealer() : null;
@@ -54,19 +54,19 @@ public class StructureRevealer {
     }
 
     public void subscribePlayerToStructure(ServerPlayerEntity player, Structure<?> structure) {
-        if (!subscribedStructures.containsEntry(player.getUniqueID(), structure)) {
-            subscribedStructures.put(player.getUniqueID(), structure);
+        if (!subscribedStructures.containsEntry(player.getUUID(), structure)) {
+            subscribedStructures.put(player.getUUID(), structure);
             refreshAndSave(player);
         }
     }
 
     public void unsubscribePlayerFromStructure(ServerPlayerEntity player, Structure<?> structure) {
-        subscribedStructures.remove(player.getUniqueID(), structure);
+        subscribedStructures.remove(player.getUUID(), structure);
         refreshAndSave(player);
     }
 
     public void unsubscribePlayerFromAllStructures(ServerPlayerEntity player) {
-        Collection<Structure<?>> structures = subscribedStructures.get(player.getUniqueID());
+        Collection<Structure<?>> structures = subscribedStructures.get(player.getUUID());
         if (structures != null) {
             structures.clear();
 
@@ -77,7 +77,7 @@ public class StructureRevealer {
     public List<ResourceLocation> getSubscriptions(ServerPlayerEntity player) {
         List<ResourceLocation> locations = new ArrayList<>();
 
-        subscribedStructures.get(player.getUniqueID()).forEach(structure -> locations.add(structure.getRegistryName()));
+        subscribedStructures.get(player.getUUID()).forEach(structure -> locations.add(structure.getRegistryName()));
 
         return locations;
     }
@@ -92,16 +92,16 @@ public class StructureRevealer {
     }
 
     private void refreshAllStructureData(ServerPlayerEntity playerIn) {
-        ChunkManager chunkManager = playerIn.getServerWorld().getChunkProvider().chunkManager;
+        ChunkManager chunkManager = playerIn.getLevel().getChunkSource().chunkMap;
 
         InternalPacketManager.sendToPlayer(playerIn, new S2CSRClearPiecesMsg());
 
         ChunkManagerHooks.getLoadedChunksIterable(chunkManager).forEach(chunkHolder -> {
 
-            if (chunkManager.getTrackingPlayers(chunkHolder.getPosition(), false)
-                    .anyMatch(player -> player.getUniqueID().equals(playerIn.getUniqueID()))) {
+            if (chunkManager.getPlayers(chunkHolder.getPos(), false)
+                    .anyMatch(player -> player.getUUID().equals(playerIn.getUUID()))) {
 
-                getSubscribedStructuresInChunk(playerIn.world, playerIn, chunkHolder.getPosition()).forEach(data -> {
+                getSubscribedStructuresInChunk(playerIn.getLevel(), playerIn, chunkHolder.getPos()).forEach(data -> {
                     InternalPacketManager.sendToPlayer(playerIn, new S2CSRSendSinglePieceMsg(data));
                 });
             }
@@ -110,7 +110,7 @@ public class StructureRevealer {
 
     private void onChunkWatch(ChunkWatchEvent.Watch event) {
         ServerWorld world = event.getWorld();
-        if (world != null && !world.isRemote() && MainConfig.INSTANCE.areDevFeaturesEnabled()) {
+        if (world != null && !world.isClientSide() && MainConfig.INSTANCE.areDevFeaturesEnabled()) {
             ServerPlayerEntity player = event.getPlayer();
             ChunkPos pos = event.getPos();
 
@@ -119,23 +119,24 @@ public class StructureRevealer {
         }
     }
 
-    private List<StructureData> getSubscribedStructuresInChunk(World world, ServerPlayerEntity player, ChunkPos pos) {
+    private List<StructureData> getSubscribedStructuresInChunk(ServerWorld world, ServerPlayerEntity player, ChunkPos pos) {
         List<StructureData> subscribedStructuresInChunk = new ArrayList<>();
 
-        DimensionType dim = world.getDimension().getType();
-        Collection<Structure<?>> structures = subscribedStructures.get(player.getUniqueID());
+        Collection<Structure<?>> structures = subscribedStructures.get(player.getUUID());
+
+        StructureManager structureManager = world.structureFeatureManager();
 
         for (Structure<?> structure : structures) {
-            List<StructureStart> starts = ((StructureAccessor) structure).getStarts(world, pos.x, pos.z);
+            Stream<? extends StructureStart<?>> starts = structureManager.startsForFeature(SectionPos.of(pos, 0), structure);
 
-            for (StructureStart start : starts) {
-                synchronized (start.getComponents()) {
-                    for (StructurePiece component : start.getComponents()) {
-                        AxisAlignedBB boundingBox = AxisAlignedBB.toImmutable(component.getBoundingBox());
-                        subscribedStructuresInChunk.add(new StructureData(boundingBox, structure, dim));
+            starts.forEach(start -> {
+                synchronized (start.getPieces()) {
+                    for (StructurePiece component : start.getPieces()) {
+                        AxisAlignedBB boundingBox = AxisAlignedBB.of(component.getBoundingBox());
+                        subscribedStructuresInChunk.add(new StructureData(boundingBox, structure, world));
                     }
                 }
-            }
+            });
         }
 
         return subscribedStructuresInChunk;

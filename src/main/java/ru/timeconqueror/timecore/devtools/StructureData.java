@@ -2,7 +2,7 @@ package ru.timeconqueror.timecore.devtools;
 
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.world.dimension.DimensionType;
+import net.minecraft.world.World;
 import net.minecraft.world.gen.feature.structure.Structure;
 
 import java.util.Objects;
@@ -10,26 +10,26 @@ import java.util.Objects;
 public class StructureData {
     private final AxisAlignedBB bb;
     private final ResourceLocation structureName;
-    private final int dimensionId;
+    private final ResourceLocation worldId;
 
-    public StructureData(AxisAlignedBB bb, ResourceLocation structureName, int dimensionId) {
+    public StructureData(AxisAlignedBB bb, ResourceLocation structureName, ResourceLocation worldId) {
         this.bb = bb;
         this.structureName = structureName;
-        this.dimensionId = dimensionId;
+        this.worldId = worldId;
     }
 
-    public StructureData(AxisAlignedBB bb, Structure<?> structure, DimensionType dimensionType) {
+    public StructureData(AxisAlignedBB bb, Structure<?> structure, World world) {
         this.bb = bb;
         this.structureName = structure.getRegistryName();
-        this.dimensionId = dimensionType.getId();
+        this.worldId = world.dimension().location();
     }
 
     public AxisAlignedBB getBoundingBox() {
         return bb;
     }
 
-    public int getDimensionId() {
-        return dimensionId;
+    public ResourceLocation getWorldId() {
+        return worldId;
     }
 
     public ResourceLocation getStructureName() {
@@ -41,13 +41,13 @@ public class StructureData {
         if (this == o) return true;
         if (!(o instanceof StructureData)) return false;
         StructureData that = (StructureData) o;
-        return dimensionId == that.dimensionId &&
+        return worldId == that.worldId &&
                 bb.equals(that.bb) &&
                 structureName.equals(that.structureName);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(bb, structureName, dimensionId);
+        return Objects.hash(bb, structureName, worldId);
     }
 }

@@ -12,7 +12,7 @@ import net.minecraft.client.renderer.RenderTypeBuffers;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import ru.timeconqueror.timecore.api.util.MathUtils;
@@ -39,17 +39,17 @@ public class StructureRenderer {
     }
 
     public void onWorldRender(RenderWorldLastEvent event) {
-        ActiveRenderInfo activeRenderInfo = Minecraft.getInstance().gameRenderer.getActiveRenderInfo();
-        Vec3d projectedView = activeRenderInfo.getProjectedView();
+        ActiveRenderInfo activeRenderInfo = Minecraft.getInstance().gameRenderer.getMainCamera();
+        Vector3d position = activeRenderInfo.getPosition();
 
-        RenderTypeBuffers renderTypeBuffers = Minecraft.getInstance().getRenderTypeBuffers();
-        IRenderTypeBuffer.Impl bufferSource = renderTypeBuffers.getBufferSource();
+        RenderTypeBuffers renderTypeBuffers = Minecraft.getInstance().renderBuffers();
+        IRenderTypeBuffer.Impl bufferSource = renderTypeBuffers.bufferSource();
         RenderType overlayRenderType = TimeRenderType.getOverlay(visibleThroughBlocks);
         IVertexBuilder buffer = bufferSource.getBuffer(overlayRenderType);
 
         MatrixStack matrixStack = event.getMatrixStack();
-        matrixStack.push();
-        matrixStack.translate(-projectedView.x, -projectedView.y, -projectedView.z);
+        matrixStack.pushPose();
+        matrixStack.translate(-position.x, -position.y, -position.z);
 
         RenderSystem.disableCull();
         if (visibleThroughBlocks) {
@@ -57,14 +57,14 @@ public class StructureRenderer {
         }
 
         ClientPlayerEntity player = Minecraft.getInstance().player;
-        int currentDimension = player.world.getDimension().getType().getId();
-        int viewDistance = ((ViewDistanceProvider) player.connection).getViewDistance() * 16 + 2 * 16 /*slight offset to not delete the structure info instantly*/;
+        ResourceLocation worldId = player.level.dimension().location();
+        int viewDistance = ((ViewDistanceProvider) player.connection).getServerChunkRadius() * 16 + 2 * 16 /*slight offset to not delete the structure info instantly*/;
         int viewDistanceSq = viewDistance * viewDistance;
 
         for (Iterator<StructureData> iterator = trackedStructurePieces.iterator(); iterator.hasNext(); ) {
             StructureData container = iterator.next();
 
-            if (container.getDimensionId() != currentDimension) {
+            if (container.getWorldId() != worldId) {
                 iterator.remove();
                 continue;
             }
@@ -77,14 +77,14 @@ public class StructureRenderer {
             }
         }
 
-        bufferSource.finish(overlayRenderType);
+        bufferSource.endBatch(overlayRenderType);
 
         RenderSystem.enableCull();
         if (visibleThroughBlocks) {
             RenderSystem.enableDepthTest();
         }
 
-        matrixStack.pop();
+        matrixStack.popPose();
     }
 
     public void trackStructurePiece(StructureData structureData) {
@@ -126,10 +126,10 @@ public class StructureRenderer {
     }
 
     private double getShortestDistanceSq(PlayerEntity player, AxisAlignedBB bb) {
-        double x = MathUtils.coerceInRange(player.getPosX(), bb.minX, bb.maxX);
-        double y = MathUtils.coerceInRange(player.getPosY(), bb.minY, bb.maxY);
-        double z = MathUtils.coerceInRange(player.getPosZ(), bb.minZ, bb.maxZ);
+        double x = MathUtils.coerceInRange(player.getX(), bb.minX, bb.maxX);
+        double y = MathUtils.coerceInRange(player.getY(), bb.minY, bb.maxY);
+        double z = MathUtils.coerceInRange(player.getZ(), bb.minZ, bb.maxZ);
 
-        return player.getDistanceSq(x, y, z);
+        return player.distanceToSqr(x, y, z);
     }
 }

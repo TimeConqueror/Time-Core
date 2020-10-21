@@ -33,6 +33,6 @@ public class ATileRegistry {
 
     @SubscribeEvent
     public static void registerRenders(FMLClientSetupEvent event) {
-        heatCubeModel = TimeModelLoader.loadJsonModel(new ResourceLocation(TimeCore.MODID, "models/tileentity/heat_cube.json"), RenderType::getEntityCutout);
+        heatCubeModel = TimeModelLoader.loadJsonModel(new ResourceLocation(TimeCore.MODID, "models/tileentity/heat_cube.json"), RenderType::entityCutout);
     }
 }

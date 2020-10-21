@@ -33,12 +33,12 @@ public class S2CSRSendSinglePieceMsg implements ITimePacket {
 
             BufferUtils.encodeBoundingBox(data.getBoundingBox(), buffer);
             buffer.writeResourceLocation(data.getStructureName());
-            buffer.writeInt(data.getDimensionId());
+            buffer.writeResourceLocation(data.getWorldId());
         }
 
         @Override
         public @NotNull S2CSRSendSinglePieceMsg decode(PacketBuffer buffer) {
-            StructureData data = new StructureData(BufferUtils.decodeBoundingBox(buffer), buffer.readResourceLocation(), buffer.readInt());
+            StructureData data = new StructureData(BufferUtils.decodeBoundingBox(buffer), buffer.readResourceLocation(), buffer.readResourceLocation());
             return new S2CSRSendSinglePieceMsg(data);
         }
 

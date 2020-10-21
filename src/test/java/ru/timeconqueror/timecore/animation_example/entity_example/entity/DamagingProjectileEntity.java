@@ -32,7 +32,7 @@ public class DamagingProjectileEntity extends ThrowableEntity {
     }
 
     @Override
-    protected void registerData() {
+    protected void defineSynchedData() {
 
     }
 
@@ -40,20 +40,20 @@ public class DamagingProjectileEntity extends ThrowableEntity {
     public void tick() {
         super.tick();
 
-        if (!world.isRemote) {
-            if (ticksExisted >= 20 * 10) {
+        if (!level.isClientSide) {
+            if (tickCount >= 20 * 10) {
                 remove();
             }
         }
     }
 
     @Override
-    protected void onImpact(RayTraceResult result) {
-        if (!world.isRemote) {
+    protected void onHit(RayTraceResult result) {
+        if (!level.isClientSide) {
             if (result.getType() == RayTraceResult.Type.ENTITY) {
                 Entity target = ((EntityRayTraceResult) result).getEntity();
 
-                if (!Objects.equals(target, owner)) {
+                if (!Objects.equals(target, getOwner())) {
                     onEntityImpact(result, target);
 
                     remove();
@@ -74,26 +74,28 @@ public class DamagingProjectileEntity extends ThrowableEntity {
 //        target.attackEntityFrom(DamageSource.causeThrownDamage(this, getThrower()), damage);
     }
 
+
+
     @Override
-    public IPacket<?> createSpawnPacket() {
+    public IPacket<?> getAddEntityPacket() {
         return NetworkHooks.getEntitySpawningPacket(this);
     }
 
     @Override
-    protected float getGravityVelocity() {
+    protected float getGravity() {
         return 0.001F;
     }
 
     @Override
-    public void writeAdditional(CompoundNBT compound) {
-        super.writeAdditional(compound);
+    protected void addAdditionalSaveData(CompoundNBT compound) {
+        super.addAdditionalSaveData(compound);
 
         compound.putFloat("damage", damage);
     }
 
     @Override
-    public void readAdditional(CompoundNBT compound) {
-        super.readAdditional(compound);
+    protected void readAdditionalSaveData(CompoundNBT compound) {
+        super.readAdditionalSaveData(compound);
 
         damage = compound.getFloat("damage");
     }

@@ -1,6 +1,8 @@
 package ru.timeconqueror.timecore.animation_example.entity_example.entity;
 
 import net.minecraft.entity.*;
+import net.minecraft.entity.ai.attributes.AttributeModifierMap;
+import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.goal.*;
 import net.minecraft.entity.monster.MonsterEntity;
 import net.minecraft.entity.passive.WolfEntity;
@@ -37,7 +39,7 @@ import java.util.EnumSet;
  * If task has a lower priority (higher number), it's checked by system if it can work in parallel (if mutex isn't the same).
  */
 public class FloroEntity extends MonsterEntity implements IRangedAttackMob, AnimatedObject<FloroEntity> {
-    private static final DataParameter<Boolean> HIDDEN = EntityDataManager.createKey(FloroEntity.class, DataSerializers.BOOLEAN);
+    private static final DataParameter<Boolean> HIDDEN = EntityDataManager.defineId(FloroEntity.class, DataSerializers.BOOLEAN);
 
     private static final DelayedAction<FloroEntity, AnimatedRangedAttackGoal.ActionData> RANGED_ATTACK_ACTION;
     private static final DelayedAction<FloroEntity, Object> REVEALING_ACTION;
@@ -87,22 +89,22 @@ public class FloroEntity extends MonsterEntity implements IRangedAttackMob, Anim
     }
 
     @Override
-    protected void registerData() {
-        super.registerData();
+    protected void defineSynchedData() {
+        super.defineSynchedData();
 
-        getDataManager().register(HIDDEN, true);
+        this.entityData.define(HIDDEN, true);
     }
 
     @Override
-    public void writeAdditional(CompoundNBT compound) {
-        super.writeAdditional(compound);
+    public void addAdditionalSaveData(CompoundNBT compound) {
+        super.addAdditionalSaveData(compound);
 
         compound.putBoolean("hidden", isHidden());
     }
 
     @Override
-    public void readAdditional(CompoundNBT compound) {
-        super.readAdditional(compound);
+    public void readAdditionalSaveData(CompoundNBT compound) {
+        super.readAdditionalSaveData(compound);
 
         if (compound.contains("hidden")) {
             setHidden(compound.getBoolean("hidden"));
@@ -111,7 +113,7 @@ public class FloroEntity extends MonsterEntity implements IRangedAttackMob, Anim
 
     @Override
     public void onAddedToWorld() {
-        if (isServerWorld() && isHidden()) {
+        if (isEffectiveAi() && isHidden()) {
             startHiddenAnimation();
         }
     }
@@ -134,47 +136,45 @@ public class FloroEntity extends MonsterEntity implements IRangedAttackMob, Anim
         targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, PlayerEntity.class, 5/*will target if rand.next(chance) == 0*/, true, false, null));
     }
 
-    @Override
-    protected void registerAttributes() {
-        super.registerAttributes();
-
-        getAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(25);
-        getAttribute(SharedMonsterAttributes.FOLLOW_RANGE).setBaseValue(25);
-        getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.26);
+    public static AttributeModifierMap.MutableAttribute createAttributes() {
+        return MonsterEntity.createMonsterAttributes()
+                .add(Attributes.MAX_HEALTH, 25)
+                .add(Attributes.FOLLOW_RANGE, 25)
+                .add(Attributes.MOVEMENT_SPEED, 0.26);
     }
 
     @Override
-    public void livingTick() {
-        if (isServerWorld()) {
+    public void aiStep() {
+        if (isEffectiveAi()) {
             if (isHidden()) {
                 isHiding = false;
             }
 
             if (canMove()) {
-                goalSelector.enableFlag(Goal.Flag.LOOK);
-                goalSelector.enableFlag(Goal.Flag.JUMP);
+                goalSelector.enableControlFlag(Goal.Flag.LOOK);
+                goalSelector.enableControlFlag(Goal.Flag.JUMP);
             } else {
-                goalSelector.disableFlag(Goal.Flag.LOOK);
-                goalSelector.disableFlag(Goal.Flag.JUMP); //actually doesn't help in some situations as these tasks still can be activated, if executingTasks list in EntityAITasks is empty.
+                goalSelector.disableControlFlag(Goal.Flag.LOOK);
+                goalSelector.disableControlFlag(Goal.Flag.JUMP); //actually doesn't help in some situations as these tasks still can be activated, if executingTasks list in EntityAITasks is empty.
             }
         }
 
-        super.livingTick();//this method should be the last, because here we update AI task. If it is before our own code, then disabling control flags won't work
+        super.aiStep();
     }
 
     @Override
-    public void addVelocity(double x, double y, double z) {
+    public void push(double x, double y, double z) {
         if (canMove()) {
-            super.addVelocity(x, y, z);
+            super.push(x, y, z);
         } else {
-            super.addVelocity(0, 0, 0);
+            super.push(0, 0, 0);
         }
     }
 
     @Override
-    public void knockBack(Entity entityIn, float strength, double xRatio, double zRatio) {
+    public void knockback(float strength, double ratioX, double ratioZ) {
         if (canMove()) {
-            super.knockBack(entityIn, strength, xRatio, zRatio);
+            super.knockback(strength, ratioX, ratioZ);
         }
     }
 
@@ -188,23 +188,23 @@ public class FloroEntity extends MonsterEntity implements IRangedAttackMob, Anim
     }
 
     @Override
-    public void attackEntityWithRangedAttack(LivingEntity target, float distanceFactor) {
-        FloroDirtProjectileEntity projectile = new FloroDirtProjectileEntity(this.world, this, 1.0F);
-        double dX = target.getPosX() - this.getPosX();
-        double dY = target.getBoundingBox().minY + (double) (target.getHeight() / 3.0F) - projectile.getPosY();
-        double dZ = target.getPosZ() - this.getPosZ();
+    public void performRangedAttack(LivingEntity target, float distanceFactor) {
+        FloroDirtProjectileEntity projectile = new FloroDirtProjectileEntity(this.level, this, 1.0F);
+        double dX = target.getX() - this.getX();
+        double dY = target.getY(0.3333333333333333D) - projectile.getY();
+        double dZ = target.getZ() - this.getZ();
         double distortion = MathHelper.sqrt(dX * dX + dZ * dZ);
-        projectile.shoot(dX, dY + distortion * 0.20000000298023224D, dZ, 1.6F, (float) (7 - this.world.getDifficulty().getId()));
+        projectile.shoot(dX, dY + distortion * 0.20000000298023224D, dZ, 1.6F, (float) (7 - this.level.getDifficulty().getId()));
 
-        this.world.addEntity(projectile);
+        this.level.addFreshEntity(projectile);
     }
 
     public boolean isHidden() {
-        return getDataManager().get(HIDDEN);
+        return getEntityData().get(HIDDEN);
     }
 
     public void setHidden(boolean value) {
-        getDataManager().set(HIDDEN, value);
+        getEntityData().set(HIDDEN, value);
     }
 
 
@@ -214,21 +214,21 @@ public class FloroEntity extends MonsterEntity implements IRangedAttackMob, Anim
 
     @Override
     protected float getStandingEyeHeight(Pose poseIn, EntitySize sizeIn) {
-        return this.getHeight() * 0.78F;
+        return this.getBbHeight() * 0.78F;
     }
 
     private class FloroRevealingGoal extends Goal {
         public FloroRevealingGoal() {
-            setMutexFlags(EnumSet.of(Flag.MOVE));
+            setFlags(EnumSet.of(Flag.MOVE));
         }
 
         @Override
-        public boolean shouldExecute() {
-            return !canMove() && getAttackTarget() != null;
+        public boolean canUse() {
+            return !canMove() && getTarget() != null;
         }
 
         @Override
-        public void startExecuting() {
+        public void start() {
             ActionManager<FloroEntity> actionManager = getActionManager();
             if (isHidden()) {
                 actionManager.enableAction(REVEALING_ACTION, null);
@@ -238,52 +238,52 @@ public class FloroEntity extends MonsterEntity implements IRangedAttackMob, Anim
         }
 
         @Override
-        public boolean isPreemptible() {
+        public boolean isInterruptable() {
             return false;
         }
     }
 
     private class FloroHiddenGoal extends Goal {
         public FloroHiddenGoal() {
-            setMutexFlags(EnumSet.of(Flag.MOVE));
+            setFlags(EnumSet.of(Flag.MOVE));
         }
 
         @Override
-        public boolean shouldExecute() {
+        public boolean canUse() {
             return isHidden();
         }
     }
 
     private class FloroHidingGoal extends Goal {
         public FloroHidingGoal() {
-            setMutexFlags(EnumSet.of(Flag.MOVE));
+            setFlags(EnumSet.of(Flag.MOVE));
         }
 
         @Override
-        public boolean shouldExecute() {
-            return !isHidden() && getAttackTarget() == null;
+        public boolean canUse() {
+            return !isHidden() && getTarget() == null;
         }
 
         @Override
-        public boolean shouldContinueExecuting() {
+        public boolean canContinueToUse() {
             return !isHidden();
         }
 
         @Override
-        public void startExecuting() {
+        public void start() {
             isHiding = true;
         }
 
         @Override
         public void tick() {
             ActionManager<FloroEntity> actionManager = getActionManager();
-            if (!actionManager.isActionEnabled(HIDING_ACTION) && ticksExisted % (12 * 20) == 0) {
+            if (!actionManager.isActionEnabled(HIDING_ACTION) && tickCount % (12 * 20) == 0) {
                 actionManager.enableAction(HIDING_ACTION, null);
             }
         }
 
         @Override
-        public void resetTask() {
+        public void stop() {
             isHiding = false;
         }
     }

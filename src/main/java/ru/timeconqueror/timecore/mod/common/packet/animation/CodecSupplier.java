@@ -31,7 +31,7 @@ public abstract class CodecSupplier {
         private final int id;
 
         public EntityCodecSupplier(Entity entity) {
-            this.id = entity.getEntityId();
+            this.id = entity.getId();
         }
 
         public EntityCodecSupplier(PacketBuffer buffer) {
@@ -50,7 +50,7 @@ public abstract class CodecSupplier {
 
         @Override
         public AnimatedObject<?> construct(S2CAnimationMsg message, Supplier<NetworkEvent.Context> contextSupplier) {
-            return (AnimatedObject<?>) message.getWorld(contextSupplier.get()).getEntityByID(id);
+            return (AnimatedObject<?>) message.getWorld(contextSupplier.get()).getEntity(id);
         }
     }
 
@@ -58,7 +58,7 @@ public abstract class CodecSupplier {
         private final BlockPos pos;
 
         public TileEntityCodecSupplier(TileEntity tileEntity) {
-            this.pos = tileEntity.getPos();
+            this.pos = tileEntity.getBlockPos();
         }
 
         public TileEntityCodecSupplier(PacketBuffer buffer) {
@@ -72,7 +72,7 @@ public abstract class CodecSupplier {
 
         @Override
         public AnimatedObject<?> construct(S2CAnimationMsg message, Supplier<NetworkEvent.Context> contextSupplier) {
-            return (AnimatedObject<?>) message.getWorld(contextSupplier.get()).getTileEntity(pos);
+            return (AnimatedObject<?>) message.getWorld(contextSupplier.get()).getBlockEntity(pos);
         }
 
         @Override

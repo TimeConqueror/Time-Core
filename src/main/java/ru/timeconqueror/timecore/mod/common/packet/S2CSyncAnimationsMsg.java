@@ -26,7 +26,7 @@ public class S2CSyncAnimationsMsg implements ITimePacket {
 
 	public S2CSyncAnimationsMsg(ServerAnimationManager<?> animationManager, Entity entity) {
 		this.serverAnimationManager = animationManager;
-		this.entityId = entity.getEntityId();
+		this.entityId = entity.getId();
 	}
 
 	private S2CSyncAnimationsMsg(Map<String, AnimationWatcher> layerMap, int entityId) {
@@ -62,7 +62,7 @@ public class S2CSyncAnimationsMsg implements ITimePacket {
 
 			String errorMessage = null;
 
-			Entity entity = world.getEntityByID(packet.entityId);
+			Entity entity = world.getEntity(packet.entityId);
 			if (entity == null) {
 				errorMessage = "Client received an animation, but entity wasn't found on client.";
 			} else if (!(entity instanceof AnimatedObject<?>)) {

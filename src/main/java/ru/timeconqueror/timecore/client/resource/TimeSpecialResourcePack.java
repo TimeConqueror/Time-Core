@@ -24,13 +24,13 @@ public class TimeSpecialResourcePack implements IResourcePack {
 
     @NotNull
     @Override
-    public InputStream getRootResourceStream(@NotNull String fileName) {
+    public InputStream getRootResource(@NotNull String fileName) {
         throw new UnsupportedOperationException("TimeCore ResourcePacks can't have root resources.");
     }
 
     @NotNull
     @Override
-    public InputStream getResourceStream(@NotNull ResourcePackType type, @NotNull ResourceLocation location) throws IOException {
+    public InputStream getResource(@NotNull ResourcePackType type, @NotNull ResourceLocation location) throws IOException {
         if (type == ResourcePackType.CLIENT_RESOURCES) {
             TimeResource resource = resourceHolder.getResource(location);
             if (resource != null) {
@@ -44,7 +44,7 @@ public class TimeSpecialResourcePack implements IResourcePack {
     }
 
     @Override
-    public Collection<ResourceLocation> getAllResourceLocations(ResourcePackType type, String namespaceIn, String pathIn, int maxDepthIn, Predicate<String> filter) {
+    public Collection<ResourceLocation> getResources(ResourcePackType type, String namespaceIn, String pathIn, int maxDepthIn, Predicate<String> filter) {
         if (type != ResourcePackType.CLIENT_RESOURCES) {
             return Collections.emptyList();
         }
@@ -56,7 +56,7 @@ public class TimeSpecialResourcePack implements IResourcePack {
     }
 
     @Override
-    public boolean resourceExists(@NotNull ResourcePackType type, @NotNull ResourceLocation location) {
+    public boolean hasResource(@NotNull ResourcePackType type, @NotNull ResourceLocation location) {
         if (type == ResourcePackType.SERVER_DATA) return false;
 
         return resourceHolder.hasResource(location);
@@ -64,13 +64,13 @@ public class TimeSpecialResourcePack implements IResourcePack {
 
     @NotNull
     @Override
-    public Set<String> getResourceNamespaces(@NotNull ResourcePackType type) {
+    public Set<String> getNamespaces(@NotNull ResourcePackType type) {
         return type == ResourcePackType.CLIENT_RESOURCES ? resourceHolder.getDomains() : Collections.emptySet();
     }
 
     @Nullable
     @Override
-    public <T> T getMetadata(@NotNull IMetadataSectionSerializer<T> deserializer) {
+    public <T> T getMetadataSection(@NotNull IMetadataSectionSerializer<T> deserializer) {
         return null;
     }
 

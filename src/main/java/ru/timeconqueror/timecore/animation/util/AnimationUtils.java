@@ -1,6 +1,6 @@
 package ru.timeconqueror.timecore.animation.util;
 
-import net.minecraft.client.renderer.Vector3f;
+import net.minecraft.util.math.vector.Vector3f;
 import ru.timeconqueror.timecore.api.animation.AnimationLayer;
 import ru.timeconqueror.timecore.api.animation.BlendType;
 import ru.timeconqueror.timecore.client.render.model.TimeModelRenderer;
@@ -15,13 +15,13 @@ public class AnimationUtils {
         rotationIn.mul(layer.getWeight());
 
         if (blendType == BlendType.OVERRIDE) {
-            piece.rotateAngleX = piece.startRotationAngles.getX() + rotationIn.getX();
-            piece.rotateAngleY = piece.startRotationAngles.getY() + rotationIn.getY();
-            piece.rotateAngleZ = piece.startRotationAngles.getZ() + rotationIn.getZ();
+            piece.xRot = piece.startRotationAngles.x() + rotationIn.x();
+            piece.yRot = piece.startRotationAngles.y() + rotationIn.y();
+            piece.zRot = piece.startRotationAngles.z() + rotationIn.z();
         } else if (blendType == BlendType.ADDING) {
-            piece.rotateAngleX += rotationIn.getX();
-            piece.rotateAngleY += rotationIn.getY();
-            piece.rotateAngleZ += rotationIn.getZ();
+            piece.xRot += rotationIn.x();
+            piece.yRot += rotationIn.y();
+            piece.zRot += rotationIn.z();
         } else throw new UnsupportedOperationException();
     }
 
@@ -40,15 +40,15 @@ public class AnimationUtils {
         BlendType blendType = layer.getBlendType();
         float weight = layer.getWeight();
 
-        scaleIn.set(calcWeightedScale(scaleIn.getX(), weight),
-                calcWeightedScale(scaleIn.getY(), weight),
-                calcWeightedScale(scaleIn.getZ(), weight));
+        scaleIn.set(calcWeightedScale(scaleIn.x(), weight),
+                calcWeightedScale(scaleIn.y(), weight),
+                calcWeightedScale(scaleIn.z(), weight));
 
         if (blendType == BlendType.OVERRIDE) {
-            piece.setScaleFactor(scaleIn.getX(), scaleIn.getY(), scaleIn.getZ());
+            piece.setScaleFactor(scaleIn.x(), scaleIn.y(), scaleIn.z());
         } else if (blendType == BlendType.ADDING) {
             Vector3f currentScale = piece.getScaleFactor();
-            piece.setScaleFactor(scaleIn.getX() * currentScale.getX(), scaleIn.getY() * currentScale.getY(), scaleIn.getZ() * currentScale.getZ());
+            piece.setScaleFactor(scaleIn.x() * currentScale.x(), scaleIn.y() * currentScale.y(), scaleIn.z() * currentScale.z());
         } else throw new UnsupportedOperationException();
     }
 

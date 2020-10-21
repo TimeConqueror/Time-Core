@@ -4,6 +4,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.SpriteRenderer;
 import net.minecraft.entity.EntityClassification;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.ai.attributes.GlobalEntityTypeAttributes;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.SpawnEggItem;
@@ -24,15 +25,15 @@ import ru.timeconqueror.timecore.client.render.model.TimeModelLoader;
 
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
 public class EntityRegistry {
-    public static final EntityType<FloroEntity> FLORO_TYPE = EntityType.Builder.create(FloroEntity::new, EntityClassification.MONSTER)
+    public static final EntityType<FloroEntity> FLORO_TYPE = EntityType.Builder.of(FloroEntity::new, EntityClassification.MONSTER)
             .setTrackingRange(80)
             .setShouldReceiveVelocityUpdates(true)
-            .size(1, 2)
+            .sized(1, 2)
             .build(TimeCore.MODID + ":floro");
-    public static final EntityType<FloroDirtProjectileEntity> FLORO_PROJECTILE_TYPE = EntityType.Builder.<FloroDirtProjectileEntity>create(FloroDirtProjectileEntity::new, EntityClassification.MISC)
+    public static final EntityType<FloroDirtProjectileEntity> FLORO_PROJECTILE_TYPE = EntityType.Builder.<FloroDirtProjectileEntity>of(FloroDirtProjectileEntity::new, EntityClassification.MISC)
             .setTrackingRange(80)
             .setShouldReceiveVelocityUpdates(true)
-            .size(0.5F, 0.5F)
+            .sized(0.5F, 0.5F)
             .build(TimeCore.MODID + ":floro_proj");
 
     public static TimeEntityModel<FloroEntity> floroModel;
@@ -41,12 +42,14 @@ public class EntityRegistry {
     public static void register(RegistryEvent.Register<EntityType<?>> event) {
         event.getRegistry().register(FLORO_TYPE.setRegistryName(TimeCore.MODID + ":floro"));
         event.getRegistry().register(FLORO_PROJECTILE_TYPE.setRegistryName(TimeCore.MODID + ":floro_proj"));
+
+        GlobalEntityTypeAttributes.put(FLORO_TYPE, FloroEntity.createAttributes().build());
     }
 
     @SubscribeEvent
     public static void registerSpawnEggs(RegistryEvent.Register<Item> event) {
         event.getRegistry().registerAll(
-                new SpawnEggItem(FLORO_TYPE, 0xFF00FF00, 0xFF000000, new Item.Properties().group(ItemGroup.MISC)).setRegistryName(TimeCore.MODID, "spawn_floro")
+                new SpawnEggItem(FLORO_TYPE, 0xFF00FF00, 0xFF000000, new Item.Properties().tab(ItemGroup.TAB_MISC)).setRegistryName(TimeCore.MODID, "spawn_floro")
         );
     }
 

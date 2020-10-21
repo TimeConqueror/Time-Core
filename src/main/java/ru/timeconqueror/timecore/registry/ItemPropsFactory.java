@@ -15,7 +15,7 @@ public class ItemPropsFactory {
      * @param group Item Group that will be applied for every properties object, created via {{@link #createProps()}}.
      */
     public ItemPropsFactory(ItemGroup group) {
-        this(props -> props.group(group));
+        this(props -> props.tab(group));
     }
 
     /**

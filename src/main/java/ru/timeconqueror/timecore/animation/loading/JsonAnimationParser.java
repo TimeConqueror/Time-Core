@@ -2,9 +2,9 @@ package ru.timeconqueror.timecore.animation.loading;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import net.minecraft.client.renderer.Vector3f;
 import net.minecraft.util.JSONUtils;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.vector.Vector3f;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 import org.jetbrains.annotations.NotNull;
@@ -34,7 +34,7 @@ public class JsonAnimationParser {
         try (final InputStream inputStream = ResourceUtils.getStream(ResourceUtils.asDataSubpath(fileLocation.getNamespace() + "/" + fileLocation.getPath()))) {
             BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
 
-            JsonObject json = JSONUtils.fromJson(reader, true);
+            JsonObject json = JSONUtils.parse(reader, true);
             return parseAnimation(fileLocation, json);
 
         } catch (Throwable e) {
@@ -81,12 +81,12 @@ public class JsonAnimationParser {
 
     private BoneOption parseAnimationBone(String boneName, JsonObject boneJson) throws JsonParsingException {
         List<KeyFrame> rotationFrames = parseKeyFrameArr("rotation", boneJson, vec -> {
-            vec.set(vec.getX() * (float) Math.PI / 180, vec.getY() * (float) Math.PI / 180, vec.getZ() * (float) Math.PI / 180);
+            vec.set(vec.x() * (float) Math.PI / 180, vec.y() * (float) Math.PI / 180, vec.z() * (float) Math.PI / 180);
             return vec;
         });
         List<KeyFrame> positionFrames = parseKeyFrameArr("position", boneJson, vector3f -> vector3f);
         if (positionFrames != null) {
-            positionFrames.forEach(keyFrame -> keyFrame.getVec().setY(-keyFrame.getVec().getY()));
+            positionFrames.forEach(keyFrame -> keyFrame.getVec().setY(-keyFrame.getVec().y()));
         }
         List<KeyFrame> scaleFrames = parseKeyFrameArr("scale", boneJson, vector3f -> vector3f);
 
@@ -112,7 +112,7 @@ public class JsonAnimationParser {
                     if (prevTime == -1) {
                         prevTime = time;
                     } else if (time <= prevTime) {
-                        throw new JsonParsingException("Keyframe with name " + keyEntry.getKey() + " (" + keyEntry.getValue() + ") should have time marker that is bigger than previous. Provided: " + time + ", previous: " + prevTime);
+                        throw new JsonParsingException("Keyframe with location " + keyEntry.getKey() + " (" + keyEntry.getValue() + ") should have time marker that is bigger than previous. Provided: " + time + ", previous: " + prevTime);
                     }
 
                     Vector3f vec = JsonUtils.toVec3f(keyEntry.getValue());

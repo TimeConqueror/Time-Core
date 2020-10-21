@@ -23,16 +23,16 @@ public abstract class AnimatedTileEntityRenderer<T extends TileEntity & Animated
         tileEntityIn.getSystem().getAnimationManager().applyAnimations(getModel());
 
         ResourceLocation texture = getTexture(tileEntityIn);
-        this.renderDispatcher.textureManager.bindTexture(texture);
+        this.renderer.textureManager.bind(texture);
 
-        matrixStackIn.push();
+        matrixStackIn.pushPose();
 
         matrixStackIn.translate(0.5F, 0, 0.5F);
 
         matrixStackIn.scale(-1, -1, 1);
-        model.render(matrixStackIn, bufferIn.getBuffer(model.getRenderType(texture)), combinedLightIn, combinedOverlayIn, 1, 1, 1, 1);
+        model.renderToBuffer(matrixStackIn, bufferIn.getBuffer(model.renderType(texture)), combinedLightIn, combinedOverlayIn, 1, 1, 1, 1);
 
-        matrixStackIn.pop();
+        matrixStackIn.popPose();
     }
 
     protected abstract ResourceLocation getTexture(T tileEntityIn);

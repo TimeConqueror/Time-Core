@@ -30,7 +30,7 @@ public abstract class PacketTimeRegistry extends TimeRegistry {
     /**
      * Create a new {@link SimpleChannel}.
      *
-     * @param name                   The name for this channel. Must be unique.
+     * @param name                   The location for this channel. Must be unique.
      *                               It will be used as a part of registry key. Should NOT contain mod ID, because it will be bound automatically.
      * @param networkProtocolVersion The network protocol version string that will be offered to the remote side {@link NetworkRegistry.ChannelBuilder#networkProtocolVersion(Supplier)}
      * @param clientAcceptedVersions Called on the client with the networkProtocolVersion string from the server {@link NetworkRegistry.ChannelBuilder#clientAcceptedVersions(Predicate)}

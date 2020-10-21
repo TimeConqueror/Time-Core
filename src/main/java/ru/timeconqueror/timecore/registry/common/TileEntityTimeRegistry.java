@@ -49,13 +49,13 @@ public abstract class TileEntityTimeRegistry extends WrappedForgeTimeRegistry<Ti
      * Method to register tileEntities automatically.
      *
      * @param tileEntitySupplier supplier, that returns new TileEntity objects.
-     * @param name               tile entity name.
+     * @param name               tile entity location.
      *                           It will be used as a part of registry key. Should NOT contain mod ID, because it will be bound automatically.
      * @param validBlocks        blocks, that can contain provided tile entity.
      * @return {@link TileEntityWrapper} to provide extra register options.
      */
     public <T extends TileEntity> TileEntityWrapper<T> regTileEntity(Supplier<T> tileEntitySupplier, String name, Block... validBlocks) {
-        TileEntityType<T> type = TileEntityType.Builder.create(tileEntitySupplier, validBlocks).build(null);
+        TileEntityType<T> type = TileEntityType.Builder.of(tileEntitySupplier, validBlocks).build(null);
         return new TileEntityWrapper<>(type, name);
     }
 

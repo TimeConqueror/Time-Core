@@ -15,13 +15,13 @@ import java.util.Map;
 import java.util.function.Function;
 
 public class LangSection<T> {
-    public static final LangSection<ItemGroup> ITEM_GROUPS = new LangSection<>("Creative Tabs", ItemGroup::getTranslationKey);
-    public static final LangSection<Block> BLOCKS = new LangSection<>("Blocks", Block::getTranslationKey);
-    public static final LangSection<Item> ITEMS = new LangSection<>("Items", Item::getTranslationKey);
-    public static final LangSection<ArmorItem> ARMOR = new LangSection<ArmorItem>("Armor", Item::getTranslationKey)
-            .setSortingComparator(Comparator.<Map.Entry<ArmorItem, String>, String>comparing(mapEntry -> mapEntry.getKey().getArmorMaterial().getName())
+    public static final LangSection<ItemGroup> ITEM_GROUPS = new LangSection<>("Creative Tabs", itemGroup -> itemGroup.getDisplayName().getString());
+    public static final LangSection<Block> BLOCKS = new LangSection<>("Blocks", Block::getDescriptionId);
+    public static final LangSection<Item> ITEMS = new LangSection<>("Items", Item::getDescriptionId);
+    public static final LangSection<ArmorItem> ARMOR = new LangSection<ArmorItem>("Armor", Item::getDescriptionId)
+            .setSortingComparator(Comparator.<Map.Entry<ArmorItem, String>, String>comparing(mapEntry -> mapEntry.getKey().getMaterial().getName())
                     .thenComparingInt((mapEntry) -> {
-                        EquipmentSlotType armorType = mapEntry.getKey().getEquipmentSlot();
+                        EquipmentSlotType armorType = mapEntry.getKey().getSlot();
                         if (armorType == EquipmentSlotType.HEAD) return 1;
                         if (armorType == EquipmentSlotType.CHEST) return 2;
                         if (armorType == EquipmentSlotType.LEGS) return 3;
@@ -30,7 +30,7 @@ public class LangSection<T> {
                         return 5;
                     })
             );
-    public static final LangSection<EntityType<?>> ENTITIES = new LangSection<>("Entities", EntityType::getTranslationKey);
+    public static final LangSection<EntityType<?>> ENTITIES = new LangSection<>("Entities", EntityType::getDescriptionId);
     public static final LangSection<String> MISC = new LangSection<>("Miscellaneous", s -> s);
 
     private final HashMap<T, String> entries = new HashMap<>();

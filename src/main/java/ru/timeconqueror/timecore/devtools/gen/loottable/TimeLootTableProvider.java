@@ -7,11 +7,11 @@ import com.google.gson.GsonBuilder;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.DirectoryCache;
 import net.minecraft.data.IDataProvider;
+import net.minecraft.loot.LootParameterSets;
+import net.minecraft.loot.LootTable;
+import net.minecraft.loot.LootTableManager;
+import net.minecraft.loot.ValidationTracker;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.storage.loot.LootParameterSets;
-import net.minecraft.world.storage.loot.LootTable;
-import net.minecraft.world.storage.loot.LootTableManager;
-import net.minecraft.world.storage.loot.ValidationTracker;
 import org.jetbrains.annotations.NotNull;
 import ru.timeconqueror.timecore.TimeCore;
 
@@ -35,7 +35,7 @@ public class TimeLootTableProvider implements IDataProvider {
     }
 
     @Override
-    public void act(@NotNull DirectoryCache cache) {
+    public void run(@NotNull DirectoryCache cache) {
         Path outputFolder = this.dataGenerator.getOutputFolder();
         Map<ResourceLocation, LootTable> map = Maps.newHashMap();
 
@@ -43,13 +43,13 @@ public class TimeLootTableProvider implements IDataProvider {
             lootTableSet.register();
 
             lootTableSet.forEach((resourceLocation, builder) -> {
-                if (map.put(resourceLocation, builder.setParameterSet(lootTableSet.getParameterSet()).build()) != null) {
+                if (map.put(resourceLocation, builder.setParamSet(lootTableSet.getParameterSet()).build()) != null) {
                     throw new IllegalStateException("Duplicate loot table: " + resourceLocation);
                 }
             });
         });
 
-        ValidationTracker validationtracker = new ValidationTracker(LootParameterSets.GENERIC, (p_229442_0_) -> null, map::get);
+        ValidationTracker validationtracker = new ValidationTracker(LootParameterSets.ALL_PARAMS, (p_229442_0_) -> null, map::get);
 
         validate(map, validationtracker);
 
@@ -64,7 +64,7 @@ public class TimeLootTableProvider implements IDataProvider {
                 Path path = getPath(outputFolder, resourceLocation);
 
                 try {
-                    IDataProvider.save(GSON, cache, LootTableManager.toJson(lootTable), path);
+                    IDataProvider.save(GSON, cache, LootTableManager.serialize(lootTable), path);
                 } catch (IOException ioexception) {
                     TimeCore.LOGGER.error("Couldn't save loot table {}", path, ioexception);
                 }
@@ -74,9 +74,7 @@ public class TimeLootTableProvider implements IDataProvider {
     }
 
     protected void validate(Map<ResourceLocation, LootTable> map, ValidationTracker validationtracker) {
-        map.forEach((resourceLocation, lootTable) -> {
-            LootTableManager.func_227508_a_(validationtracker, resourceLocation, lootTable);
-        });
+        map.forEach((resourceLocation, lootTable) -> LootTableManager.validate(validationtracker, resourceLocation, lootTable));
     }
 
     public void addLootTableSet(LootTableSet set) {

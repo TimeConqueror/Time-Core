@@ -25,7 +25,7 @@ public abstract class BaseAnimationManager implements AnimationManager {
     @Override
     public Layer getLayer(String name) {
         Layer layer = layerMap.get(name);
-        if (layer == null) throw new RuntimeException("There is no layer with name " + name);
+        if (layer == null) throw new RuntimeException("There is no layer with location " + name);
         return layer;
     }
 
@@ -54,7 +54,7 @@ public abstract class BaseAnimationManager implements AnimationManager {
             layer.setAnimation(data);
             onAnimationSet(data, layer);
         } else {
-            TimeCore.LOGGER.error("Can't start animation: layer with name " + layerName + " doesn't exist in provided animation manager.");
+            TimeCore.LOGGER.error("Can't start animation: layer with location " + layerName + " doesn't exist in provided animation manager.");
         }
     }
 
@@ -79,7 +79,7 @@ public abstract class BaseAnimationManager implements AnimationManager {
                 onAnimationEnd(null, layer, oldWatcher);
             }
         } else {
-            TimeCore.LOGGER.error("Can't find layer with name " + layerName);
+            TimeCore.LOGGER.error("Can't find layer with location " + layerName);
         }
     }
 

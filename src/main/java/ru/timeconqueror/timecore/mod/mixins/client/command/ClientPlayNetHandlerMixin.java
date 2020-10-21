@@ -20,7 +20,7 @@ import ru.timeconqueror.timecore.client.command.ClientCommandManager;
 @Mixin(ClientPlayNetHandler.class)
 public class ClientPlayNetHandlerMixin {
     @Shadow
-    private CommandDispatcher<CommandSource> commandDispatcher;
+    private CommandDispatcher<CommandSource> commands;
 
     @Inject(method = "<init>",
             at = @At(value = "RETURN"))
@@ -29,16 +29,16 @@ public class ClientPlayNetHandlerMixin {
         fillWithClientCommands(clientDispatcher);
     }
 
-    @Inject(method = "handleCommandList",
+    @Inject(method = "handleCommands",
             at = @At(value = "TAIL")
     )
-    public void handleCommandList(SCommandListPacket packetIn, CallbackInfo ci) {
+    public void handleCommands(SCommandListPacket packetIn, CallbackInfo ci) {
         CommandDispatcher<CommandSource> clientDispatcher = ClientCommandManager.getClientDispatcher();
         fillWithClientCommands(clientDispatcher);
     }
 
     private void fillWithClientCommands(CommandDispatcher<CommandSource> clientDispatcher) {
-        RootCommandNode<CommandSource> root = commandDispatcher.getRoot();
+        RootCommandNode<CommandSource> root = commands.getRoot();
 
         for (CommandNode<CommandSource> child : clientDispatcher.getRoot().getChildren()) {
             root.addChild(child);

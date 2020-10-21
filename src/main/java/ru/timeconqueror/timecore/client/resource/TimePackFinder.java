@@ -1,21 +1,18 @@
 package ru.timeconqueror.timecore.client.resource;
 
-import net.minecraft.client.resources.ClientResourcePackInfo;
 import net.minecraft.resources.IPackFinder;
+import net.minecraft.resources.IPackNameDecorator;
 import net.minecraft.resources.PackCompatibility;
 import net.minecraft.resources.ResourcePackInfo;
 import net.minecraft.util.text.StringTextComponent;
-import org.jetbrains.annotations.NotNull;
 
-import java.util.Map;
+import java.util.function.Consumer;
 
 public class TimePackFinder implements IPackFinder {
-
     @Override
-    @SuppressWarnings("unchecked")
-    public <T extends ResourcePackInfo> void addPackInfosToMap(@NotNull Map<String, T> nameToPackMap, @NotNull ResourcePackInfo.IFactory<T> packInfoFactory) {
+    public void loadPacks(Consumer<ResourcePackInfo> consumer, ResourcePackInfo.IFactory iFactory) {
         TimeSpecialResourcePack tSpecialPack = new TimeSpecialResourcePack();
-        ClientResourcePackInfo tSpecialPackInfo = new ClientResourcePackInfo("timecore_special_resources",
+        ResourcePackInfo tSpecialPackInfo = new ResourcePackInfo("timecore_special_resources",
                 true,
                 () -> tSpecialPack,
                 new StringTextComponent(tSpecialPack.getName()),
@@ -23,10 +20,10 @@ public class TimePackFinder implements IPackFinder {
                 PackCompatibility.COMPATIBLE,
                 ResourcePackInfo.Priority.TOP,
                 false,
-                null,
+                IPackNameDecorator.BUILT_IN,
                 false
         );
 
-        nameToPackMap.put(tSpecialPackInfo.getName(), ((T) tSpecialPackInfo));
+        consumer.accept(tSpecialPackInfo);
     }
 }

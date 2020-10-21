@@ -62,7 +62,7 @@ public class BlockStateResource extends JSONTimeResource {
 
     public static class Variant {
         /**
-         * variant's name
+         * variant's location
          * Examples: "north=true"
          */
         private final String name;

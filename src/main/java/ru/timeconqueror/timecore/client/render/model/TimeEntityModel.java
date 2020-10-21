@@ -15,8 +15,8 @@ public class TimeEntityModel<T extends Entity> extends EntityModel<T> {
     /**
      * Sets custom scale for the model.
      * <p>
-     * Should only be called once and before first render frame,
-     * otherwise you'll see unexpected render behaviour.
+     * Should only be called once and before first renderToBuffer frame,
+     * otherwise you'll see unexpected renderToBuffer behaviour.
      */
     public TimeEntityModel<T> setScaleMultiplier(float scaleMultiplier) {
         model.setScaleMultiplier(scaleMultiplier);
@@ -24,17 +24,17 @@ public class TimeEntityModel<T extends Entity> extends EntityModel<T> {
         return this;
     }
 
-    @Override
-    public void render(MatrixStack matrixStackIn, IVertexBuilder bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha) {
-        model.render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
-    }
-
     public ITimeModel getBaseModel() {
         return model;
     }
 
     @Override
-    public void setRotationAngles(T entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
+    public void setupAnim(T entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
 
+    }
+
+    @Override
+    public void renderToBuffer(MatrixStack matrixStackIn, IVertexBuilder bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha) {
+        model.renderToBuffer(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
     }
 }

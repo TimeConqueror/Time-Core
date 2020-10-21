@@ -1,6 +1,6 @@
 package ru.timeconqueror.timecore.animation.component;
 
-import net.minecraft.client.renderer.Vector3f;
+import net.minecraft.util.math.vector.Vector3f;
 
 public class KeyFrame {
     /**
