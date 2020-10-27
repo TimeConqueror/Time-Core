@@ -26,7 +26,7 @@ import ru.timeconqueror.timecore.mod.common.packet.S2CSRSendSinglePieceMsg;
 
 import java.util.*;
 import java.util.stream.Stream;
-
+//ToDo unsubscribe show only sunscribed
 public class StructureRevealer {
     private static final StructureRevealer INSTANCE = MainConfig.INSTANCE.areDevFeaturesEnabled() ? new StructureRevealer() : null;
 

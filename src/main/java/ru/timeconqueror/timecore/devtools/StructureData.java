@@ -41,9 +41,9 @@ public class StructureData {
         if (this == o) return true;
         if (!(o instanceof StructureData)) return false;
         StructureData that = (StructureData) o;
-        return worldId == that.worldId &&
-                bb.equals(that.bb) &&
-                structureName.equals(that.structureName);
+        return bb.equals(that.bb) &&
+                structureName.equals(that.structureName) &&
+                worldId.equals(that.worldId);
     }
 
     @Override

@@ -12,6 +12,7 @@ import net.minecraft.client.renderer.RenderTypeBuffers;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.vector.Matrix4f;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
@@ -20,6 +21,7 @@ import ru.timeconqueror.timecore.api.util.RandHelper;
 import ru.timeconqueror.timecore.client.render.TimeRenderType;
 import ru.timeconqueror.timecore.mod.mixins.accessor.client.ViewDistanceProvider;
 import ru.timeconqueror.timecore.util.client.DrawHelper;
+import ru.timeconqueror.timecore.util.client.RenderHelper;
 
 import java.util.HashSet;
 import java.util.Iterator;
@@ -39,6 +41,20 @@ public class StructureRenderer {
     }
 
     public void onWorldRender(RenderWorldLastEvent event) {
+        if (!RenderHelper.isFabulousModeEnabled()) {
+            render(event.getMatrixStack(), false);
+        }
+    }
+
+    public void render(MatrixStack stack, boolean fabulousMode) {
+        RenderSystem.pushMatrix();
+
+        if (fabulousMode) { // if we call it from WorldRenderer's mixin, we call it when matrix was multiplied, so we need to revert it
+            Matrix4f inverted = stack.last().pose().copy();
+            inverted.invert();
+            RenderSystem.multMatrix(inverted);
+        }
+
         ActiveRenderInfo activeRenderInfo = Minecraft.getInstance().gameRenderer.getMainCamera();
         Vector3d position = activeRenderInfo.getPosition();
 
@@ -47,9 +63,8 @@ public class StructureRenderer {
         RenderType overlayRenderType = TimeRenderType.getOverlay(visibleThroughBlocks);
         IVertexBuilder buffer = bufferSource.getBuffer(overlayRenderType);
 
-        MatrixStack matrixStack = event.getMatrixStack();
-        matrixStack.pushPose();
-        matrixStack.translate(-position.x, -position.y, -position.z);
+        stack.pushPose();
+        stack.translate(-position.x, -position.y, -position.z);
 
         RenderSystem.disableCull();
         if (visibleThroughBlocks) {
@@ -64,7 +79,7 @@ public class StructureRenderer {
         for (Iterator<StructureData> iterator = trackedStructurePieces.iterator(); iterator.hasNext(); ) {
             StructureData container = iterator.next();
 
-            if (container.getWorldId() != worldId) {
+            if (!container.getWorldId().equals(worldId)) {
                 iterator.remove();
                 continue;
             }
@@ -73,18 +88,20 @@ public class StructureRenderer {
             if (shortestDistanceSq > viewDistanceSq) {
                 iterator.remove();
             } else {
-                DrawHelper.drawFilledBoundingBox(matrixStack, buffer, container.getBoundingBox(), DrawHelper.withChangedAlpha(getStructureColor(container.getStructureName()), 0x33));
+                DrawHelper.drawFilledBoundingBox(stack, buffer, container.getBoundingBox(), DrawHelper.withChangedAlpha(getStructureColor(container.getStructureName()), 0x33));
             }
         }
 
         bufferSource.endBatch(overlayRenderType);
 
         RenderSystem.enableCull();
+
         if (visibleThroughBlocks) {
             RenderSystem.enableDepthTest();
         }
 
-        matrixStack.popPose();
+        stack.popPose();
+        RenderSystem.popMatrix();
     }
 
     public void trackStructurePiece(StructureData structureData) {

@@ -15,6 +15,7 @@
   "client": [
     "accessor.client.ViewDistanceProvider",
     "client.command.ClientPlayerEntityMixin",
-    "client.command.ClientPlayNetHandlerMixin"
+    "client.command.ClientPlayNetHandlerMixin",
+    "client.WorldRendererMixin",
   ]
 }
