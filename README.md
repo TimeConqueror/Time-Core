@@ -17,6 +17,7 @@
 ## How to add TimeCore as a gradle dependency:
 1. Add this maven repo in the `repositories` closure:
 
+1.15.2:
 ```groovy
     maven {
         name = "TimeConqueror's Maven"
@@ -28,10 +29,22 @@
         url = 'https://repo.spongepowered.org/maven'
     }
 ```
+1.16.3:
+```groovy
+    maven {
+        name = "TimeConqueror's Maven"
+        url = "https://repo.repsy.io/mvn/timeconqueror/mc/"
+    }
+```
 
 2. Add this dependency in the `dependencies` closure:
+1.15.2:
 ```groovy
 implementation group: 'ru.timeconqueror', name: 'TimeCore', version: '1.15.2-2.1.0.+', classifier: 'dev', changing: true
+```
+1.16.3:
+```groovy
+implementation group: 'ru.timeconqueror', name: 'TimeCore', version: '1.16.3-3.0.0.+', classifier: 'dev', changing: true
 ```
 
 3. Add this string as a `JVM Argument`:
