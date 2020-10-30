@@ -27,3 +27,4 @@ forge*changelog.txt
 /runtimeMods/
 maven
 /logs
+secret.properties

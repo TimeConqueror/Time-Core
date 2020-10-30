@@ -57,9 +57,9 @@ minecraft {
     // Otherwise, we use official mappings in a build script version
     def officialVersion = System.getenv("OFFICIAL_MAPPINGS")
     if (officialVersion == null) {
-        mappings channel: 'snapshot', version: 'complete-20200912-1.16.3-v5'
+        mappings channel: 'snapshot', version: buildProps.snapshot_mappings
     } else {
-        mappings channel: 'official', version: '1.16.3'
+        mappings channel: 'official', version: buildProps.mc_version
     }
     // makeObfSourceJar = false // an Srg named sources jar is made by default. uncomment this to disable.
 
@@ -221,10 +221,11 @@ jar {
 
 reobf.create('devJar')
 
+def devClassifier = new String('mojang-' + buildProps.snapshot_mappings)
 task devJar(type: Jar) {
     from sourceSets.main.output
 
-    classifier = 'dev'
+    classifier = devClassifier
 
     manifest {
         attributes([
@@ -252,6 +253,8 @@ task sourcesJar(type: Jar) {
 def mavenLink1 = "C:/IJ Projects/Maven"
 def mavenLink2 = "${project.projectDir.absolutePath.replace("\\", "/")}/maven"
 
+def mavenLinkRepsy = "https://repo.repsy.io/mvn/${secretProps.repsy.user}/${secretProps.repsy.repo_name}"
+
 publishing {
     publications {
         mavenJava(MavenPublication) {p ->
@@ -267,12 +270,21 @@ publishing {
         maven {
             url mavenLink2
         }
+        if(secretProps != null) {
+            maven {
+                url mavenLinkRepsy
+                credentials {
+                    username secretProps.repsy.user
+                    password secretProps.repsy.password
+                }
+            }
+        }
     }
 }
 
 task deobfPublishedDevJar(type: Exec) {
     workingDir "python/scripts"
 
-    commandLine 'python', 'deobfuscator.py', '--paths', "$mavenLink1/ru/timeconqueror/$archivesBaseName/$version/$archivesBaseName-$version-dev.jar, $mavenLink2/ru/timeconqueror/$archivesBaseName/$version/$archivesBaseName-$version-dev.jar"
+    commandLine 'python', 'deobfuscator.py', '--paths', "$mavenLink1/ru/timeconqueror/$archivesBaseName/$version/$archivesBaseName-$version-${devClassifier}.jar, $mavenLink2/ru/timeconqueror/$archivesBaseName/$version/$archivesBaseName-$version-${devClassifier}.jar"
 }
 publish.finalizedBy(deobfPublishedDevJar)

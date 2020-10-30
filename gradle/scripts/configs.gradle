@@ -12,6 +12,14 @@ ext.updateConfigs = new Runnable() {
             prop.load(it)
             ext.buildProps = new ConfigSlurper().parse prop
         }
+
+        if(file("secret.properties").exists()) {
+            file "secret.properties" withReader {
+                def prop = new Properties()
+                prop.load(it)
+                ext.secretProps = new ConfigSlurper().parse prop
+            }
+        }
     }
 }
 
