@@ -106,7 +106,7 @@ public class DeferredBlockRegister extends DeferredFMLImplForgeRegister<Block> {
          * @param itemSettings extra stuff, that you can do for that item, like generating item model.
          */
         public BlockRegistrator<B> regDefaultBlockItem(Item.Properties props, Consumer<ItemRegistrator> itemSettings) {
-            return regItem(() -> new BlockItem(getRegistryObject().get(), props), itemSettings);
+            return regItem(() -> new BlockItem(asRegistryObject().get(), props), itemSettings);
         }
 
         /**
@@ -138,7 +138,7 @@ public class DeferredBlockRegister extends DeferredFMLImplForgeRegister<Block> {
          * @param stateResourceSupplier factory, which should return new BlockStateResource instance every time it's called.
          */
         public BlockRegistrator<B> genState(Supplier<BlockStateResource> stateResourceSupplier) {
-            runTaskOnClientSetup(() -> TimeClient.RESOURCE_HOLDER.addBlockStateResource(getRegistryObject().get(), stateResourceSupplier.get()));
+            runTaskOnClientSetup(() -> TimeClient.RESOURCE_HOLDER.addBlockStateResource(asRegistryObject().get(), stateResourceSupplier.get()));
 
             return this;
         }
@@ -193,13 +193,13 @@ public class DeferredBlockRegister extends DeferredFMLImplForgeRegister<Block> {
          * @param enName english localization location of block
          */
         public BlockRegistrator<B> genLangEntry(String enName) {
-            runTaskAfterRegistering(() -> LangGeneratorFacade.addBlockEntry(getRegistryObject().get(), enName));
+            runTaskAfterRegistering(() -> LangGeneratorFacade.addBlockEntry(asRegistryObject().get(), enName));
             return this;
         }
 
         /**
          * Runs task for current registrator directly after registering object.
-         * Entry for {@link #getRegistryObject()} is already registered in this moment, so it can be retrieved inside this task.
+         * Entry for {@link #asRegistryObject()} is already registered in this moment, so it can be retrieved inside this task.
          */
         public BlockRegistrator<B> doAfterRegistering(Consumer<BlockRegistrator<B>> task) {
             runTaskAfterRegistering(() -> task.accept(this));
@@ -208,7 +208,7 @@ public class DeferredBlockRegister extends DeferredFMLImplForgeRegister<Block> {
 
         /**
          * Runs task for current registrator  on client setup.
-         * Entry for {@link #getRegistryObject()} is already registered in this moment, so it can be retrieved inside this task.
+         * Entry for {@link #asRegistryObject()} is already registered in this moment, so it can be retrieved inside this task.
          */
         public BlockRegistrator<B> doOnClientSetup(Consumer<BlockRegistrator<B>> task) {
             runTaskOnClientSetup(() -> task.accept(this));

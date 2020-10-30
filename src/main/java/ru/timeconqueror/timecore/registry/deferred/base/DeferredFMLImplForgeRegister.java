@@ -40,15 +40,15 @@ public abstract class DeferredFMLImplForgeRegister<T extends IForgeRegistryEntry
          * End method which returns the final object, so here you can retrieve your registry entry.
          */
         public RegistryObject<T> end() {
-            return getRegistryObject();
+            return asRegistryObject();
         }
 
-        public RegistryObject<T> getRegistryObject() {
+        public RegistryObject<T> asRegistryObject() {
             return registryObject;
         }
 
         public ResourceLocation getRegistryKey() {
-            return getRegistryObject().getId();
+            return asRegistryObject().getId();
         }
 
         public String getName() {

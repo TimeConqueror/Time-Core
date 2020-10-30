@@ -105,7 +105,7 @@ public class DeferredItemRegister extends DeferredFMLImplForgeRegister<Item> {
          *                          For details see {@link ItemModel}.
          */
         public ItemRegistrator<I> genModel(Supplier<ItemModel> itemModelSupplier) {
-            runOnlyForClient(() -> TimeClient.RESOURCE_HOLDER.addItemModel(getRegistryObject().get(), itemModelSupplier.get()));
+            runOnlyForClient(() -> TimeClient.RESOURCE_HOLDER.addItemModel(asRegistryObject().get(), itemModelSupplier.get()));
             return this;
         }
 
@@ -116,7 +116,7 @@ public class DeferredItemRegister extends DeferredFMLImplForgeRegister<Item> {
          * @param enName english localization location of item
          */
         public ItemRegistrator<I> genLangEntry(String enName) {
-            runTaskAfterRegistering(() -> LangGeneratorFacade.addItemEntry(getRegistryObject().get(), enName));
+            runTaskAfterRegistering(() -> LangGeneratorFacade.addItemEntry(asRegistryObject().get(), enName));
             return this;
         }
 
@@ -134,7 +134,7 @@ public class DeferredItemRegister extends DeferredFMLImplForgeRegister<Item> {
          */
         public ItemRegistrator<I> genArmorLangEntryByMaterial(String materialEnName) {
             runTaskAfterRegistering(() -> {
-                Item item = getRegistryObject().get();
+                Item item = asRegistryObject().get();
                 if (item instanceof ArmorItem) {
                     LangGeneratorFacade.addArmorEntryByMaterial((ArmorItem) item, materialEnName);
                 } else {
@@ -157,7 +157,7 @@ public class DeferredItemRegister extends DeferredFMLImplForgeRegister<Item> {
          */
         public ItemRegistrator<I> genArmorLangEntry(String enName) {
             runTaskAfterRegistering(() -> {
-                Item item = getRegistryObject().get();
+                Item item = asRegistryObject().get();
                 if (item instanceof ArmorItem) {
                     LangGeneratorFacade.addArmorEntry((ArmorItem) item, enName);
                 } else {
@@ -169,7 +169,7 @@ public class DeferredItemRegister extends DeferredFMLImplForgeRegister<Item> {
 
         /**
          * Runs task for current registrator directly after registering object.
-         * Entry for {@link #getRegistryObject()} is already registered in this moment, so it can be retrieved inside this task.
+         * Entry for {@link #asRegistryObject()} is already registered in this moment, so it can be retrieved inside this task.
          */
         public ItemRegistrator<I> doAfterRegistering(Consumer<ItemRegistrator<I>> task) {
             runTaskAfterRegistering(() -> task.accept(this));
@@ -178,7 +178,7 @@ public class DeferredItemRegister extends DeferredFMLImplForgeRegister<Item> {
 
         /**
          * Runs task for current registrator  on client setup.
-         * Entry for {@link #getRegistryObject()} is already registered in this moment, so it can be retrieved inside this task.
+         * Entry for {@link #asRegistryObject()} is already registered in this moment, so it can be retrieved inside this task.
          */
         public ItemRegistrator<I> doOnClientSetup(Consumer<ItemRegistrator<I>> task) {
             runTaskOnClientSetup(() -> task.accept(this));
