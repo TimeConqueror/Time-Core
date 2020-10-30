@@ -69,7 +69,7 @@ public class TimeModelRenderer extends ModelRenderer {
                 vector3f.transform(matrix3f);
                 float f = vector3f.x();
                 float f1 = vector3f.y();
-                float f2 = vector3f.x();
+                float f2 = vector3f.z();
 
                 for (int i = 0; i < 4; ++i) {
                     ModelRenderer.PositionTextureVertex vertex = quads.vertices[i];
