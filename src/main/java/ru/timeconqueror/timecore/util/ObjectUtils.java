@@ -18,11 +18,6 @@ public class ObjectUtils {
         return true;
     }
 
-    @SuppressWarnings("unchecked")
-    public static <T> T bypassClassChecking(Object obj) {
-        return (T) obj;
-    }
-
     public static <E extends Throwable> void runWithCatching(Class<E> exceptionToHandle, ThrowingRunnable<E> runnable) {
         runWithCatching(exceptionToHandle, runnable, Throwable::printStackTrace);
     }

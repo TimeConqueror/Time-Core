@@ -1,6 +1,5 @@
 package ru.timeconqueror.timecore.registry.deferred;
 
-import net.minecraft.block.Block;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraftforge.fml.RegistryObject;
 import ru.timeconqueror.timecore.TimeCore;
@@ -8,12 +7,13 @@ import ru.timeconqueror.timecore.block.tile.DummyTileEntity;
 import ru.timeconqueror.timecore.client.DummyTileEntityRenderer;
 import ru.timeconqueror.timecore.registry.BlockRegistryExample;
 import ru.timeconqueror.timecore.registry.TimeAutoRegistrable;
+import ru.timeconqueror.timecore.registry.newreg.TileEntityRegister;
 
 public class TileEntityDeferredRegistryExample {
     @TimeAutoRegistrable
-    private static final DeferredTileEntityRegister REGISTER = new DeferredTileEntityRegister(TimeCore.MODID);
+    private static final TileEntityRegister REGISTER = new TileEntityRegister(TimeCore.MODID);
 
-    public static RegistryObject<TileEntityType<DummyTileEntity>> TEST_TE_TYPE = REGISTER.regTileEntityType("test_tile", DummyTileEntity::new, () -> new Block[]{BlockRegistryExample.TEST_BLOCK_WITH_TILE})
+    public static RegistryObject<TileEntityType<DummyTileEntity>> TEST_TE_TYPE = REGISTER.register("test_tile", DummyTileEntity::new, BlockRegistryExample.TEST_BLOCK_WITH_TILE)
             .regCustomRenderer(() -> DummyTileEntityRenderer::new)
-            .endTyped();
+            .asRegistryObject();
 }

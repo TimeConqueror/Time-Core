@@ -7,7 +7,7 @@ import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
-import ru.timeconqueror.timecore.util.ObjectUtils;
+import ru.timeconqueror.timecore.util.Hacks;
 
 import java.util.function.Supplier;
 
@@ -16,7 +16,7 @@ public interface ITimePacket {
     @NotNull//TODO move to handler
     default World getWorld(NetworkEvent.Context ctx) {
         return DistExecutor.runForDist(//TODO deprecated, switch to newer?
-                () -> () -> ObjectUtils.bypassClassChecking(Minecraft.getInstance().level),
+                () -> () -> Hacks.bypassClassChecking(Minecraft.getInstance().level),
                 () -> () -> ctx.getSender().level);
     }
 

@@ -17,9 +17,9 @@ public class TileEntityRegister extends ForgeRegister<TileEntityType<?>> {
         super(ForgeRegistries.TILE_ENTITIES, modid);
     }
 
-    public <T extends TileEntity> TileEntityRegisterChain<T> register(String name, Supplier<T> tileEntityFactory, Supplier<Block[]> validBlocksSupplier) {
+    public <T extends TileEntity> TileEntityRegisterChain<T> register(String name, Supplier<T> tileEntityFactory, Block... validBlocks) {
         Supplier<TileEntityType<T>> typeSupplier = () ->
-                TileEntityType.Builder.of(tileEntityFactory, validBlocksSupplier.get())
+                TileEntityType.Builder.of(tileEntityFactory, validBlocks)
                         .build(null /*forge doesn't have support for it*/);
 
         RegistryObject<TileEntityType<T>> holder = registerEntry(name, typeSupplier);

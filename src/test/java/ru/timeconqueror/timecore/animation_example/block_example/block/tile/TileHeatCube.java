@@ -15,7 +15,7 @@ public class TileHeatCube extends TileEntity implements AnimatedObject<TileHeatC
     private AnimationSystem<TileHeatCube> animationSystem;
 
     public TileHeatCube() {
-        super(ATileRegistry.HEAT_CUBE_TILE.get());
+        super(ATileRegistry.HEAT_CUBE);
     }
 
     @Override

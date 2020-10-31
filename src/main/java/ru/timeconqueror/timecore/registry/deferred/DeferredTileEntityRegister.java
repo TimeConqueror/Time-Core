@@ -9,7 +9,7 @@ import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.registries.ForgeRegistries;
 import ru.timeconqueror.timecore.registry.deferred.base.DeferredFMLImplForgeRegister;
-import ru.timeconqueror.timecore.util.ObjectUtils;
+import ru.timeconqueror.timecore.util.Hacks;
 
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -41,7 +41,7 @@ public class DeferredTileEntityRegister extends DeferredFMLImplForgeRegister<Til
          * Will return the typed registry object of tile entity type.
          */
         public RegistryObject<TileEntityType<T>> endTyped() {
-            return (RegistryObject<TileEntityType<T>>) ObjectUtils.bypassClassChecking(super.end());
+            return Hacks.bypassClassChecking(super.end());
         }
     }
 }

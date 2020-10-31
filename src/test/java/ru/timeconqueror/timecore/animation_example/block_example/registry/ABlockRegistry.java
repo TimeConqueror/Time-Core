@@ -3,20 +3,29 @@ package ru.timeconqueror.timecore.animation_example.block_example.registry;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.item.ItemGroup;
-import net.minecraftforge.fml.RegistryObject;
+import net.minecraftforge.registries.ObjectHolder;
 import ru.timeconqueror.timecore.TimeCore;
 import ru.timeconqueror.timecore.animation_example.block_example.block.HeatCubeBlock;
 import ru.timeconqueror.timecore.registry.BlockPropsFactory;
 import ru.timeconqueror.timecore.registry.TimeAutoRegistrable;
-import ru.timeconqueror.timecore.registry.deferred.DeferredBlockRegister;
+import ru.timeconqueror.timecore.registry.newreg.BlockRegister;
 
+import static ru.timeconqueror.timecore.util.Hacks.promise;
+
+@ObjectHolder(TimeCore.MODID)
 public class ABlockRegistry {
-    @TimeAutoRegistrable
-    private static final DeferredBlockRegister REGISTER = new DeferredBlockRegister(TimeCore.MODID);
+    public static final HeatCubeBlock HEAT_CUBE = promise();
 
-    private static final BlockPropsFactory PROPS_CREATOR = new BlockPropsFactory(() -> Block.Properties.of(Material.STONE));
+    private static class Init {
+        @TimeAutoRegistrable
+        private static final BlockRegister REGISTER = new BlockRegister(TimeCore.MODID);
 
-    public static RegistryObject<HeatCubeBlock> HEAT_CUBE = REGISTER.regBlock("heat_cube22", () -> new HeatCubeBlock(PROPS_CREATOR.create()))
-            .regDefaultBlockItem(ItemGroup.TAB_MISC)
-            .endTyped();
+        @TimeAutoRegistrable.InitMethod
+        private static void register() {
+            BlockPropsFactory propsCreator = new BlockPropsFactory(() -> Block.Properties.of(Material.STONE));
+
+            REGISTER.register("heat_cube", () -> new HeatCubeBlock(propsCreator.create()))
+                    .regDefaultBlockItem(ItemGroup.TAB_MISC);
+        }
+    }
 }

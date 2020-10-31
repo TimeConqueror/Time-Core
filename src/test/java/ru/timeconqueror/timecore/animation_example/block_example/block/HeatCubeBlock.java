@@ -37,7 +37,7 @@ public class HeatCubeBlock extends Block {
     @Nullable
     @Override
     public TileEntity createTileEntity(BlockState state, IBlockReader world) {
-        return ATileRegistry.HEAT_CUBE_TILE.get().create();
+        return ATileRegistry.HEAT_CUBE.create();
     }
 
 //    @Override
