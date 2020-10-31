@@ -16,7 +16,7 @@ public class ABlockRegistry {
 
     private static final BlockPropsFactory PROPS_CREATOR = new BlockPropsFactory(() -> Block.Properties.of(Material.STONE));
 
-    public static RegistryObject<HeatCubeBlock> HEAT_CUBE = REGISTER.regBlock("heat_cube", () -> new HeatCubeBlock(PROPS_CREATOR.create()))
+    public static RegistryObject<HeatCubeBlock> HEAT_CUBE = REGISTER.regBlock("heat_cube22", () -> new HeatCubeBlock(PROPS_CREATOR.create()))
             .regDefaultBlockItem(ItemGroup.TAB_MISC)
             .endTyped();
 }

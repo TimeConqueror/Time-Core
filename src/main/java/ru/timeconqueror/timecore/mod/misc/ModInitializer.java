@@ -2,27 +2,43 @@ package ru.timeconqueror.timecore.mod.misc;
 
 import net.minecraftforge.fml.ModContainer;
 import net.minecraftforge.fml.ModLoadingContext;
+import net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.moddiscovery.ModAnnotation;
 import net.minecraftforge.forgespi.language.ModFileScanData;
+import org.objectweb.asm.Type;
 import ru.timeconqueror.timecore.TimeCore;
 import ru.timeconqueror.timecore.devtools.gen.lang.LangGeneratorFacade;
 import ru.timeconqueror.timecore.devtools.kotlin.KotlinAutomaticEventSubscriber;
 import ru.timeconqueror.timecore.registry.TimeAutoRegistrable;
+import ru.timeconqueror.timecore.registry.TimeAutoRegistrable.InitMethod;
 import ru.timeconqueror.timecore.registry.deferred.base.DeferredFMLImplForgeRegister;
 import ru.timeconqueror.timecore.registry.deferred.base.DeferredTimeRegister;
+import ru.timeconqueror.timecore.registry.newreg.ForgeRegister;
+import ru.timeconqueror.timecore.registry.newreg.TimeRegister;
 import ru.timeconqueror.timecore.util.reflection.ReflectionHelper;
 import ru.timeconqueror.timecore.util.reflection.UnlockedField;
+import ru.timeconqueror.timecore.util.reflection.UnlockedMethod;
 
 import java.lang.annotation.ElementType;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
 
 import static net.minecraftforge.fml.Logging.LOADING;
 
 public class ModInitializer {
+    private static final Type TIME_AUTO_REG_TYPE = Type.getType(TimeAutoRegistrable.class);
+    private static final Type TIME_AUTO_REG_INIT_TYPE = Type.getType(InitMethod.class);
+
+    private static final List<UnlockedMethod<?>> INIT_METHODS = new ArrayList<>();
+
     public static void run(String modId, ModContainer modContainer, ModFileScanData scanResults, Class<?> modClass) {
         runKotlinAutomaticEventSubscriber(modId, modContainer, scanResults, modClass);
         setupAutoRegistries(scanResults);
         regModBusListeners();
+
+        processInitMethods();
     }
 
     private static void runKotlinAutomaticEventSubscriber(String modId, ModContainer modContainer, ModFileScanData scanResults, Class<?> modClass) {
@@ -37,52 +53,13 @@ public class ModInitializer {
 
     private static void setupAutoRegistries(ModFileScanData scanResults) {
         scanResults.getAnnotations().stream()
-                .filter(annotationData -> annotationData.getAnnotationType().equals(TimeAutoRegistrable.ASM_TYPE))
+                .filter(annotationData -> annotationData.getAnnotationType().equals(TIME_AUTO_REG_TYPE) || annotationData.getAnnotationType().equals(TIME_AUTO_REG_INIT_TYPE))
                 .forEach(annotationData -> {
                     try {
-                        String containerClassName = annotationData.getClassType().getClassName();
-                        Class<?> containerClass = Class.forName(containerClassName);
-
-                        ElementType targetType = annotationData.getTargetType();
-
-                        if (targetType == ElementType.FIELD) {
-                            String memberName = annotationData.getMemberName();
-                            UnlockedField<Object> field = ReflectionHelper.findFieldUnsuppressed(containerClass, memberName);
-
-                            processAnnoOnField(containerClass, field);
-                        } else if (targetType == ElementType.TYPE) {
-
-                            final ModAnnotation.EnumHolder targetHolder = (ModAnnotation.EnumHolder) annotationData.getAnnotationData().getOrDefault("target", new ModAnnotation.EnumHolder(null, "INSTANCE"));
-                            TimeAutoRegistrable.Target target = TimeAutoRegistrable.Target.valueOf(targetHolder.getValue());
-
-                            Object instance;
-                            try {
-                                instance = containerClass.newInstance();
-                            } catch (ReflectiveOperationException e) {
-                                if (e.getCause() instanceof NoSuchMethodException) {
-                                    throw new RuntimeException("TimeCore AutoRegistry can't find constructor with no parameters for " + containerClass, e);
-                                } else {
-                                    throw new RuntimeException(e);
-                                }
-                            }
-
-                            if (target == TimeAutoRegistrable.Target.CLASS) {
-                                FMLJavaModLoadingContext.get().getModEventBus().register(containerClass);
-                                TimeCore.LOGGER.debug("{}: Registered Event Subscriber as class: {}", ModLoadingContext.get().getActiveNamespace(), containerClass);
-                            } else {
-                                FMLJavaModLoadingContext.get().getModEventBus().register(instance);
-                                TimeCore.LOGGER.debug("{}: Registered Event Subscriber as instance: {}", ModLoadingContext.get().getActiveNamespace(), containerClass);
-                            }
-
-                            String instanceFieldName = (String) annotationData.getAnnotationData().getOrDefault("instance", "");
-                            if (!instanceFieldName.isEmpty()) {
-                                UnlockedField<Object> field = ReflectionHelper.findFieldUnsuppressed(containerClass, instanceFieldName);
-                                if (field.isStatic()) {
-                                    field.set(containerClass, instance);
-                                } else {
-                                    throw new IllegalStateException("Field with location " + instanceFieldName + " in class " + containerClass + " should be static!");
-                                }
-                            }
+                        if (annotationData.getAnnotationType().equals(TIME_AUTO_REG_TYPE)) {
+                            processTimeAutoRegistrable(annotationData);
+                        } else {
+                            processTimeAutoRegInitMethod(annotationData);
                         }
                     } catch (ClassNotFoundException e) {
                         throw new RuntimeException(e);
@@ -90,12 +67,91 @@ public class ModInitializer {
                 });
     }
 
-    private static void processAnnoOnField(Class<?> containerClass, UnlockedField<Object> field) {
-        if (field.isStatic() && DeferredTimeRegister.class.isAssignableFrom(field.getField().getType())) {
-            DeferredTimeRegister register = ((DeferredTimeRegister) field.get(null));
-            register.regToBus(FMLJavaModLoadingContext.get().getModEventBus());
-        } else {
-            throw new UnsupportedOperationException(TimeAutoRegistrable.class.getSimpleName() + " can be used only on fields that are static and have " + DeferredFMLImplForgeRegister.class.getSimpleName() + " type");
+    private static void processTimeAutoRegistrable(ModFileScanData.AnnotationData annotationData) throws ClassNotFoundException {
+        String containerClassName = annotationData.getClassType().getClassName();
+        Class<?> containerClass = Class.forName(containerClassName);
+
+        ElementType targetType = annotationData.getTargetType();
+
+        if (targetType == ElementType.FIELD) {
+            String fieldName = annotationData.getMemberName();
+            UnlockedField<Object> field = ReflectionHelper.findFieldUnsuppressed(containerClass, fieldName);
+
+            processTimeAutoRegistrableOnField(containerClass, field);
+        } else if (targetType == ElementType.TYPE) {
+
+            final ModAnnotation.EnumHolder targetHolder = (ModAnnotation.EnumHolder) annotationData.getAnnotationData().getOrDefault("target", new ModAnnotation.EnumHolder(null, "INSTANCE"));
+            TimeAutoRegistrable.Target target = TimeAutoRegistrable.Target.valueOf(targetHolder.getValue());
+
+            Object instance;
+            try {
+                instance = containerClass.newInstance();
+            } catch (ReflectiveOperationException e) {
+                if (e.getCause() instanceof NoSuchMethodException) {
+                    throw new RuntimeException("TimeCore AutoRegistry can't find constructor with no parameters for " + containerClass, e);
+                } else {
+                    throw new RuntimeException(e);
+                }
+            }
+
+            if (target == TimeAutoRegistrable.Target.CLASS) {
+                FMLJavaModLoadingContext.get().getModEventBus().register(containerClass);
+                TimeCore.LOGGER.debug("{}: Registered Event Subscriber as class: {}", ModLoadingContext.get().getActiveNamespace(), containerClass);
+            } else {
+                FMLJavaModLoadingContext.get().getModEventBus().register(instance);
+                TimeCore.LOGGER.debug("{}: Registered Event Subscriber as instance: {}", ModLoadingContext.get().getActiveNamespace(), containerClass);
+            }
+
+            String instanceFieldName = (String) annotationData.getAnnotationData().getOrDefault("instance", "");
+            if (!instanceFieldName.isEmpty()) {
+                UnlockedField<Object> field = ReflectionHelper.findFieldUnsuppressed(containerClass, instanceFieldName);
+                if (field.isStatic()) {
+                    field.set(containerClass, instance);
+                } else {
+                    throw new IllegalStateException("Field with location " + instanceFieldName + " in class " + containerClass + " should be static!");
+                }
+            }
         }
+    }
+
+    private static void processTimeAutoRegistrableOnField(Class<?> containerClass, UnlockedField<Object> field) {
+        if (field.isStatic()) {
+            if (TimeRegister.class.isAssignableFrom(field.getField().getType())) {
+                TimeRegister register = (TimeRegister) field.get(null);
+                register.regToBus(FMLJavaModLoadingContext.get().getModEventBus());
+                return;
+            }
+
+            if (DeferredTimeRegister.class.isAssignableFrom(field.getField().getType())) {
+                DeferredTimeRegister register = ((DeferredTimeRegister) field.get(null));
+                register.regToBus(FMLJavaModLoadingContext.get().getModEventBus());
+            }
+        } else {
+            throw new UnsupportedOperationException(TimeAutoRegistrable.class.getSimpleName() + " can be used only on fields that are static and have " + DeferredFMLImplForgeRegister.class.getSimpleName() + " or " + ForgeRegister.class.getSimpleName() + " type");
+        }
+    }
+
+    private static void processTimeAutoRegInitMethod(ModFileScanData.AnnotationData annotationData) throws ClassNotFoundException {
+        String containerClassName = annotationData.getClassType().getClassName();
+        Class<?> containerClass = Class.forName(containerClassName);
+
+        String methodName = annotationData.getMemberName();
+        UnlockedMethod<Object> initMethod = ReflectionHelper.findMethodUnsuppressed(containerClass, methodName);
+        if (initMethod.isStatic()) {
+            Method nativeMethod = initMethod.getMethod();
+            if (nativeMethod.getParameterCount() == 0) {
+                INIT_METHODS.add(initMethod);
+            } else if (nativeMethod.getParameterCount() == 1 && FMLConstructModEvent.class.isAssignableFrom(nativeMethod.getParameterTypes()[0])) {
+                FMLJavaModLoadingContext.get().getModEventBus().addListener(event -> initMethod.invoke(null, event));
+            } else {
+                throw new UnsupportedOperationException(InitMethod.class.getSimpleName() + " can be used only on methods without any parameters");
+            }
+        } else {
+            throw new UnsupportedOperationException(InitMethod.class.getSimpleName() + " can be used only on static fields");
+        }
+    }
+
+    private static void processInitMethods() {
+        INIT_METHODS.forEach(unlockedMethod -> unlockedMethod.invoke(null));
     }
 }

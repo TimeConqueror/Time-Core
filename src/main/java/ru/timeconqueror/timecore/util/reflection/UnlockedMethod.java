@@ -36,4 +36,11 @@ public class UnlockedMethod<T> {
     public Method getMethod() {
         return method;
     }
+
+    /**
+     * Returns true, if provided method is static, otherwise returns false.
+     */
+    public boolean isStatic() {
+        return ReflectionHelper.isStatic(method);
+    }
 }

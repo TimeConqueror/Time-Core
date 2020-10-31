@@ -11,7 +11,7 @@ public class TileEntityCommonRegistryExample extends TileEntityTimeRegistry {
 
     @Override
     public void register() {
-        TEST_TE_TYPE_1 = regTileEntity(DummyTileEntity::new, "test_tile_1", BlockCommonRegistryExample.TEST_BLOCK_WITH_TILE)
+        TEST_TE_TYPE_1 = regTileEntity(DummyTileEntity::new, "test_tile_1", BlockRegistryExample.TEST_BLOCK_WITH_TILE)
                 .regCustomRenderer(() -> DummyTileEntityRenderer::new)
                 .retrieveTileEntityType();
     }

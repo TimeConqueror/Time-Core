@@ -23,6 +23,10 @@ public class ReflectionHelper {
         return Modifier.isStatic(f.getModifiers());
     }
 
+    public static boolean isStatic(Method m) {
+        return Modifier.isStatic(m.getModifiers());
+    }
+
     /**
      * Removes {@code final} modifier from field.
      */

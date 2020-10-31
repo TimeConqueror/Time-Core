@@ -37,8 +37,6 @@ import java.lang.annotation.Target;
 @Target({ElementType.TYPE, ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface TimeAutoRegistrable {
-    Type ASM_TYPE = Type.getType(TimeAutoRegistrable.class);
-
     /**
      * Depending on what is set, different listener creation behaviour is performed.
      *
@@ -71,6 +69,12 @@ public @interface TimeAutoRegistrable {
      * </pre>
      */
     String instance() default "";
+
+    @java.lang.annotation.Target({ElementType.METHOD})
+    @Retention(RetentionPolicy.RUNTIME)
+    @interface InitMethod {
+        Type ASM_TYPE = Type.getType(InitMethod.class);
+    }
 
     enum Target {
         INSTANCE,
