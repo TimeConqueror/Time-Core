@@ -20,7 +20,7 @@ public class ATileRegistry {
 
         @TimeAutoRegistrable.InitMethod
         private static void register() {
-            REGISTER.register("heat_cube", TileHeatCube::new, ABlockRegistry.HEAT_CUBE)
+            REGISTER.registerSingleBound("heat_cube", TileHeatCube::new, () -> ABlockRegistry.HEAT_CUBE)
                     .regCustomRenderer(() -> TERHeatCube::new);
         }
     }

@@ -17,7 +17,7 @@ public class TileEntityRegistryExample {
 
         @TimeAutoRegistrable.InitMethod
         private static void register() {
-            REGISTER.register("test_tile_1", DummyTileEntity::new, BlockRegistryExample.TEST_BLOCK_WITH_TILE);
+            REGISTER.registerSingleBound("test_tile_1", DummyTileEntity::new, () -> BlockRegistryExample.TEST_BLOCK_WITH_TILE);
         }
     }
 }

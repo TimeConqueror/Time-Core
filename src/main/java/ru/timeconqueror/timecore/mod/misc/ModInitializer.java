@@ -12,8 +12,6 @@ import ru.timeconqueror.timecore.devtools.gen.lang.LangGeneratorFacade;
 import ru.timeconqueror.timecore.devtools.kotlin.KotlinAutomaticEventSubscriber;
 import ru.timeconqueror.timecore.registry.TimeAutoRegistrable;
 import ru.timeconqueror.timecore.registry.TimeAutoRegistrable.InitMethod;
-import ru.timeconqueror.timecore.registry.deferred.base.DeferredFMLImplForgeRegister;
-import ru.timeconqueror.timecore.registry.deferred.base.DeferredTimeRegister;
 import ru.timeconqueror.timecore.registry.newreg.ForgeRegister;
 import ru.timeconqueror.timecore.registry.newreg.TimeRegister;
 import ru.timeconqueror.timecore.util.reflection.ReflectionHelper;
@@ -119,15 +117,12 @@ public class ModInitializer {
             if (TimeRegister.class.isAssignableFrom(field.getField().getType())) {
                 TimeRegister register = (TimeRegister) field.get(null);
                 register.regToBus(FMLJavaModLoadingContext.get().getModEventBus());
-                return;
-            }
-
-            if (DeferredTimeRegister.class.isAssignableFrom(field.getField().getType())) {
-                DeferredTimeRegister register = ((DeferredTimeRegister) field.get(null));
-                register.regToBus(FMLJavaModLoadingContext.get().getModEventBus());
+                register.setOwner(containerClass);
+            } else {
+                throw new UnsupportedOperationException(TimeAutoRegistrable.class.getSimpleName() + " can be used only on fields that have " + ForgeRegister.class.getSimpleName() + " type. Error is in: " + field);
             }
         } else {
-            throw new UnsupportedOperationException(TimeAutoRegistrable.class.getSimpleName() + " can be used only on fields that are static and have " + DeferredFMLImplForgeRegister.class.getSimpleName() + " or " + ForgeRegister.class.getSimpleName() + " type");
+            throw new UnsupportedOperationException(TimeAutoRegistrable.class.getSimpleName() + " can be used only on static fields. Error is in: " + field);
         }
     }
 
@@ -135,8 +130,19 @@ public class ModInitializer {
         String containerClassName = annotationData.getClassType().getClassName();
         Class<?> containerClass = Class.forName(containerClassName);
 
-        String methodName = annotationData.getMemberName();
-        UnlockedMethod<Object> initMethod = ReflectionHelper.findMethodUnsuppressed(containerClass, methodName);
+        String methodSignature = annotationData.getMemberName();
+
+        StringBuilder methodName = new StringBuilder();
+        for (char c : methodSignature.toCharArray()) {
+            if (c != '(') {
+                methodName.append(c);
+            } else {
+                break;
+            }
+        }
+
+        UnlockedMethod<Object> initMethod = ReflectionHelper.findMethodUnsuppressed(containerClass, methodName.toString());
+
         if (initMethod.isStatic()) {
             Method nativeMethod = initMethod.getMethod();
             if (nativeMethod.getParameterCount() == 0) {
@@ -144,10 +150,10 @@ public class ModInitializer {
             } else if (nativeMethod.getParameterCount() == 1 && FMLConstructModEvent.class.isAssignableFrom(nativeMethod.getParameterTypes()[0])) {
                 FMLJavaModLoadingContext.get().getModEventBus().addListener(event -> initMethod.invoke(null, event));
             } else {
-                throw new UnsupportedOperationException(InitMethod.class.getSimpleName() + " can be used only on methods without any parameters");
+                throw new UnsupportedOperationException(InitMethod.class.getSimpleName() + " can be used only on methods without any parameters. Error is in: " + initMethod);
             }
         } else {
-            throw new UnsupportedOperationException(InitMethod.class.getSimpleName() + " can be used only on static fields");
+            throw new UnsupportedOperationException(InitMethod.class.getSimpleName() + " can be used only on static fields. Error is in: " + initMethod);
         }
     }
 

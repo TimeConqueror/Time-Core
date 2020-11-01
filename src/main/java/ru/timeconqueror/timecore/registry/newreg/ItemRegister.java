@@ -3,8 +3,11 @@ package ru.timeconqueror.timecore.registry.newreg;
 import net.minecraft.item.ArmorItem;
 import net.minecraft.item.Item;
 import net.minecraftforge.fml.RegistryObject;
+import net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent;
 import net.minecraftforge.fml.event.lifecycle.GatherDataEvent;
 import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.ObjectHolder;
+import ru.timeconqueror.timecore.api.TimeMod;
 import ru.timeconqueror.timecore.api.client.TimeClient;
 import ru.timeconqueror.timecore.api.client.resource.ItemModel;
 import ru.timeconqueror.timecore.api.client.resource.StandardItemModelParents;
@@ -12,16 +15,111 @@ import ru.timeconqueror.timecore.api.client.resource.location.BlockModelLocation
 import ru.timeconqueror.timecore.api.client.resource.location.ModelLocation;
 import ru.timeconqueror.timecore.api.client.resource.location.TextureLocation;
 import ru.timeconqueror.timecore.devtools.gen.lang.LangGeneratorFacade;
+import ru.timeconqueror.timecore.registry.TimeAutoRegistrable;
 import ru.timeconqueror.timecore.util.EnvironmentUtils;
+import ru.timeconqueror.timecore.util.Hacks;
 
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
+/**
+ * All {@link TimeRegister}s are used to simplify stuff registering.
+ * You can use it for both {@link RegistryObject} or {@link ObjectHolder} style.
+ * <p>
+ * To use it you need to:
+ * <ol>
+ *     <li>Create its instance and declare it static. Access modifier can be any.</li>
+ *     <li>Attach {@link TimeAutoRegistrable} annotation to it to register it as an event listener.</li>
+ *     <li>Extend you main mod class from {@link TimeMod} to enable TimeCore's annotations.</li>
+ * </ol>
+ *
+ * <b>Features:</b>
+ * If you need to register stuff, your first step will be to call method #register.
+ * If the register system has any extra available registering stuff, then this method will return Register Chain,
+ * which will have extra methods to apply.
+ * Otherwise it will RegistryObject, which can be used or not used (depending on your registry style).
+ * <br>
+ * <br>
+ * <b>{@link RegistryObject} style:</b>
+ * <br>
+ * <blockquote>
+ *     <pre>
+ *     public class TileEntityDeferredRegistryExample {
+ *         {@literal @}TimeAutoRegistrable
+ *          private static final TileEntityRegister REGISTER = new TileEntityRegister(TimeCore.MODID);
+ *
+ *          public static RegistryObject<TileEntityType<DummyTileEntity>> TEST_TE_TYPE = REGISTER.register("test_tile", DummyTileEntity::new, BlockRegistryExample.TEST_BLOCK_WITH_TILE)
+ *              .regCustomRenderer(() -> DummyTileEntityRenderer::new) // <- one of extra features
+ *              .asRegistryObject(); // <- retrieving registry object from our register chain.
+ *      }
+ *     </pre>
+ * </blockquote>
+ * <br>
+ * <b>{@link ObjectHolder} style:</b>
+ * <br>
+ * For this style you need to know one thing:
+ * you will need two classes: one for storing registry values and one for registering them.
+ * In the following case I made registering class an inner class of storing class.
+ * If you want, you may store them in separate files, there's no matter.
+ * <p>
+ * So the storing (main) class needs to have {@link ObjectHolder} annotation with your mod id to inject values in all public static final fields.
+ * The name of the field should match it's registry name (ignoring case).
+ * More about it you can check in (<a href=https://mcforge.readthedocs.io/en/1.16.x/>Forge Documentation</a>)
+ * <p>
+ * The inner class will be used for us as a registrator. It should be static, but can have any access modifier.
+ * We still add {@link TimeRegister} there as stated above. (with TimeAutoRegistrable annotation, etc.)]
+ * <p>
+ * One more thing: we should add is a <b>static</b> register method and annotate with {@link TimeAutoRegistrable.InitMethod}. Method can have any access modifier.
+ * There we will register all needed stuff, using {@link TimeRegister} field.
+ * Method annotated with {@link TimeAutoRegistrable.InitMethod} can have zero parameters or one {@link FMLConstructModEvent} parameter.
+ * It will be called before Registry events to prepare all the stuff.
+ * <p>
+ * As you can see, I used {@link Hacks#promise()} method for public static final fields that will be initialized later.
+ * You can place there null, but some IDE may always tell you, that it expects the NullPointerException in all places, where you call it.
+ * We know, that it will be initialized later, so using {@link Hacks#promise()} we set null in this field, but disables IDE null checks for it.
+ *
+ * <br>
+ * <blockquote>
+ *     <pre>
+ *     {@literal @}ObjectHolder(TimeCore.MODID)
+ *      public class ItemRegistryExample {
+ *          public static final Item TEST_DIAMOND = Hacks.promise();
+ *
+ *          private static class Init {
+ *             {@literal @}TimeAutoRegistrable
+ *              private static final ItemRegister REGISTER = new ItemRegister(TimeCore.MODID);
+ *
+ *             {@literal @}TimeAutoRegistrable.InitMethod
+ *              private static void register() {
+ *                  ItemPropsFactory miscGrouped = new ItemPropsFactory(ItemGroup.TAB_MISC);
+ *
+ *                  REGISTER.register("test_diamond", () -> new Item(miscGrouped.createProps()))
+ *                          .genDefaultModel(new TextureLocation("minecraft", "item/diamond"));
+ *               }
+ *          }
+ *      }
+ *     </pre>
+ * </blockquote>
+ * <p>
+ * <p>
+ * Examples can be seen at test module.
+ */
 public class ItemRegister extends ForgeRegister<Item> {
     public ItemRegister(String modid) {
         super(ForgeRegistries.ITEMS, modid);
     }
 
+    /**
+     * Adds entry in provided {@code entrySup} to the queue, all entries from which will be registered later.
+     * <p>
+     * This method also returns {@link ItemRegisterChain} to provide extra methods, which you can apply to entry being registered.
+     * All method of {@link ItemRegisterChain} are optional.
+     *
+     * @param name     The item's name, will automatically have the modid as a namespace.
+     * @param entrySup A factory for the new item, it should return a new instance every time it is called.
+     * @return A {@link ItemRegisterChain} for adding some extra stuff.
+     * @see ItemRegisterChain
+     */
     public <I extends Item> ItemRegisterChain<I> register(String name, Supplier<I> entrySup) {
         RegistryObject<I> holder = registerEntry(name, entrySup);
 

@@ -13,7 +13,7 @@ public class TileEntityDeferredRegistryExample {
     @TimeAutoRegistrable
     private static final TileEntityRegister REGISTER = new TileEntityRegister(TimeCore.MODID);
 
-    public static RegistryObject<TileEntityType<DummyTileEntity>> TEST_TE_TYPE = REGISTER.register("test_tile", DummyTileEntity::new, BlockRegistryExample.TEST_BLOCK_WITH_TILE)
+    public static RegistryObject<TileEntityType<DummyTileEntity>> TEST_TE_TYPE = REGISTER.registerSingleBound("test_tile", DummyTileEntity::new, () -> BlockRegistryExample.TEST_BLOCK_WITH_TILE)
             .regCustomRenderer(() -> DummyTileEntityRenderer::new)
             .asRegistryObject();
 }

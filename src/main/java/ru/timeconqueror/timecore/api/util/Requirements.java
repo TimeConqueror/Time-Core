@@ -74,4 +74,10 @@ public class Requirements {
             throw new IllegalArgumentException("Provided object should be an instance of " + clazz + ". Provided: " + obj.getClass());
         }
     }
+
+    public static <T> void notEmpty(T[] arr) {
+        if (arr.length == 0) {
+            throw new IllegalStateException("Provided array is empty.");
+        }
+    }
 }

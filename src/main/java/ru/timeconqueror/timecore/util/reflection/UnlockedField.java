@@ -81,4 +81,9 @@ public class UnlockedField<T> {
     public boolean isStatic() {
         return ReflectionHelper.isStatic(field);
     }
+
+    @Override
+    public String toString() {
+        return field.toString();
+    }
 }

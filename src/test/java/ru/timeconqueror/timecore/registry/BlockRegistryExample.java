@@ -33,7 +33,7 @@ public class BlockRegistryExample {
                     .apply(chain -> {
                         BlockModelLocation modelLocation = new BlockModelLocation(chain.getModId(), "block/test_sand");
                         chain
-                                .genModel(modelLocation, () -> BlockModel.createCubeAllModel(new TextureLocation("minecraft", "blocks/sand")))
+                                .genModel(modelLocation, () -> BlockModel.createCubeAllModel(new TextureLocation("minecraft", "block/sand")))
                                 .genDefaultState(modelLocation);
                     });
 

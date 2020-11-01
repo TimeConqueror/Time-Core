@@ -1,14 +1,18 @@
 package ru.timeconqueror.timecore.registry.newreg;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.IForgeRegistryEntry;
+import ru.timeconqueror.timecore.api.util.Pair;
+import ru.timeconqueror.timecore.api.util.Wrapper;
 import ru.timeconqueror.timecore.util.EnvironmentUtils;
 
 import java.util.ArrayList;
@@ -22,8 +26,6 @@ public abstract class ForgeRegister<T extends IForgeRegistryEntry<T>> extends Ti
     private Map<RegistryObject<T>, Supplier<T>> entries = new HashMap<>();
     private List<Runnable> clientRunnables = new ArrayList<>();
     private List<Runnable> regEventRunnables = new ArrayList<>();
-
-    private final boolean registeredToBus = false;
 
     public ForgeRegister(IForgeRegistry<T> reg, String modid) {
         super(modid);
@@ -56,7 +58,7 @@ public abstract class ForgeRegister<T extends IForgeRegistryEntry<T>> extends Ti
 
     @Override
     public void regToBus(IEventBus bus) {
-        bus.addGenericListener(IForgeRegistryEntry.class, EventPriority.LOWEST, this::onAllRegEvent);
+        bus.register(new EventDispatcher());
         bus.addListener(EventPriority.LOWEST, this::onClientInit);
     }
 
@@ -69,21 +71,30 @@ public abstract class ForgeRegister<T extends IForgeRegistryEntry<T>> extends Ti
     protected void onRegEvent(RegistryEvent.Register<T> event) {
         IForgeRegistry<T> registry = event.getRegistry();
 
-        for (Map.Entry<RegistryObject<T>, Supplier<T>> entry : entries.entrySet()) {
-            RegistryObject<T> holder = entry.getKey();
-            registry.register(entry.getValue().get());
+        Wrapper<RegistryObject<T>> currentHolder = new Wrapper<>(null);
 
-            holder.updateReference(registry);
-        }
+        withErrorCatching("registering entries of type " + registry.getRegistrySuperType(), () -> {
+            for (Map.Entry<RegistryObject<T>, Supplier<T>> entry : entries.entrySet()) {
+                RegistryObject<T> holder = entry.getKey();
+                currentHolder.set(holder);
+                registry.register(entry.getValue().get());
+
+                holder.updateReference(registry);
+            }
+        }, () -> Lists.newArrayList(
+                Pair.of("Registry type", registry.getRegistrySuperType()),
+                Pair.of("Currently registering object", currentHolder.get() != null ? currentHolder.get().getId() : null)));
 
         entries = null;
 
-        regEventRunnables.forEach(Runnable::run);
+        withErrorCatching("finishing register event of type " + registry.getRegistrySuperType(), () -> regEventRunnables.forEach(Runnable::run));
+
         regEventRunnables = null;
     }
 
     protected void onClientInit(FMLClientSetupEvent event) {
-        clientRunnables.forEach(Runnable::run);
+        withErrorCatching("client setup event", () -> clientRunnables.forEach(Runnable::run));
+
         clientRunnables = null;
     }
 
@@ -119,6 +130,13 @@ public abstract class ForgeRegister<T extends IForgeRegistryEntry<T>> extends Ti
         protected RegisterChain<I> runOnlyForClient(Runnable runnable) {
             register.runTaskOnClientSetup(runnable);
             return this;
+        }
+    }
+
+    public class EventDispatcher {
+        @SubscribeEvent
+        public void handleEvent(RegistryEvent.Register<?> event) {
+            ForgeRegister.this.onAllRegEvent(event);
         }
     }
 }

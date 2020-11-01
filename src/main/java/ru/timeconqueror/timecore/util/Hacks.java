@@ -5,7 +5,7 @@ import javax.annotation.Nonnull;
 public class Hacks {
     /**
      * Can be used on fields, that will be initialized later, via reflection.
-     * It just tells IDE, that all is good and it won't be null
+     * It just promises IDE, that it won't be null
      */
     @SuppressWarnings("ConstantConditions")
     @Nonnull

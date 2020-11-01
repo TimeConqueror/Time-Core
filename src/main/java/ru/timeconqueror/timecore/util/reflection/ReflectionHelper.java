@@ -1,6 +1,7 @@
 package ru.timeconqueror.timecore.util.reflection;
 
 import com.google.common.annotations.Beta;
+import com.google.common.base.Joiner;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import org.jetbrains.annotations.Nullable;
 import ru.timeconqueror.timecore.TimeCore;
@@ -9,7 +10,6 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.Arrays;
 
 @Beta
 public class ReflectionHelper {
@@ -185,7 +185,7 @@ public class ReflectionHelper {
             Method method = clazz.getDeclaredMethod(methodName, params);
             return new UnlockedMethod<>(method);
         } catch (Throwable e) {
-            throw new RuntimeException("Can't retrieve method " + methodName + " with params " + Arrays.toString(params) + " from class " + clazz, e);
+            throw new RuntimeException("Can't retrieve method " + clazz.getName() + "#" + methodName + "(" + Joiner.on(",").join(params) + ")", e);
         }
     }
 

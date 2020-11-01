@@ -3,7 +3,6 @@ package ru.timeconqueror.timecore.registry;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import org.objectweb.asm.Type;
-import ru.timeconqueror.timecore.registry.deferred.base.DeferredTimeRegister;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

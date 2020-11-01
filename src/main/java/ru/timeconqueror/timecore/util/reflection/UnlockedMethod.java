@@ -43,4 +43,9 @@ public class UnlockedMethod<T> {
     public boolean isStatic() {
         return ReflectionHelper.isStatic(method);
     }
+
+    @Override
+    public String toString() {
+        return method.toString();
+    }
 }
