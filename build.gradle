@@ -123,7 +123,7 @@ minecraft {
             // Recommended logging level for the console
             property 'forge.logging.console.level', 'debug'
 
-            args '--mod', 'timecore', '--all', '--output', ("\"" + projectDir.path + "/src/main/resources/\"")
+            args '--mod', 'timecore', '--all', '--output', ("\"" + projectDir.path + "/src/generated/resources/\"")
             setArgs(extraArgs)
 
             mods {
