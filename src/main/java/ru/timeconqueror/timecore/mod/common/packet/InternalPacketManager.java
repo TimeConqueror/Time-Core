@@ -5,13 +5,12 @@ import net.minecraftforge.fml.network.PacketDistributor;
 import net.minecraftforge.fml.network.simple.SimpleChannel;
 import ru.timeconqueror.timecore.TimeCore;
 import ru.timeconqueror.timecore.registry.AutoRegistrable;
-import ru.timeconqueror.timecore.registry.common.PacketTimeRegistry;
 import ru.timeconqueror.timecore.registry.newreg.PacketRegister;
 
 
 public class InternalPacketManager {
     private static final String PROTOCOL_STRING = "1";
-    public static final SimpleChannel INSTANCE = PacketTimeRegistry.newChannel("main", () -> PROTOCOL_STRING, PROTOCOL_STRING::equals, PROTOCOL_STRING::equals);
+    public static final SimpleChannel INSTANCE = PacketRegister.newChannel(TimeCore.MODID, "main", () -> PROTOCOL_STRING, PROTOCOL_STRING::equals, PROTOCOL_STRING::equals);
 
     @AutoRegistrable
     private static final PacketRegister REGISTER = new PacketRegister(TimeCore.MODID);
