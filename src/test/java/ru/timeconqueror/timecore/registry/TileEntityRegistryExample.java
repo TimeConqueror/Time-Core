@@ -12,10 +12,10 @@ public class TileEntityRegistryExample {
     public static final TileEntityType<DummyTileEntity> TEST_TILE_1 = Hacks.promise();
 
     private static class Init {
-        @TimeAutoRegistrable
+        @AutoRegistrable
         private static final TileEntityRegister REGISTER = new TileEntityRegister(TimeCore.MODID);
 
-        @TimeAutoRegistrable.InitMethod
+        @AutoRegistrable.InitMethod
         private static void register() {
             REGISTER.registerSingleBound("test_tile_1", DummyTileEntity::new, () -> BlockRegistryExample.TEST_BLOCK_WITH_TILE);
         }

@@ -13,10 +13,10 @@ public class ItemRegistryExample {
     public static final Item TEST_DIAMOND = Hacks.promise();
 
     private static class Init {
-        @TimeAutoRegistrable
+        @AutoRegistrable
         private static final ItemRegister REGISTER = new ItemRegister(TimeCore.MODID);
 
-        @TimeAutoRegistrable.InitMethod
+        @AutoRegistrable.InitMethod
         private static void register() {
             ItemPropsFactory miscGrouped = new ItemPropsFactory(ItemGroup.TAB_MISC);
 

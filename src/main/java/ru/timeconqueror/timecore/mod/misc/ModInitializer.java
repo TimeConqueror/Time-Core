@@ -4,14 +4,13 @@ import net.minecraftforge.fml.ModContainer;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.fml.loading.moddiscovery.ModAnnotation;
 import net.minecraftforge.forgespi.language.ModFileScanData;
 import org.objectweb.asm.Type;
 import ru.timeconqueror.timecore.TimeCore;
 import ru.timeconqueror.timecore.devtools.gen.lang.LangGeneratorFacade;
 import ru.timeconqueror.timecore.devtools.kotlin.KotlinAutomaticEventSubscriber;
-import ru.timeconqueror.timecore.registry.TimeAutoRegistrable;
-import ru.timeconqueror.timecore.registry.TimeAutoRegistrable.InitMethod;
+import ru.timeconqueror.timecore.registry.AutoRegistrable;
+import ru.timeconqueror.timecore.registry.AutoRegistrable.InitMethod;
 import ru.timeconqueror.timecore.registry.newreg.ForgeRegister;
 import ru.timeconqueror.timecore.registry.newreg.TimeRegister;
 import ru.timeconqueror.timecore.util.reflection.ReflectionHelper;
@@ -26,7 +25,7 @@ import java.util.List;
 import static net.minecraftforge.fml.Logging.LOADING;
 
 public class ModInitializer {
-    private static final Type TIME_AUTO_REG_TYPE = Type.getType(TimeAutoRegistrable.class);
+    private static final Type TIME_AUTO_REG_TYPE = Type.getType(AutoRegistrable.class);
     private static final Type TIME_AUTO_REG_INIT_TYPE = Type.getType(InitMethod.class);
 
     private static final List<UnlockedMethod<?>> INIT_METHODS = new ArrayList<>();
@@ -55,7 +54,7 @@ public class ModInitializer {
                 .forEach(annotationData -> {
                     try {
                         if (annotationData.getAnnotationType().equals(TIME_AUTO_REG_TYPE)) {
-                            processTimeAutoRegistrable(annotationData);
+                            processAutoRegistrable(annotationData);
                         } else {
                             processTimeAutoRegInitMethod(annotationData);
                         }
@@ -65,7 +64,7 @@ public class ModInitializer {
                 });
     }
 
-    private static void processTimeAutoRegistrable(ModFileScanData.AnnotationData annotationData) throws ClassNotFoundException {
+    private static void processAutoRegistrable(ModFileScanData.AnnotationData annotationData) throws ClassNotFoundException {
         String containerClassName = annotationData.getClassType().getClassName();
         Class<?> containerClass = Class.forName(containerClassName);
 
@@ -75,11 +74,8 @@ public class ModInitializer {
             String fieldName = annotationData.getMemberName();
             UnlockedField<Object> field = ReflectionHelper.findFieldUnsuppressed(containerClass, fieldName);
 
-            processTimeAutoRegistrableOnField(containerClass, field);
+            processAutoRegistrableOnField(containerClass, field);
         } else if (targetType == ElementType.TYPE) {
-
-            final ModAnnotation.EnumHolder targetHolder = (ModAnnotation.EnumHolder) annotationData.getAnnotationData().getOrDefault("target", new ModAnnotation.EnumHolder(null, "INSTANCE"));
-            TimeAutoRegistrable.Target target = TimeAutoRegistrable.Target.valueOf(targetHolder.getValue());
 
             Object instance;
             try {
@@ -92,13 +88,8 @@ public class ModInitializer {
                 }
             }
 
-            if (target == TimeAutoRegistrable.Target.CLASS) {
-                FMLJavaModLoadingContext.get().getModEventBus().register(containerClass);
-                TimeCore.LOGGER.debug("{}: Registered Event Subscriber as class: {}", ModLoadingContext.get().getActiveNamespace(), containerClass);
-            } else {
-                FMLJavaModLoadingContext.get().getModEventBus().register(instance);
-                TimeCore.LOGGER.debug("{}: Registered Event Subscriber as instance: {}", ModLoadingContext.get().getActiveNamespace(), containerClass);
-            }
+            FMLJavaModLoadingContext.get().getModEventBus().register(instance);
+            TimeCore.LOGGER.debug("{}: Registered Event Subscriber as instance: {}", ModLoadingContext.get().getActiveNamespace(), containerClass);
 
             String instanceFieldName = (String) annotationData.getAnnotationData().getOrDefault("instance", "");
             if (!instanceFieldName.isEmpty()) {
@@ -112,17 +103,17 @@ public class ModInitializer {
         }
     }
 
-    private static void processTimeAutoRegistrableOnField(Class<?> containerClass, UnlockedField<Object> field) {
+    private static void processAutoRegistrableOnField(Class<?> containerClass, UnlockedField<Object> field) {
         if (field.isStatic()) {
             if (TimeRegister.class.isAssignableFrom(field.getField().getType())) {
                 TimeRegister register = (TimeRegister) field.get(null);
                 register.regToBus(FMLJavaModLoadingContext.get().getModEventBus());
                 register.setOwner(containerClass);
             } else {
-                throw new UnsupportedOperationException(TimeAutoRegistrable.class.getSimpleName() + " can be used only on fields that have " + ForgeRegister.class.getSimpleName() + " type. Error is in: " + field);
+                throw new UnsupportedOperationException(AutoRegistrable.class.getSimpleName() + " can be used only on fields that have " + ForgeRegister.class.getSimpleName() + " type. Error is in: " + field);
             }
         } else {
-            throw new UnsupportedOperationException(TimeAutoRegistrable.class.getSimpleName() + " can be used only on static fields. Error is in: " + field);
+            throw new UnsupportedOperationException(AutoRegistrable.class.getSimpleName() + " can be used only on static fields. Error is in: " + field);
         }
     }
 

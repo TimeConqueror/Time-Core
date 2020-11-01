@@ -21,10 +21,10 @@ public class BlockRegistryExample {
     public static final Block TEST_BLOCK_WITH_TILE = promise();
 
     private static class Init {
-        @TimeAutoRegistrable
+        @AutoRegistrable
         private static final BlockRegister REGISTER = new BlockRegister(TimeCore.MODID);
 
-        @TimeAutoRegistrable.InitMethod
+        @AutoRegistrable.InitMethod
         private static void register() {
             BlockPropsFactory propsCreator = new BlockPropsFactory(() -> Block.Properties.of(Material.STONE));
 

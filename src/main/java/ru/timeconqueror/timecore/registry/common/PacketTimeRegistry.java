@@ -8,7 +8,7 @@ import net.minecraftforge.fml.network.NetworkRegistry;
 import net.minecraftforge.fml.network.simple.SimpleChannel;
 import ru.timeconqueror.timecore.api.common.packet.ITimePacket;
 import ru.timeconqueror.timecore.mod.common.packet.InternalPacketManager;
-import ru.timeconqueror.timecore.registry.TimeAutoRegistrable;
+import ru.timeconqueror.timecore.registry.AutoRegistrable;
 import ru.timeconqueror.timecore.registry.common.base.TimeRegistry;
 
 import java.util.HashMap;
@@ -18,7 +18,7 @@ import java.util.function.Supplier;
 /**
  * Used for simplifying packet adding. You need to extend it and do your stuff in {@link #register()} method<br>
  * <p>
- * Any your registry that extends it should be annotated by {@link TimeAutoRegistrable} with {@link TimeAutoRegistrable.Target#INSTANCE} target
+ * Any your registry that extends it should be annotated by {@link AutoRegistrable} with {@link AutoRegistrable.Target#INSTANCE} target
  * to create its instance automatically and provide register features.<br>
  *
  * <b><font color="yellow">WARNING: Any annotated registry class must contain constructor without params or exception will be thrown.</b><br>

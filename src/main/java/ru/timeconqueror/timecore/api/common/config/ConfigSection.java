@@ -73,11 +73,4 @@ public abstract class ConfigSection {
     public @NotNull String getKey() {
         return key;
     }
-
-    /**
-     * Should return new builder instance to be used in {@code setup} methods.
-     */
-    protected ImprovedConfigBuilder getBuilder() {
-        return new ImprovedConfigBuilder(this);
-    }
 }

@@ -8,7 +8,7 @@ import ru.timeconqueror.timecore.api.client.resource.ItemModel;
 import ru.timeconqueror.timecore.api.client.resource.StandardItemModelParents;
 import ru.timeconqueror.timecore.api.client.resource.location.ModelLocation;
 import ru.timeconqueror.timecore.api.client.resource.location.TextureLocation;
-import ru.timeconqueror.timecore.registry.TimeAutoRegistrable;
+import ru.timeconqueror.timecore.registry.AutoRegistrable;
 import ru.timeconqueror.timecore.registry.common.base.WrappedForgeTimeRegistry;
 
 import java.util.function.Supplier;
@@ -16,7 +16,7 @@ import java.util.function.Supplier;
 /**
  * Used for simplifying item adding. You need to extend it and do your stuff in {@link #register()} method<br>
  * <p>
- * Any your registry that extends it should be annotated with {@link TimeAutoRegistrable} with {@link TimeAutoRegistrable.Target#INSTANCE} target
+ * Any your registry that extends it should be annotated with {@link AutoRegistrable} with {@link AutoRegistrable.Target#INSTANCE} target
  * to create its instance automatically and provide register features.<br>
  *
  * <b><font color="yellow">WARNING: Any annotated registry class must contain constructor without params or exception will be thrown.</b><br>

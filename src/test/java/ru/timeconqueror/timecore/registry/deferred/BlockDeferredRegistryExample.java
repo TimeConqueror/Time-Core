@@ -7,12 +7,12 @@ import net.minecraftforge.fml.RegistryObject;
 import ru.timeconqueror.timecore.TimeCore;
 import ru.timeconqueror.timecore.api.client.resource.location.TextureLocation;
 import ru.timeconqueror.timecore.block.TestCobbleBlock;
+import ru.timeconqueror.timecore.registry.AutoRegistrable;
 import ru.timeconqueror.timecore.registry.BlockPropsFactory;
-import ru.timeconqueror.timecore.registry.TimeAutoRegistrable;
 import ru.timeconqueror.timecore.registry.newreg.BlockRegister;
 
 public class BlockDeferredRegistryExample {
-    @TimeAutoRegistrable
+    @AutoRegistrable
     private static final BlockRegister REGISTER = new BlockRegister(TimeCore.MODID);
     private static final BlockPropsFactory BLOCK_PROPS_CREATOR = new BlockPropsFactory(() -> Block.Properties.of(Material.STONE));
 

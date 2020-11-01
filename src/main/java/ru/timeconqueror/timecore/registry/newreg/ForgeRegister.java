@@ -34,10 +34,10 @@ public abstract class ForgeRegister<T extends IForgeRegistryEntry<T>> extends Ti
 
     @SuppressWarnings("unchecked")
     protected <I extends T> RegistryObject<I> registerEntry(String name, Supplier<I> entrySup) {
+        Preconditions.checkNotNull(entries, "Cannot register new entries after RegistryEvent.Register has been fired.");
+
         ResourceLocation registryName = new ResourceLocation(getModid(), name);
         RegistryObject<I> holder = RegistryObject.of(registryName, registry);
-
-        Preconditions.checkNotNull(entries, "Cannot register new entries after RegistryEvent.Register has been fired.");
 
         if (entries.put((RegistryObject<T>) holder, () -> entrySup.get().setRegistryName(registryName)) != null) {
             throw new IllegalArgumentException("Attempted to register " + name + " twice for registry " + registry.getRegistryName());
@@ -48,11 +48,14 @@ public abstract class ForgeRegister<T extends IForgeRegistryEntry<T>> extends Ti
 
     protected void runTaskOnClientSetup(Runnable runnable) {
         if (EnvironmentUtils.isOnPhysicalClient()) {
+            Preconditions.checkNotNull(clientRunnables, "You attempted to call this method after FMLClientSetupEvent has been fired.");
             clientRunnables.add(runnable);
         }
     }
 
     protected void runTaskAfterRegistering(Runnable runnable) {
+        Preconditions.checkNotNull(regEventRunnables, "You attempted to call this method after RegistryEvent.Register has been fired.");
+
         regEventRunnables.add(runnable);
     }
 

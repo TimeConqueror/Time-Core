@@ -18,8 +18,8 @@ import ru.timeconqueror.timecore.api.client.resource.BlockStateResource;
 import ru.timeconqueror.timecore.api.client.resource.location.BlockModelLocation;
 import ru.timeconqueror.timecore.api.client.resource.location.TextureLocation;
 import ru.timeconqueror.timecore.devtools.gen.lang.LangGeneratorFacade;
+import ru.timeconqueror.timecore.registry.AutoRegistrable;
 import ru.timeconqueror.timecore.registry.ItemPropsFactory;
-import ru.timeconqueror.timecore.registry.TimeAutoRegistrable;
 import ru.timeconqueror.timecore.registry.newreg.ItemRegister.ItemRegisterChain;
 import ru.timeconqueror.timecore.util.Hacks;
 
@@ -33,7 +33,7 @@ import java.util.function.Supplier;
  * To use it you need to:
  * <ol>
  *     <li>Create its instance and declare it static. Access modifier can be any.</li>
- *     <li>Attach {@link TimeAutoRegistrable} annotation to it to register it as an event listener.</li>
+ *     <li>Attach {@link AutoRegistrable} annotation to it to register it as an event listener.</li>
  *     <li>Extend you main mod class from {@link TimeMod} to enable TimeCore's annotations.</li>
  * </ol>
  *
@@ -49,7 +49,7 @@ import java.util.function.Supplier;
  * <blockquote>
  *     <pre>
  *     public class TileEntityDeferredRegistryExample {
- *         {@literal @}TimeAutoRegistrable
+ *         {@literal @}AutoRegistrable
  *          private static final TileEntityRegister REGISTER = new TileEntityRegister(TimeCore.MODID);
  *
  *          public static RegistryObject<TileEntityType<DummyTileEntity>> TEST_TE_TYPE = REGISTER.register("test_tile", DummyTileEntity::new, BlockRegistryExample.TEST_BLOCK_WITH_TILE)
@@ -71,11 +71,11 @@ import java.util.function.Supplier;
  * More about it you can check in (<a href=https://mcforge.readthedocs.io/en/1.16.x/>Forge Documentation</a>)
  * <p>
  * The inner class will be used for us as a registrator. It should be static, but can have any access modifier.
- * We still add {@link TimeRegister} there as stated above. (with TimeAutoRegistrable annotation, etc.)]
+ * We still add {@link TimeRegister} there as stated above. (with AutoRegistrable annotation, etc.)]
  * <p>
- * One more thing: we should add is a <b>static</b> register method and annotate with {@link TimeAutoRegistrable.InitMethod}. Method can have any access modifier.
+ * One more thing: we should add is a <b>static</b> register method and annotate with {@link AutoRegistrable.InitMethod}. Method can have any access modifier.
  * There we will register all needed stuff, using {@link TimeRegister} field.
- * Method annotated with {@link TimeAutoRegistrable.InitMethod} can have zero parameters or one {@link FMLConstructModEvent} parameter.
+ * Method annotated with {@link AutoRegistrable.InitMethod} can have zero parameters or one {@link FMLConstructModEvent} parameter.
  * It will be called before Registry events to prepare all the stuff.
  * <p>
  * As you can see, I used {@link Hacks#promise()} method for public static final fields that will be initialized later.
@@ -90,10 +90,10 @@ import java.util.function.Supplier;
  *          public static final Item TEST_DIAMOND = Hacks.promise();
  *
  *          private static class Init {
- *             {@literal @}TimeAutoRegistrable
+ *             {@literal @}AutoRegistrable
  *              private static final ItemRegister REGISTER = new ItemRegister(TimeCore.MODID);
  *
- *             {@literal @}TimeAutoRegistrable.InitMethod
+ *             {@literal @}AutoRegistrable.InitMethod
  *              private static void register() {
  *                  ItemPropsFactory miscGrouped = new ItemPropsFactory(ItemGroup.TAB_MISC);
  *

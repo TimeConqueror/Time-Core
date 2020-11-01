@@ -8,8 +8,8 @@ import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.ObjectHolder;
 import ru.timeconqueror.timecore.api.TimeMod;
 import ru.timeconqueror.timecore.api.common.sound.TimeSound;
-import ru.timeconqueror.timecore.registry.TimeAutoRegistrable;
-import ru.timeconqueror.timecore.registry.TimeAutoRegistrable.InitMethod;
+import ru.timeconqueror.timecore.registry.AutoRegistrable;
+import ru.timeconqueror.timecore.registry.AutoRegistrable.InitMethod;
 import ru.timeconqueror.timecore.util.Hacks;
 
 /**
@@ -19,7 +19,7 @@ import ru.timeconqueror.timecore.util.Hacks;
  * To use it you need to:
  * <ol>
  *     <li>Create its instance and declare it static. Access modifier can be any.</li>
- *     <li>Attach {@link TimeAutoRegistrable} annotation to it to register it as an event listener.</li>
+ *     <li>Attach {@link AutoRegistrable} annotation to it to register it as an event listener.</li>
  *     <li>Extend you main mod class from {@link TimeMod} to enable TimeCore's annotations.</li>
  * </ol>
  *
@@ -35,7 +35,7 @@ import ru.timeconqueror.timecore.util.Hacks;
  * <blockquote>
  *     <pre>
  *     public class TileEntityDeferredRegistryExample {
- *         {@literal @}TimeAutoRegistrable
+ *         {@literal @}AutoRegistrable
  *          private static final TileEntityRegister REGISTER = new TileEntityRegister(TimeCore.MODID);
  *
  *          public static RegistryObject<TileEntityType<DummyTileEntity>> TEST_TE_TYPE = REGISTER.register("test_tile", DummyTileEntity::new, BlockRegistryExample.TEST_BLOCK_WITH_TILE)
@@ -57,9 +57,9 @@ import ru.timeconqueror.timecore.util.Hacks;
  * More about it you can check in (<a href=https://mcforge.readthedocs.io/en/1.16.x/>Forge Documentation</a>)
  * <p>
  * The inner class will be used for us as a registrator. It should be static, but can have any access modifier.
- * We still add {@link TimeRegister} there as stated above. (with TimeAutoRegistrable annotation, etc.)]
+ * We still add {@link TimeRegister} there as stated above. (with AutoRegistrable annotation, etc.)]
  * <p>
- * One more thing: we should add is a <b>static</b> register method and annotate with {@link TimeAutoRegistrable.InitMethod}. Method can have any access modifier.
+ * One more thing: we should add is a <b>static</b> register method and annotate with {@link AutoRegistrable.InitMethod}. Method can have any access modifier.
  * There we will register all needed stuff, using {@link TimeRegister} field.
  * Method annotated with {@link InitMethod} can have zero parameters or one {@link FMLConstructModEvent} parameter.
  * It will be called before Registry events to prepare all the stuff.
@@ -76,10 +76,10 @@ import ru.timeconqueror.timecore.util.Hacks;
  *          public static final Item TEST_DIAMOND = Hacks.promise();
  *
  *          private static class Init {
- *             {@literal @}TimeAutoRegistrable
+ *             {@literal @}AutoRegistrable
  *              private static final ItemRegister REGISTER = new ItemRegister(TimeCore.MODID);
  *
- *             {@literal @}TimeAutoRegistrable.InitMethod
+ *             {@literal @}AutoRegistrable.InitMethod
  *              private static void register() {
  *                  ItemPropsFactory miscGrouped = new ItemPropsFactory(ItemGroup.TAB_MISC);
  *

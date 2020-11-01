@@ -6,13 +6,13 @@ import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModLoadingContext;
 import ru.timeconqueror.timecore.api.common.sound.TimeSound;
-import ru.timeconqueror.timecore.registry.TimeAutoRegistrable;
+import ru.timeconqueror.timecore.registry.AutoRegistrable;
 import ru.timeconqueror.timecore.registry.common.base.ForgeTimeRegistry;
 
 /**
  * Used for simplifying sound adding. You need to extend it and do your stuff in {@link #register()} method<br>
  * <p>
- * Any your registry that extends it should be annotated by {@link TimeAutoRegistrable} with {@link TimeAutoRegistrable.Target#INSTANCE} target
+ * Any your registry that extends it should be annotated by {@link AutoRegistrable} with {@link AutoRegistrable.Target#INSTANCE} target
  * to create its instance automatically and provide register features.<br>
  *
  * <b><font color="yellow">WARNING: Any annotated registry class must contain constructor without params or exception will be thrown.</b><br>
