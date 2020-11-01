@@ -1,7 +1,6 @@
 package ru.timeconqueror.timecore.mod.misc;
 
 import net.minecraftforge.fml.ModContainer;
-import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.forgespi.language.ModFileScanData;
@@ -17,7 +16,6 @@ import ru.timeconqueror.timecore.util.reflection.ReflectionHelper;
 import ru.timeconqueror.timecore.util.reflection.UnlockedField;
 import ru.timeconqueror.timecore.util.reflection.UnlockedMethod;
 
-import java.lang.annotation.ElementType;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
@@ -68,39 +66,10 @@ public class ModInitializer {
         String containerClassName = annotationData.getClassType().getClassName();
         Class<?> containerClass = Class.forName(containerClassName);
 
-        ElementType targetType = annotationData.getTargetType();
+        String fieldName = annotationData.getMemberName();
+        UnlockedField<Object> field = ReflectionHelper.findFieldUnsuppressed(containerClass, fieldName);
 
-        if (targetType == ElementType.FIELD) {
-            String fieldName = annotationData.getMemberName();
-            UnlockedField<Object> field = ReflectionHelper.findFieldUnsuppressed(containerClass, fieldName);
-
-            processAutoRegistrableOnField(containerClass, field);
-        } else if (targetType == ElementType.TYPE) {
-
-            Object instance;
-            try {
-                instance = containerClass.newInstance();
-            } catch (ReflectiveOperationException e) {
-                if (e.getCause() instanceof NoSuchMethodException) {
-                    throw new RuntimeException("TimeCore AutoRegistry can't find constructor with no parameters for " + containerClass, e);
-                } else {
-                    throw new RuntimeException(e);
-                }
-            }
-
-            FMLJavaModLoadingContext.get().getModEventBus().register(instance);
-            TimeCore.LOGGER.debug("{}: Registered Event Subscriber as instance: {}", ModLoadingContext.get().getActiveNamespace(), containerClass);
-
-            String instanceFieldName = (String) annotationData.getAnnotationData().getOrDefault("instance", "");
-            if (!instanceFieldName.isEmpty()) {
-                UnlockedField<Object> field = ReflectionHelper.findFieldUnsuppressed(containerClass, instanceFieldName);
-                if (field.isStatic()) {
-                    field.set(containerClass, instance);
-                } else {
-                    throw new IllegalStateException("Field with location " + instanceFieldName + " in class " + containerClass + " should be static!");
-                }
-            }
-        }
+        processAutoRegistrableOnField(containerClass, field);
     }
 
     private static void processAutoRegistrableOnField(Class<?> containerClass, UnlockedField<Object> field) {
