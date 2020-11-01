@@ -140,7 +140,7 @@ public class BlockRegister extends ForgeRegister<Block> {
     }
 
     public class BlockRegisterChain<B extends Block> extends ForgeRegister.RegisterChain<B> {
-        public BlockRegisterChain(RegistryObject<B> holder) {
+        private BlockRegisterChain(RegistryObject<B> holder) {
             super(BlockRegister.this, holder);
         }
 
