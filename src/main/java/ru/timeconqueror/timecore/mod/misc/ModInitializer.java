@@ -1,5 +1,6 @@
 package ru.timeconqueror.timecore.mod.misc;
 
+import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.fml.ModContainer;
 import net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -108,7 +109,7 @@ public class ModInitializer {
             if (nativeMethod.getParameterCount() == 0) {
                 INIT_METHODS.add(initMethod);
             } else if (nativeMethod.getParameterCount() == 1 && FMLConstructModEvent.class.isAssignableFrom(nativeMethod.getParameterTypes()[0])) {
-                FMLJavaModLoadingContext.get().getModEventBus().addListener(event -> initMethod.invoke(null, event));
+                FMLJavaModLoadingContext.get().getModEventBus().addListener(EventPriority.HIGHEST, event -> initMethod.invoke(null, event));
             } else {
                 throw new UnsupportedOperationException(InitMethod.class.getSimpleName() + " can be used only on methods without any parameters. Error is in: " + initMethod);
             }

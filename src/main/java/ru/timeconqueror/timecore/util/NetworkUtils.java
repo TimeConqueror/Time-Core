@@ -3,6 +3,7 @@ package ru.timeconqueror.timecore.util;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
 
@@ -31,6 +32,20 @@ public class NetworkUtils {
         for (ServerPlayerEntity player : getPlayersNearby(fromPos, distanceIn)) {
             action.accept(player);
         }
+    }
+
+    /**
+     * Send provided message for each player, who is in specific distance from given pos.//FIXME check for shouldn't be called on client?
+     */
+    public static void sendForEachPlayerNearby(BlockPos fromPos, double distanceIn, ITextComponent component) {
+        forEachPlayerNearby(fromPos, distanceIn, serverPlayerEntity -> serverPlayerEntity.sendMessage(component, serverPlayerEntity.getUUID()));
+    }
+
+    /**
+     * Send provided message for provided player.
+     */
+    public static void sendMessage(ServerPlayerEntity player, ITextComponent component) {
+        player.sendMessage(component, player.getUUID());
     }
 
     /**
