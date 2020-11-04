@@ -121,7 +121,7 @@ public class PacketRegister extends TimeRegister {
      * @see NetworkRegistry.ChannelBuilder#newSimpleChannel(ResourceLocation, Supplier, Predicate, Predicate)
      */
     public PacketRegisterChain createChannel(String name, Supplier<String> networkProtocolVersion, Predicate<String> clientAcceptedVersions, Predicate<String> serverAcceptedVersions) {
-        SimpleChannel channel = createChannel(getModid(), name, networkProtocolVersion, clientAcceptedVersions, serverAcceptedVersions);
+        SimpleChannel channel = createChannel(getModId(), name, networkProtocolVersion, clientAcceptedVersions, serverAcceptedVersions);
         return new PacketRegisterChain(channel);
     }
 

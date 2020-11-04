@@ -3,5 +3,7 @@
   "cmd.timecore.structure_revealer.subscribe.success": "Successfully subscribed %1$s to %2$s",
   "cmd.timecore.structure_revealer.unsubscribe.success": "Successfully unsubscribed %1$s from %2$s",
   "cmd.timecore.structure_revealer.unsubscribe_from_all.success": "Successfully unsubscribed %1$s from all structures",
-  "cmd.timecore.structure_revealer.list": "Subscribed structures for %s:"
+  "cmd.timecore.structure_revealer.list": "Subscribed structures for %s:",
+  "#MARK AUTO GEN START": "",
+  "#MARK AUTO GEN END": ""
 }

@@ -7,6 +7,7 @@ import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 import ru.timeconqueror.timecore.TimeCore;
 import ru.timeconqueror.timecore.api.util.Wrapper;
+import ru.timeconqueror.timecore.storage.Storage;
 import ru.timeconqueror.timecore.util.FileUtils;
 
 import java.io.File;
@@ -24,10 +25,11 @@ public class LangJsonGenerator {
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().setLenient().create();
     private static final Marker LOG_MARKER = MarkerManager.getMarker(LangJsonGenerator.class.getSimpleName());
 
-    public void save(String modid, HashMap<String, LangSection<?>> langSectionMap) {
-        TimeCore.LOGGER.debug(LOG_MARKER, "Generating of lang entries is started for mod {}", modid);
+    public void save(String modId, HashMap<String, LangSection<?>> langSectionMap) {
+        TimeCore.LOGGER.debug(LOG_MARKER, "Generating of lang entries is started for mod {}", modId);
 
-        File outputFile = new File("../src/main/resources/assets/" + modid + "/lang/en_us.json");
+        File outputFile = Storage.getSettings(modId).getLangGeneratorOutputFile();
+
         TimeCore.LOGGER.debug(LOG_MARKER, "The result will be saved at {}", outputFile.getAbsolutePath());
 
         try {

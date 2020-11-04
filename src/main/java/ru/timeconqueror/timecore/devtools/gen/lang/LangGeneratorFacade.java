@@ -8,9 +8,9 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.event.lifecycle.GatherDataEvent;
-import ru.timeconqueror.timecore.api.TimeMod;
+import ru.timeconqueror.timecore.mod.mixins.accessor.GatherDataEventAccessor;
+import ru.timeconqueror.timecore.storage.Storage;
 import ru.timeconqueror.timecore.util.EnvironmentUtils;
 
 import java.util.HashMap;
@@ -42,10 +42,10 @@ import java.util.LinkedHashMap;
  * </blockquote>
  */
 public class LangGeneratorFacade {
-    private static final LangJsonGenerator GENERATOR = new LangJsonGenerator();
-    private static final HashMap<String, LangSection<?>> SECTIONS = new LinkedHashMap<>();
+    private final LangJsonGenerator generator = new LangJsonGenerator();
+    private final HashMap<String, LangSection<?>> sections = new LinkedHashMap<>();
 
-    static {
+    public LangGeneratorFacade() {
         addSection(LangSection.ITEM_GROUPS);
         addSection(LangSection.BLOCKS);
         addSection(LangSection.ITEMS);
@@ -61,7 +61,7 @@ public class LangGeneratorFacade {
      * @param item   item for which english location will be added to file
      * @param enName english localization location of item
      */
-    public static void addItemEntry(Item item, String enName) {
+    public void addItemEntry(Item item, String enName) {
         if (shouldSave()) {
             addLangEntry(LangSection.ITEMS, item, enName);
         }
@@ -74,7 +74,7 @@ public class LangGeneratorFacade {
      * @param block  block for which english location will be added to file
      * @param enName english localization location of block
      */
-    public static void addBlockEntry(Block block, String enName) {
+    public void addBlockEntry(Block block, String enName) {
         if (shouldSave()) {
             addLangEntry(LangSection.BLOCKS, block, enName);
         }
@@ -87,7 +87,7 @@ public class LangGeneratorFacade {
      * @param entityEntry entry of entity for which english location will be added to file
      * @param enName      english localization location of entity
      */
-    public static void addEntityEntry(EntityType<?> entityEntry, String enName) {
+    public void addEntityEntry(EntityType<?> entityEntry, String enName) {
         if (shouldSave()) {
             addLangEntry(LangSection.ENTITIES, entityEntry, enName);
         }
@@ -100,7 +100,7 @@ public class LangGeneratorFacade {
      * @param itemGroup item group for which english location will be added to file
      * @param enName    english localization location of item group
      */
-    public static void addItemGroupEntry(ItemGroup itemGroup, String enName) {
+    public void addItemGroupEntry(ItemGroup itemGroup, String enName) {
         if (shouldSave()) {
             addLangEntry(LangSection.ITEM_GROUPS, itemGroup, enName);
         }
@@ -118,7 +118,7 @@ public class LangGeneratorFacade {
      * @param item           armor item for which english location will be added to file
      * @param materialEnName the english location of material, will be the first word in the full location
      */
-    public static void addArmorEntryByMaterial(ArmorItem item, String materialEnName) {
+    public void addArmorEntryByMaterial(ArmorItem item, String materialEnName) {
         if (shouldSave()) {
             EquipmentSlotType equipmentSlot = item.getSlot();
 
@@ -155,7 +155,7 @@ public class LangGeneratorFacade {
      * @param item   armor item for which english location will be added to file
      * @param enName english localization location of item
      */
-    public static void addArmorEntry(ArmorItem item, String enName) {
+    public void addArmorEntry(ArmorItem item, String enName) {
         if (shouldSave()) {
             addLangEntry(LangSection.ARMOR, item, enName);
         }
@@ -168,7 +168,7 @@ public class LangGeneratorFacade {
      * @param key    full localization key of this thing
      * @param enName english localization location of this thing
      */
-    public static void addMiscEntry(String key, String enName) {
+    public void addMiscEntry(String key, String enName) {
         if (!shouldSave()) return;
         addLangEntry(LangSection.MISC, key, enName);
     }
@@ -181,8 +181,8 @@ public class LangGeneratorFacade {
      *
      * @param langSection section to be added to the generator
      */
-    public static <T> LangSection<T> addSection(LangSection<T> langSection) {
-        if (SECTIONS.put(langSection.getName(), langSection) != null) {
+    public <T> LangSection<T> addSection(LangSection<T> langSection) {
+        if (sections.put(langSection.getName(), langSection) != null) {
             throw new IllegalArgumentException("Lang section with location " + langSection.getName() + " already exists.");
         }
 
@@ -192,7 +192,7 @@ public class LangGeneratorFacade {
     /**
      * Adds lang entry to provided section.
      */
-    private static <T> void addLangEntry(LangSection<T> section, T entry, String enName) {
+    private <T> void addLangEntry(LangSection<T> section, T entry, String enName) {
         if (shouldSave()) section.addEntry(entry, enName);
     }
 
@@ -202,9 +202,11 @@ public class LangGeneratorFacade {
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void onDataEvent(GatherDataEvent event) {
-        if (ModLoadingContext.get().getActiveContainer().getMod() instanceof TimeMod) {
+        GatherDataEventAccessor hiddenStuff = (GatherDataEventAccessor) event;
 
+        for (String mod : hiddenStuff.getConfig().getMods()) {
+            LangGeneratorFacade langGeneratorFacade = Storage.getFeatures(mod).getLangGeneratorFacade();
+            langGeneratorFacade.generator.save(mod, langGeneratorFacade.sections);
         }
-        GENERATOR.save(ModLoadingContext.get().getActiveNamespace(), SECTIONS);
     }
 }

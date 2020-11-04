@@ -106,7 +106,7 @@ public class SoundRegister extends ForgeRegister<SoundEvent> {
      *                 It will be used as a part of registry key. Should NOT contain mod ID, because it will be bound automatically.
      */
     public RegistryObject<TimeSound> register(String location) {
-        ResourceLocation registryName = new ResourceLocation(getModid(), location);
+        ResourceLocation registryName = new ResourceLocation(getModId(), location);
 
         return registerEntry(location, () -> new TimeSound(registryName));
     }

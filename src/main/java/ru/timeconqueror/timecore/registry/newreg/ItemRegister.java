@@ -201,7 +201,7 @@ public class ItemRegister extends ForgeRegister<Item> {
          */
         public ItemRegisterChain<I> genLangEntry(String enName) {
             if (EnvironmentUtils.isInDev()) {
-                runTaskAfterRegistering(() -> LangGeneratorFacade.addItemEntry(asRegistryObject().get(), enName));
+                runTaskAfterRegistering(() -> ItemRegister.this.getLangGeneratorFacade().addItemEntry(asRegistryObject().get(), enName));
             }
             return this;
         }
@@ -223,7 +223,7 @@ public class ItemRegister extends ForgeRegister<Item> {
                 runTaskAfterRegistering(() -> {
                     Item item = asRegistryObject().get();
                     if (item instanceof ArmorItem) {
-                        LangGeneratorFacade.addArmorEntryByMaterial((ArmorItem) item, materialEnName);
+                        ItemRegister.this.getLangGeneratorFacade().addArmorEntryByMaterial((ArmorItem) item, materialEnName);
                     } else {
                         throw new IllegalArgumentException("#genArmorLangEntry will only work with armor items. For common items use #genLangEntry instead.");
                     }
@@ -247,7 +247,7 @@ public class ItemRegister extends ForgeRegister<Item> {
             runTaskAfterRegistering(() -> {
                 Item item = asRegistryObject().get();
                 if (item instanceof ArmorItem) {
-                    LangGeneratorFacade.addArmorEntry((ArmorItem) item, enName);
+                    ItemRegister.this.getLangGeneratorFacade().addArmorEntry((ArmorItem) item, enName);
                 } else {
                     throw new IllegalArgumentException("#genArmorLangEntry will only work with armor items. For common items use #genLangEntry instead.");
                 }

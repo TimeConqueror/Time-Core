@@ -274,7 +274,7 @@ public class BlockRegister extends ForgeRegister<Block> {
          * @param enName english localization location of block
          */
         public BlockRegisterChain<B> genLangEntry(String enName) {
-            runTaskAfterRegistering(() -> LangGeneratorFacade.addBlockEntry(asRegistryObject().get(), enName));
+            runTaskAfterRegistering(() -> BlockRegister.this.getLangGeneratorFacade().addBlockEntry(asRegistryObject().get(), enName));
             return this;
         }
 

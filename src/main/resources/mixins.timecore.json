@@ -9,6 +9,7 @@
     "MixinDataMain",
     "MixinFMLModContainer",
     "MixinLivingEntity",
+    "accessor.GatherDataEventAccessor",
     "config.MixinConfigValue"
   ],
   "client": [

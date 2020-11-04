@@ -36,7 +36,7 @@ public abstract class ForgeRegister<T extends IForgeRegistryEntry<T>> extends Ti
     protected <I extends T> RegistryObject<I> registerEntry(String name, Supplier<I> entrySup) {
         Preconditions.checkNotNull(entries, "Cannot register new entries after RegistryEvent.Register has been fired.");
 
-        ResourceLocation registryName = new ResourceLocation(getModid(), name);
+        ResourceLocation registryName = new ResourceLocation(getModId(), name);
         RegistryObject<I> holder = RegistryObject.of(registryName, registry);
 
         if (entries.put((RegistryObject<T>) holder, () -> entrySup.get().setRegistryName(registryName)) != null) {
