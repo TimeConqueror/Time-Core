@@ -7,15 +7,14 @@
   "compatibilityLevel": "JAVA_8",
   "mixins": [
     "MixinDataMain",
-    "MixinDirectoryCache",
     "MixinFMLModContainer",
     "MixinLivingEntity",
     "config.MixinConfigValue"
   ],
   "client": [
     "accessor.client.ViewDistanceProvider",
-    "client.command.ClientPlayerEntityMixin",
-    "client.command.ClientPlayNetHandlerMixin",
     "client.WorldRendererMixin",
+    "client.command.ClientPlayerEntityMixin",
+    "client.command.ClientPlayNetHandlerMixin"
   ]
 }

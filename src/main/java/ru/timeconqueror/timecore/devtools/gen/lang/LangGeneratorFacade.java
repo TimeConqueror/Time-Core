@@ -10,6 +10,7 @@ import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.event.lifecycle.GatherDataEvent;
+import ru.timeconqueror.timecore.api.TimeMod;
 import ru.timeconqueror.timecore.util.EnvironmentUtils;
 
 import java.util.HashMap;
@@ -201,6 +202,9 @@ public class LangGeneratorFacade {
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void onDataEvent(GatherDataEvent event) {
+        if (ModLoadingContext.get().getActiveContainer().getMod() instanceof TimeMod) {
+
+        }
         GENERATOR.save(ModLoadingContext.get().getActiveNamespace(), SECTIONS);
     }
 }

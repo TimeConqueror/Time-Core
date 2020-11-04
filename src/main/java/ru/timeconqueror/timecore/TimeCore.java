@@ -7,13 +7,11 @@ import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.minecraftforge.fml.event.lifecycle.GatherDataEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.spongepowered.asm.mixin.MixinEnvironment;
 import ru.timeconqueror.timecore.api.TimeMod;
-import ru.timeconqueror.timecore.api.datagen.DataGen;
 import ru.timeconqueror.timecore.client.resource.TimePackFinder;
 import ru.timeconqueror.timecore.devtools.StructureRevealer;
 import ru.timeconqueror.timecore.util.reflection.ReflectionHelper;
@@ -40,7 +38,6 @@ public final class TimeCore implements TimeMod {
 
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::doClientStuff);
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::onDataEvent);
     }
 
     /**
@@ -55,10 +52,6 @@ public final class TimeCore implements TimeMod {
     }
 
     private void doClientStuff(final FMLClientSetupEvent event) {
-    }
-
-    private void onDataEvent(GatherDataEvent event) {
-        DataGen.disableFileDeletion = true;
     }
 
     private static void checkForMixinBootstrap() {

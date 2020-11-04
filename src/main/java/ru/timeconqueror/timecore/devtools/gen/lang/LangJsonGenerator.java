@@ -25,9 +25,10 @@ public class LangJsonGenerator {
     private static final Marker LOG_MARKER = MarkerManager.getMarker(LangJsonGenerator.class.getSimpleName());
 
     public void save(String modid, HashMap<String, LangSection<?>> langSectionMap) {
-        TimeCore.LOGGER.debug(LOG_MARKER, "Generating of lang entries is started.");
+        TimeCore.LOGGER.debug(LOG_MARKER, "Generating of lang entries is started for mod {}", modid);
 
         File outputFile = new File("../src/main/resources/assets/" + modid + "/lang/en_us.json");
+        TimeCore.LOGGER.debug(LOG_MARKER, "The result will be saved at {}", outputFile.getAbsolutePath());
 
         try {
             FileUtils.prepareFileForRead(outputFile);
@@ -36,10 +37,14 @@ public class LangJsonGenerator {
             Type mapType = new TypeToken<LinkedHashMap<String, String>>() {
             }.getType();
             LinkedHashMap<String, String> entries = GSON.fromJson(new FileReader(outputFile), mapType);
+            if (entries == null) {
+                entries = new LinkedHashMap<>();
+            }
 
             Wrapper<Integer> index = new Wrapper<>(0);
             Wrapper<Integer> startIndex = new Wrapper<>(-1);
             Wrapper<Integer> endIndex = new Wrapper<>(-1);
+
             entries.forEach((key, value) -> {
                 if (key.equals(START_MARK)) {
                     if (startIndex.get() != -1) {
@@ -74,12 +79,14 @@ public class LangJsonGenerator {
             LinkedHashMap<String, String> newValues = new LinkedHashMap<>(entries.size());
             index.set(0);
             Wrapper<Boolean> generated = new Wrapper<>(false);
+
+            LinkedHashMap<String, String> finalEntries = entries;
             entries.forEach((key, value) -> {
                 if (index.get() < startIndex.get() || (endIndex.get() != -1 && index.get() >= endIndex.get() + 1)) {
                     newValues.put(key, value);
                 }
 
-                if (index.get().equals(startIndex.get()) || (index.get() == entries.size() - 1 && !generated.get())) {
+                if (index.get().equals(startIndex.get()) || (index.get() == finalEntries.size() - 1 && !generated.get())) {
                     newValues.put(START_MARK, "");
                     putAllEntries(langSectionMap, newValues);
                     newValues.put(END_MARK, "");
