@@ -1,5 +1,6 @@
 package ru.timeconqueror.timecore.util;
 
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
@@ -44,7 +45,7 @@ public class NetworkUtils {
     /**
      * Send provided message for provided player.
      */
-    public static void sendMessage(ServerPlayerEntity player, ITextComponent component) {
+    public static void sendMessage(PlayerEntity player, ITextComponent component) {
         player.sendMessage(component, player.getUUID());
     }
 
