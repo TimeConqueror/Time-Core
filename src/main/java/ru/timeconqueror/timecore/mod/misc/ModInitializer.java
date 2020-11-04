@@ -1,5 +1,7 @@
 package ru.timeconqueror.timecore.mod.misc;
 
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Multimap;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.fml.ModContainer;
 import net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent;
@@ -18,8 +20,6 @@ import ru.timeconqueror.timecore.util.reflection.UnlockedField;
 import ru.timeconqueror.timecore.util.reflection.UnlockedMethod;
 
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
 
 import static net.minecraftforge.fml.Logging.LOADING;
 
@@ -27,14 +27,14 @@ public class ModInitializer {
     private static final Type TIME_AUTO_REG_TYPE = Type.getType(AutoRegistrable.class);
     private static final Type TIME_AUTO_REG_INIT_TYPE = Type.getType(InitMethod.class);
 
-    private static final List<UnlockedMethod<?>> INIT_METHODS = new ArrayList<>();
+    private static final Multimap<String, UnlockedMethod<?>> INIT_METHODS = ArrayListMultimap.create();
 
     public static void run(String modId, ModContainer modContainer, ModFileScanData scanResults, Class<?> modClass) {
         runKotlinAutomaticEventSubscriber(modId, modContainer, scanResults, modClass);
-        setupAutoRegistries(scanResults);
+        setupAutoRegistries(modId, scanResults);
         regModBusListeners();
 
-        processInitMethods();
+        processInitMethods(modId);
     }
 
     private static void runKotlinAutomaticEventSubscriber(String modId, ModContainer modContainer, ModFileScanData scanResults, Class<?> modClass) {
@@ -47,7 +47,7 @@ public class ModInitializer {
         FMLJavaModLoadingContext.get().getModEventBus().register(LangGeneratorFacade.class);
     }
 
-    private static void setupAutoRegistries(ModFileScanData scanResults) {
+    private static void setupAutoRegistries(String modId, ModFileScanData scanResults) {
         scanResults.getAnnotations().stream()
                 .filter(annotationData -> annotationData.getAnnotationType().equals(TIME_AUTO_REG_TYPE) || annotationData.getAnnotationType().equals(TIME_AUTO_REG_INIT_TYPE))
                 .forEach(annotationData -> {
@@ -55,7 +55,7 @@ public class ModInitializer {
                         if (annotationData.getAnnotationType().equals(TIME_AUTO_REG_TYPE)) {
                             processAutoRegistrable(annotationData);
                         } else {
-                            processTimeAutoRegInitMethod(annotationData);
+                            processTimeAutoRegInitMethod(modId, annotationData);
                         }
                     } catch (ClassNotFoundException e) {
                         throw new RuntimeException(e);
@@ -87,7 +87,7 @@ public class ModInitializer {
         }
     }
 
-    private static void processTimeAutoRegInitMethod(ModFileScanData.AnnotationData annotationData) throws ClassNotFoundException {
+    private static void processTimeAutoRegInitMethod(String modId, ModFileScanData.AnnotationData annotationData) throws ClassNotFoundException {
         String containerClassName = annotationData.getClassType().getClassName();
         Class<?> containerClass = Class.forName(containerClassName);
 
@@ -107,7 +107,7 @@ public class ModInitializer {
         if (initMethod.isStatic()) {
             Method nativeMethod = initMethod.getMethod();
             if (nativeMethod.getParameterCount() == 0) {
-                INIT_METHODS.add(initMethod);
+                INIT_METHODS.put(modId, initMethod);
             } else if (nativeMethod.getParameterCount() == 1 && FMLConstructModEvent.class.isAssignableFrom(nativeMethod.getParameterTypes()[0])) {
                 FMLJavaModLoadingContext.get().getModEventBus().addListener(EventPriority.HIGHEST, event -> initMethod.invoke(null, event));
             } else {
@@ -118,7 +118,7 @@ public class ModInitializer {
         }
     }
 
-    private static void processInitMethods() {
-        INIT_METHODS.forEach(unlockedMethod -> unlockedMethod.invoke(null));
+    private static void processInitMethods(String modId) {
+        INIT_METHODS.removeAll(modId).forEach(unlockedMethod -> unlockedMethod.invoke(null));
     }
 }
