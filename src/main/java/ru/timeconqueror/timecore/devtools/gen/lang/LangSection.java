@@ -1,11 +1,5 @@
 package ru.timeconqueror.timecore.devtools.gen.lang;
 
-import net.minecraft.block.Block;
-import net.minecraft.entity.EntityType;
-import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.item.ArmorItem;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemGroup;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -15,24 +9,6 @@ import java.util.Map;
 import java.util.function.Function;
 
 public class LangSection<T> {
-    public static final LangSection<ItemGroup> ITEM_GROUPS = new LangSection<>("Creative Tabs", itemGroup -> itemGroup.getDisplayName().getString());
-    public static final LangSection<Block> BLOCKS = new LangSection<>("Blocks", Block::getDescriptionId);
-    public static final LangSection<Item> ITEMS = new LangSection<>("Items", Item::getDescriptionId);
-    public static final LangSection<ArmorItem> ARMOR = new LangSection<ArmorItem>("Armor", Item::getDescriptionId)
-            .setSortingComparator(Comparator.<Map.Entry<ArmorItem, String>, String>comparing(mapEntry -> mapEntry.getKey().getMaterial().getName())
-                    .thenComparingInt((mapEntry) -> {
-                        EquipmentSlotType armorType = mapEntry.getKey().getSlot();
-                        if (armorType == EquipmentSlotType.HEAD) return 1;
-                        if (armorType == EquipmentSlotType.CHEST) return 2;
-                        if (armorType == EquipmentSlotType.LEGS) return 3;
-                        if (armorType == EquipmentSlotType.FEET) return 4;
-
-                        return 5;
-                    })
-            );
-    public static final LangSection<EntityType<?>> ENTITIES = new LangSection<>("Entities", EntityType::getDescriptionId);
-    public static final LangSection<String> MISC = new LangSection<>("Miscellaneous", s -> s);
-
     private final HashMap<T, String> entries = new HashMap<>();
     private final String name;
     private final Function<T, String> keyCreator;
@@ -52,7 +28,7 @@ public class LangSection<T> {
 
     public void addEntry(T entry, String enName) {
         if (saved)
-            throw new IllegalStateException("Entry map has already been saved. You should add entries only before there were dumped to file.");
+            throw new IllegalStateException("Entry map has already been saved. You should add entries only before they are dumped to file.");
         entries.put(entry, enName);
     }
 

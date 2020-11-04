@@ -8,6 +8,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.GatherDataEvent;
 import ru.timeconqueror.timecore.mod.mixins.accessor.GatherDataEventAccessor;
 import ru.timeconqueror.timecore.storage.Storage;
@@ -41,21 +42,20 @@ import java.util.LinkedHashMap;
  *  </pre>
  * </blockquote>
  */
+@Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
 public class LangGeneratorFacade {
     private final LangJsonGenerator generator = new LangJsonGenerator();
     private final HashMap<String, LangSection<?>> sections = new LinkedHashMap<>();
 
-    public LangGeneratorFacade() {
-        addSection(LangSection.ITEM_GROUPS);
-        addSection(LangSection.BLOCKS);
-        addSection(LangSection.ITEMS);
-        addSection(LangSection.ARMOR);
-        addSection(LangSection.ENTITIES);
-        addSection(LangSection.MISC);
-    }
+    private final LangSection<ItemGroup> itemGroupSection = addSection(DefaultSections.ITEM_GROUPS.get());
+    private final LangSection<Block> blockSection = addSection(DefaultSections.BLOCKS.get());
+    private final LangSection<Item> itemSection = addSection(DefaultSections.ITEMS.get());
+    private final LangSection<ArmorItem> armorSection = addSection(DefaultSections.ARMOR.get());
+    private final LangSection<EntityType<?>> entitySection = addSection(DefaultSections.ENTITIES.get());
+    private final LangSection<String> miscSection = addSection(DefaultSections.MISC.get());
 
     /**
-     * Adds item entry to {@link LangSection#ITEMS}, which will be processed by generator on {@link GatherDataEvent}.
+     * Adds item entry to {@link DefaultSections#ITEMS}, which will be processed by generator on {@link GatherDataEvent}.
      * Generator will generate entries only in {@code runData} launch mode.
      *
      * @param item   item for which english location will be added to file
@@ -63,12 +63,12 @@ public class LangGeneratorFacade {
      */
     public void addItemEntry(Item item, String enName) {
         if (shouldSave()) {
-            addLangEntry(LangSection.ITEMS, item, enName);
+            itemSection.addEntry(item, enName);
         }
     }
 
     /**
-     * Adds block entry to {@link LangSection#BLOCKS}, which will be processed by generator on {@link GatherDataEvent}.
+     * Adds block entry to {@link DefaultSections#BLOCKS}, which will be processed by generator on {@link GatherDataEvent}.
      * Generator will generate entries only in {@code runData} launch mode.
      *
      * @param block  block for which english location will be added to file
@@ -76,12 +76,12 @@ public class LangGeneratorFacade {
      */
     public void addBlockEntry(Block block, String enName) {
         if (shouldSave()) {
-            addLangEntry(LangSection.BLOCKS, block, enName);
+            blockSection.addEntry(block, enName);
         }
     }
 
     /**
-     * Adds entity entry to {@link LangSection#ENTITIES}, which will be processed by generator on {@link GatherDataEvent}.
+     * Adds entity entry to {@link DefaultSections#ENTITIES}, which will be processed by generator on {@link GatherDataEvent}.
      * Generator will generate entries only in {@code runData} launch mode.
      *
      * @param entityEntry entry of entity for which english location will be added to file
@@ -89,12 +89,12 @@ public class LangGeneratorFacade {
      */
     public void addEntityEntry(EntityType<?> entityEntry, String enName) {
         if (shouldSave()) {
-            addLangEntry(LangSection.ENTITIES, entityEntry, enName);
+            entitySection.addEntry(entityEntry, enName);
         }
     }
 
     /**
-     * Adds item group entry to {@link LangSection#ITEM_GROUPS}, which will be processed by generator on {@link GatherDataEvent}.
+     * Adds item group entry to {@link DefaultSections#ITEM_GROUPS}, which will be processed by generator on {@link GatherDataEvent}.
      * Generator will generate entries only in {@code runData} launch mode.
      *
      * @param itemGroup item group for which english location will be added to file
@@ -102,12 +102,12 @@ public class LangGeneratorFacade {
      */
     public void addItemGroupEntry(ItemGroup itemGroup, String enName) {
         if (shouldSave()) {
-            addLangEntry(LangSection.ITEM_GROUPS, itemGroup, enName);
+            itemGroupSection.addEntry(itemGroup, enName);
         }
     }
 
     /**
-     * Adds armor item entry to {@link LangSection#ARMOR}, which will be processed by generator on {@link GatherDataEvent}.
+     * Adds armor item entry to {@link DefaultSections#ARMOR}, which will be processed by generator on {@link GatherDataEvent}.
      * Generator will generate entries only in {@code runData} launch mode.<br>
      * <p>
      * This method is only for common armor stuff names, like the "Diamond Helmet", where equipment slot ("Helmet") is the last word.<br>
@@ -145,7 +145,7 @@ public class LangGeneratorFacade {
     }
 
     /**
-     * Adds armor item entry to {@link LangSection#ARMOR}, which will be processed by generator on {@link GatherDataEvent}.
+     * Adds armor item entry to {@link DefaultSections#ARMOR}, which will be processed by generator on {@link GatherDataEvent}.
      * Generator will generate entries only in {@code runData} launch mode.<br>
      * <p>
      * This method is only for uncommon armor stuff names, like the "Helmet of The Dark One", where "Helmet" is the first word, not the last.<br>
@@ -157,20 +157,21 @@ public class LangGeneratorFacade {
      */
     public void addArmorEntry(ArmorItem item, String enName) {
         if (shouldSave()) {
-            addLangEntry(LangSection.ARMOR, item, enName);
+            armorSection.addEntry(item, enName);
         }
     }
 
     /**
-     * Adds miscellaneous entry to {@link LangSection#MISC}, which will be processed by generator on {@link GatherDataEvent}.
+     * Adds miscellaneous entry to {@link DefaultSections#MISC}, which will be processed by generator on {@link GatherDataEvent}.
      * Generator will generate entries only in {@code runData} launch mode.
      *
      * @param key    full localization key of this thing
      * @param enName english localization location of this thing
      */
     public void addMiscEntry(String key, String enName) {
-        if (!shouldSave()) return;
-        addLangEntry(LangSection.MISC, key, enName);
+        if (shouldSave()) {
+            miscSection.addEntry(key, enName);
+        }
     }
 
     /**
@@ -189,19 +190,13 @@ public class LangGeneratorFacade {
         return langSection;
     }
 
-    /**
-     * Adds lang entry to provided section.
-     */
-    private <T> void addLangEntry(LangSection<T> section, T entry, String enName) {
-        if (shouldSave()) section.addEntry(entry, enName);
-    }
-
     private static boolean shouldSave() {
         return EnvironmentUtils.isInDataMode();
     }
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void onDataEvent(GatherDataEvent event) {
+        System.out.println("EnvironmentUtils.isInDataMode() = " + EnvironmentUtils.isInDataMode());
         GatherDataEventAccessor hiddenStuff = (GatherDataEventAccessor) event;
 
         for (String mod : hiddenStuff.getConfig().getMods()) {

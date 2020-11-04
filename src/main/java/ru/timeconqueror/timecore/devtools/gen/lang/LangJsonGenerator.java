@@ -30,8 +30,6 @@ public class LangJsonGenerator {
 
         File outputFile = Storage.getSettings(modId).getLangGeneratorOutputFile();
 
-        TimeCore.LOGGER.debug(LOG_MARKER, "The result will be saved at {}", outputFile.getAbsolutePath());
-
         try {
             FileUtils.prepareFileForRead(outputFile);
             FileUtils.prepareFileForWrite(outputFile);
@@ -83,22 +81,23 @@ public class LangJsonGenerator {
             Wrapper<Boolean> generated = new Wrapper<>(false);
 
             LinkedHashMap<String, String> finalEntries = entries;
-            entries.forEach((key, value) -> {
-                if (index.get() < startIndex.get() || (endIndex.get() != -1 && index.get() >= endIndex.get() + 1)) {
-                    newValues.put(key, value);
-                }
+            if (entries.isEmpty()) {
+                fill(langSectionMap, newValues);
+            } else {
+                entries.forEach((key, value) -> {
+                    if (index.get() < startIndex.get() || (endIndex.get() != -1 && index.get() >= endIndex.get() + 1)) {
+                        newValues.put(key, value);
+                    }
 
-                if (index.get().equals(startIndex.get()) || (index.get() == finalEntries.size() - 1 && !generated.get())) {
-                    newValues.put(START_MARK, "");
-                    putAllEntries(langSectionMap, newValues);
-                    newValues.put(END_MARK, "");
+                    if (index.get().equals(startIndex.get()) || (index.get() == finalEntries.size() - 1 && !generated.get())) {
+                        fill(langSectionMap, newValues);
 
+                        generated.set(true);
+                    }
 
-                    generated.set(true);
-                }
-
-                index.set(index.get() + 1);
-            });
+                    index.set(index.get() + 1);
+                });
+            }
 
             try (FileWriter fileWriter = new FileWriter(outputFile)) {
                 GSON.toJson(newValues, mapType, fileWriter);
@@ -107,16 +106,17 @@ public class LangJsonGenerator {
             e.printStackTrace();
         }
 
-        TimeCore.LOGGER.debug(LOG_MARKER, "Generating of lang entries is finished.");
-        TimeCore.LOGGER.debug(LOG_MARKER, "Results were saved in {}", outputFile.getAbsolutePath());
+        TimeCore.LOGGER.debug(LOG_MARKER, "Generating of lang entries for mod {} is finished. Results were saved in {}", modId, outputFile.getAbsolutePath());
     }
 
-    private void putAllEntries(Map<String, LangSection<?>> sectionMap, Map<String, String> out) {
+    private void fill(Map<String, LangSection<?>> sectionMap, Map<String, String> out) {
+        out.put(START_MARK, "");
         sectionMap.forEach((s, langSection) -> {
             if (!langSection.isEmpty()) {
                 out.put("_comment", langSection.getComment());
                 langSection.sendEntries(out);
             }
         });
+        out.put(END_MARK, "");
     }
 }

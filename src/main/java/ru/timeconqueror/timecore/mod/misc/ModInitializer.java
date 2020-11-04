@@ -9,7 +9,6 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.forgespi.language.ModFileScanData;
 import org.objectweb.asm.Type;
 import ru.timeconqueror.timecore.TimeCore;
-import ru.timeconqueror.timecore.devtools.gen.lang.LangGeneratorFacade;
 import ru.timeconqueror.timecore.devtools.kotlin.KotlinAutomaticEventSubscriber;
 import ru.timeconqueror.timecore.registry.AutoRegistrable;
 import ru.timeconqueror.timecore.registry.AutoRegistrable.InitMethod;
@@ -32,7 +31,6 @@ public class ModInitializer {
     public static void run(String modId, ModContainer modContainer, ModFileScanData scanResults, Class<?> modClass) {
         runKotlinAutomaticEventSubscriber(modId, modContainer, scanResults, modClass);
         setupAutoRegistries(modId, scanResults);
-        regModBusListeners();
 
         processInitMethods(modId);
     }
@@ -41,10 +39,6 @@ public class ModInitializer {
         TimeCore.LOGGER.debug(LOADING, "Injecting Automatic event subscribers for {}", modId);
         KotlinAutomaticEventSubscriber.inject(modContainer, scanResults, modClass.getClassLoader());
         TimeCore.LOGGER.debug(LOADING, "Completed Automatic event subscribers for {}", modId);
-    }
-
-    private static void regModBusListeners() {
-        FMLJavaModLoadingContext.get().getModEventBus().register(LangGeneratorFacade.class);
     }
 
     private static void setupAutoRegistries(String modId, ModFileScanData scanResults) {
