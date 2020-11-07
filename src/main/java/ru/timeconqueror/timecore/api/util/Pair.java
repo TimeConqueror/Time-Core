@@ -1,5 +1,9 @@
 package ru.timeconqueror.timecore.api.util;
 
+import java.util.Map;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
+
 public class Pair<A, B> {
     private final A a;
     private final B b;
@@ -24,5 +28,9 @@ public class Pair<A, B> {
     @Override
     public String toString() {
         return "{" + a + " -> " + b + "}";
+    }
+
+    public static <A, B> Collector<Pair<A, B>, ?, Map<A, B>> toMap() {
+        return Collectors.toMap(Pair::getA, Pair::getB);
     }
 }
