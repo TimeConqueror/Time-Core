@@ -133,6 +133,17 @@ public class ItemRegister extends ForgeRegister<Item> {
 
         /**
          * Creates and registers simple item model without the need of json file (via code) for bound item with one provided texture and "item/generated" parent model.
+         * Will require the texture with path: "${your_modid}:textures/item/${registry_name}.png"
+         * Example: "my_mod:textures/item/sparkle.png"
+         *
+         * @param parentType type of generated model: generated or handheld
+         */
+        public ItemRegisterChain<I> genModel(StandardItemModelParents parentType) {
+            return genModel(parentType, new TextureLocation(getModId(), getName()));
+        }
+
+        /**
+         * Creates and registers simple item model without the need of json file (via code) for bound item with one provided texture and "item/generated" parent model.
          */
         public ItemRegisterChain<I> genDefaultModel(TextureLocation texture) {
             return genModel(StandardItemModelParents.DEFAULT, texture);
