@@ -93,7 +93,7 @@ import java.util.function.Supplier;
  *              private static void register() {
  *                  ItemPropsFactory miscGrouped = new ItemPropsFactory(ItemGroup.TAB_MISC);
  *
- *                  REGISTER.register("test_diamond", () -> new Item(miscGrouped.createProps()))
+ *                  REGISTER.register("test_diamond", () -> new Item(miscGrouped.create()))
  *                          .genDefaultModel(new TextureLocation("minecraft", "item/diamond"));
  *               }
  *          }
