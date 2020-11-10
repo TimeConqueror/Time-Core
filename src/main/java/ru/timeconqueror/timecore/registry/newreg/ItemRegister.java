@@ -139,7 +139,7 @@ public class ItemRegister extends ForgeRegister<Item> {
          * @param parentType type of generated model: generated or handheld
          */
         public ItemRegisterChain<I> genModel(StandardItemModelParents parentType) {
-            return genModel(parentType, new TextureLocation(getModId(), getName()));
+            return genModel(parentType, new TextureLocation(getModId(), "item/" + getName()));
         }
 
         /**
