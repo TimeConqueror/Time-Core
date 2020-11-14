@@ -86,4 +86,19 @@ public class MathUtils {
     public static double difference(double number1, double number2) {
         return Math.abs(number1 - number2);
     }
+
+    /**
+     * Returns the arithmetic mean from provided values.
+     */
+    public static int average(int... vals) {
+        if (vals.length == 0) return 0;
+
+        int s = 0;
+
+        for (int val : vals) {
+            s += val;
+        }
+
+        return s / vals.length;
+    }
 }
