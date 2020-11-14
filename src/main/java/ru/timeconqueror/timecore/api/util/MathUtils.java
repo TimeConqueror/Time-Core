@@ -65,7 +65,7 @@ public class MathUtils {
      * @param start   start value (0)
      * @param end     end value (1)
      */
-    public static float calcPercentage(float current, float start, float end) {
+    public static float percentage(float current, float start, float end) {
         return end - start != 0 ? (current - start) / (end - start) : 1;
     }
 
@@ -76,14 +76,14 @@ public class MathUtils {
      * @param start   start value (0)
      * @param end     end value (1)
      */
-    public static double calcPercentage(double current, double start, double end) {
+    public static double percentage(double current, double start, double end) {
         return end - start != 0 ? (current - start) / (end - start) : 1;
     }
 
     /**
      * Returns the difference between two numbers.
      */
-    public static double calcDifference(double number1, double number2) {
+    public static double difference(double number1, double number2) {
         return Math.abs(number1 - number2);
     }
 }
