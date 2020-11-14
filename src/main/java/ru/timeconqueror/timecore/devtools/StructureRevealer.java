@@ -8,7 +8,6 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.SectionPos;
 import net.minecraft.world.gen.feature.structure.Structure;
-import net.minecraft.world.gen.feature.structure.StructureManager;
 import net.minecraft.world.gen.feature.structure.StructurePiece;
 import net.minecraft.world.gen.feature.structure.StructureStart;
 import net.minecraft.world.server.ChunkManager;
@@ -16,9 +15,11 @@ import net.minecraft.world.server.ChunkManagerHooks;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.world.ChunkWatchEvent;
 import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import net.minecraftforge.fml.loading.FMLEnvironment;
+import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import ru.timeconqueror.timecore.mod.common.config.MainConfig;
 import ru.timeconqueror.timecore.mod.common.packet.InternalPacketManager;
 import ru.timeconqueror.timecore.mod.common.packet.S2CSRClearPiecesMsg;
@@ -26,6 +27,7 @@ import ru.timeconqueror.timecore.mod.common.packet.S2CSRSendSinglePieceMsg;
 
 import java.util.*;
 import java.util.stream.Stream;
+
 //ToDo unsubscribe show only sunscribed
 public class StructureRevealer {
     private static final StructureRevealer INSTANCE = MainConfig.INSTANCE.areDevFeaturesEnabled() ? new StructureRevealer() : null;
@@ -35,6 +37,7 @@ public class StructureRevealer {
      */
     public final StructureRenderer structureRenderer;
     private Multimap<UUID, Structure<?>> subscribedStructures = ArrayListMultimap.create();
+    private final Multimap<UUID, ChunkPos> recentlyWatchedChunks = ArrayListMultimap.create();
 
     public StructureRevealer() {
         if (FMLEnvironment.dist == Dist.CLIENT) {
@@ -46,6 +49,7 @@ public class StructureRevealer {
         }
 
         MinecraftForge.EVENT_BUS.addListener(this::onChunkWatch);
+        MinecraftForge.EVENT_BUS.addListener(this::onTickStart);
         MinecraftForge.EVENT_BUS.addListener(this::onServerStart);
     }
 
@@ -111,11 +115,26 @@ public class StructureRevealer {
     private void onChunkWatch(ChunkWatchEvent.Watch event) {
         ServerWorld world = event.getWorld();
         if (world != null && !world.isClientSide() && MainConfig.INSTANCE.areDevFeaturesEnabled()) {
+
             ServerPlayerEntity player = event.getPlayer();
             ChunkPos pos = event.getPos();
 
-            getSubscribedStructuresInChunk(world, player, pos)
-                    .forEach(data -> InternalPacketManager.sendToPlayer(player, new S2CSRSendSinglePieceMsg(data)));
+            recentlyWatchedChunks.put(player.getUUID(), pos);
+        }
+    }
+
+    private void onTickStart(TickEvent.ServerTickEvent event) {
+        if (event.phase == TickEvent.Phase.START) {
+            recentlyWatchedChunks.keySet().forEach(uuid -> {
+                ServerPlayerEntity player = ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayer(uuid);
+
+                if (player != null) {
+                    recentlyWatchedChunks.get(uuid)
+                            .forEach(chunkPos -> getSubscribedStructuresInChunk(player.getLevel(), player, chunkPos)
+                                    .forEach(data -> InternalPacketManager.sendToPlayer(player, new S2CSRSendSinglePieceMsg(data))));
+                }
+            });
+            recentlyWatchedChunks.clear();
         }
     }
 
@@ -124,10 +143,8 @@ public class StructureRevealer {
 
         Collection<Structure<?>> structures = subscribedStructures.get(player.getUUID());
 
-        StructureManager structureManager = world.structureFeatureManager();
-
         for (Structure<?> structure : structures) {
-            Stream<? extends StructureStart<?>> starts = structureManager.startsForFeature(SectionPos.of(pos, 0), structure);
+            Stream<? extends StructureStart<?>> starts = world.startsForFeature(SectionPos.of(pos, 0), structure);
 
             starts.forEach(start -> {
                 synchronized (start.getPieces()) {
