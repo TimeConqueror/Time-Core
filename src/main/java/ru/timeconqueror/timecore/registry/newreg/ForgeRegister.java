@@ -96,9 +96,10 @@ public abstract class ForgeRegister<T extends IForgeRegistryEntry<T>> extends Ti
     }
 
     protected void onClientInit(FMLClientSetupEvent event) {
-        withErrorCatching("client setup event", () -> clientRunnables.forEach(Runnable::run));
-
-        clientRunnables = null;
+        event.enqueueWork(() -> {
+            withErrorCatching("client setup event", () -> clientRunnables.forEach(Runnable::run));
+            clientRunnables = null;
+        });
     }
 
     protected IForgeRegistry<T> getRegistry() {
