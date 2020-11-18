@@ -13,8 +13,7 @@ public class Hacks {
         return null;
     }
 
-    @SuppressWarnings("unchecked")
-    public static <T> T bypassClassChecking(Object obj) {
-        return (T) obj;
+    public static <R, T extends R> R bypassClassChecking(T obj) {
+        return obj;
     }
 }
