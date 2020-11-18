@@ -32,7 +32,7 @@ public final class TimeCore implements TimeMod {
 
             //noinspection ConstantConditions
             if (mc != null) {//it's null in runData
-                mc.getResourcePackRepository().addPackFinder(new TimePackFinder());
+                mc.submitAsync(() -> mc.getResourcePackRepository().addPackFinder(new TimePackFinder()));
             }
         });
 
