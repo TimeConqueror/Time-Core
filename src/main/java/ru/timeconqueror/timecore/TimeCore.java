@@ -1,9 +1,6 @@
 package ru.timeconqueror.timecore;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
@@ -12,7 +9,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.spongepowered.asm.mixin.MixinEnvironment;
 import ru.timeconqueror.timecore.api.TimeMod;
-import ru.timeconqueror.timecore.client.resource.TimePackFinder;
 import ru.timeconqueror.timecore.devtools.StructureRevealer;
 import ru.timeconqueror.timecore.util.reflection.ReflectionHelper;
 
@@ -26,15 +22,6 @@ public final class TimeCore implements TimeMod {
         INSTANCE = this;
 
         checkForMixinBootstrap();
-
-        DistExecutor.runWhenOn(Dist.CLIENT, () -> () -> {
-            Minecraft mc = Minecraft.getInstance();
-
-            //noinspection ConstantConditions
-            if (mc != null) {//it's null in runData
-                mc.submitAsync(() -> mc.getResourcePackRepository().addPackFinder(new TimePackFinder()));
-            }
-        });
 
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::doClientStuff);
