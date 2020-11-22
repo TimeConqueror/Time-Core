@@ -5,23 +5,17 @@ import net.minecraft.resources.ResourcePackType;
 import net.minecraft.resources.data.IMetadataSectionSerializer;
 import net.minecraft.util.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
-import ru.timeconqueror.timecore.api.client.TimeClient;
-import ru.timeconqueror.timecore.api.client.resource.TimeResource;
-import ru.timeconqueror.timecore.api.client.resource.TimeResourceHolder;
+import ru.timeconqueror.timecore.api.client.resource.GlobalResourceStorage;
 
 import javax.annotation.Nullable;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 public class TimeSpecialResourcePack implements IResourcePack {
-    private final TimeResourceHolder resourceHolder = TimeClient.RESOURCE_HOLDER;
-
     @NotNull
     @Override
     public InputStream getRootResource(@NotNull String fileName) {
@@ -32,12 +26,7 @@ public class TimeSpecialResourcePack implements IResourcePack {
     @Override
     public InputStream getResource(@NotNull ResourcePackType type, @NotNull ResourceLocation location) throws IOException {
         if (type == ResourcePackType.CLIENT_RESOURCES) {
-            TimeResource resource = resourceHolder.getResource(location);
-            if (resource != null) {
-                return resource.getInputStream();
-            }
-
-            throw new FileNotFoundException("Can't find " + location + " " + getName());
+            return GlobalResourceStorage.INSTANCE.getResource(location);
         } else {
             throw new UnsupportedOperationException("TimeCore ResourcePacks supports only client resources.");
         }
@@ -45,27 +34,22 @@ public class TimeSpecialResourcePack implements IResourcePack {
 
     @Override
     public Collection<ResourceLocation> getResources(ResourcePackType type, String namespaceIn, String pathIn, int maxDepthIn, Predicate<String> filter) {
-        if (type != ResourcePackType.CLIENT_RESOURCES) {
-            return Collections.emptyList();
+        if (type == ResourcePackType.CLIENT_RESOURCES) {
+            return GlobalResourceStorage.INSTANCE.getResources(namespaceIn, pathIn, filter);
         }
 
-        return resourceHolder.getResources().keySet().stream()
-                .filter(location -> location.getNamespace().equals(namespaceIn))
-                .filter(location -> location.getPath().startsWith(pathIn) && filter.test(location.getPath()))
-                .collect(Collectors.toList());
+        return Collections.emptyList();
     }
 
     @Override
     public boolean hasResource(@NotNull ResourcePackType type, @NotNull ResourceLocation location) {
-        if (type == ResourcePackType.SERVER_DATA) return false;
-
-        return resourceHolder.hasResource(location);
+        return type == ResourcePackType.CLIENT_RESOURCES && GlobalResourceStorage.INSTANCE.hasResource(location);
     }
 
     @NotNull
     @Override
     public Set<String> getNamespaces(@NotNull ResourcePackType type) {
-        return type == ResourcePackType.CLIENT_RESOURCES ? resourceHolder.getDomains() : Collections.emptySet();
+        return type == ResourcePackType.CLIENT_RESOURCES ? GlobalResourceStorage.INSTANCE.getDomains() : Collections.emptySet();
     }
 
     @Nullable

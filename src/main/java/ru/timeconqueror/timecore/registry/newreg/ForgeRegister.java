@@ -131,9 +131,8 @@ public abstract class ForgeRegister<T extends IForgeRegistryEntry<T>> extends Ti
             return getRegistryName().getPath();
         }
 
-        protected RegisterChain<I> runOnlyForClient(Runnable runnable) {
-            register.runTaskOnClientSetup(runnable);
-            return this;
+        public void clientSideOnly(Runnable runnable) {
+            if (EnvironmentUtils.isOnPhysicalClient()) runnable.run();
         }
     }
 

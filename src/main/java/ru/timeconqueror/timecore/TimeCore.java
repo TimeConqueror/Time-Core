@@ -1,6 +1,10 @@
 package ru.timeconqueror.timecore;
 
+import net.minecraft.block.Block;
+import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.client.event.ModelRegistryEvent;
+import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
@@ -25,6 +29,10 @@ public final class TimeCore implements TimeMod {
 
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::doClientStuff);
+
+        FMLJavaModLoadingContext.get().getModEventBus().addGenericListener(Item.class, this::test2);
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::test1);
+        FMLJavaModLoadingContext.get().getModEventBus().addGenericListener(Block.class, this::test3);
     }
 
     /**
@@ -36,6 +44,18 @@ public final class TimeCore implements TimeMod {
 
     private void setup(final FMLCommonSetupEvent event) {
         ReflectionHelper.initClass(StructureRevealer.class);
+    }
+
+    public void test1(ModelRegistryEvent event) {
+        System.out.println("ModelRegistryEvent");
+    }
+
+    public void test2(RegistryEvent.Register<Item> event) {
+        System.out.println("RegistryEvent.Register<Item>");
+    }
+
+    public void test3(RegistryEvent.Register<Block> event) {
+        System.out.println("RegistryEvent.Register<Block>");
     }
 
     private void doClientStuff(final FMLClientSetupEvent event) {

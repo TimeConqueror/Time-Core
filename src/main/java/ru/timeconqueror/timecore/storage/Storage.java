@@ -7,9 +7,9 @@ import java.util.Map;
 
 /**
  * Storage for all mod settings, which will be used in TimeCore.
- * Also stores all mod-id-dependent features, like LangGenerator.
  */
 public class Storage {
+    //TODO make synchronized?
     private static final Map<String, ModSettings> ALL_SETTINGS = new HashMap<>();
     private static final Map<String, Features> ALL_FEATURES = new HashMap<>();
 

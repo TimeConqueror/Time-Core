@@ -3,8 +3,6 @@ package ru.timeconqueror.timecore.api.client.resource;
 import com.google.common.base.Joiner;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.function.Supplier;
@@ -57,8 +55,8 @@ public abstract class JSONTimeResource implements TimeResource {
     }
 
     @Override
-    public InputStream getInputStream() {
-        return new ByteArrayInputStream(buildJSONString().getBytes(StandardCharsets.UTF_8));
+    public byte[] toBytes() {
+        return buildJSONString().getBytes(StandardCharsets.UTF_8);
     }
 
     public abstract String buildJSONString();

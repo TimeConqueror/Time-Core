@@ -4,6 +4,7 @@ import net.minecraft.block.Block;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
+import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent;
@@ -12,16 +13,19 @@ import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.ObjectHolder;
 import org.jetbrains.annotations.Nullable;
 import ru.timeconqueror.timecore.api.TimeMod;
-import ru.timeconqueror.timecore.api.client.TimeClient;
 import ru.timeconqueror.timecore.api.client.resource.BlockModel;
 import ru.timeconqueror.timecore.api.client.resource.BlockStateResource;
+import ru.timeconqueror.timecore.api.client.resource.TimeResourceHolder;
 import ru.timeconqueror.timecore.api.client.resource.location.BlockModelLocation;
 import ru.timeconqueror.timecore.api.client.resource.location.TextureLocation;
 import ru.timeconqueror.timecore.devtools.gen.lang.LangGeneratorFacade;
 import ru.timeconqueror.timecore.registry.AutoRegistrable;
 import ru.timeconqueror.timecore.registry.ItemPropsFactory;
 import ru.timeconqueror.timecore.registry.newreg.ItemRegister.ItemRegisterChain;
+import ru.timeconqueror.timecore.storage.LoadingOnlyStorage;
+import ru.timeconqueror.timecore.util.EnvironmentUtils;
 import ru.timeconqueror.timecore.util.Hacks;
+import ru.timeconqueror.timecore.util.Temporal;
 
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -110,6 +114,7 @@ import java.util.function.Supplier;
  */
 public class BlockRegister extends ForgeRegister<Block> {
     private final ItemRegister itemRegister;
+    private final Temporal<TimeResourceHolder> resourceHolder = Temporal.of(new TimeResourceHolder(), "Called too late. Resources were already loaded.");
 
     public BlockRegister(String modid) {
         super(ForgeRegistries.BLOCKS, modid);
@@ -131,6 +136,13 @@ public class BlockRegister extends ForgeRegister<Block> {
         RegistryObject<B> holder = registerEntry(name, entrySup);
 
         return new BlockRegisterChain<>(holder);
+    }
+
+    @Override
+    protected void onRegEvent(RegistryEvent.Register<Block> event) {
+        super.onRegEvent(event);
+
+        LoadingOnlyStorage.addResourceHolder(resourceHolder.remove());
     }
 
     @Override
@@ -211,7 +223,9 @@ public class BlockRegister extends ForgeRegister<Block> {
          * @param blockModelLocation location of block model, which will be called from blockstate json.
          */
         public BlockRegisterChain<B> genDefaultState(BlockModelLocation blockModelLocation) {
-            return genState(() -> new BlockStateResource().addDefaultVariant(blockModelLocation));
+            clientSideOnly(() -> genState(new BlockStateResource().addDefaultVariant(blockModelLocation)));
+
+            return this;
         }
 
         /**
@@ -220,7 +234,17 @@ public class BlockRegister extends ForgeRegister<Block> {
          * @param stateResourceSupplier factory, which should return new BlockStateResource instance every time it's called.
          */
         public BlockRegisterChain<B> genState(Supplier<BlockStateResource> stateResourceSupplier) {
-            runTaskOnClientSetup(() -> TimeClient.RESOURCE_HOLDER.addBlockStateResource(asRegistryObject().get(), stateResourceSupplier.get()));
+            clientSideOnly(() -> genState(stateResourceSupplier.get()));
+            return this;
+        }
+
+        /**
+         * Generates and loads blockstate json on the fly.
+         *
+         * @param stateResource blockstate file for this block.
+         */
+        public BlockRegisterChain<B> genState(BlockStateResource stateResource) {
+            clientSideOnly(() -> resourceHolder.get().addBlockStateResource(getRegistryName(), stateResource));
 
             return this;
         }
@@ -231,8 +255,22 @@ public class BlockRegister extends ForgeRegister<Block> {
          *
          * @param blockModelSupplier factory, which should return new BlockModel instance every time it's called.
          */
-        public BlockRegisterChain<B> genModelWithRegistryKeyPath(Supplier<BlockModel> blockModelSupplier) {
-            return genModel(new BlockModelLocation(getModId(), getName()), blockModelSupplier);
+        public BlockRegisterChain<B> genModelWithRegNamePath(Supplier<BlockModel> blockModelSupplier) {
+            clientSideOnly(() -> genModelWithRegNamePath(blockModelSupplier.get()));
+
+            return this;
+        }
+
+        /**
+         * Generates and loads block model on the fly.
+         * Model can be located later with path models/block/<block_registry_name>.json
+         *
+         * @param blockModel model for block.
+         */
+        public BlockRegisterChain<B> genModelWithRegNamePath(BlockModel blockModel) {
+            clientSideOnly(() -> genModel(new BlockModelLocation(getModId(), getName()), blockModel));
+
+            return this;
         }
 
         /**
@@ -242,7 +280,20 @@ public class BlockRegister extends ForgeRegister<Block> {
          * @param blockModelSupplier factory, which should return new BlockModel instance every time it's called.
          */
         public BlockRegisterChain<B> genModel(BlockModelLocation blockModelLocation, Supplier<BlockModel> blockModelSupplier) {
-            runOnlyForClient(() -> TimeClient.RESOURCE_HOLDER.addBlockModel(blockModelLocation, blockModelSupplier.get()));
+            clientSideOnly(() -> genModel(blockModelLocation, blockModelSupplier.get()));
+
+            return this;
+        }
+
+        /**
+         * Generates and loads block model on the fly.
+         *
+         * @param blockModelLocation location, where model will be located.
+         * @param blockModel         model for this block.
+         */
+        public BlockRegisterChain<B> genModel(BlockModelLocation blockModelLocation, BlockModel blockModel) {
+            clientSideOnly(() -> resourceHolder.get().addBlockModel(blockModelLocation, blockModel));
+
             return this;
         }
 
@@ -251,8 +302,8 @@ public class BlockRegister extends ForgeRegister<Block> {
          * Requires texture with this path &lt;modid&gt;/textures/block/&lt;registry_key&gt;.png to be present
          */
         public BlockRegisterChain<B> genDefaultStateAndModel() {
-            genModelWithRegistryKeyPath(() -> BlockModel.createCubeAllModel(new TextureLocation(getModId(), "block/" + getName())));
-            genDefaultState(new BlockModelLocation(getModId(), getName()));
+            clientSideOnly(() -> genDefaultStateAndModel(new TextureLocation(getModId(), "block/" + getName())));
+
             return this;
         }
 
@@ -262,8 +313,10 @@ public class BlockRegister extends ForgeRegister<Block> {
          * @param textureLocation texture location, which block cube-all model will use for every side.
          */
         public BlockRegisterChain<B> genDefaultStateAndModel(TextureLocation textureLocation) {
-            genModelWithRegistryKeyPath(() -> BlockModel.createCubeAllModel(textureLocation));
-            genDefaultState(new BlockModelLocation(getModId(), getName()));
+            if (EnvironmentUtils.isOnPhysicalClient()) {
+                genModelWithRegNamePath(BlockModel.createCubeAllModel(textureLocation));
+                genDefaultState(new BlockModelLocation(getModId(), getName()));
+            }
             return this;
         }
 

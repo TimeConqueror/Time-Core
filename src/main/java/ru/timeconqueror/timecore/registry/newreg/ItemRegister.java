@@ -2,22 +2,25 @@ package ru.timeconqueror.timecore.registry.newreg;
 
 import net.minecraft.item.ArmorItem;
 import net.minecraft.item.Item;
+import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent;
 import net.minecraftforge.fml.event.lifecycle.GatherDataEvent;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.ObjectHolder;
 import ru.timeconqueror.timecore.api.TimeMod;
-import ru.timeconqueror.timecore.api.client.TimeClient;
 import ru.timeconqueror.timecore.api.client.resource.ItemModel;
 import ru.timeconqueror.timecore.api.client.resource.StandardItemModelParents;
+import ru.timeconqueror.timecore.api.client.resource.TimeResourceHolder;
 import ru.timeconqueror.timecore.api.client.resource.location.BlockModelLocation;
 import ru.timeconqueror.timecore.api.client.resource.location.ModelLocation;
 import ru.timeconqueror.timecore.api.client.resource.location.TextureLocation;
 import ru.timeconqueror.timecore.devtools.gen.lang.LangGeneratorFacade;
 import ru.timeconqueror.timecore.registry.AutoRegistrable;
+import ru.timeconqueror.timecore.storage.LoadingOnlyStorage;
 import ru.timeconqueror.timecore.util.EnvironmentUtils;
 import ru.timeconqueror.timecore.util.Hacks;
+import ru.timeconqueror.timecore.util.Temporal;
 
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -105,6 +108,8 @@ import java.util.function.Supplier;
  * Examples can be seen at test module.
  */
 public class ItemRegister extends ForgeRegister<Item> {
+    private final Temporal<TimeResourceHolder> resourceHolder = Temporal.of(new TimeResourceHolder(), "Called too late. Resources were already loaded.");
+
     public ItemRegister(String modid) {
         super(ForgeRegistries.ITEMS, modid);
     }
@@ -126,6 +131,13 @@ public class ItemRegister extends ForgeRegister<Item> {
         return new ItemRegisterChain<>(holder);
     }
 
+    @Override
+    protected void onRegEvent(RegistryEvent.Register<Item> event) {
+        super.onRegEvent(event);
+
+        LoadingOnlyStorage.addResourceHolder(resourceHolder.remove());
+    }
+
     public class ItemRegisterChain<I extends Item> extends ForgeRegister.RegisterChain<I> {
         private ItemRegisterChain(RegistryObject<I> holder) {
             super(ItemRegister.this, holder);
@@ -139,28 +151,32 @@ public class ItemRegister extends ForgeRegister<Item> {
          * @param parentType type of generated model: generated or handheld
          */
         public ItemRegisterChain<I> genModel(StandardItemModelParents parentType) {
-            return genModel(parentType, new TextureLocation(getModId(), "item/" + getName()));
+            clientSideOnly(() -> genModel(parentType, new TextureLocation(getModId(), "item/" + getName())));
+            return this;
         }
 
         /**
          * Creates and registers simple item model without the need of json file (via code) for bound item with one provided texture and "item/generated" parent model.
          */
         public ItemRegisterChain<I> genDefaultModel(TextureLocation texture) {
-            return genModel(StandardItemModelParents.DEFAULT, texture);
+            clientSideOnly(() -> genModel(StandardItemModelParents.DEFAULT, texture));
+            return this;
         }
 
         /**
          * Creates and registers simple item model without the need of json file (via code) for bound item with one provided texture and "item/handheld" parent model.
          */
         public ItemRegisterChain<I> genHandheldModel(TextureLocation texture) {
-            return genModel(StandardItemModelParents.HANDHELD, texture);
+            clientSideOnly(() -> genModel(StandardItemModelParents.HANDHELD, texture));
+            return this;
         }
 
         /**
          * Creates and registers simple item model without the need of json file (via code) for bound item with dependency on block model.
          */
         public ItemRegisterChain<I> genModelFromBlockParent(BlockModelLocation parentBlockModelLocation) {
-            return genModel(() -> new ItemModel(parentBlockModelLocation));
+            clientSideOnly(() -> genModel(new ItemModel(parentBlockModelLocation)));
+            return this;
         }
 
         /**
@@ -171,7 +187,8 @@ public class ItemRegister extends ForgeRegister<Item> {
          *                      Vanilla uses it in, for example, spawn egg model where the layers are represented by base texture and overlay (spots).
          */
         public ItemRegisterChain<I> genModel(StandardItemModelParents parent, TextureLocation... textureLayers) {
-            return genModel(parent.getModelLocation(), textureLayers);
+            clientSideOnly(() -> genModel(parent.getModelLocation(), textureLayers));
+            return this;
         }
 
         /**
@@ -184,11 +201,9 @@ public class ItemRegister extends ForgeRegister<Item> {
          *                      Vanilla uses it in, for example, spawn egg model where the layers are represented by base texture and overlay (spots).
          */
         public ItemRegisterChain<I> genModel(ModelLocation parent, TextureLocation... textureLayers) {
-            return genModel(() -> {
-                ItemModel model = new ItemModel(parent);
-                model.addTextureLayers(textureLayers);
-                return model;
-            });
+            clientSideOnly(() -> genModel(new ItemModel(parent).addTextureLayers(textureLayers)));
+
+            return this;
         }
 
         /**
@@ -200,7 +215,18 @@ public class ItemRegister extends ForgeRegister<Item> {
          *                          For details see {@link ItemModel}.
          */
         public ItemRegisterChain<I> genModel(Supplier<ItemModel> itemModelSupplier) {
-            runOnlyForClient(() -> TimeClient.RESOURCE_HOLDER.addItemModel(asRegistryObject().get(), itemModelSupplier.get()));
+            clientSideOnly(() -> genModel(itemModelSupplier.get()));
+            return this;
+        }
+
+        /**
+         * Registers simple item model without the need of json file (via code) for bound item.
+         *
+         * @param itemModel model for this item.
+         *                  For details see {@link ItemModel}.
+         */
+        public ItemRegisterChain<I> genModel(ItemModel itemModel) {
+            clientSideOnly(() -> resourceHolder.get().addItemModel(getRegistryName(), itemModel));
             return this;
         }
 
@@ -270,7 +296,7 @@ public class ItemRegister extends ForgeRegister<Item> {
          * Runs task for current registrator directly after registering object.
          * Entry for {@link #asRegistryObject()} is already registered in this moment, so it can be retrieved inside this task.
          */
-        public ItemRegisterChain<I> addActionAfterRegistering(Consumer<ItemRegisterChain<I>> task) {
+        public ItemRegisterChain<I> doAfterRegister(Consumer<ItemRegisterChain<I>> task) {
             runTaskAfterRegistering(() -> task.accept(this));
             return this;
         }
@@ -279,7 +305,7 @@ public class ItemRegister extends ForgeRegister<Item> {
          * Runs task for current registrator  on client setup.
          * Entry for {@link #asRegistryObject()} is already registered in this moment, so it can be retrieved inside this task.
          */
-        public ItemRegisterChain<I> addActionOnClientSetup(Consumer<ItemRegisterChain<I>> task) {
+        public ItemRegisterChain<I> doOnClientSetup(Consumer<ItemRegisterChain<I>> task) {
             runTaskOnClientSetup(() -> task.accept(this));
             return this;
         }

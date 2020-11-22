@@ -9,6 +9,7 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.forgespi.language.ModFileScanData;
 import org.objectweb.asm.Type;
 import ru.timeconqueror.timecore.TimeCore;
+import ru.timeconqueror.timecore.api.client.resource.GlobalResourceStorage;
 import ru.timeconqueror.timecore.devtools.kotlin.KotlinAutomaticEventSubscriber;
 import ru.timeconqueror.timecore.registry.AutoRegistrable;
 import ru.timeconqueror.timecore.registry.AutoRegistrable.InitMethod;
@@ -33,6 +34,8 @@ public class ModInitializer {
         setupAutoRegistries(modId, scanResults);
 
         processInitMethods(modId);
+
+        GlobalResourceStorage.INSTANCE.setup(modId);
     }
 
     private static void runKotlinAutomaticEventSubscriber(String modId, ModContainer modContainer, ModFileScanData scanResults, Class<?> modClass) {

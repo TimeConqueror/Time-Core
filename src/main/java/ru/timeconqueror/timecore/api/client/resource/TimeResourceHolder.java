@@ -1,20 +1,14 @@
 package ru.timeconqueror.timecore.api.client.resource;
 
-import net.minecraft.block.Block;
-import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
 import ru.timeconqueror.timecore.api.client.resource.location.BlockModelLocation;
 import ru.timeconqueror.timecore.util.ObjectUtils;
 
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
 
 public class TimeResourceHolder {
     private final HashMap<ResourceLocation, TimeResource> resources = new HashMap<>();
-    private final HashSet<String> domains = new HashSet<>();
 
     /**
      * Adds {@code resource} to the internal resourcepack. It will be available on given location.
@@ -29,46 +23,40 @@ public class TimeResourceHolder {
      * Adds item model that will be available with path:
      * itemNameSpace:models/item/itemName.json
      *
-     * @param item  used to provide path to model.
-     * @param model resource that will be available on created path.
+     * @param registryName registry name of item which is used to provide path to model.
+     * @param model        resource that will be available on created path.
      */
-    public void addItemModel(Item item, ItemModel model) {
-        ResourceLocation registryName = item.getRegistryName();
-
+    public void addItemModel(ResourceLocation registryName, ItemModel model) {
         if (!ObjectUtils.checkIfNotNull(registryName, "Can't register model location for the item without a registry location.")) {
             return;
         }
 
-        resources.put(LocationResolver.toItemModelLocation(registryName), model);
+        addResource(LocationResolver.toItemModelLocation(registryName), model);
     }
 
     /**
      * Adds item model that will be available with path:
      * blockNameSpace:blockstates/blockName.json
      *
-     * @param block              used to provide path to model.
+     * @param registryName       registry name of block which is used to provide path to model.
      * @param blockStateResource resource that will be available on created path.
      */
-    public void addBlockStateResource(Block block, BlockStateResource blockStateResource) {
-        ResourceLocation registryName = block.getRegistryName();
-
+    public void addBlockStateResource(ResourceLocation registryName, BlockStateResource blockStateResource) {
         if (!ObjectUtils.checkIfNotNull(registryName, "Can't register blockstate location for the block without a registry location.")) {
             return;
         }
 
-        resources.put(LocationResolver.toBlockStateLocation(registryName), blockStateResource);
+        addResource(LocationResolver.toBlockStateLocation(registryName), blockStateResource);
     }
 
     /**
      * Adds item model that will be available with path:
      * blockNameSpace:models/block/.json
      *
-     * @param block used to provide path to model.
-     * @param model resource that will be available on created path.
+     * @param registryName registry name of block which is used to provide path to model.
+     * @param model        resource that will be available on created path.
      */
-    public void addBlockModel(Block block, BlockModel model) {
-        ResourceLocation registryName = block.getRegistryName();
-
+    public void addBlockModel(ResourceLocation registryName, BlockModel model) {
         if (!ObjectUtils.checkIfNotNull(registryName, "Can't register model location for the block without a registry location.")) {
             return;
         }
@@ -77,7 +65,7 @@ public class TimeResourceHolder {
     }
 
     public void addBlockModel(BlockModelLocation location, BlockModel model) {
-        resources.put(location.fullLocation(), model);
+        addResource(location.fullLocation(), model);
     }
 
     @Nullable
@@ -87,18 +75,6 @@ public class TimeResourceHolder {
 
     public boolean hasResource(ResourceLocation location) {
         return resources.containsKey(location);
-    }
-
-    public void addDomain(String domain) {
-        domains.add(domain);
-    }
-
-    public boolean hasDomain(String domain) {
-        return domains.contains(domain);
-    }
-
-    public Set<String> getDomains() {
-        return Collections.unmodifiableSet(domains);
     }
 
     public HashMap<ResourceLocation, TimeResource> getResources() {

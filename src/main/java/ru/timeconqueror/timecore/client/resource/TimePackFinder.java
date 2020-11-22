@@ -10,7 +10,7 @@ import java.util.function.Consumer;
 
 public class TimePackFinder implements IPackFinder {
     @Override
-    public void loadPacks(Consumer<ResourcePackInfo> consumer, ResourcePackInfo.IFactory iFactory) {
+    public void loadPacks(Consumer<ResourcePackInfo> mapInserter, ResourcePackInfo.IFactory iFactory) {
         TimeSpecialResourcePack tSpecialPack = new TimeSpecialResourcePack();
         ResourcePackInfo tSpecialPackInfo = new ResourcePackInfo("timecore_special_resources",
                 true,
@@ -24,6 +24,6 @@ public class TimePackFinder implements IPackFinder {
                 false
         );
 
-        consumer.accept(tSpecialPackInfo);
+        mapInserter.accept(tSpecialPackInfo);
     }
 }
