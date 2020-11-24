@@ -3,6 +3,7 @@ package ru.timeconqueror.timecore.api.client.resource;
 import net.minecraft.util.ResourceLocation;
 import ru.timeconqueror.timecore.TimeCore;
 import ru.timeconqueror.timecore.mod.misc.Markers;
+import ru.timeconqueror.timecore.storage.LoadingOnlyStorage;
 
 import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
@@ -43,6 +44,8 @@ public enum GlobalResourceStorage {
     }
 
     public Collection<ResourceLocation> getResources(String namespaceIn, String pathIn, Predicate<String> filter) {
+        LoadingOnlyStorage.tryLoadResourceHolders();
+
         return resources.keySet().stream()
                 .filter(location -> location.getNamespace().equals(namespaceIn))
                 .filter(location -> location.getPath().startsWith(pathIn) && filter.test(location.getPath()))

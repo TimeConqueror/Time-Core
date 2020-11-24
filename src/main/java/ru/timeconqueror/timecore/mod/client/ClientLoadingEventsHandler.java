@@ -9,6 +9,6 @@ import ru.timeconqueror.timecore.storage.LoadingOnlyStorage;
 public class ClientLoadingEventsHandler {
     @SubscribeEvent
     public static void onModelRegistry(ModelRegistryEvent event) {
-        LoadingOnlyStorage.loadResourceHolders();
+        LoadingOnlyStorage.tryLoadResourceHolders();
     }
 }

@@ -6,30 +6,15 @@ import ru.timeconqueror.timecore.util.Temporal;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
 public class LoadingOnlyStorage {
-    private static final Temporal<List<TimeResourceHolder>> HOLDERS = Temporal.of(new ArrayList<>(), "Holders were already loaded. You need to register holder earlier!");
-    public static final Lock HOLDER_SYSTEM_LOCK = new ReentrantLock();
+    private static final Temporal<List<TimeResourceHolder>> HOLDERS = Temporal.of(new ArrayList<>(), "Holders were already loaded. You need to add it earlier!");
 
-    public static void addResourceHolder(TimeResourceHolder holder) {
-        HOLDER_SYSTEM_LOCK.lock();
-
-        try {
-            HOLDERS.get().add(holder);
-        } finally {
-            HOLDER_SYSTEM_LOCK.unlock();
-        }
+    public synchronized static void addResourceHolder(TimeResourceHolder holder) {
+        HOLDERS.get().add(holder);
     }
 
-    public static void loadResourceHolders() {
-        HOLDER_SYSTEM_LOCK.lock();
-
-        try {
-            GlobalResourceStorage.INSTANCE.fill(HOLDERS.remove());
-        } finally {
-            HOLDER_SYSTEM_LOCK.unlock();
-        }
+    public synchronized static void tryLoadResourceHolders() {
+        HOLDERS.transferAndRemove(GlobalResourceStorage.INSTANCE::fill);
     }
 }

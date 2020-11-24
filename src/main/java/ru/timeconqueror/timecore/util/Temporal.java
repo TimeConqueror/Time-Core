@@ -53,6 +53,12 @@ public class Temporal<T> {
         return !removed;
     }
 
+    public void transferAndRemove(Consumer<T> action) {
+        if (isPresent()) {
+            action.accept(remove());
+        }
+    }
+
     public Temporal<T> ifPresent(Consumer<T> action) {
         if (isPresent()) {
             action.accept(value);
