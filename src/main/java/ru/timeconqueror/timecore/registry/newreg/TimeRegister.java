@@ -41,7 +41,7 @@ public abstract class TimeRegister {
             runnable.run();
         } catch (Throwable e) {
             String culpritInfo = getOwner() != null ? "Currently handling stuff received from class: " + getOwner().getName() : "Unknown owner";
-            throw new RuntimeException("Caught exception during " + action + ". " + culpritInfo);
+            throw new RuntimeException("Caught exception during " + action + ". " + culpritInfo, e);
         }
     }
 
