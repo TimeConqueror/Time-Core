@@ -9,6 +9,7 @@ import net.minecraftforge.fml.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
 import ru.timeconqueror.timecore.util.Hacks;
 
+import java.io.IOException;
 import java.util.function.Supplier;
 
 public interface ITimePacket {
@@ -33,7 +34,7 @@ public interface ITimePacket {
          * @param packet packet to encode
          * @param buffer buffer, where you should encode packet.
          */
-        void encode(T packet, PacketBuffer buffer);
+        void encode(T packet, PacketBuffer buffer) throws IOException;
 
         /**
          * Decodes packet from provided buffer.
@@ -43,7 +44,7 @@ public interface ITimePacket {
          * @param buffer buffer, from which data will be read
          */
         @NotNull
-        T decode(PacketBuffer buffer);
+        T decode(PacketBuffer buffer) throws IOException;
 
         void onPacketReceived(T packet, Supplier<NetworkEvent.Context> contextSupplier);
 

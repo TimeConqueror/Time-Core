@@ -1,5 +1,7 @@
 package ru.timeconqueror.timecore.api.util;
 
+import java.util.Objects;
+
 /**
  * Provides ability to set variable created outside of lambda function from this lambda.
  * <br>Example:<br>
@@ -33,6 +35,19 @@ public class Wrapper<T> {
 
     @Override
     public String toString() {
-        return value != null ? value.toString() : null;
+        return value != null ? value.toString() : "null";
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Wrapper)) return false;
+        Wrapper<?> wrapper = (Wrapper<?>) o;
+        return Objects.equals(value, wrapper.value);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(value);
     }
 }

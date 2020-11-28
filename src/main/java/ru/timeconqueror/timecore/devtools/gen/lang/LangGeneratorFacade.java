@@ -196,7 +196,6 @@ public class LangGeneratorFacade {
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void onDataEvent(GatherDataEvent event) {
-        System.out.println("EnvironmentUtils.isInDataMode() = " + EnvironmentUtils.isInDataMode());
         GatherDataEventAccessor hiddenStuff = (GatherDataEventAccessor) event;
 
         for (String mod : hiddenStuff.getConfig().getMods()) {

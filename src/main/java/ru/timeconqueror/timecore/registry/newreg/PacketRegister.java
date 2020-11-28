@@ -12,6 +12,7 @@ import ru.timeconqueror.timecore.api.common.packet.ITimePacket;
 import ru.timeconqueror.timecore.mod.common.packet.InternalPacketManager;
 import ru.timeconqueror.timecore.registry.AutoRegistrable;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -132,8 +133,20 @@ public class PacketRegister extends TimeRegister {
         Preconditions.checkNotNull(runnables, "You attempted to call this method after FMLCommonSetupEvent has been fired.");
 
         runnables.add(() -> channel.messageBuilder(packetClass, getAndIncreaseIndex(channel))
-                .encoder(packetHandler::encode)
-                .decoder(packetHandler::decode)
+                .encoder((t, buffer) -> {
+                    try {
+                        packetHandler.encode(t, buffer);
+                    } catch (IOException e) {
+                        throw new RuntimeException("Can't encode packet: " + e.getMessage(), e);
+                    }
+                })
+                .decoder(buffer -> {
+                    try {
+                        return packetHandler.decode(buffer);
+                    } catch (IOException e) {
+                        throw new RuntimeException("Can't decode packet: " + e.getMessage(), e);
+                    }
+                })
                 .consumer(packetHandler::handle)
                 .add());
     }
