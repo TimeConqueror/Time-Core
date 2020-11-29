@@ -88,7 +88,7 @@ public class StructureRenderer {
             if (shortestDistanceSq > viewDistanceSq) {
                 iterator.remove();
             } else {
-                DrawHelper.drawFilledBoundingBox(stack, buffer, container.getBoundingBox(), DrawHelper.withChangedAlpha(getStructureColor(container.getStructureName()), 0x55));
+                DrawHelper.drawFilledBoundingBox(stack, buffer, container.getBoundingBox(), DrawHelper.changeAlpha(getStructureColor(container.getStructureName()), 0x55));
             }
         }
 

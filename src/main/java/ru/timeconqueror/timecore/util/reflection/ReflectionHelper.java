@@ -1,6 +1,5 @@
 package ru.timeconqueror.timecore.util.reflection;
 
-import com.google.common.annotations.Beta;
 import com.google.common.base.Joiner;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import org.jetbrains.annotations.Nullable;
@@ -10,10 +9,10 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.Optional;
 
-@Beta
 public class ReflectionHelper {
-    private static final UnlockedField<Field> F_MODIFIERS = findFieldUnsuppressed(Field.class, "modifiers");
+    private static final UnlockedField<Field> F_MODIFIERS = findField(Field.class, "modifiers");
 
     public static boolean isFinal(Field f) {
         return Modifier.isFinal(f.getModifiers());
@@ -86,18 +85,17 @@ public class ReflectionHelper {
      * @param clazz     The class to find the field on.
      * @param fieldName The location of the field to find.
      * @return The field with the specified location in the given class or null if the field is not found.
-     * @see #findFieldUnsuppressed(Class, String)
+     * @see #findField(Class, String)
      */
-    @Nullable
-    public static <T> UnlockedField<T> findField(Class<?> clazz, String fieldName) {
+    public static <T> Optional<UnlockedField<T>> findFieldSoftly(Class<?> clazz, String fieldName) {
         try {
             Field f = clazz.getDeclaredField(fieldName);
-            return new UnlockedField<>(f);
+            return Optional.of(new UnlockedField<>(f));
         } catch (Throwable e) {
             e.printStackTrace();
         }
 
-        return null;
+        return Optional.empty();
     }
 
     /**
@@ -109,9 +107,9 @@ public class ReflectionHelper {
      * @param clazz     The class to find the field on.
      * @param fieldName The location of the field to find.
      * @return The field with the specified location in the given class or throws an exception.
-     * @see #findField(Class, String)
+     * @see #findFieldSoftly(Class, String)
      */
-    public static <T> UnlockedField<T> findFieldUnsuppressed(Class<?> clazz, String fieldName) {
+    public static <T> UnlockedField<T> findField(Class<?> clazz, String fieldName) {
         try {
             Field f = clazz.getDeclaredField(fieldName);
             return new UnlockedField<>(f);
@@ -132,16 +130,15 @@ public class ReflectionHelper {
      * @param srgName The searge obfuscated location of the field to find.
      * @return The field with the specified location in the given class or null if the field is not found.
      */
-    @Nullable
-    public static <T, C> UnlockedField<T> findObfField(Class<C> clazz, String srgName) {
+    public static <T, C> Optional<UnlockedField<T>> findObfFieldSoftly(Class<C> clazz, String srgName) {
         try {
             Field f = ObfuscationReflectionHelper.findField(clazz, srgName);
-            return new UnlockedField<>(f);
+            return Optional.of(new UnlockedField<>(f));
         } catch (Throwable e) {
             e.printStackTrace();
         }
 
-        return null;
+        return Optional.empty();
     }
 
     /**
@@ -154,18 +151,17 @@ public class ReflectionHelper {
      * @param methodName The location of the method to find.
      * @param params     The parameter classes of the method to find.
      * @return The method with the specified location in the given class or null if the method is not found.
-     * @see #findMethodUnsuppressed(Class, String, Class[])
+     * @see #findMethod(Class, String, Class[])
      */
-    @Nullable
-    public static <T> UnlockedMethod<T> findMethod(Class<?> clazz, String methodName, Class<?>... params) {
+    public static <T> Optional<UnlockedMethod<T>> findMethodSoftly(Class<?> clazz, String methodName, Class<?>... params) {
         try {
             Method method = clazz.getDeclaredMethod(methodName, params);
-            return new UnlockedMethod<>(method);
+            return Optional.of(new UnlockedMethod<>(method));
         } catch (Throwable e) {
             e.printStackTrace();
         }
 
-        return null;
+        return Optional.empty();
     }
 
     /**
@@ -178,9 +174,9 @@ public class ReflectionHelper {
      * @param methodName The location of the method to find.
      * @param params     The parameter classes of the method to find.
      * @return The field with the specified location in the given class or throws an exception.
-     * @see #findMethod(Class, String, Class[])
+     * @see #findMethodSoftly(Class, String, Class[])
      */
-    public static <T> UnlockedMethod<T> findMethodUnsuppressed(Class<?> clazz, String methodName, Class<?>... params) {
+    public static <T> UnlockedMethod<T> findMethod(Class<?> clazz, String methodName, Class<?>... params) {
         try {
             Method method = clazz.getDeclaredMethod(methodName, params);
             return new UnlockedMethod<>(method);
@@ -202,16 +198,15 @@ public class ReflectionHelper {
      * @param params  The parameter classes of the method to find.
      * @return The method with the specified location in the given class or null if the method is not found.
      */
-    @Nullable
-    public static <T> UnlockedMethod<T> findObfMethod(Class<?> clazz, String srgName, Class<?> returnedType, Class<?>... params) {
+    public static <T> Optional<UnlockedMethod<T>> findObfMethodSoftly(Class<?> clazz, String srgName, Class<?>... params) {
         try {
             Method method = ObfuscationReflectionHelper.findMethod(clazz, srgName, params);
-            return new UnlockedMethod<>(method);
+            return Optional.of(new UnlockedMethod<>(method));
         } catch (Throwable e) {
             e.printStackTrace();
         }
 
-        return null;
+        return Optional.empty();
     }
 
     /**
@@ -222,16 +217,15 @@ public class ReflectionHelper {
      * @param <T>    The type of constructor.
      * @return The constructor with specified params or null if the constructor is not found.
      */
-    @Nullable
-    public static <T> UnlockedConstructor<T> findConstructor(Class<T> clazz, Class<?>... params) {
+    public static <T> Optional<UnlockedConstructor<T>> findConstructorSoftly(Class<T> clazz, Class<?>... params) {
         try {
             Constructor<T> constructor = ObfuscationReflectionHelper.findConstructor(clazz, params);
-            return new UnlockedConstructor<>(constructor);
+            return Optional.of(new UnlockedConstructor<>(constructor));
         } catch (Throwable e) {
             e.printStackTrace();
         }
 
-        return null;
+        return Optional.empty();
     }
 
     /**
@@ -257,5 +251,10 @@ public class ReflectionHelper {
             TimeCore.LOGGER.error("Can't load class" + className + ", because it isn't found");
             throw new RuntimeException();
         }
+    }
+
+    public static <E extends Enum<E>> E[] getEnumValues(Class<E> enumClass) {
+        UnlockedField<E[]> valuesField = ReflectionHelper.findField(enumClass, "$VALUES");
+        return valuesField.get(null);
     }
 }

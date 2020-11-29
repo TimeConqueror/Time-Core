@@ -15,7 +15,7 @@ public abstract class MixinDataMain {
             at = @At(value = "INVOKE",
                     target = "Lnet/minecraftforge/fml/DatagenModLoader;begin(Ljava/util/Set;Ljava/nio/file/Path;Ljava/util/Collection;Ljava/util/Collection;ZZZZZZ)V"))
     private static void onStart(String[] args, CallbackInfo ci) {
-        UnlockedField<Boolean> fIsInDataMode = ReflectionHelper.findFieldUnsuppressed(EnvironmentUtils.class, "isInDataMode");
+        UnlockedField<Boolean> fIsInDataMode = ReflectionHelper.findField(EnvironmentUtils.class, "isInDataMode");
         fIsInDataMode.set(null, true);
     }
 }

@@ -65,7 +65,7 @@ public class ModInitializer {
         Class<?> containerClass = Class.forName(containerClassName);
 
         String fieldName = annotationData.getMemberName();
-        UnlockedField<Object> field = ReflectionHelper.findFieldUnsuppressed(containerClass, fieldName);
+        UnlockedField<Object> field = ReflectionHelper.findField(containerClass, fieldName);
 
         processAutoRegistrableOnField(containerClass, field);
     }
@@ -99,7 +99,7 @@ public class ModInitializer {
             }
         }
 
-        UnlockedMethod<Object> initMethod = ReflectionHelper.findMethodUnsuppressed(containerClass, methodName.toString());
+        UnlockedMethod<Object> initMethod = ReflectionHelper.findMethod(containerClass, methodName.toString());
 
         if (initMethod.isStatic()) {
             Method nativeMethod = initMethod.getMethod();
