@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonSyntaxException;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.IResource;
 import net.minecraft.util.JSONUtils;
@@ -27,7 +28,7 @@ public class JsonModelParser {
         try (final IResource resource = Minecraft.getInstance().getResourceManager().getResource(fileLocation)) {
             BufferedReader reader = new BufferedReader(new InputStreamReader(resource.getInputStream()));
 
-            JsonObject json = JSONUtils.parse(reader, true/*isLenient*/);
+            JsonObject json = JSONUtils.parse(reader, true);
             return parseJsonModel(json);
 
         } catch (Throwable e) {
@@ -35,14 +36,14 @@ public class JsonModelParser {
         }
     }
 
-    private List<TimeModelFactory> parseJsonModel(JsonObject object) throws JsonParsingException {
+    private List<TimeModelFactory> parseJsonModel(JsonObject object) {
         List<TimeModelFactory> modelFactories = new ArrayList<>();
         for (Map.Entry<String, JsonElement> entry : object.entrySet()) {
             if (entry.getKey().equals("format_version")) {
-                String formatVersion = entry.getValue().getAsString();
+                String formatVersion = JSONUtils.convertToString(entry.getValue(), entry.getKey());
                 checkFormatVersion(formatVersion);
             } else {
-                TimeModelFactory modelFactory = parseSubModel(entry.getKey(), entry.getValue().getAsJsonArray());
+                TimeModelFactory modelFactory = parseSubModel(entry.getKey(), JSONUtils.convertToJsonArray(entry.getValue(), entry.getKey()));
                 modelFactories.add(modelFactory);
             }
         }
@@ -50,17 +51,17 @@ public class JsonModelParser {
         return modelFactories;
     }
 
-    private TimeModelFactory parseSubModel(String name, JsonArray subModelArr) throws JsonParsingException {
-        JsonObject subModel = subModelArr.get(0).getAsJsonObject();
-        JsonArray bones = subModel.get("bones").getAsJsonArray();
+    private TimeModelFactory parseSubModel(String name, JsonArray subModelArr) {
+        JsonObject subModel = JSONUtils.convertToJsonObject(subModelArr.get(0), "member of " + name + "");
+        JsonArray bones = JSONUtils.getAsJsonArray(subModel, "bones");
 
-        JsonObject description = subModel.get("description").getAsJsonObject();
-        int textureWidth = JsonUtils.getInt("texture_width", description);
-        int textureHeight = JsonUtils.getInt("texture_height", description);
+        JsonObject description = JSONUtils.getAsJsonObject(subModel, "description");
+        int textureWidth = JSONUtils.getAsInt(description, "texture_width");
+        int textureHeight = JSONUtils.getAsInt(description, "texture_height");
 
         HashMap<String, RawModelBone> pieces = new HashMap<>();
         for (JsonElement bone : bones) {
-            RawModelBone piece = parseBone(bone);
+            RawModelBone piece = parseBone(JSONUtils.convertToJsonObject(bone, "member of 'bones'"));
             pieces.put(piece.name, piece);
         }
 
@@ -73,7 +74,7 @@ public class JsonModelParser {
 
                     parent.children.add(value);
                 } else {
-                    throw new JsonParsingException("Can't find parent node " + value.parentName + " for node " + value.name);
+                    throw new JsonSyntaxException("Can't find parent node " + value.parentName + " for node " + value.name);
                 }
             } else {
                 rootPieces.add(value);
@@ -92,30 +93,31 @@ public class JsonModelParser {
         };
     }
 
-    private RawModelBone parseBone(JsonElement bone) throws JsonParsingException {
-        Vector3f pivot = JsonUtils.getVec3f("pivot", bone);
-        Vector3f rotationAngles = JsonUtils.getVec3f("rotation", bone, new Vector3f(0, 0, 0));
-        boolean mirror = JsonUtils.getBoolean("mirror", bone, false);
-        boolean neverRender = JsonUtils.getBoolean("neverrender", bone, false);
-        float inflate = JsonUtils.getFloat("inflate", bone, 0F);
-        String name = JsonUtils.getString("name", bone);
-        String parentName = JsonUtils.getString("parent", bone, null);
+    private RawModelBone parseBone(JsonObject bone) {
+        Vector3f pivot = JsonUtils.getAsVec3f(bone, "pivot");
+        Vector3f rotationAngles = JsonUtils.getAsVec3f(bone, "rotation", new Vector3f(0, 0, 0));
+        boolean mirror = JSONUtils.getAsBoolean(bone, "mirror", false);
+        boolean neverRender = JSONUtils.getAsBoolean(bone, "neverrender", false);
+        float inflate = JSONUtils.getAsFloat(bone, "inflate", 0F);
+        String name = JSONUtils.getAsString(bone, "name");
+        String parentName = JSONUtils.getAsString(bone, "parent", null);
 
         List<RawModelBone> extraBones = new ArrayList<>();
 
         List<RawModelCube> cubes = new ArrayList<>();
-        if (bone.getAsJsonObject().has("cubes")) {
-            for (JsonElement cube : bone.getAsJsonObject().get("cubes").getAsJsonArray()) {
-                Vector3f origin = JsonUtils.getVec3f("origin", cube);
-                Vector3f size = JsonUtils.getVec3f("size", cube);
-                Vector2f uv = JsonUtils.getVec2f("uv", cube);
+        if (bone.has("cubes")) {
+            for (JsonElement cube : JSONUtils.getAsJsonArray(bone, "cubes")) {
+                JsonObject cubeObject = JSONUtils.convertToJsonObject(cube, "member of 'cubes'");
+                Vector3f origin = JsonUtils.getAsVec3f(cubeObject, "origin");
+                Vector3f size = JsonUtils.getAsVec3f(cubeObject, "size");
+                Vector2f uv = JsonUtils.getAsVec2f(cubeObject, "uv");
 
-                if (cube.getAsJsonObject().has("rotation") || cube.getAsJsonObject().has("inflate") || cube.getAsJsonObject().has("mirror")) {
-                    Vector3f rotation = JsonUtils.getVec3f("rotation", cube, new Vector3f(0, 0, 0));
-                    Vector3f innerPivot = JsonUtils.getVec3f("pivot", cube, new Vector3f(0, 0, 0));
-                    boolean innerMirror = JsonUtils.getBoolean("mirror", cube, false);
+                if (cubeObject.has("rotation") || cubeObject.has("inflate") || cubeObject.has("mirror")) {
+                    Vector3f rotation = JsonUtils.getAsVec3f(cubeObject, "rotation", new Vector3f(0, 0, 0));
+                    Vector3f innerPivot = JsonUtils.getAsVec3f(cubeObject, "pivot", new Vector3f(0, 0, 0));
+                    boolean innerMirror = JSONUtils.getAsBoolean(cubeObject, "mirror", false);
 
-                    float cubeInflate = JsonUtils.getFloat("inflate", cube, 0F);
+                    float cubeInflate = JSONUtils.getAsFloat(cubeObject, "inflate", 0F);
                     extraBones.add(new RawModelBone(Lists.newArrayList(new RawModelCube(origin, size, uv)), innerPivot, rotation, innerMirror, false, cubeInflate, "cube_wrapper_" + extraBones.size(), name));
                 } else {
                     cubes.add(new RawModelCube(origin, size, uv));
@@ -128,9 +130,9 @@ public class JsonModelParser {
         return rawModelBone;
     }
 
-    private void checkFormatVersion(String version) throws JsonParsingException {
+    private void checkFormatVersion(String version) {
         if (!CollectionUtils.contains(ACCEPTABLE_FORMAT_VERSIONS, version)) {
-            throw new JsonParsingException("The format version " + version + " is not supported. Supported versions: " + Arrays.toString(ACCEPTABLE_FORMAT_VERSIONS));
+            throw new JsonSyntaxException("The format version " + version + " is not supported. Supported versions: " + Arrays.toString(ACCEPTABLE_FORMAT_VERSIONS));
         }
     }
 
