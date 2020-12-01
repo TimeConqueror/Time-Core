@@ -21,12 +21,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class TimeLootTableProvider implements IDataProvider {
+public class TimeLootTableGenerator implements IDataProvider {
     private static final Gson GSON = (new GsonBuilder()).setPrettyPrinting().disableHtmlEscaping().create();
     private final DataGenerator dataGenerator;
     private final List<LootTableSet> setList = new ArrayList<>();
 
-    public TimeLootTableProvider(DataGenerator dataGenerator) {
+    public TimeLootTableGenerator(DataGenerator dataGenerator) {
         this.dataGenerator = dataGenerator;
     }
 
@@ -77,8 +77,9 @@ public class TimeLootTableProvider implements IDataProvider {
         map.forEach((resourceLocation, lootTable) -> LootTableManager.validate(validationtracker, resourceLocation, lootTable));
     }
 
-    public void addLootTableSet(LootTableSet set) {
+    public TimeLootTableGenerator addSet(LootTableSet set) {
         setList.add(set);
+        return this;
     }
 
     @NotNull

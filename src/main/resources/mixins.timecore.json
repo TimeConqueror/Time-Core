@@ -10,6 +10,7 @@
     "MixinFMLModContainer",
     "MixinLivingEntity",
     "accessor.GatherDataEventAccessor",
+    "accessor.UnlockedAdvancementProvider",
     "config.MixinConfigValue"
   ],
   "client": [
