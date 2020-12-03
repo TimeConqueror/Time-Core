@@ -22,7 +22,7 @@ public abstract class TimeRegister {
         modFeatures = Storage.getFeatures(modId);
     }
 
-    public abstract void regToBus(IEventBus bus);
+    public abstract void regToBus(IEventBus modEventBus);
 
     public String getModId() {
         return modId;

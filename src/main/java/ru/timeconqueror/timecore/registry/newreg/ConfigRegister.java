@@ -111,10 +111,10 @@ public class ConfigRegister extends TimeRegister {
     }
 
     @Override
-    public void regToBus(IEventBus bus) {
-        bus.addListener(this::onLoad);
-        bus.addListener(this::onReload);
-        bus.addListener(this::onInit);
+    public void regToBus(IEventBus modEventBus) {
+        modEventBus.addListener(this::onLoad);
+        modEventBus.addListener(this::onReload);
+        modEventBus.addListener(this::onInit);
     }
 
     private static String format(String path) {

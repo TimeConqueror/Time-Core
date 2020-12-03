@@ -146,9 +146,9 @@ public class BlockRegister extends ForgeRegister<Block> {
     }
 
     @Override
-    public void regToBus(IEventBus bus) {
-        super.regToBus(bus);
-        itemRegister.regToBus(bus);
+    public void regToBus(IEventBus modEventBus) {
+        super.regToBus(modEventBus);
+        itemRegister.regToBus(modEventBus);
     }
 
     public class BlockRegisterChain<B extends Block> extends ForgeRegister.RegisterChain<B> {

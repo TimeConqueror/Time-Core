@@ -60,9 +60,9 @@ public abstract class ForgeRegister<T extends IForgeRegistryEntry<T>> extends Ti
     }
 
     @Override
-    public void regToBus(IEventBus bus) {
-        bus.register(new EventDispatcher());
-        bus.addListener(EventPriority.LOWEST, this::onClientInit);
+    public void regToBus(IEventBus modEventBus) {
+        modEventBus.register(new EventDispatcher());
+        modEventBus.addListener(EventPriority.LOWEST, this::onClientInit);
     }
 
     private void onAllRegEvent(RegistryEvent.Register<? extends IForgeRegistryEntry<?>> event) {

@@ -152,8 +152,8 @@ public class PacketRegister extends TimeRegister {
     }
 
     @Override
-    public void regToBus(IEventBus bus) {
-        bus.addListener(this::onInit);
+    public void regToBus(IEventBus modEventBus) {
+        modEventBus.addListener(this::onInit);
     }
 
     private void onInit(FMLCommonSetupEvent event) {
