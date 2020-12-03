@@ -5,5 +5,5 @@ import net.minecraft.util.ResourceLocation;
 
 @FunctionalInterface
 public interface ISaveFunction {
-    Advancement process(Advancement.Builder builder, ResourceLocation relPath);
+    Advancement process(ResourceLocation savePath, Advancement.Builder builder);
 }

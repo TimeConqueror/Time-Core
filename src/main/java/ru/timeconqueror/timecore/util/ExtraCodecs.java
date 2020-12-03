@@ -1,6 +1,11 @@
 package ru.timeconqueror.timecore.util;
 
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.DataResult;
+import net.minecraft.block.Block;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.ForgeRegistryEntry;
 import ru.timeconqueror.timecore.util.reflection.ReflectionHelper;
 
 import java.lang.reflect.Array;
@@ -9,6 +14,15 @@ import java.util.Map;
 import java.util.function.Function;
 
 public class ExtraCodecs {
+    public static Codec<Block> BLOCK_CODEC = ResourceLocation.CODEC.comapFlatMap(location -> {
+        Block block = ForgeRegistries.BLOCKS.getValue(location);
+        if (block != null) {
+            return DataResult.success(block);
+        } else {
+            return DataResult.error("Unknown block with '" + location + "' key");
+        }
+    }, ForgeRegistryEntry::getRegistryName);
+
     public static <T extends Enum<T>, S> Codec<T> forEnum(Class<T> enumClass, Function<T, S> idSupplier, Codec<S> idCodec) {
         T[] enumValues = ReflectionHelper.getEnumValues(enumClass);
 

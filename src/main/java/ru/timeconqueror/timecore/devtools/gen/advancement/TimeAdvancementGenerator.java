@@ -22,7 +22,7 @@ public class TimeAdvancementGenerator implements IDataProvider {
     private static final Logger LOGGER = LogManager.getLogger();
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     private final DataGenerator generator;
-    private final List<AdvancementSet> setList = new ArrayList<>();
+    private final List<IAdvancementSet> setList = new ArrayList<>();
 
     public TimeAdvancementGenerator(DataGenerator generatorIn) {
         this.generator = generatorIn;
@@ -32,7 +32,7 @@ public class TimeAdvancementGenerator implements IDataProvider {
         Path outputFolder = this.generator.getOutputFolder();
 
         Set<ResourceLocation> set = new HashSet<>();
-        ISaveFunction saveFunction = (advancementBuilder, id) -> {
+        ISaveFunction saveFunction = (id, advancementBuilder) -> {
             Advancement advancement = advancementBuilder.build(id);
 
             if (!set.add(advancement.getId())) {
@@ -51,12 +51,12 @@ public class TimeAdvancementGenerator implements IDataProvider {
             return advancement;
         };
 
-        for (AdvancementSet advancementSet : this.setList) {
+        for (IAdvancementSet advancementSet : this.setList) {
             advancementSet.fill(saveFunction);
         }
     }
 
-    public TimeAdvancementGenerator addSet(AdvancementSet advancementSet) {
+    public TimeAdvancementGenerator addSet(IAdvancementSet advancementSet) {
         setList.add(advancementSet);
 
         return this;
