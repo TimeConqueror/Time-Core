@@ -15,8 +15,8 @@ import net.minecraftforge.fml.event.lifecycle.ModLifecycleEvent;
  * <p>
  * Posted by {@link Mod.EventBusSubscriber.Bus#MOD} event bus.
  */
-public class FMLModConstructedEvent extends ModLifecycleEvent {
-    public FMLModConstructedEvent(ModContainer container) {
+public class FMLModInitializedEvent extends ModLifecycleEvent {
+    public FMLModInitializedEvent(ModContainer container) {
         super(container);
     }
 }

@@ -54,35 +54,37 @@ public class EnvironmentUtils {
      * Enables all log messages with provided markers.
      */
     public static void enableLogMarkers(Marker... markers) {
-        changeLogMarkerState(true, markers);
+        changeLogMarkerStates(true, markers);
     }
 
     /**
      * Disables all log messages with provided markers.
      */
-    public static void disableLogMarker(Marker... markers) {
-        changeLogMarkerState(false, markers);
+    public static void disableLogMarkers(Marker... markers) {
+        changeLogMarkerStates(false, markers);
     }
 
     /**
      * Enables all log messages with provided marker names.
      */
-    public static void enableLogMarker(String... markers) {
-        changeLogMarkerState(true, markers);
+    public static void enableLogMarkers(String... markers) {
+        changeLogMarkerStates(true, markers);
     }
 
     /**
      * Disables all log messages with provided marker names.
      */
-    public static void disableLogMarker(String... markers) {
-        changeLogMarkerState(false, markers);
+    public static void disableLogMarkers(String... markers) {
+        changeLogMarkerStates(false, markers);
     }
 
-    private static void changeLogMarkerState(boolean enable, Marker... markers) {
-        changeLogMarkerState(enable, CollectionUtils.map(markers, String[]::new, Marker::getName));
+    private static void changeLogMarkerStates(boolean enable, Marker... markers) {
+        changeLogMarkerStates(enable, CollectionUtils.map(markers, String[]::new, Marker::getName));
     }
 
-    private static void changeLogMarkerState(boolean enable, String... markerNames) {
+    private static void changeLogMarkerStates(boolean enable, String... markerNames) {
+        if (markerNames.length == 0) return;
+
         LoggerContext context = (LoggerContext) LogManager.getContext(false);
 
         for (String marker : markerNames) {
