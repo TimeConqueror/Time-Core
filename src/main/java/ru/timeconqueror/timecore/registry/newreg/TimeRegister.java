@@ -2,10 +2,10 @@ package ru.timeconqueror.timecore.registry.newreg;
 
 import net.minecraftforge.eventbus.api.IEventBus;
 import org.jetbrains.annotations.Nullable;
-import ru.timeconqueror.timecore.api.util.Pair;
 import ru.timeconqueror.timecore.devtools.gen.lang.LangGeneratorFacade;
 import ru.timeconqueror.timecore.storage.Features;
 import ru.timeconqueror.timecore.storage.Storage;
+import ru.timeconqueror.timecore.util.Pair;
 
 import java.util.List;
 import java.util.function.Supplier;

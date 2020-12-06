@@ -11,9 +11,9 @@ import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.IForgeRegistryEntry;
-import ru.timeconqueror.timecore.api.util.Pair;
-import ru.timeconqueror.timecore.api.util.Wrapper;
 import ru.timeconqueror.timecore.util.EnvironmentUtils;
+import ru.timeconqueror.timecore.util.Pair;
+import ru.timeconqueror.timecore.util.Wrapper;
 
 import java.util.ArrayList;
 import java.util.HashMap;

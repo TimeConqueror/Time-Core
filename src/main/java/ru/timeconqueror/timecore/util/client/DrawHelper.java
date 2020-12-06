@@ -6,7 +6,7 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.vector.Matrix4f;
 import org.lwjgl.opengl.GL11;
-import ru.timeconqueror.timecore.api.util.Requirements;
+import ru.timeconqueror.timecore.util.Requirements;
 
 //FIXME change rendering of font
 public class DrawHelper {

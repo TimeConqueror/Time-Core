@@ -8,9 +8,9 @@ import ru.timeconqueror.timecore.TimeCore;
 import ru.timeconqueror.timecore.animation.util.AnimationUtils;
 import ru.timeconqueror.timecore.api.animation.Animation;
 import ru.timeconqueror.timecore.api.animation.AnimationLayer;
-import ru.timeconqueror.timecore.api.util.Pair;
 import ru.timeconqueror.timecore.client.render.model.ITimeModel;
 import ru.timeconqueror.timecore.client.render.model.TimeModelRenderer;
+import ru.timeconqueror.timecore.util.Pair;
 
 import java.util.ArrayList;
 import java.util.List;

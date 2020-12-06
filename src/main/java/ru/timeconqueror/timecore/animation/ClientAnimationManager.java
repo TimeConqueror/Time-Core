@@ -3,8 +3,8 @@ package ru.timeconqueror.timecore.animation;
 import net.minecraft.client.Minecraft;
 import ru.timeconqueror.timecore.animation.watcher.AnimationWatcher;
 import ru.timeconqueror.timecore.api.animation.Animation;
-import ru.timeconqueror.timecore.api.util.MathUtils;
 import ru.timeconqueror.timecore.client.render.model.ITimeModel;
+import ru.timeconqueror.timecore.util.MathUtils;
 
 public class ClientAnimationManager extends BaseAnimationManager {
     @Override

@@ -1,4 +1,4 @@
-package ru.timeconqueror.timecore.api.util;
+package ru.timeconqueror.timecore.util;
 
 import java.util.Map;
 import java.util.stream.Collector;

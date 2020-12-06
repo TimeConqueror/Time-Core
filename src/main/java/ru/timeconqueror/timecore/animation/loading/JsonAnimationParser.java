@@ -14,8 +14,8 @@ import ru.timeconqueror.timecore.animation.component.BasicAnimation;
 import ru.timeconqueror.timecore.animation.component.BoneOption;
 import ru.timeconqueror.timecore.animation.component.KeyFrame;
 import ru.timeconqueror.timecore.api.animation.Animation;
-import ru.timeconqueror.timecore.api.util.CollectionUtils;
 import ru.timeconqueror.timecore.client.render.JsonParsingException;
+import ru.timeconqueror.timecore.util.CollectionUtils;
 import ru.timeconqueror.timecore.util.JsonUtils;
 import ru.timeconqueror.timecore.util.ResourceUtils;
 

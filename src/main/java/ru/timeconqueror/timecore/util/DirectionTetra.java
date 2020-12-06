@@ -1,4 +1,4 @@
-package ru.timeconqueror.timecore.api.util;
+package ru.timeconqueror.timecore.util;
 
 import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.math.BlockPos;

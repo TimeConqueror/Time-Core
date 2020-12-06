@@ -16,10 +16,10 @@ import net.minecraft.util.math.vector.Matrix4f;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
-import ru.timeconqueror.timecore.api.util.MathUtils;
-import ru.timeconqueror.timecore.api.util.RandHelper;
 import ru.timeconqueror.timecore.client.render.TimeRenderType;
 import ru.timeconqueror.timecore.mod.mixins.accessor.client.ViewDistanceProvider;
+import ru.timeconqueror.timecore.util.MathUtils;
+import ru.timeconqueror.timecore.util.RandHelper;
 import ru.timeconqueror.timecore.util.client.DrawHelper;
 import ru.timeconqueror.timecore.util.client.RenderHelper;
 

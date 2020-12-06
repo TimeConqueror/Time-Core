@@ -11,7 +11,6 @@ import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.core.Filter;
 import org.apache.logging.log4j.core.LoggerContext;
 import org.apache.logging.log4j.core.filter.MarkerFilter;
-import ru.timeconqueror.timecore.api.util.CollectionUtils;
 
 import java.nio.file.Path;
 
