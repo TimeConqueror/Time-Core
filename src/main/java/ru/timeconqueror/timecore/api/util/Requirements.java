@@ -64,9 +64,13 @@ public class Requirements {
     }
 
     public static <T> void arrayWithLength(T[] arr, int length) {
+        arrayWithLength(arr, length, "Provided array should have length " + length + ". Provided: " + arr.length);
+    }
+
+    public static <T> void arrayWithLength(T[] arr, int length, String errorMessage) {
         Preconditions.checkNotNull(arr);
         if (arr.length != length)
-            throw new IllegalArgumentException("Provided array should have length " + length + ". Provided: " + arr.length);
+            throw new IllegalArgumentException(errorMessage);
     }
 
     public static void instanceOf(Object obj, Class<?> clazz) {

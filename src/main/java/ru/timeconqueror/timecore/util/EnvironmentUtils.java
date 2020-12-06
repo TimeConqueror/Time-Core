@@ -6,6 +6,12 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.fml.loading.FMLPaths;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.core.Filter;
+import org.apache.logging.log4j.core.LoggerContext;
+import org.apache.logging.log4j.core.filter.MarkerFilter;
+import ru.timeconqueror.timecore.api.util.CollectionUtils;
 
 import java.nio.file.Path;
 
@@ -43,5 +49,47 @@ public class EnvironmentUtils {
 
     public static Path getConfigDir() {
         return FMLPaths.CONFIGDIR.get();
+    }
+
+    /**
+     * Enables all log messages with provided markers.
+     */
+    public static void enableLogMarkers(Marker... markers) {
+        changeLogMarkerState(true, markers);
+    }
+
+    /**
+     * Disables all log messages with provided markers.
+     */
+    public static void disableLogMarker(Marker... markers) {
+        changeLogMarkerState(false, markers);
+    }
+
+    /**
+     * Enables all log messages with provided marker names.
+     */
+    public static void enableLogMarker(String... markers) {
+        changeLogMarkerState(true, markers);
+    }
+
+    /**
+     * Disables all log messages with provided marker names.
+     */
+    public static void disableLogMarker(String... markers) {
+        changeLogMarkerState(false, markers);
+    }
+
+    private static void changeLogMarkerState(boolean enable, Marker... markers) {
+        changeLogMarkerState(enable, CollectionUtils.map(markers, String[]::new, Marker::getName));
+    }
+
+    private static void changeLogMarkerState(boolean enable, String... markerNames) {
+        LoggerContext context = (LoggerContext) LogManager.getContext(false);
+
+        for (String marker : markerNames) {
+            context.getConfiguration().addFilter(MarkerFilter.createFilter(marker, enable ? Filter.Result.ACCEPT : Filter.Result.DENY, Filter.Result.NEUTRAL));
+        }
+
+        context.updateLoggers();
     }
 }
