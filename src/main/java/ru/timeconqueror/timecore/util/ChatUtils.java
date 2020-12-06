@@ -2,6 +2,7 @@ package ru.timeconqueror.timecore.util;
 
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
 
@@ -20,8 +21,7 @@ public class ChatUtils {
     /**
      * Changes format (usually color) of provided message.
      */
-    public static <T extends ITextComponent> T format(T msg, TextFormatting format) {
-        msg.getStyle().withColor(format);
-        return msg;
+    public static IFormattableTextComponent format(IFormattableTextComponent msg, TextFormatting... formats) {
+        return msg.withStyle(formats);
     }
 }
