@@ -101,4 +101,32 @@ public class MathUtils {
 
         return s / vals.length;
     }
+
+    public static int min(int... vals) {
+        if (vals.length == 0) throw new IllegalArgumentException("Can't get minimum value from zero-sized array.");
+
+        int min = Integer.MAX_VALUE;
+
+        for (int val : vals) {
+            if (val < min) {
+                min = val;
+            }
+        }
+
+        return min;
+    }
+
+    public static int max(int... vals) {
+        if (vals.length == 0) throw new IllegalArgumentException("Can't get maximum value from zero-sized array.");
+
+        int max = Integer.MIN_VALUE;
+
+        for (int val : vals) {
+            if (val > max) {
+                max = val;
+            }
+        }
+
+        return max;
+    }
 }
