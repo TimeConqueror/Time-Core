@@ -66,20 +66,21 @@ minecraft {
     accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
 
     // Default run configurations.
-    // These can be tweaked, removed, or duplicated as needed.
-    def extraArgs = Arrays.asList('--mixin mixins.timecore.json'.split(' '))
+    // These can be tweaked, removed, or duplicated as needed.,
+    def extraArgs = new ArrayList<>(Arrays.asList('--mixin mixins.timecore.json'.split(' ')))
+    def extraVmArgs = Arrays.asList('-Dmixin.debug.countInjections=true')
     runs {
         client {
             workingDirectory project.file('run')
 
             // Recommended logging data for a userdev environment
 //            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
-            property 'forge.logging.markers', 'REGISTRIES,RESOURCE_SYSTEM'
 
             // Recommended logging level for the console
             property 'forge.logging.console.level', 'debug'
 
             setArgs(extraArgs)
+            setJvmArgs(extraVmArgs)
 
             mods {
                 timecore {
@@ -102,6 +103,7 @@ minecraft {
             //property 'forge.logging.console.level', 'debug'
 
             setArgs(extraArgs)
+            setJvmArgs(extraVmArgs)
 
             mods {
                 timecore {
@@ -125,6 +127,7 @@ minecraft {
 
             args '--mod', 'timecore', '--all', '--output', ("\"" + projectDir.path + "/src/generated/resources/\"")
             setArgs(extraArgs)
+            setJvmArgs(extraVmArgs)
 
             mods {
                 timecore {

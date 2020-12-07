@@ -24,6 +24,8 @@ import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.registries.ForgeRegistries;
+import ru.timeconqueror.timecore.storage.StructureTags;
+import ru.timeconqueror.timecore.util.Temporal;
 
 import java.util.*;
 import java.util.function.Function;
@@ -145,6 +147,8 @@ public class StructureRegister extends ForgeRegister<Structure<?>> {
                 // and re-enter it and your structures will be spawning. I could not figure out why it needs
                 // the restart but honestly, superflat is really buggy and shouldn't be your main focus in my opinion.
                 FlatGenerationSettings.STRUCTURE_FEATURES.put(structureInfo.structure(), structureInfo.getFeature());
+
+                structureInfo.tags.transferAndRemove(tags -> StructureTags.put(tags, structureInfo.structure()));
             });
         });
     }
@@ -243,6 +247,14 @@ public class StructureRegister extends ForgeRegister<Structure<?>> {
         }
 
         /**
+         * Applies some structure settings.
+         */
+        public StructureRegisterChain<T, S> addToTag(StructureTags.Tag tag) {
+            this.info.tags.get().add(tag);
+            return this;
+        }
+
+        /**
          * Returns holder, from which you can get both structure and structure feature.
          * Keep in mind, that structure feature will this registry name: "${your_mod_id}:configured_${structure_name}".
          * Example: "best_mod:configured_my_test_structure".
@@ -308,6 +320,7 @@ public class StructureRegister extends ForgeRegister<Structure<?>> {
         private final Lazy<StructureFeature<T, S>> feature;
         private boolean featureReadyToLoad;
         private final StructureSeparationSettings separationSettings;
+        private final Temporal<EnumSet<StructureTags.Tag>> tags = Temporal.of(EnumSet.noneOf(StructureTags.Tag.class));
 
         public StructureInfo(RegistryObject<S> registryObject, StructureSeparationSettings separationSettings, Function<S, StructureFeature<T, S>> structureFeatureFactory) {
             this.registryObject = registryObject;
