@@ -14,6 +14,7 @@ import net.minecraftforge.registries.ObjectHolder;
 import org.jetbrains.annotations.Nullable;
 import ru.timeconqueror.timecore.api.TimeMod;
 import ru.timeconqueror.timecore.api.client.resource.BlockModel;
+import ru.timeconqueror.timecore.api.client.resource.BlockModels;
 import ru.timeconqueror.timecore.api.client.resource.BlockStateResource;
 import ru.timeconqueror.timecore.api.client.resource.TimeResourceHolder;
 import ru.timeconqueror.timecore.api.client.resource.location.BlockModelLocation;
@@ -223,7 +224,7 @@ public class BlockRegister extends ForgeRegister<Block> {
          * @param blockModelLocation location of block model, which will be called from blockstate json.
          */
         public BlockRegisterChain<B> genDefaultState(BlockModelLocation blockModelLocation) {
-            clientSideOnly(() -> genState(new BlockStateResource().addDefaultVariant(blockModelLocation)));
+            clientSideOnly(() -> genState(BlockStateResource.fromBuilder(BlockStateResource.Builder.create().addDefaultVariant(blockModelLocation))));
 
             return this;
         }
@@ -314,7 +315,7 @@ public class BlockRegister extends ForgeRegister<Block> {
          */
         public BlockRegisterChain<B> genDefaultStateAndModel(TextureLocation textureLocation) {
             if (EnvironmentUtils.isOnPhysicalClient()) {
-                genModelWithRegNamePath(BlockModel.createCubeAllModel(textureLocation));
+                genModelWithRegNamePath(BlockModels.cubeAllModel(textureLocation));
                 genDefaultState(new BlockModelLocation(getModId(), getName()));
             }
             return this;

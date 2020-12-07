@@ -22,13 +22,13 @@ public class ItemModel extends JSONTimeResource {
     }
 
     @Override
-    public String buildJSONString() {
+    public String toJson() {
         return object(null, listOf(
-                value("parent", parent.toString()),
+                property("parent", parent.toString()),
                 object("textures", listOf(() -> {
                             String[] jsonLayers = new String[this.layers.size()];
                             for (int i = 0; i < layers.size(); i++) {
-                                jsonLayers[i] = value("layer" + i, layers.get(i).toString());
+                                jsonLayers[i] = property("layer" + i, layers.get(i).toString());
                             }
                             return jsonLayers;
                         })

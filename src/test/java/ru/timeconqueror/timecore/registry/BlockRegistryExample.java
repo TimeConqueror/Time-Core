@@ -5,7 +5,7 @@ import net.minecraft.block.material.Material;
 import net.minecraft.item.ItemGroup;
 import net.minecraftforge.registries.ObjectHolder;
 import ru.timeconqueror.timecore.TimeCore;
-import ru.timeconqueror.timecore.api.client.resource.BlockModel;
+import ru.timeconqueror.timecore.api.client.resource.BlockModels;
 import ru.timeconqueror.timecore.api.client.resource.location.BlockModelLocation;
 import ru.timeconqueror.timecore.api.client.resource.location.TextureLocation;
 import ru.timeconqueror.timecore.block.DummyBlockWithTileEntity;
@@ -33,7 +33,7 @@ public class BlockRegistryExample {
                     .apply(chain -> {
                         BlockModelLocation modelLocation = new BlockModelLocation(chain.getModId(), "block/test_sand");
                         chain
-                                .genModel(modelLocation, () -> BlockModel.createCubeAllModel(new TextureLocation("minecraft", "block/sand")))
+                                .genModel(modelLocation, () -> BlockModels.cubeAllModel(new TextureLocation("minecraft", "block/sand")))
                                 .genDefaultState(modelLocation);
                     });
 

@@ -12,7 +12,7 @@ public class TKeyBinds {
 
     public static void registerKeys(FMLClientSetupEvent event) {
         event.enqueueWork(() -> {
-            toggleReplaceMode = new KeyBinding("Toggle Replace Mode", KeyConflictContext.IN_GAME, InputMappings.Type.KEYSYM, GLFW.GLFW_KEY_GRAVE_ACCENT, "TimeCore");
+            toggleReplaceMode = new KeyBinding("Toggle Replace Mode", KeyConflictContext.IN_GAME, InputMappings.Type.KEYSYM, GLFW.GLFW_KEY_GRAVE_ACCENT, "TimeCore");//TODO I18n
             ClientRegistry.registerKeyBinding(toggleReplaceMode);
         });
     }

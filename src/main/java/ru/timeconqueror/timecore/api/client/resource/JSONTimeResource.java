@@ -30,15 +30,15 @@ public abstract class JSONTimeResource implements TimeResource {
         return str.toString();
     }
 
-    public static String value(String key, String value) {
+    public static String property(String key, String value) {
         return "\"" + key + "\":" + "\"" + value + "\"";
     }
 
-    public static String value(String key, int value) {
+    public static String property(String key, int value) {
         return "\"" + key + "\":" + value;
     }
 
-    public static String value(String key, float value) {
+    public static String property(String key, float value) {
         return "\"" + key + "\":" + value;
     }
 
@@ -56,8 +56,8 @@ public abstract class JSONTimeResource implements TimeResource {
 
     @Override
     public byte[] toBytes() {
-        return buildJSONString().getBytes(StandardCharsets.UTF_8);
+        return toJson().getBytes(StandardCharsets.UTF_8);
     }
 
-    public abstract String buildJSONString();
+    public abstract String toJson();
 }
