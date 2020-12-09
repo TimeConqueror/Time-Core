@@ -10,6 +10,7 @@
     "MixinDataMain",
     "MixinFMLModContainer",
     "MixinLivingEntity",
+    "NoiseChunkGeneratorMixin",
     "accessor.GatherDataEventAccessor",
     "accessor.UnlockedAdvancementProvider",
     "config.MixinConfigValue"

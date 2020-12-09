@@ -68,7 +68,7 @@ minecraft {
     // Default run configurations.
     // These can be tweaked, removed, or duplicated as needed.,
     def extraArgs = new ArrayList<>(Arrays.asList('--mixin mixins.timecore.json'.split(' ')))
-    def extraVmArgs = Arrays.asList('-Dmixin.debug.countInjections=true')
+    def extraVmArgs = Arrays.asList('-Dmixin.debug.countInjections=true', '-Dmixin.debug.verbose=true')
     runs {
         client {
             workingDirectory project.file('run')
