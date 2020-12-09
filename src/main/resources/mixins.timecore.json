@@ -18,6 +18,7 @@
   "client": [
     "accessor.client.ViewDistanceProvider",
     "client.ClientModelLoaderMixin",
+    "client.MinecraftMixin",
     "client.WorldRendererMixin",
     "client.command.ClientPlayerEntityMixin",
     "client.command.ClientPlayNetHandlerMixin"
