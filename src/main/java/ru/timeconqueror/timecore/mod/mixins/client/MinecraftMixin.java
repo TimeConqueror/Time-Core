@@ -16,8 +16,8 @@ public class MinecraftMixin {
                     ordinal = 0
             ),
             index = 11)
-    private boolean disableExperimentalWarning(boolean containsExperimentalSettings) {
-        if (containsExperimentalSettings) {
+    private boolean suppressExperimentalWarning(boolean containsExperimentalFeatures) {
+        if (containsExperimentalFeatures) {
             TimeCore.LOGGER.info("The world contains experimental features.");
 
             if (MainConfig.INSTANCE.suppressExperimentalWarning.get()) {
@@ -27,6 +27,6 @@ public class MinecraftMixin {
             }
         }
 
-        return containsExperimentalSettings;
+        return containsExperimentalFeatures;
     }
 }
