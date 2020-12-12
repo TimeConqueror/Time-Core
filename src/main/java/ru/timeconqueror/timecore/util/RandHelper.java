@@ -23,6 +23,8 @@ public class RandHelper {
     /**
      * Returns {@code a} with {@code chance}% (from 0 to 100) otherwise return {@code b}
      * Uses built-in random instance.
+     *
+     * @throws IllegalArgumentException if provided chance is more than 100.
      */
     public static <T> T chance(int chance, T a, T b) {
         return chance(RAND, chance, a, b);
@@ -30,6 +32,8 @@ public class RandHelper {
 
     /**
      * Returns {@code a} with {@code chance}% (from 0 to 100) otherwise return {@code b}
+     *
+     * @throws IllegalArgumentException if provided chance is more than 100.
      */
     public static <T> T chance(Random random, int chance, T a, T b) {
         return chance(random, chance) ? a : b;
@@ -38,6 +42,8 @@ public class RandHelper {
     /**
      * Returns true with {@code chance}% (from 0 to 100).
      * Uses built-in random instance.
+     *
+     * @throws IllegalArgumentException if provided chance is more than 100.
      */
     public static boolean chance(int chance) {
         return chance(RAND, chance);
@@ -45,8 +51,13 @@ public class RandHelper {
 
     /**
      * Returns true with {@code chance}% (from 0 to 100).
+     *
+     * @throws IllegalArgumentException if provided chance is more than 100.
      */
     public static boolean chance(Random random, int chance) {
+        if (chance > 100)
+            throw new IllegalArgumentException("Chance shouldn't be greater than 100. Provided: " + chance);
+
         return random.nextInt(100) < chance;
     }
 
