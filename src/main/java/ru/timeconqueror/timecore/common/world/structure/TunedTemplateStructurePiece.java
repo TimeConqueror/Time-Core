@@ -1,4 +1,4 @@
-package ru.timeconqueror.timecore.mod.common.world.structure;
+package ru.timeconqueror.timecore.common.world.structure;
 
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;
