@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * You can use it as a wrapper for all vanilla registries, which don't have forge wrapper.
+ * You can {@link SimpleVanillaRegister} it as a wrapper for all vanilla registries, which don't have forge wrapper.
  * All values will be registered on the main thread on {@link FMLCommonSetupEvent}
  */
 public abstract class VanillaRegister<T> extends TimeRegister {
@@ -23,16 +23,8 @@ public abstract class VanillaRegister<T> extends TimeRegister {
         this.registry = registry;
     }
 
-    /**
-     * Adds value to the delayed registry array, all entries from which will be registered later.
-     *
-     * @param name  The value's name, will automatically have the modid as a namespace.
-     * @param value value to be registered.
-     */
-    public T register(String name, T value) {
+    protected void addEntry(String name, T value) {
         entries.get().add(Pair.of(new ResourceLocation(getModId(), name), value));
-
-        return value;
     }
 
     @Override

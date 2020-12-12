@@ -32,14 +32,29 @@ public class RandHelper {
      * Returns {@code a} with {@code chance}% (from 0 to 100) otherwise return {@code b}
      */
     public static <T> T chance(Random random, int chance, T a, T b) {
-        return random.nextInt(100) < chance ? a : b;
+        return chance(random, chance) ? a : b;
+    }
+
+    /**
+     * Returns true with {@code chance}% (from 0 to 100).
+     * Uses built-in random instance.
+     */
+    public static boolean chance(int chance) {
+        return chance(RAND, chance);
+    }
+
+    /**
+     * Returns true with {@code chance}% (from 0 to 100).
+     */
+    public static boolean chance(Random random, int chance) {
+        return random.nextInt(100) < chance;
     }
 
     /**
      * Chooses with equal probability.
      */
     @SafeVarargs
-    public static <T> T chooseEqual(Random r, T... items) {
+    public static <T> T chooseEqually(Random r, T... items) {
         return items[r.nextInt(items.length)];
     }
 
@@ -48,7 +63,7 @@ public class RandHelper {
      * Uses built-in random instance.
      */
     @SafeVarargs
-    public static <T> T chooseEqual(T... items) {
-        return chooseEqual(RAND, items);
+    public static <T> T chooseEqually(T... items) {
+        return chooseEqually(RAND, items);
     }
 }
