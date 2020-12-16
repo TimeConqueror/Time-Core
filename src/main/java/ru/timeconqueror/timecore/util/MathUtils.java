@@ -1,5 +1,9 @@
 package ru.timeconqueror.timecore.util;
 
+import net.minecraft.entity.Entity;
+import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.util.math.vector.Vector3i;
+
 public class MathUtils {
     /**
      * Coerces number in provided range.
@@ -128,5 +132,13 @@ public class MathUtils {
         }
 
         return max;
+    }
+
+    public static double distSqr(Vector3i vec, Vector3d vec2) {
+        return vec.distSqr(vec2.x, vec2.y, vec2.z, true);
+    }
+
+    public static double distSqr(Vector3i vec, Entity entity) {
+        return vec.distSqr(entity.getX(), entity.getY(), entity.getZ(), true);
     }
 }
