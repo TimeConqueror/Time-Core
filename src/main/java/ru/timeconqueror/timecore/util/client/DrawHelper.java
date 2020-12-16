@@ -2,17 +2,18 @@ package ru.timeconqueror.timecore.util.client;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
+import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.vector.Matrix4f;
 import org.lwjgl.opengl.GL11;
 import ru.timeconqueror.timecore.util.Requirements;
 
-//FIXME change rendering of font
 public class DrawHelper {
     /**
      * Draws textured rectangle.
      * <p>
+     * Required GL Mode: {@link GL11#GL_QUADS}
      * Required VertexFormat: {@link DefaultVertexFormats#POSITION_TEX}
      * <p>
      * Term, used in parameters:
@@ -20,25 +21,26 @@ public class DrawHelper {
      * The example:
      * Total texture has 64x64 resolution.
      * Let's consider axis X:
-     * If we provide 4 as {@code texturePartsCount} it wil be splitted into 4 pieces with width 16.
+     * If we provide 4 as {@code texturePartCount} it wil be splitted into 4 pieces with width 16.
      * Then if we set {@code textureX} to 1 and {@code textureWidth} to 3, it will mean, that we need a texture with start at (1 * 16) by X and with end at (1 + 3) * 16 by X.
      *
-     * @param x0                start x-coordinate. (x of left-top corner)
-     * @param y0                start y-coordinate. (y of left-top corner)
-     * @param width             represents both coordinate and texture width along the axis X. For texture it means texture width in parts.
-     * @param height            represents both coordinate and texture width along the axis Y. For texture it means texture height in parts.
-     * @param zLevel            z-coordinate.
-     * @param textureX          index of start subtexture part on axis X (x of left-top texture corner).
-     * @param textureY          index of start subtexture part on axis Y (y of left-top texture corner).
-     * @param texturePartsCount in how much parts texture must be divided in both axis. Part description is mentioned above.
+     * @param x0               start x-coordinate. (x of left-top corner)
+     * @param y0               start y-coordinate. (y of left-top corner)
+     * @param width            represents both coordinate and texture width along the axis X. For texture it means texture width in parts.
+     * @param height           represents both coordinate and texture width along the axis Y. For texture it means texture height in parts.
+     * @param zLevel           z-coordinate.
+     * @param textureX         index of start subtexture part on axis X (x of left-top texture corner).
+     * @param textureY         index of start subtexture part on axis Y (y of left-top texture corner).
+     * @param texturePartCount in how many parts texture must be divided in both axis. Part description is mentioned above.
      */
-    public static void drawTexturedRectByParts(IVertexBuilder vertexBuilder, MatrixStack matrixStack, float x0, float y0, float width, float height, float zLevel, float textureX, float textureY, float texturePartsCount) {
-        drawTexturedRectByParts(vertexBuilder, matrixStack, x0, y0, width, height, zLevel, textureX, textureY, width, height, texturePartsCount);
+    public static void drawTexturedRectByParts(IVertexBuilder vertexBuilder, MatrixStack matrixStack, float x0, float y0, float width, float height, float zLevel, float textureX, float textureY, float texturePartCount) {
+        drawTexturedRectByParts(vertexBuilder, matrixStack, x0, y0, width, height, zLevel, textureX, textureY, width, height, texturePartCount);
     }
 
     /**
      * Draws textured rectangle.
      * <p>
+     * Required GL Mode: {@link GL11#GL_QUADS}
      * Required VertexFormat: {@link DefaultVertexFormats#POSITION_TEX}
      * <p>
      * Term, used in parameters:
@@ -46,28 +48,29 @@ public class DrawHelper {
      * The example:
      * Total texture has 64x64 resolution.
      * Let's consider axis X:
-     * If we provide 4 as {@code texturePartsCount} it wil be splitted into 4 pieces with width 16.
+     * If we provide 4 as {@code texturePartCount} it wil be splitted into 4 pieces with width 16.
      * Then if we set {@code textureX} to 1 and {@code textureWidth} to 3, it will mean, that we need a texture with start at (1 * 16) by X and with end at (1 + 3) * 16 by X.
      *
-     * @param x0                start x-coordinate. (x of left-top corner)
-     * @param y0                start y-coordinate. (y of left-top corner)
-     * @param width             Represents coordinate length along the axis X.
-     * @param height            Represents coordinate length along the axis Y.
-     * @param zLevel            z-coordinate.
-     * @param textureX          index of start subtexture part on axis X (x of left-top texture corner).
-     * @param textureY          index of start subtexture part on axis Y (y of left-top texture corner).
-     * @param textureWidth      subtexture width in parts.
-     * @param textureHeight     subtexture height in parts.
-     * @param texturePartsCount in how much parts texture must be divided in both axis. Part description is mentioned above.
+     * @param x0               start x-coordinate. (x of left-top corner)
+     * @param y0               start y-coordinate. (y of left-top corner)
+     * @param width            Represents coordinate length along the axis X.
+     * @param height           Represents coordinate length along the axis Y.
+     * @param zLevel           z-coordinate.
+     * @param textureX         index of start subtexture part on axis X (x of left-top texture corner).
+     * @param textureY         index of start subtexture part on axis Y (y of left-top texture corner).
+     * @param textureWidth     subtexture width in parts.
+     * @param textureHeight    subtexture height in parts.
+     * @param texturePartCount in how many parts texture must be divided in both axis. Part description is mentioned above.
      */
-    public static void drawTexturedRectByParts(IVertexBuilder vertexBuilder, MatrixStack matrixStack, float x0, float y0, float width, float height, float zLevel, float textureX, float textureY, float textureWidth, float textureHeight, float texturePartsCount) {
-        float portionFactor = 1 / texturePartsCount;
+    public static void drawTexturedRectByParts(IVertexBuilder vertexBuilder, MatrixStack matrixStack, float x0, float y0, float width, float height, float zLevel, float textureX, float textureY, float textureWidth, float textureHeight, float texturePartCount) {
+        float portionFactor = 1 / texturePartCount;
         drawTexturedRect(vertexBuilder, matrixStack, x0, y0, width, height, zLevel, textureX, textureY, textureWidth, textureHeight, portionFactor);
     }
 
     /**
      * Draws textured rectangle.
      * <p>
+     * Required GL Mode: {@link GL11#GL_QUADS}
      * Required VertexFormat: {@link DefaultVertexFormats#POSITION_TEX}
      * <p>
      * Term, used in parameters:
@@ -75,7 +78,7 @@ public class DrawHelper {
      * The example:
      * Total texture has 64x64 resolution.
      * Let's consider axis X:
-     * If we provide 4 as {@code texturePartsCount} it wil be splitted into 4 pieces with width 16.
+     * If we provide 4 as {@code texturePartCount} it wil be splitted into 4 pieces with width 16.
      * Then if we set {@code textureX} to 1 and {@code textureWidth} to 3, it will mean, that we need a texture with start at (1 * 16) by X and with end at (1 + 3) * 16 by X.
      *
      * @param x0                  start x-coordinate. (x of left-top corner)
@@ -87,7 +90,7 @@ public class DrawHelper {
      * @param textureY            index of start subtexture part on axis Y (y of left-top texture corner).
      * @param textureWidth        subtexture width in parts.
      * @param textureHeight       subtexture height in parts.
-     * @param textureDivideFactor represents the value equal to 1 / parts. Part count determines in how much parts texture must be divided in both axis. Part description is mentioned above.
+     * @param textureDivideFactor represents the value equal to 1 / parts. Part count determines in how many parts texture must be divided in both axis. Part description is mentioned above.
      */
     private static void drawTexturedRect(IVertexBuilder vertexBuilder, MatrixStack matrixStack, float x0, float y0, float width, float height, float zLevel, float textureX, float textureY, float textureWidth, float textureHeight, float textureDivideFactor) {
         Matrix4f pose = matrixStack.last().pose();
@@ -100,6 +103,7 @@ public class DrawHelper {
     /**
      * Draws textured rectangle.
      * <p>
+     * Required GL Mode: {@link GL11#GL_QUADS}
      * Required VertexFormat: {@link DefaultVertexFormats#POSITION_COLOR_TEX}
      * <p>
      * Term, used in parameters:
@@ -107,26 +111,27 @@ public class DrawHelper {
      * The example:
      * Total texture has 64x64 resolution.
      * Let's consider axis X:
-     * If we provide 4 as {@code texturePartsCount} it wil be splitted into 4 pieces with width 16.
+     * If we provide 4 as {@code texturePartCount} it wil be splitted into 4 pieces with width 16.
      * Then if we set {@code textureX} to 1 and {@code textureWidth} to 3, it will mean, that we need a texture with start at (1 * 16) by X and with end at (1 + 3) * 16 by X.
      *
-     * @param x0                start x-coordinate. (x of left-top corner)
-     * @param y0                start y-coordinate. (y of left-top corner)
-     * @param width             represents both coordinate and texture width along the axis X. For texture it means texture width in parts.
-     * @param height            represents both coordinate and texture width along the axis Y. For texture it means texture height in parts.
-     * @param zLevel            z-coordinate.
-     * @param textureX          index of start subtexture part on axis X (x of left-top texture corner).
-     * @param textureY          index of start subtexture part on axis Y (y of left-top texture corner).
-     * @param texturePartsCount in how much parts texture must be divided in both axis. Part description is mentioned above.
-     * @param argbColor         color which will be applied to the texture
+     * @param x0               start x-coordinate. (x of left-top corner)
+     * @param y0               start y-coordinate. (y of left-top corner)
+     * @param width            represents both coordinate and texture width along the axis X. For texture it means texture width in parts.
+     * @param height           represents both coordinate and texture width along the axis Y. For texture it means texture height in parts.
+     * @param zLevel           z-coordinate.
+     * @param textureX         index of start subtexture part on axis X (x of left-top texture corner).
+     * @param textureY         index of start subtexture part on axis Y (y of left-top texture corner).
+     * @param texturePartCount in how many parts texture must be divided in both axis. Part description is mentioned above.
+     * @param argbColor        color which will be applied to the texture
      */
-    public static void drawTexturedRectByParts(IVertexBuilder vertexBuilder, MatrixStack matrixStack, float x0, float y0, float width, float height, float zLevel, float textureX, float textureY, float texturePartsCount, int argbColor) {
-        drawTexturedRectByParts(vertexBuilder, matrixStack, x0, y0, width, height, zLevel, textureX, textureY, width, height, texturePartsCount, argbColor);
+    public static void drawTexturedRectByParts(IVertexBuilder vertexBuilder, MatrixStack matrixStack, float x0, float y0, float width, float height, float zLevel, float textureX, float textureY, float texturePartCount, int argbColor) {
+        drawTexturedRectByParts(vertexBuilder, matrixStack, x0, y0, width, height, zLevel, textureX, textureY, width, height, texturePartCount, argbColor);
     }
 
     /**
      * Draws textured rectangle.
      * <p>
+     * Required GL Mode: {@link GL11#GL_QUADS}
      * Required VertexFormat: {@link DefaultVertexFormats#POSITION_COLOR_TEX}
      * <p>
      * Term, used in parameters:
@@ -134,29 +139,30 @@ public class DrawHelper {
      * The example:
      * Total texture has 64x64 resolution.
      * Let's consider axis X:
-     * If we provide 4 as {@code texturePartsCount} it wil be splitted into 4 pieces with width 16.
+     * If we provide 4 as {@code texturePartCount} it wil be splitted into 4 pieces with width 16.
      * Then if we set {@code textureX} to 1 and {@code textureWidth} to 3, it will mean, that we need a texture with start at (1 * 16) by X and with end at (1 + 3) * 16 by X.
      *
-     * @param x0                start x-coordinate. (x of left-top corner)
-     * @param y0                start y-coordinate. (y of left-top corner)
-     * @param width             Represents coordinate length along the axis X.
-     * @param height            Represents coordinate length along the axis Y.
-     * @param zLevel            z-coordinate.
-     * @param textureX          index of start subtexture part on axis X (x of left-top texture corner).
-     * @param textureY          index of start subtexture part on axis Y (y of left-top texture corner).
-     * @param textureWidth      subtexture width in parts.
-     * @param textureHeight     subtexture height in parts.
-     * @param texturePartsCount in how much parts texture must be divided in both axis. Part description is mentioned above.
-     * @param argbColor         color which will be applied to the texture
+     * @param x0               start x-coordinate. (x of left-top corner)
+     * @param y0               start y-coordinate. (y of left-top corner)
+     * @param width            Represents coordinate length along the axis X.
+     * @param height           Represents coordinate length along the axis Y.
+     * @param zLevel           z-coordinate.
+     * @param textureX         index of start subtexture part on axis X (x of left-top texture corner).
+     * @param textureY         index of start subtexture part on axis Y (y of left-top texture corner).
+     * @param textureWidth     subtexture width in parts.
+     * @param textureHeight    subtexture height in parts.
+     * @param texturePartCount in how many parts texture must be divided in both axis. Part description is mentioned above.
+     * @param argbColor        color which will be applied to the texture
      */
-    public static void drawTexturedRectByParts(IVertexBuilder vertexBuilder, MatrixStack matrixStack, float x0, float y0, float width, float height, float zLevel, float textureX, float textureY, float textureWidth, float textureHeight, float texturePartsCount, int argbColor) {
-        float portionFactor = 1 / texturePartsCount;
+    public static void drawTexturedRectByParts(IVertexBuilder vertexBuilder, MatrixStack matrixStack, float x0, float y0, float width, float height, float zLevel, float textureX, float textureY, float textureWidth, float textureHeight, float texturePartCount, int argbColor) {
+        float portionFactor = 1 / texturePartCount;
         drawTexturedRect(vertexBuilder, matrixStack, x0, y0, width, height, zLevel, textureX, textureY, textureWidth, textureHeight, portionFactor, argbColor);
     }
 
     /**
      * Draws textured rectangle.
      * <p>
+     * Required GL Mode: {@link GL11#GL_QUADS}
      * Required VertexFormat: {@link DefaultVertexFormats#POSITION_COLOR_TEX}
      * <p>
      * Term, used in parameters:
@@ -164,7 +170,7 @@ public class DrawHelper {
      * The example:
      * Total texture has 64x64 resolution.
      * Let's consider axis X:
-     * If we provide 4 as {@code texturePartsCount} it wil be splitted into 4 pieces with width 16.
+     * If we provide 4 as {@code texturePartCount} it wil be splitted into 4 pieces with width 16.
      * Then if we set {@code textureX} to 1 and {@code textureWidth} to 3, it will mean, that we need a texture with start at (1 * 16) by X and with end at (1 + 3) * 16 by X.
      *
      * @param x0                  start x-coordinate. (x of left-top corner)
@@ -176,7 +182,7 @@ public class DrawHelper {
      * @param textureY            index of start subtexture part on axis Y (y of left-top texture corner).
      * @param textureWidth        subtexture width in parts.
      * @param textureHeight       subtexture height in parts.
-     * @param textureDivideFactor represents the value equal to 1 / parts. Part count determines in how much parts texture must be divided in both axis. Part description is mentioned above.
+     * @param textureDivideFactor represents the value equal to 1 / parts. Part count determines in how many parts texture must be divided in both axis. Part description is mentioned above.
      * @param argbColor           color which will be applied to the texture
      */
     private static void drawTexturedRect(IVertexBuilder vertexBuilder, MatrixStack matrixStack, float x0, float y0, float width, float height, float zLevel, float textureX, float textureY, float textureWidth, float textureHeight, float textureDivideFactor, int argbColor) {
@@ -191,6 +197,83 @@ public class DrawHelper {
         vertexBuilder.vertex(pose, x0, y0 + height, zLevel).color(r, g, b, a).uv(textureX * textureDivideFactor, (textureY + textureHeight) * textureDivideFactor).endVertex();
         vertexBuilder.vertex(pose, x0 + width, y0 + height, zLevel).color(r, g, b, a).uv((textureX + textureWidth) * textureDivideFactor, (textureY + textureHeight) * textureDivideFactor).endVertex();
         vertexBuilder.vertex(pose, x0 + width, y0, zLevel).color(r, g, b, a).uv((textureX + textureWidth) * textureDivideFactor, textureY * textureDivideFactor).endVertex();
+    }
+
+    /**
+     * Draws textured rectangle with fully bound texture.
+     * <p>
+     * Required GL Mode: {@link GL11#GL_QUADS}
+     * Required VertexFormat: {@link DefaultVertexFormats#POSITION_TEX}
+     *
+     * @param x0     start x-coordinate. (x of left-top corner)
+     * @param y0     start y-coordinate. (y of left-top corner)
+     * @param width  Represents coordinate length along the axis X.
+     * @param height Represents coordinate length along the axis Y.
+     * @param zLevel z-coordinate.
+     */
+    @Deprecated
+    public static void drawTexturedRect(IVertexBuilder builder, MatrixStack matrixStack, float x0, float y0, float width, float height, float zLevel) {
+        Matrix4f pose = matrixStack.last().pose();
+
+        builder.vertex(pose, x0, y0, zLevel).uv(0, 0).endVertex();
+        builder.vertex(pose, x0, y0 + height, zLevel).uv(0, 1).endVertex();
+        builder.vertex(pose, x0 + width, y0 + height, zLevel).uv(1, 1).endVertex();
+        builder.vertex(pose, x0 + width, y0, zLevel).uv(1, 0).endVertex();
+    }
+
+
+    /**
+     * Draws textured rectangle with autoexpandable width.
+     * How it works: this method renders left and right part of rectangle, depending on given {@code requiredWidth}, and then repeats center element until it fill all remaining width.
+     * <p>
+     * If {@code requiredWidth} is less than the sum of {@code startElement, endElement} width, it will be expanded to this sum.
+     * <p>
+     * Term, used in parameters:
+     * Parts are used to determine the actual size of {@code textureX, textureY, textureWidth, textureHeight} and coordinates relative to the entire texture.
+     * The example:
+     * Total texture has 64x64 resolution.
+     * Let's consider axis X:
+     * If we provide 4 as {@code texturePartCount} it wil be splitted into 4 pieces with width 16.
+     * Then if we set {@code textureX} to 1 and {@code textureWidth} to 3, it will mean, that we need a texture with start at (1 * 16) by X and with end at (1 + 3) * 16 by X.
+     *
+     * @param x0               start x-coordinate. (x of left-top corner)
+     * @param y0               start y-coordinate. (y of left-top corner)
+     * @param requiredWidth    what coordinate width must rectangle have.
+     * @param zLevel           z-coordinate.
+     * @param startElement     element, that represents left rectangle part.
+     * @param repeatElement    element, that represents repeat rectangle part.
+     * @param endElement       element, that represents right rectangle part.
+     * @param texturePartCount in how many parts texture must be divided in both axis. Part description is mentioned above.
+     */
+    public static void drawWidthExpandableTexturedRect(IVertexBuilder builder, MatrixStack matrixStack, float x0, float y0, float requiredWidth, float zLevel, TexturedRect startElement, TexturedRect repeatElement, TexturedRect endElement, float texturePartCount) {
+        float startWidth = startElement.width;
+        float endWidth = endElement.width;
+        float minWidth = startWidth + endWidth;
+
+        if (requiredWidth <= minWidth) {
+            DrawHelper.drawTexturedRectByParts(builder, matrixStack, x0, y0, startWidth, startElement.height, zLevel, startElement.textureX, startElement.textureY, startElement.textureWidth, startElement.textureHeight, texturePartCount);
+            DrawHelper.drawTexturedRectByParts(builder, matrixStack, x0 + startWidth, y0, endWidth, endElement.height, zLevel, endElement.textureX, endElement.textureY, endElement.textureWidth, endElement.textureHeight, texturePartCount);
+        } else {
+            float remainingWidth = requiredWidth - minWidth;
+            float repeatWidth = repeatElement.width;
+            float repeatTimes = remainingWidth / repeatWidth;
+
+            int fullTimes = (int) repeatTimes;
+            float fracPart = repeatTimes - (int) repeatTimes;
+
+            DrawHelper.drawTexturedRectByParts(builder, matrixStack, x0, y0, startWidth, startElement.height, zLevel, startElement.textureX, startElement.textureY, startElement.textureWidth, startElement.textureHeight, texturePartCount);
+
+            float extraX = startWidth;
+            for (int i = 0; i < fullTimes; i++) {
+                DrawHelper.drawTexturedRectByParts(builder, matrixStack, x0 + extraX, y0, repeatElement.width, repeatElement.height, zLevel, repeatElement.textureX, repeatElement.textureY, repeatElement.textureWidth, repeatElement.textureHeight, texturePartCount);
+                extraX += repeatElement.width;
+            }
+
+            DrawHelper.drawTexturedRectByParts(builder, matrixStack, x0 + extraX, y0, repeatWidth * fracPart, repeatElement.height, zLevel, repeatElement.textureX, repeatElement.textureY, repeatElement.textureWidth * fracPart, repeatElement.textureHeight, texturePartCount);
+            extraX += repeatWidth * fracPart;
+
+            DrawHelper.drawTexturedRectByParts(builder, matrixStack, x0 + extraX, y0, endWidth, endElement.height, zLevel, endElement.textureX, endElement.textureY, endElement.textureWidth, endElement.textureHeight, texturePartCount);
+        }
     }
 
     /**
@@ -239,171 +322,101 @@ public class DrawHelper {
         return argb | alpha << 24;
     }
 
-//    /**
-//     * Draws textured rectangle with autoexpandable width. So if you have texture width, for example, in 30 pixels, while your rectangle have a larger width.
-//     * How it works: this method renders left and right part of rectangle, depending on given {@code requiredWidth}, and then repeats center element until it fill all remaining width.
-//     * <p>
-//     * If {@code requiredWidth} is less than the sum of {@code startElement, endElement} width, it will be expanded to this sum.
-//     * <p>
-//     * Terms, used in parameters:
-//     * Point number represents in how much points texture must be divided.
-//     * Point is a relative texture coordinate. It is used in {@code startElement, repeatElement, endElement} to determine its sizes and coordinates relative to the entire texture.
-//     *
-//     * @param x0            start x-coordinate. (x of left-top corner)
-//     * @param y0            start y-coordinate. (y of left-top corner)
-//     * @param requiredWidth what coordinate width must rectangle have.
-//     * @param zLevel        z-coordinate.
-//     * @param startElement  element, that represents left rectangle part.
-//     * @param repeatElement element, that represents repeat rectangle part.
-//     * @param endElement    element, that represents right rectangle part.
-//     * @param pointNumber   in how much points texture must be divided. Point description is mentioned above.
-//     */
-//    @Deprecated // will be changed to new system
-//    public static void drawWidthExpandableTexturedRect(float x0, float y0, float requiredWidth, float zLevel, TexturedRect startElement, TexturedRect repeatElement, TexturedRect endElement, float pointNumber) {
-//        float startWidth = startElement.width;
-//        float endWidth = endElement.width;
-//        float minWidth = startWidth + endWidth;
-//
-//        if (requiredWidth <= minWidth) {
-//            DrawHelper.drawTexturedRect(x0, y0, startWidth, startElement.height, zLevel, startElement.textureX, startElement.textureY, startElement.textureWidth, startElement.textureHeight, pointNumber);
-//            DrawHelper.drawTexturedRect(x0 + startWidth, y0, endWidth, endElement.height, zLevel, endElement.textureX, endElement.textureY, endElement.textureWidth, endElement.textureHeight, pointNumber);
-//        } else {
-//            float remainingWidth = requiredWidth - minWidth;
-//            float repeatWidth = repeatElement.width;
-//            float repeatTimes = remainingWidth / repeatWidth;
-//
-//            int fullTimes = (int) repeatTimes;
-//            float fracPart = repeatTimes - (int) repeatTimes;
-//
-//            DrawHelper.drawTexturedRect(x0, y0, startWidth, startElement.height, zLevel, startElement.textureX, startElement.textureY, startElement.textureWidth, startElement.textureHeight, pointNumber);
-//
-//            float extraX = startWidth;
-//            for (int i = 0; i < fullTimes; i++) {
-//                DrawHelper.drawTexturedRect(x0 + extraX, y0, repeatElement.width, repeatElement.height, zLevel, repeatElement.textureX, repeatElement.textureY, repeatElement.textureWidth, repeatElement.textureHeight, pointNumber);
-//                extraX += repeatElement.width;
-//            }
-//
-//            DrawHelper.drawTexturedRect(x0 + extraX, y0, repeatWidth * fracPart, repeatElement.height, zLevel, repeatElement.textureX, repeatElement.textureY, repeatElement.textureWidth * fracPart, repeatElement.textureHeight, pointNumber);
-//            extraX += repeatWidth * fracPart;
-//
-//            DrawHelper.drawTexturedRect(x0 + extraX, y0, endWidth, endElement.height, zLevel, endElement.textureX, endElement.textureY, endElement.textureWidth, endElement.textureHeight, pointNumber);
-//        }
-//    }
-//
-//    /**
-//     * Draws textured rectangle with full bound texture.
-//     *
-//     * @param x0     start x-coordinate. (x of left-top corner)
-//     * @param y0     start y-coordinate. (y of left-top corner)
-//     * @param width  Represents coordinate length along the axis X.
-//     * @param height Represents coordinate length along the axis Y.
-//     * @param zLevel z-coordinate.
-//     */
-//    @Deprecated // will be changed to new system
-//    public static void drawTexturedRect(double x0, double y0, double width, double height, double zLevel) {
-//        bufferBuilder.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
-//        bufferBuilder.vertex(x0, y0, zLevel).uv(0, 0).endVertex();
-//        bufferBuilder.vertex(x0, y0 + height, zLevel).uv(0, 1).endVertex();
-//        bufferBuilder.vertex(x0 + width, y0 + height, zLevel).uv(1, 1).endVertex();
-//        bufferBuilder.vertex(x0 + width, y0, zLevel).uv(1, 0).endVertex();
-//        tessellator.end();
-//    }
-//
-//    /**
-//     * Draws string.
-//     *
-//     * @param text  text to be displayed.
-//     * @param x     start x-coordinate (left)
-//     * @param y     start y-coordinate (top)
-//     * @param color HTML color. Example: 0xFF0000 -> red.
-//     */
-//    public static void drawString(MatrixStack stack, FontRenderer fontRendererIn, String text, float x, float y, int color) {
-//        fontRendererIn.draw(stack, text, x, y, color);
-//    }
-//
-//    /**
-//     * Draws string with shadow.
-//     *
-//     * @param text  text to be displayed.
-//     * @param x     start x-coordinate (left)
-//     * @param y     start y-coordinate (top)
-//     * @param color HTML color. Example: 0xFF0000 -> red.
-//     */
-//    public static void drawStringWithShadow(MatrixStack stack, FontRenderer fontRendererIn, String text, float x, float y, int color) {
-//        fontRendererIn.drawShadow(stack, text, x, y, color);
-//    }
-//
-//    /**
-//     * Draws x-centered string.
-//     *
-//     * @param text  text to be displayed.
-//     * @param x     center x-coordinate
-//     * @param y     start y-coordinate (top)
-//     * @param color HTML color. Example: 0xFF0000 -> red.
-//     */
-//    public static void drawXCenteredString(MatrixStack stack, FontRenderer fontRendererIn, String text, float x, float y, int color) {
-//        drawString(stack, fontRendererIn, text, x - fontRendererIn.width(text) / 2F, y, color);
-//    }
-//
-//    /**
-//     * Draws x-centered string with shadow.
-//     *
-//     * @param text  text to be displayed.
-//     * @param x     center x-coordinate
-//     * @param y     start y-coordinate (top)
-//     * @param color HTML color. Example: 0xFF0000 -> red.
-//     */
-//    public static void drawXCenteredStringWithShadow(MatrixStack stack, FontRenderer fontRendererIn, String text, float x, float y, int color) {
-//        drawStringWithShadow(stack, fontRendererIn, text, x - fontRendererIn.width(text) / 2F, y, color);
-//    }
-//
-//    /**
-//     * Draws y-centered string.
-//     *
-//     * @param text  text to be displayed.
-//     * @param x     start x-coordinate (left)
-//     * @param y     center y-coordinate
-//     * @param color HTML color. Example: 0xFF0000 -> red.
-//     */
-//    public static void drawYCenteredString(MatrixStack stack, FontRenderer fontRendererIn, String text, float x, float y, int color) {
-//        drawString(stack, fontRendererIn, text, x, y - fontRendererIn.lineHeight / 2F, color);
-//    }
-//
-//    /**
-//     * Draws y-centered string with shadow.
-//     *
-//     * @param text  text to be displayed.
-//     * @param x     start x-coordinate (left)
-//     * @param y     center y-coordinate
-//     * @param color HTML color. Example: 0xFF0000 -> red.
-//     */
-//    public static void drawYCenteredStringWithShadow(MatrixStack stack, FontRenderer fontRendererIn, String text, float x, float y, int color) {
-//        drawStringWithShadow(stack, fontRendererIn, text, x, y - fontRendererIn.lineHeight / 2F, color);
-//    }
-//
-//    /**
-//     * Draws xy-centered string.
-//     *
-//     * @param text  text to be displayed.
-//     * @param x     center x-coordinate
-//     * @param y     center y-coordinate
-//     * @param color HTML color. Example: 0xFF0000 -> red.
-//     */
-//    public static void drawXYCenteredString(MatrixStack stack, FontRenderer fontRendererIn, String text, float x, float y, int color) {
-//        drawString(stack, fontRendererIn, text, x - fontRendererIn.width(text) / 2F, y - fontRendererIn.lineHeight / 2F, color);
-//    }
-//
-//    /**
-//     * Draws xy-centered string with shadow.
-//     *
-//     * @param text  text to be displayed.
-//     * @param x     center x-coordinate
-//     * @param y     center y-coordinate
-//     * @param color HTML color. Example: 0xFF0000 -> red.
-//     */
-//    public static void drawXYCenteredStringWithShadow(MatrixStack stack, FontRenderer fontRendererIn, String text, float x, float y, int color) {
-//        drawStringWithShadow(stack, fontRendererIn, text, x - fontRendererIn.width(text) / 2F, y - fontRendererIn.lineHeight / 2F, color);
-//    }
+    /**
+     * Draws string.
+     *
+     * @param text  text to be displayed.
+     * @param x     start x-coordinate (left)
+     * @param y     start y-coordinate (top)
+     * @param color HTML color. Example: 0xFF0000 -> red.
+     */
+    public static void drawString(MatrixStack stack, FontRenderer fontRendererIn, String text, float x, float y, int color) {
+        fontRendererIn.draw(stack, text, x, y, color);
+    }
+
+    /**
+     * Draws string with shadow.
+     *
+     * @param text  text to be displayed.
+     * @param x     start x-coordinate (left)
+     * @param y     start y-coordinate (top)
+     * @param color HTML color. Example: 0xFF0000 -> red.
+     */
+    public static void drawStringWithShadow(MatrixStack stack, FontRenderer fontRendererIn, String text, float x, float y, int color) {
+        fontRendererIn.drawShadow(stack, text, x, y, color);
+    }
+
+    /**
+     * Draws x-centered string.
+     *
+     * @param text  text to be displayed.
+     * @param x     center x-coordinate
+     * @param y     start y-coordinate (top)
+     * @param color HTML color. Example: 0xFF0000 -> red.
+     */
+    public static void drawXCenteredString(MatrixStack stack, FontRenderer fontRendererIn, String text, float x, float y, int color) {
+        drawString(stack, fontRendererIn, text, x - fontRendererIn.width(text) / 2F, y, color);
+    }
+
+    /**
+     * Draws x-centered string with shadow.
+     *
+     * @param text  text to be displayed.
+     * @param x     center x-coordinate
+     * @param y     start y-coordinate (top)
+     * @param color HTML color. Example: 0xFF0000 -> red.
+     */
+    public static void drawXCenteredStringWithShadow(MatrixStack stack, FontRenderer fontRendererIn, String text, float x, float y, int color) {
+        drawStringWithShadow(stack, fontRendererIn, text, x - fontRendererIn.width(text) / 2F, y, color);
+    }
+
+    /**
+     * Draws y-centered string.
+     *
+     * @param text  text to be displayed.
+     * @param x     start x-coordinate (left)
+     * @param y     center y-coordinate
+     * @param color HTML color. Example: 0xFF0000 -> red.
+     */
+    public static void drawYCenteredString(MatrixStack stack, FontRenderer fontRendererIn, String text, float x, float y, int color) {
+        drawString(stack, fontRendererIn, text, x, y - fontRendererIn.lineHeight / 2F, color);
+    }
+
+    /**
+     * Draws y-centered string with shadow.
+     *
+     * @param text  text to be displayed.
+     * @param x     start x-coordinate (left)
+     * @param y     center y-coordinate
+     * @param color HTML color. Example: 0xFF0000 -> red.
+     */
+    public static void drawYCenteredStringWithShadow(MatrixStack stack, FontRenderer fontRendererIn, String text, float x, float y, int color) {
+        drawStringWithShadow(stack, fontRendererIn, text, x, y - fontRendererIn.lineHeight / 2F, color);
+    }
+
+    /**
+     * Draws xy-centered string.
+     *
+     * @param text  text to be displayed.
+     * @param x     center x-coordinate
+     * @param y     center y-coordinate
+     * @param color HTML color. Example: 0xFF0000 -> red.
+     */
+    public static void drawXYCenteredString(MatrixStack stack, FontRenderer fontRendererIn, String text, float x, float y, int color) {
+        drawString(stack, fontRendererIn, text, x - fontRendererIn.width(text) / 2F, y - fontRendererIn.lineHeight / 2F, color);
+    }
+
+    /**
+     * Draws xy-centered string with shadow.
+     *
+     * @param text  text to be displayed.
+     * @param x     center x-coordinate
+     * @param y     center y-coordinate
+     * @param color HTML color. Example: 0xFF0000 -> red.
+     */
+    public static void drawXYCenteredStringWithShadow(MatrixStack stack, FontRenderer fontRendererIn, String text, float x, float y, int color) {
+        drawStringWithShadow(stack, fontRendererIn, text, x - fontRendererIn.width(text) / 2F, y - fontRendererIn.lineHeight / 2F, color);
+    }
 
     /**
      * Adds filled bounding box to renderToBuffer buffer.
