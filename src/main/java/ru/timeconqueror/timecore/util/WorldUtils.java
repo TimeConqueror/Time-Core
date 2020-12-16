@@ -11,6 +11,10 @@ import java.util.function.Consumer;
 
 public class WorldUtils {
 
+    public static BlockPos.Mutable toMutable(BlockPos pos) {
+        return new BlockPos.Mutable(pos.getX(), pos.getY(), pos.getZ());
+    }
+
     public static <T> void forTypedTile(World world, BlockPos pos, Class<T> clazz, Consumer<T> action) {
         forTypedTile(world, pos, clazz, action, s -> {
         });

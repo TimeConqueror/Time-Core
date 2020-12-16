@@ -6,8 +6,9 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.OverridingMethodsMustInvokeSuper;
 import java.util.ArrayList;
+import java.util.List;
 
-public abstract class ConfigSection {
+public abstract class ConfigSection implements ILoadListener {
     /**
      * Determines the section in config file and also is used as a part of lang keys.
      * <br>
@@ -20,7 +21,7 @@ public abstract class ConfigSection {
      */
     @Nullable
     private final String comment;
-    private ArrayList<ConfigSection> sections;
+    private final List<ILoadListener> loadListeners = new ArrayList<>();
 
     public ConfigSection(@NotNull String key, @Nullable String comment) {
         this.key = key;
@@ -48,14 +49,12 @@ public abstract class ConfigSection {
     public abstract void setup(ImprovedConfigBuilder builder);
 
     /**
-     * Adds subsection to this section.
+     * Adds load listener to this section.
      * <p>
-     * Called by {@link ImprovedConfigBuilder} during adding subcategories in {@link ImprovedConfigBuilder#addAndSetupSection}.
+     * Called by {@link ImprovedConfigBuilder} during adding subcategories and quick config values.
      */
-    void addSection(ConfigSection category) {
-        if (sections == null) sections = new ArrayList<>();
-
-        sections.add(category);
+    void addLoadListener(ILoadListener loadListener) {
+        loadListeners.add(loadListener);
     }
 
     /**
@@ -63,7 +62,7 @@ public abstract class ConfigSection {
      */
     @OverridingMethodsMustInvokeSuper
     public void onEveryLoad(final ModConfig.ModConfigEvent configEvent) {
-        if (sections != null) sections.forEach(configSection -> configSection.onEveryLoad(configEvent));
+        loadListeners.forEach(iLoadListener -> iLoadListener.onEveryLoad(configEvent));
     }
 
     public @Nullable String getComment() {

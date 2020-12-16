@@ -28,6 +28,7 @@ public class ImprovedConfigBuilder extends ForgeConfigSpec.Builder {
     private final boolean autoLangKey;
     private final Stack<String> i18nPrefix = new Stack<>();
     private final List<String> commentAdditions = new ArrayList<>();
+    private final ConfigSection rootSection;
     private ConfigSection section;
 
     public ImprovedConfigBuilder(ConfigSection section) {
@@ -40,7 +41,8 @@ public class ImprovedConfigBuilder extends ForgeConfigSpec.Builder {
      */
     public ImprovedConfigBuilder(ConfigSection section, boolean addDefaultValueToComment, boolean autoGenLangKey) {
         modid = ModLoadingContext.get().getActiveNamespace();
-        this.section = section;
+        this.rootSection = section;
+        this.section = rootSection;
         this.defValueToComment = addDefaultValueToComment;
         this.autoLangKey = autoGenLangKey;
 
@@ -48,6 +50,16 @@ public class ImprovedConfigBuilder extends ForgeConfigSpec.Builder {
         pushWithLang(section.getKey());
     }
 
+    /**
+     * Optimizes config value retrieving due to lazy loading and subsequent caching.
+     */
+    public <T> QuickConfigValue<T> optimizedVal(ForgeConfigSpec.ConfigValue<T> val) {
+        QuickConfigValue<T> quick = new QuickConfigValue<>(val);
+
+        rootSection.addLoadListener(quick);
+
+        return quick;
+    }
 
     /**
      * Just adds extra functionality to the base define method.
@@ -104,7 +116,7 @@ public class ImprovedConfigBuilder extends ForgeConfigSpec.Builder {
 
         if (comment != null && !comment.isEmpty()) comment(comment);
 
-        this.section.addSection(sectionIn);
+        this.section.addLoadListener(sectionIn);
 
         ConfigSection prevSection = this.section;
         this.section = sectionIn;

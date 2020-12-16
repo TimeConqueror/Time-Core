@@ -30,7 +30,7 @@ import java.util.stream.Stream;
 
 //ToDo unsubscribe show only sunscribed
 public class StructureRevealer {
-    private static final StructureRevealer INSTANCE = MainConfig.INSTANCE.areDevFeaturesEnabled() ? new StructureRevealer() : null;
+    private static final StructureRevealer INSTANCE = MainConfig.INSTANCE.devFeaturesEnabled.get() ? new StructureRevealer() : null;
 
     /**
      * Structure renderer. Can be accessible only on client side. Will be null on dedicated server.
@@ -114,7 +114,7 @@ public class StructureRevealer {
 
     private void onChunkWatch(ChunkWatchEvent.Watch event) {
         ServerWorld world = event.getWorld();
-        if (world != null && !world.isClientSide() && MainConfig.INSTANCE.areDevFeaturesEnabled()) {
+        if (world != null && !world.isClientSide() && MainConfig.INSTANCE.devFeaturesEnabled.get()) {
 
             ServerPlayerEntity player = event.getPlayer();
             ChunkPos pos = event.getPos();

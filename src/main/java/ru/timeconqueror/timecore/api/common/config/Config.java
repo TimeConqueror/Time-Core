@@ -6,7 +6,7 @@ import org.jetbrains.annotations.Nullable;
 
 /**
  * Config is the main, the highest section, and can contain both sections and properties.
- */
+ *///TODO make a wrapper for lazy loading of values without
 public abstract class Config extends ConfigSection {
     /**
      * <i>Please, see description in ModConfig.Type</i>

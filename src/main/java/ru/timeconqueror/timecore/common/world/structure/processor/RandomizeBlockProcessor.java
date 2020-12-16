@@ -17,8 +17,8 @@ import ru.timeconqueror.timecore.util.RandHelper;
 public class RandomizeBlockProcessor extends StructureProcessor {
     public static final Codec<RandomizeBlockProcessor> CODEC = RecordCodecBuilder.create(instance ->
             instance
-                    .group(ExtraCodecs.BLOCK_CODEC.fieldOf("to_replace").forGetter(p -> p.toReplace),
-                            ExtraCodecs.BLOCK_CODEC.fieldOf("randomized").forGetter(p -> p.randomized))
+                    .group(ExtraCodecs.BLOCK.fieldOf("to_replace").forGetter(p -> p.toReplace),
+                            ExtraCodecs.BLOCK.fieldOf("randomized").forGetter(p -> p.randomized))
                     .apply(instance, RandomizeBlockProcessor::new)
     );
 
