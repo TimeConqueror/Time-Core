@@ -16,7 +16,7 @@ import net.minecraft.util.math.vector.Matrix4f;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
-import ru.timeconqueror.timecore.client.render.TimeRenderType;
+import ru.timeconqueror.timecore.client.render.TimeRenderTypes;
 import ru.timeconqueror.timecore.mod.mixins.accessor.client.ViewDistanceProvider;
 import ru.timeconqueror.timecore.util.MathUtils;
 import ru.timeconqueror.timecore.util.RandHelper;
@@ -60,7 +60,7 @@ public class StructureRenderer {
 
         RenderTypeBuffers renderTypeBuffers = Minecraft.getInstance().renderBuffers();
         IRenderTypeBuffer.Impl bufferSource = renderTypeBuffers.bufferSource();
-        RenderType overlayRenderType = TimeRenderType.getOverlay(visibleThroughBlocks);
+        RenderType overlayRenderType = TimeRenderTypes.getOverlay(visibleThroughBlocks);
         IVertexBuilder buffer = bufferSource.getBuffer(overlayRenderType);
 
         stack.pushPose();

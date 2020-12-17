@@ -6,9 +6,7 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import org.lwjgl.opengl.GL11;
 
-import java.util.OptionalDouble;
-
-public class TimeRenderType extends RenderType {
+public class TimeRenderTypes extends RenderType {
     protected static final RenderState.AlphaState ALPHA_GREATER_MIN_LIMIT = new RenderState.AlphaState(0.001F);
 
     public static RenderType getOverlay(boolean disableDepthTest) {
@@ -29,7 +27,7 @@ public class TimeRenderType extends RenderType {
                         .createCompositeState(false));
     }
 
-    public TimeRenderType(String nameIn, VertexFormat formatIn, int drawModeIn, int bufferSizeIn, boolean useDelegateIn, boolean needsSortingIn, Runnable setupTaskIn, Runnable clearTaskIn) {
+    private TimeRenderTypes(String nameIn, VertexFormat formatIn, int drawModeIn, int bufferSizeIn, boolean useDelegateIn, boolean needsSortingIn, Runnable setupTaskIn, Runnable clearTaskIn) {
         super(nameIn, formatIn, drawModeIn, bufferSizeIn, useDelegateIn, needsSortingIn, setupTaskIn, clearTaskIn);
     }
 }
