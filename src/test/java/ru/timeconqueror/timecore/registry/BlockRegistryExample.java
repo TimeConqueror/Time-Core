@@ -30,7 +30,7 @@ public class BlockRegistryExample {
 
             REGISTER.register("test_sand", () -> new Block(propsCreator.create()))
                     .regDefaultBlockItem(ItemGroup.TAB_MISC)
-                    .apply(chain -> {
+                    .also(chain -> {
                         BlockModelLocation modelLocation = new BlockModelLocation(chain.getModId(), "block/test_sand");
                         chain
                                 .genModel(modelLocation, () -> BlockModels.cubeAllModel(new TextureLocation("minecraft", "block/sand")))

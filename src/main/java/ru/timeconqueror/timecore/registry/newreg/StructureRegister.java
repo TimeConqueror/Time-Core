@@ -211,7 +211,7 @@ public class StructureRegister extends ForgeRegister<Structure<?>> {
         private final StructureInfo<T, S> info;
 
         protected StructureRegisterChain(RegistryObject<S> regObj, StructureSeparationSettings separationSettings, T featureConfig) {
-            super(StructureRegister.this, regObj);
+            super(regObj);
 
             this.info = new StructureInfo<>(regObj, separationSettings, s -> new StructureFeature<>(s, featureConfig));
             this.holder = new StructureHolder<>(regObj, info::getFeature);

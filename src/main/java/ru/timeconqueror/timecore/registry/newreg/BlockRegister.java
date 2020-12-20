@@ -154,7 +154,7 @@ public class BlockRegister extends ForgeRegister<Block> {
 
     public class BlockRegisterChain<B extends Block> extends ForgeRegister.RegisterChain<B> {
         private BlockRegisterChain(RegistryObject<B> holder) {
-            super(BlockRegister.this, holder);
+            super(holder);
         }
 
         /**
@@ -357,7 +357,7 @@ public class BlockRegister extends ForgeRegister<Block> {
          *
          * @param multipleSettings functions to apply on current registrator.
          */
-        public BlockRegisterChain<B> apply(Consumer<BlockRegisterChain<B>> multipleSettings) {
+        public BlockRegisterChain<B> also(Consumer<BlockRegisterChain<B>> multipleSettings) {
             multipleSettings.accept(this);
             return this;
         }

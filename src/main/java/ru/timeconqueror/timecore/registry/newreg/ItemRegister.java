@@ -140,7 +140,7 @@ public class ItemRegister extends ForgeRegister<Item> {
 
     public class ItemRegisterChain<I extends Item> extends ForgeRegister.RegisterChain<I> {
         private ItemRegisterChain(RegistryObject<I> holder) {
-            super(ItemRegister.this, holder);
+            super(holder);
         }
 
         /**

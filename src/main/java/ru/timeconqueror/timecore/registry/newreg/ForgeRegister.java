@@ -108,11 +108,9 @@ public abstract class ForgeRegister<T extends IForgeRegistryEntry<T>> extends Ti
 
     public static class RegisterChain<I extends IForgeRegistryEntry<? super I>> {
         protected final RegistryObject<I> holder;
-        private final ForgeRegister<?> register;
 
-        protected RegisterChain(ForgeRegister<?> register, RegistryObject<I> holder) {
+        protected RegisterChain(RegistryObject<I> holder) {
             this.holder = holder;
-            this.register = register;
         }
 
         public RegistryObject<I> asRegistryObject() {

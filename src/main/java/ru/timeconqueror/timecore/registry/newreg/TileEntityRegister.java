@@ -145,7 +145,7 @@ public class TileEntityRegister extends ForgeRegister<TileEntityType<?>> {
 
     public class TileEntityRegisterChain<T extends TileEntity> extends ForgeRegister.RegisterChain<TileEntityType<T>> {
         private TileEntityRegisterChain(RegistryObject<TileEntityType<T>> holder) {
-            super(TileEntityRegister.this, holder);
+            super(holder);
         }
 
         public TileEntityRegisterChain<T> regCustomRenderer(Supplier<Function<? super TileEntityRendererDispatcher, ? extends TileEntityRenderer<? super T>>> rendererFactory) {
