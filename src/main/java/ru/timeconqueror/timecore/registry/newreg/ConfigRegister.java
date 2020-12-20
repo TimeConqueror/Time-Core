@@ -9,7 +9,6 @@ import net.minecraftforge.fml.loading.FMLPaths;
 import ru.timeconqueror.timecore.api.TimeMod;
 import ru.timeconqueror.timecore.api.common.config.Config;
 import ru.timeconqueror.timecore.api.common.config.ImprovedConfigBuilder;
-import ru.timeconqueror.timecore.api.common.event.FMLModInitializedEvent;
 import ru.timeconqueror.timecore.mod.common.config.TimeCoreConfigManager;
 import ru.timeconqueror.timecore.registry.AutoRegistrable;
 
@@ -103,8 +102,8 @@ public class ConfigRegister extends TimeRegister {
         });
     }
 
-    private void onInit(FMLModInitializedEvent event) {
-        withErrorCatching("FMLModInitializedEvent", () -> {
+    private void onInit(FMLConstructModEvent event) {
+        withErrorCatching("FMLConstructModEvent", () -> {
             runnables.forEach(Runnable::run);
             runnables = null;
         });

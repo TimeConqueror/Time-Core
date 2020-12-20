@@ -2,7 +2,6 @@ package ru.timeconqueror.timecore;
 
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.apache.logging.log4j.LogManager;
@@ -24,7 +23,6 @@ public final class TimeCore implements TimeMod {
         checkForMixinBootstrap();
 
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::doClientStuff);
     }
 
     /**
@@ -36,9 +34,6 @@ public final class TimeCore implements TimeMod {
 
     private void setup(final FMLCommonSetupEvent event) {
         ReflectionHelper.initClass(StructureRevealer.class);
-    }
-
-    private void doClientStuff(final FMLClientSetupEvent event) {
     }
 
     private static void checkForMixinBootstrap() {
