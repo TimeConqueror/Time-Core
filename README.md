@@ -15,6 +15,9 @@
 * Client-side Commands - provides the way of creating commands, that exist only on client side.
 
 ## How to add TimeCore as a gradle dependency:
+Note: if you want to use TimeCore, you have to use mojang mappings (at future I'll try to add special repository, which
+will remap mod's jar file to use with other mappings). Here you can see how to use
+them: https://github.com/alcatrazEscapee/mappificator
 1. Add this maven repo in the `repositories` closure:
 
 1.15.2:
@@ -29,7 +32,8 @@
         url = 'https://repo.spongepowered.org/maven'
     }
 ```
-1.16.3:
+
+1.16.4:
 ```groovy
     maven {
         name = "TimeConqueror's Maven"
@@ -42,10 +46,40 @@
 ```groovy
 implementation group: 'ru.timeconqueror', name: 'TimeCore', version: '1.15.2-<version-placeholder>', classifier: 'dev', changing: true
 ```
-1.16.3:
+
+1.16.4:
+
 ```groovy
-implementation group: 'ru.timeconqueror', name: 'TimeCore', version: '1.16.3-<version-placeholder>', changing: true
+implementation fg.deobf("ru.timeconqueror:TimeCore:1.16.4-<version-placeholder>:dev")
 ```
 
 3. Add this string as a `JVM Argument`:
-`-Dmixin.env.disableRefMap=true`
+   `-Dmixin.env.disableRefMap=true`
+
+4. Optional: since TimeCore has kotlin libraries, it guarantees to work in runtime. For using it in dev workspace:
+
+4.1. Add `plugins` closure:
+
+```groovy
+plugins {
+    id "org.jetbrains.kotlin.jvm" version "1.3.72"
+}
+```
+
+4.2 Add Maven Central's repository, if you don't have it.
+
+```groovy
+repositories {
+    mavenCentral()
+}
+```
+
+4.3 Add these dependencies:
+
+```groovy
+dependencies {
+    implementation 'org.jetbrains:annotations:18.0.0'
+    implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
+    implementation 'org.jetbrains.kotlin:kotlin-reflect'
+}
+```

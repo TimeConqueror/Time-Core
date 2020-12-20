@@ -148,6 +148,8 @@ sourceSets.main.resources { srcDir 'src/generated/resources' }
 configurations {
     // configuration that holds jars to include in the jar
     implementation.extendsFrom(shade)
+
+    implementation.extendsFrom(handledImplementation)
 }
 
 dependencies {
@@ -171,7 +173,7 @@ dependencies {
         }
     }
 
-    implementation 'org.jetbrains:annotations:18.0.0'
+    shade 'org.jetbrains:annotations:18.0.0'
 
     shade "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
     shade "org.jetbrains.kotlin:kotlin-reflect"
@@ -194,7 +196,7 @@ dependencies {
     // http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html
     // http://www.gradle.org/docs/current/userguide/dependency_management.html
 
-    compile("org.spongepowered:mixin:0.8") {
+    handledImplementation("org.spongepowered:mixin:0.8") {
         transitive = false
     }
 
@@ -225,11 +227,10 @@ jar {
 
 reobf.create('devJar')
 
-def devClassifier = new String('mojang-' + buildProps.snapshot_mappings)
 task devJar(type: Jar) {
     from sourceSets.main.output
 
-    classifier = devClassifier
+    classifier = 'dev'
 
     manifest {
         attributes([
@@ -262,9 +263,35 @@ def mavenLinkRepsy = "https://repo.repsy.io/mvn/${secretProps.repsy.user}/${secr
 publishing {
     publications {
         mavenJava(MavenPublication) {p ->
+
             artifact jar
             artifact devJar
             artifact sourcesJar
+
+//            pom.withXml {
+//                def dependenciesNode = asNode().appendNode('dependencies')
+//
+//                //Iterate over the compile dependencies (we don't want the test ones), adding a <dependency> node for each
+//                configurations.customCompile.allDependencies.each {
+//                    def dependencyNode = dependenciesNode.appendNode('dependency')
+//                    dependencyNode.appendNode('groupId', it.group)
+//                    dependencyNode.appendNode('artifactId', it.name)
+//                    dependencyNode.appendNode('version', it.version)
+//                }
+//                //Iterate over the compile dependencies (we don't want the test ones), adding a <dependency> node for each
+//                configurations.shade.allDependencies.each {
+//                    def dependencyNode = dependenciesNode.appendNode('dependency')
+//                    dependencyNode.appendNode('groupId', it.group)
+//                    dependencyNode.appendNode('artifactId', it.name)
+//                    dependencyNode.appendNode('version', it.version)
+//                }
+//
+//                def repositoriesNode = asNode().appendNode('repositories')
+//
+//                def repoSpongeNode = repositoriesNode.appendNode('repository')
+//                repoSpongeNode.appendNode('name', 'Sponge Repo')
+//                repoSpongeNode.appendNode('url', 'https://repo.spongepowered.org/maven')
+//            }
         }
     }
     repositories {
@@ -285,10 +312,3 @@ publishing {
         }
     }
 }
-
-task deobfPublishedDevJar(type: Exec) {
-    workingDir "python/scripts"
-
-    commandLine 'python', 'deobfuscator.py', '--paths', "$mavenLink1/ru/timeconqueror/$archivesBaseName/$version/$archivesBaseName-$version-${devClassifier}.jar, $mavenLink2/ru/timeconqueror/$archivesBaseName/$version/$archivesBaseName-$version-${devClassifier}.jar"
-}
-publish.finalizedBy(deobfPublishedDevJar)
