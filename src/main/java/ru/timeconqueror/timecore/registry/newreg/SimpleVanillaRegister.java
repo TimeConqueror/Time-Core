@@ -5,7 +5,7 @@ import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 
 /**
  * You can use it as a wrapper for all vanilla registries, which don't have forge wrapper.
- * All values will be registered on the main thread on {@link FMLCommonSetupEvent}
+ * All entries will be registered on the main thread on {@link FMLCommonSetupEvent}
  */
 public class SimpleVanillaRegister<T> extends VanillaRegister<T> {
     public SimpleVanillaRegister(String modId, Registry<T> registry) {
@@ -13,14 +13,14 @@ public class SimpleVanillaRegister<T> extends VanillaRegister<T> {
     }
 
     /**
-     * Adds value to the delayed registry array, all entries from which will be registered later.
+     * Adds entry to the delayed registry array, all entries from which will be registered later.
      *
-     * @param name  The value's name, will automatically have the modid as a namespace.
-     * @param value value to be registered.
+     * @param name  The entry's name, will automatically have the modid as a namespace.
+     * @param entry entry to be registered.
      */
-    public T register(String name, T value) {
-        addEntry(name, value);
+    public T register(String name, T entry) {
+        addEntry(name, entry);
 
-        return value;
+        return entry;
     }
 }
