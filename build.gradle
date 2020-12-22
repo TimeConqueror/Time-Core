@@ -312,3 +312,9 @@ publishing {
         }
     }
 }
+
+task printVersion {
+    println("Compiled version: $version")
+}
+
+publish.finalizedBy(printVersion)

@@ -16,7 +16,7 @@ public class SimpleForgeRegister<T extends IForgeRegistryEntry<T>> extends Forge
         super(reg, modid);
     }
 
-    public RegistryObject<T> register(String name, Supplier<T> entry) {
+    public <I extends T> RegistryObject<I> register(String name, Supplier<I> entry) {
         return registerEntry(name, entry);
     }
 }

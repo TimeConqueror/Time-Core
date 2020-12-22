@@ -18,7 +18,7 @@ public class SimpleVanillaRegister<T> extends VanillaRegister<T> {
      * @param name  The entry's name, will automatically have the modid as a namespace.
      * @param entry entry to be registered.
      */
-    public T register(String name, T entry) {
+    public <I extends T> I register(String name, I entry) {
         addEntry(name, entry);
 
         return entry;
