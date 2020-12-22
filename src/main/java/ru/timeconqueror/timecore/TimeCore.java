@@ -3,7 +3,6 @@ package ru.timeconqueror.timecore;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.spongepowered.asm.mixin.MixinEnvironment;
@@ -21,8 +20,6 @@ public final class TimeCore implements TimeMod {
         INSTANCE = this;
 
         checkForMixinBootstrap();
-
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
     }
 
     /**
@@ -39,7 +36,7 @@ public final class TimeCore implements TimeMod {
     private static void checkForMixinBootstrap() {
         try {
             if (MixinEnvironment.getCurrentEnvironment().getPhase() != MixinEnvironment.Phase.DEFAULT) {
-                throw new IllegalArgumentException("Mixins are not initialized ");
+                throw new IllegalArgumentException("Mixins are not initialized");
             }
         } catch (NoClassDefFoundError e) {
             throw new IllegalStateException("TimeCore requires MixinBootstrap Mod to be loaded.");

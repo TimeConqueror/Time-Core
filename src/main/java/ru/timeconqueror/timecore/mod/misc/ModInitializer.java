@@ -32,7 +32,12 @@ public class ModInitializer {
         runKotlinAutomaticEventSubscriber(modId, modContainer, scanResults, modClass);
 
         List<UnlockedMethod<?>> initMethods = new ArrayList<>();
-        setupAutoRegistries(scanResults, initMethods::add);
+        List<TimeRegister> registers = new ArrayList<>();
+
+        setupAutoRegistries(scanResults, initMethods::add, registers::add);
+
+        RegisterSubscriber.regToBus(registers, FMLJavaModLoadingContext.get().getModEventBus());
+
         processInitMethods(initMethods);
 
         GlobalResourceStorage.INSTANCE.setup(modId);
@@ -44,13 +49,13 @@ public class ModInitializer {
         TimeCore.LOGGER.debug(LOADING, "Completed Automatic event subscribers for {}", modId);
     }
 
-    private static void setupAutoRegistries(ModFileScanData scanResults, Consumer<UnlockedMethod<?>> initMethodRegistrator) {
+    private static void setupAutoRegistries(ModFileScanData scanResults, Consumer<UnlockedMethod<?>> initMethodRegistrator, Consumer<TimeRegister> registerSubscriber) {
         scanResults.getAnnotations().stream()
                 .filter(annotationData -> annotationData.getAnnotationType().equals(TIME_AUTO_REG_TYPE) || annotationData.getAnnotationType().equals(TIME_AUTO_REG_INIT_TYPE))
                 .forEach(annotationData -> {
                     try {
                         if (annotationData.getAnnotationType().equals(TIME_AUTO_REG_TYPE)) {
-                            processAutoRegistrable(annotationData);
+                            processAutoRegistrable(annotationData, registerSubscriber);
                         } else {
                             processTimeAutoRegInitMethod(annotationData, initMethodRegistrator);
                         }
@@ -60,22 +65,23 @@ public class ModInitializer {
                 });
     }
 
-    private static void processAutoRegistrable(ModFileScanData.AnnotationData annotationData) throws ClassNotFoundException {
+    private static void processAutoRegistrable(ModFileScanData.AnnotationData annotationData, Consumer<TimeRegister> registerSubscriber) throws ClassNotFoundException {
         String containerClassName = annotationData.getClassType().getClassName();
         Class<?> containerClass = Class.forName(containerClassName);
 
         String fieldName = annotationData.getMemberName();
         UnlockedField<Object> field = ReflectionHelper.findField(containerClass, fieldName);
 
-        processAutoRegistrableOnField(containerClass, field);
+        processAutoRegistrableOnField(containerClass, field, registerSubscriber);
     }
 
-    private static void processAutoRegistrableOnField(Class<?> containerClass, UnlockedField<Object> field) {
+    private static void processAutoRegistrableOnField(Class<?> containerClass, UnlockedField<Object> field, Consumer<TimeRegister> registerSubscriber) {
         if (field.isStatic()) {
             if (TimeRegister.class.isAssignableFrom(field.getField().getType())) {
                 TimeRegister register = (TimeRegister) field.get(null);
-                register.regToBus(FMLJavaModLoadingContext.get().getModEventBus());
                 register.setOwner(containerClass);
+
+                registerSubscriber.accept(register);
             } else {
                 throw new UnsupportedOperationException(AutoRegistrable.class.getSimpleName() + " can be used only on fields that have " + ForgeRegister.class.getSimpleName() + " type. Error is in: " + field);
             }
@@ -92,11 +98,9 @@ public class ModInitializer {
 
         StringBuilder methodName = new StringBuilder();
         for (char c : methodSignature.toCharArray()) {
-            if (c != '(') {
-                methodName.append(c);
-            } else {
-                break;
-            }
+            if (c == '(') break;
+
+            methodName.append(c);
         }
 
         UnlockedMethod<?> initMethod = ReflectionHelper.findMethod(containerClass, methodName.toString());
