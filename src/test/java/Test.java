@@ -1,4 +1,3 @@
-import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.datafixers.util.Either;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
@@ -19,19 +18,17 @@ public class Test {
             SIMPLE_CODEC.fieldOf("simple").forGetter(MSField::getSimple)
     ).apply(instance, MSField::new));
 
-    public static void main(String[] args) throws CommandSyntaxException {
-//        INBT encode = encode(FIELD_CODEC, NBT_OPS, new MSField(true, null));
+    public static void main(String[] args) {
+        Runnable runnable = () -> {
+            Runnable ru = () -> {
+                throw new RuntimeException();
+            };
+            ru.run();
+        };
 
-//        INBT encode = new JsonToNBT(new StringReader("{bool:1b}")).readValue();
-//        System.out.println(encode);
-//
-//        MSField decode = decode(FIELD_CODEC, NBT_OPS, encode);
-//        System.out.println(decode);
+        runnable.run();
 
-//        Either<String, String> typedTileEntity = getTypedTileEntity(null, null);
-//        System.out.println(typedTileEntity.left().get().charAt(0));
-
-//        new EnumCodec<>(Type.class);
+        System.out.println("hello!");
     }
 
     public enum Type {

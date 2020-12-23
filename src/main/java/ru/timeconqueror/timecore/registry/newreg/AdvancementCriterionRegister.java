@@ -24,6 +24,7 @@ public class AdvancementCriterionRegister extends TimeRegister {
 
     @Override
     public void regToBus(IEventBus modEventBus) {
+        super.regToBus(modEventBus);
         modEventBus.addListener(this::onSetup);
     }
 

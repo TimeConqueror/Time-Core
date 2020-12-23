@@ -153,11 +153,12 @@ public class PacketRegister extends TimeRegister {
 
     @Override
     public void regToBus(IEventBus modEventBus) {
+        super.regToBus(modEventBus);
         modEventBus.addListener(this::onInit);
     }
 
     private void onInit(FMLCommonSetupEvent event) {
-        withErrorCatching("common setup event", () -> runnables.forEach(Runnable::run));
+        catchErrors("common setup event", () -> runnables.forEach(Runnable::run));
 
         runnables = null;
         lastIndexes = null;

@@ -34,7 +34,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 public class StructureRegister extends ForgeRegister<Structure<?>> {
-    private final List<StructureInfo<?, ?>> structureInfoList = Collections.synchronizedList(new ArrayList<>());
+    private final List<StructureInfo<?, ?>> structureInfoList = new ArrayList<>();
 
     public StructureRegister(String modid) {
         super(ForgeRegistries.STRUCTURE_FEATURES, modid);
@@ -179,7 +179,7 @@ public class StructureRegister extends ForgeRegister<Structure<?>> {
      * can or cannot spawn your structure.
      */
     private void onWorldLoad(WorldEvent.Load event) {
-        if (event.getWorld() instanceof ServerWorld) {
+        if (!event.getWorld().isClientSide()) {
             ServerWorld serverWorld = (ServerWorld) event.getWorld();
 
             ChunkGenerator generator = serverWorld.getChunkSource().getGenerator();

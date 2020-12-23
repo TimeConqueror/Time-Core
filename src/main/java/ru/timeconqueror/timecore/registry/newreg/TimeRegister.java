@@ -1,13 +1,16 @@
 package ru.timeconqueror.timecore.registry.newreg;
 
 import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
 import org.jetbrains.annotations.Nullable;
 import ru.timeconqueror.timecore.devtools.gen.lang.LangGeneratorFacade;
 import ru.timeconqueror.timecore.storage.Features;
 import ru.timeconqueror.timecore.storage.Storage;
 import ru.timeconqueror.timecore.util.Pair;
 
+import javax.annotation.OverridingMethodsMustInvokeSuper;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -16,13 +19,25 @@ public abstract class TimeRegister {
     protected final Features modFeatures;
     @Nullable
     private Class<?> owner;
+    private final AtomicReference<RuntimeException> error = new AtomicReference<>();
 
     public TimeRegister(String modId) {
         this.modId = modId;
         modFeatures = Storage.getFeatures(modId);
     }
 
-    public abstract void regToBus(IEventBus modEventBus);
+    @OverridingMethodsMustInvokeSuper
+    public void regToBus(IEventBus modEventBus) {
+        modEventBus.addListener(this::handleLoadException);
+    }
+
+    private void handleLoadException(FMLLoadCompleteEvent event) {
+        RuntimeException e = error.get();
+
+        if (e != null) {
+            throw e;
+        }
+    }
 
     public String getModId() {
         return modId;
@@ -36,23 +51,28 @@ public abstract class TimeRegister {
         return owner;
     }
 
-    public void withErrorCatching(String action, Runnable runnable) {
+    public void catchErrors(String action, Runnable runnable) {
         try {
             runnable.run();
         } catch (Throwable e) {
             String culpritInfo = getOwner() != null ? "Currently handling stuff from class: " + getOwner().getName() : "Unknown owner";
-            throw new RuntimeException("Caught exception during " + action + ". " + culpritInfo, e);
+            storeException(new RuntimeException("Caught exception during " + action + ". " + culpritInfo, e));
         }
     }
 
-    public void withErrorCatching(String action, Runnable runnable, Supplier<List<Pair<?, ?>>> extraInfo) {
+    public void catchErrors(String action, Runnable runnable, Supplier<List<Pair<?, ?>>> extraInfo) {
         try {
             runnable.run();
         } catch (Throwable e) {
             String culpritInfo = getOwner() != null ? "Currently handling stuff from class: " + getOwner().getName() + "." : "Unknown owner.";
             String extra = "Extra Info:\n" + extraInfo.get().stream().map(pair -> pair.getA().toString() + " -> " + pair.getB().toString() + "\n").collect(Collectors.joining());
-            throw new RuntimeException("Caught exception during " + action + ". \n" + culpritInfo + "\n" + extra, e);
+            RuntimeException exception = new RuntimeException("Caught exception during " + action + ". \n" + culpritInfo + "\n" + extra, e);
+            storeException(exception);
         }
+    }
+
+    protected void storeException(RuntimeException exception) {
+        error.compareAndSet(null, exception);
     }
 
     protected LangGeneratorFacade getLangGeneratorFacade() {

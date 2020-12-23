@@ -12,7 +12,7 @@ public class StructureProcessorTypeRegister extends VanillaRegister<IStructurePr
 
     public <P extends StructureProcessor> IStructureProcessorType<P> register(String name, Codec<P> codec) {
         IStructureProcessorType<P> type = () -> codec;
-        addEntry(name, type);
+        registerEntry(name, () -> type);
 
         return type;
     }

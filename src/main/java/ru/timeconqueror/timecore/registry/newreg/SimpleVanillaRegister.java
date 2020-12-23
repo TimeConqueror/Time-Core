@@ -2,6 +2,9 @@ package ru.timeconqueror.timecore.registry.newreg;
 
 import net.minecraft.util.registry.Registry;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+import ru.timeconqueror.timecore.registry.Promised;
+
+import java.util.function.Supplier;
 
 /**
  * You can use it as a wrapper for all vanilla registries, which don't have forge wrapper.
@@ -15,12 +18,10 @@ public class SimpleVanillaRegister<T> extends VanillaRegister<T> {
     /**
      * Adds entry to the delayed registry array, all entries from which will be registered later.
      *
-     * @param name  The entry's name, will automatically have the modid as a namespace.
-     * @param entry entry to be registered.
+     * @param name     The entry's name, will automatically have the modid as a namespace.
+     * @param entrySup supplier of entry to be registered.
      */
-    public <I extends T> I register(String name, I entry) {
-        addEntry(name, entry);
-
-        return entry;
+    public <I extends T> Promised<I> register(String name, Supplier<I> entrySup) {
+        return registerEntry(name, entrySup);
     }
 }

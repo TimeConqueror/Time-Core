@@ -103,7 +103,7 @@ public class ConfigRegister extends TimeRegister {
     }
 
     private void onInit(FMLConstructModEvent event) {
-        withErrorCatching("FMLConstructModEvent", () -> {
+        catchErrors("FMLConstructModEvent", () -> {
             runnables.forEach(Runnable::run);
             runnables = null;
         });
@@ -111,6 +111,7 @@ public class ConfigRegister extends TimeRegister {
 
     @Override
     public void regToBus(IEventBus modEventBus) {
+        super.regToBus(modEventBus);
         modEventBus.addListener(this::onLoad);
         modEventBus.addListener(this::onReload);
         modEventBus.addListener(this::onInit);

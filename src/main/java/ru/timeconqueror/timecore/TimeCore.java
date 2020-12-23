@@ -11,7 +11,7 @@ import ru.timeconqueror.timecore.api.TimeMod;
 import ru.timeconqueror.timecore.devtools.StructureRevealer;
 import ru.timeconqueror.timecore.util.reflection.ReflectionHelper;
 
-@Mod(TimeCore.MODID)
+@Mod(TimeCore.MODID)//todo add null check in ObjectHolder
 public final class TimeCore implements TimeMod {
     public static final String MODID = "timecore";
     public static final Logger LOGGER = LogManager.getLogger(MODID);

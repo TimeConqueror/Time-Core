@@ -61,6 +61,7 @@ public abstract class ForgeRegister<T extends IForgeRegistryEntry<T>> extends Ti
 
     @Override
     public void regToBus(IEventBus modEventBus) {
+        super.regToBus(modEventBus);
         modEventBus.register(new EventDispatcher());
         modEventBus.addListener(EventPriority.LOWEST, this::onClientInit);
     }
@@ -76,7 +77,7 @@ public abstract class ForgeRegister<T extends IForgeRegistryEntry<T>> extends Ti
 
         Wrapper<RegistryObject<T>> currentHolder = new Wrapper<>(null);
 
-        withErrorCatching("registering entries of type " + registry.getRegistrySuperType(), () -> {
+        catchErrors("registering entries of type " + registry.getRegistrySuperType(), () -> {
             for (Map.Entry<RegistryObject<T>, Supplier<T>> entry : entries.entrySet()) {
                 RegistryObject<T> holder = entry.getKey();
                 currentHolder.set(holder);
@@ -90,14 +91,14 @@ public abstract class ForgeRegister<T extends IForgeRegistryEntry<T>> extends Ti
 
         entries = null;
 
-        withErrorCatching("finishing register event of type " + registry.getRegistrySuperType(), () -> regEventRunnables.forEach(Runnable::run));
+        catchErrors("finishing register event of type " + registry.getRegistrySuperType(), () -> regEventRunnables.forEach(Runnable::run));
 
         regEventRunnables = null;
     }
 
     protected void onClientInit(FMLClientSetupEvent event) {
         event.enqueueWork(() -> {
-            withErrorCatching("client setup event", () -> clientRunnables.forEach(Runnable::run));
+            catchErrors("client setup event", () -> clientRunnables.forEach(Runnable::run));
             clientRunnables = null;
         });
     }
