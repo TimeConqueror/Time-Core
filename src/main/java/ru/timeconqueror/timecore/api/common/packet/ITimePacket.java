@@ -3,8 +3,9 @@ package ru.timeconqueror.timecore.api.common.packet;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.DistExecutor;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.LogicalSide;
+import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.fml.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
 import ru.timeconqueror.timecore.util.Hacks;
@@ -56,9 +57,7 @@ public interface ITimePacket {
 
         @NotNull//TODO move to handler
         default World getWorld(NetworkEvent.Context ctx) {
-            return DistExecutor.safeRunForDist(
-                    () -> () -> Hacks.bypassClassChecking(Minecraft.getInstance().level),
-                    () -> () -> ctx.getSender().level);
+            return FMLEnvironment.dist == Dist.CLIENT ? Hacks.bypassClassChecking(Minecraft.getInstance().level) : ctx.getSender().level;
         }
     }
 }
