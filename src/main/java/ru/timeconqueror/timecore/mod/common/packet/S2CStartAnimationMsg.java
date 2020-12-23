@@ -8,8 +8,6 @@ import ru.timeconqueror.timecore.api.animation.AnimatedObject;
 import ru.timeconqueror.timecore.api.animation.Animation;
 import ru.timeconqueror.timecore.mod.common.packet.animation.CodecSupplier;
 
-import java.util.function.Supplier;
-
 public class S2CStartAnimationMsg extends S2CAnimationMsg {
     private final AnimationStarter.AnimationData animationData;
 
@@ -32,7 +30,7 @@ public class S2CStartAnimationMsg extends S2CAnimationMsg {
         }
 
         @Override
-        public void onPacket(S2CStartAnimationMsg packet, AnimatedObject<?> provider, String layerName, Supplier<NetworkEvent.Context> contextSupplier) {
+        public void onPacket(S2CStartAnimationMsg packet, AnimatedObject<?> provider, String layerName, NetworkEvent.Context ctx) {
             AnimationStarter animationStarter = AnimationStarter.fromAnimationData(packet.animationData);
             Animation animation = animationStarter.getData().getAnimation();
 

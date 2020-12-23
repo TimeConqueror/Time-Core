@@ -13,14 +13,6 @@ import java.io.IOException;
 import java.util.function.Supplier;
 
 public interface ITimePacket {
-
-    @NotNull//TODO move to handler
-    default World getWorld(NetworkEvent.Context ctx) {
-        return DistExecutor.runForDist(//TODO deprecated, switch to newer?
-                () -> () -> Hacks.bypassClassChecking(Minecraft.getInstance().level),
-                () -> () -> ctx.getSender().level);
-    }
-
     /**
      * Should return the side, where packet can be read.
      */
@@ -46,7 +38,7 @@ public interface ITimePacket {
         @NotNull
         T decode(PacketBuffer buffer) throws IOException;
 
-        void onPacketReceived(T packet, Supplier<NetworkEvent.Context> contextSupplier);
+        void onPacketReceived(T packet, NetworkEvent.Context ctx, World world);
 
         /**
          * Handles received packet.
@@ -57,9 +49,16 @@ public interface ITimePacket {
         default boolean handle(T packet, Supplier<NetworkEvent.Context> contextSupplier) {
             NetworkEvent.Context ctx = contextSupplier.get();
             if (ctx.getDirection().getReceptionSide() == packet.getReceptionSide()) {
-                onPacketReceived(packet, contextSupplier);
+                onPacketReceived(packet, ctx, getWorld(ctx));
                 return true;
             } else return false;
+        }
+
+        @NotNull//TODO move to handler
+        default World getWorld(NetworkEvent.Context ctx) {
+            return DistExecutor.safeRunForDist(
+                    () -> () -> Hacks.bypassClassChecking(Minecraft.getInstance().level),
+                    () -> () -> ctx.getSender().level);
         }
     }
 }

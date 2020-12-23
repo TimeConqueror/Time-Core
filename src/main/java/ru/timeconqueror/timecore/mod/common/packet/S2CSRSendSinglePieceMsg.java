@@ -1,6 +1,7 @@
 package ru.timeconqueror.timecore.mod.common.packet;
 
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.world.World;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
@@ -11,7 +12,6 @@ import ru.timeconqueror.timecore.devtools.StructureRevealer;
 import ru.timeconqueror.timecore.util.BufferUtils;
 
 import java.util.Optional;
-import java.util.function.Supplier;
 
 public class S2CSRSendSinglePieceMsg implements ITimePacket {
     private final StructureData data;
@@ -43,7 +43,7 @@ public class S2CSRSendSinglePieceMsg implements ITimePacket {
         }
 
         @Override
-        public void onPacketReceived(S2CSRSendSinglePieceMsg packet, Supplier<NetworkEvent.Context> contextSupplier) {
+        public void onPacketReceived(S2CSRSendSinglePieceMsg packet, NetworkEvent.Context ctx, World world) {
             Optional<StructureRevealer> instance = StructureRevealer.getInstance();
             if (instance.isPresent()) {
                 instance.get().structureRenderer.trackStructurePiece(packet.data);

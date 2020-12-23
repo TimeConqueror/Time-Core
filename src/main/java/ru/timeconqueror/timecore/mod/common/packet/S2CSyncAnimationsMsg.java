@@ -15,7 +15,6 @@ import ru.timeconqueror.timecore.api.animation.AnimatedObject;
 import ru.timeconqueror.timecore.api.common.packet.ITimePacket;
 
 import java.util.Map;
-import java.util.function.Supplier;
 
 public class S2CSyncAnimationsMsg implements ITimePacket {
 	//server side only
@@ -57,9 +56,7 @@ public class S2CSyncAnimationsMsg implements ITimePacket {
 		}
 
 		@Override
-		public void onPacketReceived(S2CSyncAnimationsMsg packet, Supplier<NetworkEvent.Context> contextSupplier) {
-			World world = packet.getWorld(contextSupplier.get());
-
+		public void onPacketReceived(S2CSyncAnimationsMsg packet, NetworkEvent.Context ctx, World world) {
 			String errorMessage = null;
 
 			Entity entity = world.getEntity(packet.entityId);

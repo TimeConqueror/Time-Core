@@ -6,8 +6,6 @@ import ru.timeconqueror.timecore.api.animation.AnimatedObject;
 import ru.timeconqueror.timecore.api.animation.AnimationManager;
 import ru.timeconqueror.timecore.mod.common.packet.animation.CodecSupplier;
 
-import java.util.function.Supplier;
-
 public class S2CEndAnimationMsg extends S2CAnimationMsg {
     private final int transitionTime;
 
@@ -19,7 +17,7 @@ public class S2CEndAnimationMsg extends S2CAnimationMsg {
     public static class Handler extends S2CAnimationMsg.Handler<S2CEndAnimationMsg> {
 
         @Override
-        public void onPacket(S2CEndAnimationMsg packet, AnimatedObject<?> provider, String layerName, Supplier<NetworkEvent.Context> contextSupplier) {
+        public void onPacket(S2CEndAnimationMsg packet, AnimatedObject<?> provider, String layerName, NetworkEvent.Context ctx) {
             AnimationManager animationManager = provider.getActionManager().getAnimationManager();
             animationManager.removeAnimation(layerName, packet.transitionTime);
         }

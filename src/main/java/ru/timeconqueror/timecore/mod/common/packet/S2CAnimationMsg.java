@@ -1,14 +1,13 @@
 package ru.timeconqueror.timecore.mod.common.packet;
 
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.world.World;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
 import ru.timeconqueror.timecore.api.animation.AnimatedObject;
 import ru.timeconqueror.timecore.api.common.packet.ITimePacket;
 import ru.timeconqueror.timecore.mod.common.packet.animation.CodecSupplier;
-
-import java.util.function.Supplier;
 
 public abstract class S2CAnimationMsg implements ITimePacket {
     protected final String layerName;
@@ -47,13 +46,13 @@ public abstract class S2CAnimationMsg implements ITimePacket {
 
         public abstract T decodeWithExtraData(CodecSupplier codecSupplier, String layerName, PacketBuffer buffer);
 
-        public abstract void onPacket(T packet, AnimatedObject<?> provider, String layerName, Supplier<NetworkEvent.Context> contextSupplier);
+        public abstract void onPacket(T packet, AnimatedObject<?> provider, String layerName, NetworkEvent.Context ctx);
 
         @Override
-        public void onPacketReceived(T packet, Supplier<NetworkEvent.Context> contextSupplier) {
-            AnimatedObject<?> animatedObject = packet.codecSupplier.construct(packet, contextSupplier);
+        public void onPacketReceived(T packet, NetworkEvent.Context ctx, World world) {
+            AnimatedObject<?> animatedObject = packet.codecSupplier.construct(world);
 
-            onPacket(packet, animatedObject, packet.layerName, contextSupplier);
+            onPacket(packet, animatedObject, packet.layerName, ctx);
         }
     }
 

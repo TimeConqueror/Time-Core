@@ -4,12 +4,9 @@ import net.minecraft.entity.Entity;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraft.world.World;
 import ru.timeconqueror.timecore.animation.EnumAnimatedObjectType;
 import ru.timeconqueror.timecore.api.animation.AnimatedObject;
-import ru.timeconqueror.timecore.mod.common.packet.S2CAnimationMsg;
-
-import java.util.function.Supplier;
 
 public abstract class CodecSupplier {
     public static CodecSupplier fromBuffer(PacketBuffer packetBuffer) {
@@ -25,7 +22,7 @@ public abstract class CodecSupplier {
 
     protected abstract void encode(PacketBuffer buffer);
 
-    public abstract AnimatedObject<?> construct(S2CAnimationMsg message, Supplier<NetworkEvent.Context> contextSupplier);
+    public abstract AnimatedObject<?> construct(World world);
 
     public static class EntityCodecSupplier extends CodecSupplier {
         private final int id;
@@ -49,8 +46,8 @@ public abstract class CodecSupplier {
         }
 
         @Override
-        public AnimatedObject<?> construct(S2CAnimationMsg message, Supplier<NetworkEvent.Context> contextSupplier) {
-            return (AnimatedObject<?>) message.getWorld(contextSupplier.get()).getEntity(id);
+        public AnimatedObject<?> construct(World world) {
+            return (AnimatedObject<?>) world.getEntity(id);
         }
     }
 
@@ -71,8 +68,8 @@ public abstract class CodecSupplier {
         }
 
         @Override
-        public AnimatedObject<?> construct(S2CAnimationMsg message, Supplier<NetworkEvent.Context> contextSupplier) {
-            return (AnimatedObject<?>) message.getWorld(contextSupplier.get()).getBlockEntity(pos);
+        public AnimatedObject<?> construct(World world) {
+            return (AnimatedObject<?>) world.getBlockEntity(pos);
         }
 
         @Override
