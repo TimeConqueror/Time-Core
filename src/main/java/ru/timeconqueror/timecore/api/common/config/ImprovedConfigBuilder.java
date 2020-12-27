@@ -5,10 +5,12 @@ import net.minecraftforge.fml.ModLoadingContext;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import ru.timeconqueror.timecore.internal.common.config.QuickConfigValue;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 /**
@@ -50,11 +52,16 @@ public class ImprovedConfigBuilder extends ForgeConfigSpec.Builder {
         pushWithLang(section.getKey());
     }
 
-    /**
-     * Optimizes config value retrieving due to lazy loading and subsequent caching.
-     */
-    public <T> QuickConfigValue<T> optimizedVal(ForgeConfigSpec.ConfigValue<T> val) {
-        QuickConfigValue<T> quick = new QuickConfigValue<>(val);
+    public <T> IQuickConfigValue<T> optimized(ForgeConfigSpec.ConfigValue<T> configValue) {
+        IQuickConfigValue<T> quick = QuickConfigValue.fromConfigValue(configValue);
+
+        rootSection.addLoadListener(quick);
+
+        return quick;
+    }
+
+    public <T, M> IQuickConfigValue<M> optimized(ForgeConfigSpec.ConfigValue<T> configValue, Function<T, M> forwardMapper, Function<M, T> backwardMapper) {
+        IQuickConfigValue<M> quick = QuickConfigValue.fromConverter(() -> forwardMapper.apply(configValue.get()), m -> configValue.set(backwardMapper.apply(m)));
 
         rootSection.addLoadListener(quick);
 
