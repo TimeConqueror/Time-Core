@@ -9,7 +9,7 @@ import org.jetbrains.annotations.Nullable;
  */
 public abstract class Config extends ConfigSection {
     /**
-     * <i>Please, see description in ModConfig.Type</i>
+     * <i>Please, see description in {@link ModConfig.Type}</i>
      *
      * @see ModConfig.Type
      */
@@ -17,7 +17,7 @@ public abstract class Config extends ConfigSection {
     private final ModConfig.Type type;
 
     /**
-     * @param type    <i>please, see description in ModConfig.Type</i>
+     * @param type    <i>please, see description in {@link ModConfig.Type}</i>
      * @param key     used as a location for the config file (see {@link #getRelativePath()}). Also determines the section in config file and is used as a part of lang keys.
      * @param comment used to provide a comment that can be seen above this section in the config file.
      */
