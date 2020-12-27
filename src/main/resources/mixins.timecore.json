@@ -13,6 +13,7 @@
     "NoiseChunkGeneratorMixin",
     "accessor.GatherDataEventAccessor",
     "accessor.UnlockedAdvancementProvider",
+    "config.ConfigTrackerMixin",
     "config.MixinConfigValue"
   ],
   "client": [
