@@ -8,7 +8,7 @@ import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.fml.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
-import ru.timeconqueror.timecore.util.Hacks;
+import ru.timeconqueror.timecore.api.util.Hacks;
 
 import java.io.IOException;
 import java.util.function.Supplier;

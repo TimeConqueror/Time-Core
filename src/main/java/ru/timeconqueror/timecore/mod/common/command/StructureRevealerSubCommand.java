@@ -15,7 +15,7 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.gen.feature.structure.Structure;
 import org.jetbrains.annotations.Nullable;
-import ru.timeconqueror.timecore.common.command.argument.StructureArgument;
+import ru.timeconqueror.timecore.api.common.command.argument.StructureArgument;
 import ru.timeconqueror.timecore.devtools.StructureRevealer;
 
 import java.util.Collection;

@@ -7,6 +7,7 @@ import net.minecraft.client.renderer.model.Model;
 import net.minecraft.client.renderer.model.ModelRenderer;
 import net.minecraft.util.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
+import ru.timeconqueror.timecore.api.client.render.model.ITimeModel;
 
 import java.util.HashMap;
 import java.util.List;
@@ -51,7 +52,6 @@ public class TimeModel extends Model implements ITimeModel {
         return pieces;
     }
 
-    @Override
     public void setPieces(List<TimeModelRenderer> pieces) {
         this.pieces = pieces;
         this.pieceMap = new HashMap<>();

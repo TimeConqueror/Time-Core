@@ -7,9 +7,9 @@ import org.jetbrains.annotations.Nullable;
 import ru.timeconqueror.timecore.TimeCore;
 import ru.timeconqueror.timecore.api.animation.Animation;
 import ru.timeconqueror.timecore.api.animation.AnimationLayer;
-import ru.timeconqueror.timecore.client.render.model.ITimeModel;
+import ru.timeconqueror.timecore.api.client.render.model.ITimeModel;
+import ru.timeconqueror.timecore.api.util.Pair;
 import ru.timeconqueror.timecore.client.render.model.TimeModelRenderer;
-import ru.timeconqueror.timecore.util.Pair;
 
 import java.util.*;
 import java.util.function.Consumer;

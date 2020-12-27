@@ -2,7 +2,7 @@ package ru.timeconqueror.timecore.api.client.resource.blockstates
 
 import ru.timeconqueror.timecore.api.client.resource.BlockStateResource
 import ru.timeconqueror.timecore.api.client.resource.location.BlockModelLocation
-import ru.timeconqueror.timecore.util.*
+import ru.timeconqueror.timecore.api.util.*
 
 object StairsBlockStateFactory {
     @JvmStatic

@@ -6,11 +6,11 @@ import net.minecraft.item.ItemGroup;
 import net.minecraftforge.registries.ObjectHolder;
 import ru.timeconqueror.timecore.TimeCore;
 import ru.timeconqueror.timecore.animation_example.block_example.block.HeatCubeBlock;
-import ru.timeconqueror.timecore.registry.AutoRegistrable;
-import ru.timeconqueror.timecore.registry.BlockPropsFactory;
-import ru.timeconqueror.timecore.registry.newreg.BlockRegister;
+import ru.timeconqueror.timecore.api.registry.BlockRegister;
+import ru.timeconqueror.timecore.api.registry.util.AutoRegistrable;
+import ru.timeconqueror.timecore.api.registry.util.BlockPropsFactory;
 
-import static ru.timeconqueror.timecore.util.Hacks.promise;
+import static ru.timeconqueror.timecore.api.util.Hacks.promise;
 
 @ObjectHolder(TimeCore.MODID)
 public class ABlockRegistry {

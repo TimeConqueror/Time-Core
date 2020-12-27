@@ -8,8 +8,8 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import ru.timeconqueror.timecore.TimeCore;
+import ru.timeconqueror.timecore.api.client.render.model.TimeModelLoader;
 import ru.timeconqueror.timecore.client.render.model.TimeModel;
-import ru.timeconqueror.timecore.client.render.model.TimeModelLoader;
 
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
 public class TileModels {

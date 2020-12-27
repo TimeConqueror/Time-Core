@@ -4,7 +4,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.IBlockReader;
-import ru.timeconqueror.timecore.registry.deferred.TileEntityDeferredRegistryExample;
+import ru.timeconqueror.timecore.registry_example.deferred.TileEntityDeferredRegistryExample;
 
 import javax.annotation.Nullable;
 

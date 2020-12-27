@@ -4,8 +4,11 @@ import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraftforge.fml.network.PacketDistributor;
 import net.minecraftforge.fml.network.simple.SimpleChannel;
 import ru.timeconqueror.timecore.TimeCore;
-import ru.timeconqueror.timecore.registry.AutoRegistrable;
-import ru.timeconqueror.timecore.registry.newreg.PacketRegister;
+import ru.timeconqueror.timecore.api.registry.PacketRegister;
+import ru.timeconqueror.timecore.api.registry.util.AutoRegistrable;
+import ru.timeconqueror.timecore.common.packet.animation.S2CEndAnimationMsg;
+import ru.timeconqueror.timecore.common.packet.animation.S2CStartAnimationMsg;
+import ru.timeconqueror.timecore.common.packet.animation.S2CSyncAnimationsMsg;
 
 public class InternalPacketManager {
     @AutoRegistrable

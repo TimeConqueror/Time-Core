@@ -8,8 +8,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.spongepowered.asm.mixin.MixinEnvironment;
 import ru.timeconqueror.timecore.api.TimeMod;
+import ru.timeconqueror.timecore.api.util.reflection.ReflectionHelper;
 import ru.timeconqueror.timecore.devtools.StructureRevealer;
-import ru.timeconqueror.timecore.util.reflection.ReflectionHelper;
 
 @Mod(TimeCore.MODID)//todo add null check in ObjectHolder
 public final class TimeCore implements TimeMod {

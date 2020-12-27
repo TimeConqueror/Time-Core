@@ -6,8 +6,8 @@ import ru.timeconqueror.timecore.animation.watcher.TransitionWatcher;
 import ru.timeconqueror.timecore.api.animation.Animation;
 import ru.timeconqueror.timecore.api.animation.AnimationLayer;
 import ru.timeconqueror.timecore.api.animation.BlendType;
-import ru.timeconqueror.timecore.client.render.model.ITimeModel;
-import ru.timeconqueror.timecore.util.MathUtils;
+import ru.timeconqueror.timecore.api.client.render.model.ITimeModel;
+import ru.timeconqueror.timecore.api.util.MathUtils;
 
 public class Layer implements AnimationLayer {
     private String name;

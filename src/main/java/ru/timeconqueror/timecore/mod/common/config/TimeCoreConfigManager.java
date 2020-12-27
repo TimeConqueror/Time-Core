@@ -1,8 +1,8 @@
 package ru.timeconqueror.timecore.mod.common.config;
 
 import ru.timeconqueror.timecore.TimeCore;
-import ru.timeconqueror.timecore.registry.AutoRegistrable;
-import ru.timeconqueror.timecore.registry.newreg.ConfigRegister;
+import ru.timeconqueror.timecore.api.registry.ConfigRegister;
+import ru.timeconqueror.timecore.api.registry.util.AutoRegistrable;
 
 public class TimeCoreConfigManager {
     @AutoRegistrable

@@ -21,7 +21,7 @@ public abstract class AnimatedEntityRenderer<T extends Entity & AnimatedObject<T
 
     @Override
     public void render(T entity, float entityYaw, float partialTicks, MatrixStack matrixStack, IRenderTypeBuffer buffer, int packedLight) {
-        entity.getSystem().getAnimationManager().applyAnimations(getEntityModel().getBaseModel());
+        entity.getSystem().getAnimationManager().applyAnimations(getEntityModel());
 
         preRenderCallback(entity, matrixStack, partialTicks);
         super.render(entity, entityYaw, partialTicks, matrixStack, buffer, packedLight);

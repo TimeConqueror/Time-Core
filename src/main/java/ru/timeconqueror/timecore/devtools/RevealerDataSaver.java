@@ -10,9 +10,9 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.gen.feature.structure.Structure;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.Nullable;
-import ru.timeconqueror.timecore.util.EnvironmentUtils;
-import ru.timeconqueror.timecore.util.FileUtils;
-import ru.timeconqueror.timecore.util.ObjectUtils;
+import ru.timeconqueror.timecore.api.util.EnvironmentUtils;
+import ru.timeconqueror.timecore.api.util.FileUtils;
+import ru.timeconqueror.timecore.api.util.ObjectUtils;
 
 import java.io.File;
 import java.io.IOException;

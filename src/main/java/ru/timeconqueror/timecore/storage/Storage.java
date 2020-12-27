@@ -7,7 +7,7 @@ import java.util.Map;
 
 /**
  * Storage for all mod settings, which will be used in TimeCore.
- */
+ *///TODO rework
 public class Storage {
     //TODO make synchronized?
     private static final Map<String, ModSettings> ALL_SETTINGS = new HashMap<>();

@@ -7,7 +7,7 @@ import org.jetbrains.annotations.Nullable;
 import ru.timeconqueror.timecore.animation.action.ActionManagerImpl;
 import ru.timeconqueror.timecore.animation.watcher.AnimationWatcher;
 import ru.timeconqueror.timecore.api.animation.AnimatedObject;
-import ru.timeconqueror.timecore.client.render.model.ITimeModel;
+import ru.timeconqueror.timecore.api.client.render.model.ITimeModel;
 
 public class ServerAnimationManager<T extends AnimatedObject<T>> extends BaseAnimationManager {
     private ActionManagerImpl<T> actionManager;

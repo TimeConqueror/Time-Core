@@ -7,9 +7,9 @@ import net.minecraftforge.fml.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
 import ru.timeconqueror.timecore.TimeCore;
 import ru.timeconqueror.timecore.api.common.packet.ITimePacket;
+import ru.timeconqueror.timecore.api.util.BufferUtils;
 import ru.timeconqueror.timecore.devtools.StructureData;
 import ru.timeconqueror.timecore.devtools.StructureRevealer;
-import ru.timeconqueror.timecore.util.BufferUtils;
 
 import java.util.Optional;
 

@@ -7,8 +7,8 @@ import ru.timeconqueror.timecore.animation.AnimationStarter;
 import ru.timeconqueror.timecore.animation.util.WatcherSerializer;
 import ru.timeconqueror.timecore.api.animation.Animation;
 import ru.timeconqueror.timecore.api.animation.AnimationConstants;
-import ru.timeconqueror.timecore.client.render.model.ITimeModel;
-import ru.timeconqueror.timecore.util.Requirements;
+import ru.timeconqueror.timecore.api.client.render.model.ITimeModel;
+import ru.timeconqueror.timecore.api.util.Requirements;
 
 import javax.annotation.OverridingMethodsMustInvokeSuper;
 import java.util.Objects;

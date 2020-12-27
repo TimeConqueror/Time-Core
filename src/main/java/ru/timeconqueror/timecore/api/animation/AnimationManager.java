@@ -2,7 +2,7 @@ package ru.timeconqueror.timecore.api.animation;
 
 import org.jetbrains.annotations.NotNull;
 import ru.timeconqueror.timecore.animation.AnimationStarter;
-import ru.timeconqueror.timecore.client.render.model.ITimeModel;
+import ru.timeconqueror.timecore.api.client.render.model.ITimeModel;
 
 import java.util.Set;
 

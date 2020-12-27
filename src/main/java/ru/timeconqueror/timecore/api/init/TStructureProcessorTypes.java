@@ -2,9 +2,9 @@ package ru.timeconqueror.timecore.api.init;
 
 import net.minecraft.world.gen.feature.template.IStructureProcessorType;
 import ru.timeconqueror.timecore.TimeCore;
-import ru.timeconqueror.timecore.common.world.structure.processor.RandomizeBlockProcessor;
-import ru.timeconqueror.timecore.registry.AutoRegistrable;
-import ru.timeconqueror.timecore.registry.newreg.StructureProcessorTypeRegister;
+import ru.timeconqueror.timecore.api.common.world.structure.processor.RandomizeBlockProcessor;
+import ru.timeconqueror.timecore.api.registry.StructureProcessorTypeRegister;
+import ru.timeconqueror.timecore.api.registry.util.AutoRegistrable;
 
 public class TStructureProcessorTypes {
     @AutoRegistrable

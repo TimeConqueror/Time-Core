@@ -13,6 +13,4 @@ public interface ActionManager<T> {
     <EXTRA_DATA> void disableAction(DelayedAction<T, EXTRA_DATA> action);
 
     AnimationManager getAnimationManager();
-
-//    void onTick();
 }

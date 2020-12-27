@@ -5,7 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ru.timeconqueror.timecore.animation.component.KeyFrame;
 import ru.timeconqueror.timecore.animation.component.Transition;
-import ru.timeconqueror.timecore.client.render.model.ITimeModel;
+import ru.timeconqueror.timecore.api.client.render.model.ITimeModel;
 import ru.timeconqueror.timecore.client.render.model.TimeModelRenderer;
 
 import java.util.List;

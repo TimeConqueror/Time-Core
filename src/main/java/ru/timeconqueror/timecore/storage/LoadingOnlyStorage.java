@@ -2,7 +2,7 @@ package ru.timeconqueror.timecore.storage;
 
 import ru.timeconqueror.timecore.api.client.resource.GlobalResourceStorage;
 import ru.timeconqueror.timecore.api.client.resource.TimeResourceHolder;
-import ru.timeconqueror.timecore.util.Temporal;
+import ru.timeconqueror.timecore.api.util.Temporal;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -2,7 +2,7 @@ package ru.timeconqueror.timecore.api.client.resource;
 
 import net.minecraft.util.ResourceLocation;
 import ru.timeconqueror.timecore.TimeCore;
-import ru.timeconqueror.timecore.mod.misc.Markers;
+import ru.timeconqueror.timecore.api.Markers;
 import ru.timeconqueror.timecore.storage.LoadingOnlyStorage;
 
 import java.io.ByteArrayInputStream;

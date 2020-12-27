@@ -1,7 +1,7 @@
 {
   "required": true,
   "minVersion": "0.7.11",
-  "package": "ru.timeconqueror.timecore.mod.mixins",
+  "package": "ru.timeconqueror.timecore.mixins",
   "refmap": "mixins.timecore.refmap.json",
   "target": "@env(DEFAULT)",
   "compatibilityLevel": "JAVA_8",
