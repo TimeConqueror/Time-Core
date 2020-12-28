@@ -19,11 +19,13 @@ public class NetworkUtils {
      * Returns all players who are in specific distance from given pos.//FIXME check for shouldn't be called on client?
      */
     public static List<ServerPlayerEntity> getPlayersNearby(BlockPos fromPos, double distanceIn) {
-        List<ServerPlayerEntity> players = ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayers();
-        return players.stream().filter(player -> {
-            double distanceSq = player.distanceToSqr(fromPos.getX(), fromPos.getY(), fromPos.getZ());
-            return distanceIn * distanceIn <= distanceSq;
-        }).collect(Collectors.toList());
+        return ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayers()
+                .stream()
+                .filter(player -> {
+                    double distanceSq = player.distanceToSqr(fromPos.getX(), fromPos.getY(), fromPos.getZ());
+                    return distanceIn * distanceIn >= distanceSq;
+                })
+                .collect(Collectors.toList());
     }
 
     /**

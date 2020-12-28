@@ -1,5 +1,9 @@
 package ru.timeconqueror.timecore.api.util;
 
+import com.mojang.serialization.DataResult;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.ResourceLocationException;
+
 public class ParseUtils {
     public static boolean isInt(String s) {
         if (s == null) {
@@ -45,5 +49,13 @@ public class ParseUtils {
         }
 
         return true;
+    }
+
+    public static DataResult<ResourceLocation> parseResourceLocation(String location) {
+        try {
+            return DataResult.success(new ResourceLocation(location));
+        } catch (ResourceLocationException e) {
+            return DataResult.error(e.getMessage());
+        }
     }
 }
