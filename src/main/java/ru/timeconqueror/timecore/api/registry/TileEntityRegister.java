@@ -12,6 +12,7 @@ import net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.ObjectHolder;
 import ru.timeconqueror.timecore.api.TimeMod;
+import ru.timeconqueror.timecore.api.client.render.tile.ProfiledTileEntityRenderer;
 import ru.timeconqueror.timecore.api.registry.util.AutoRegistrable;
 import ru.timeconqueror.timecore.api.util.Hacks;
 
@@ -149,7 +150,7 @@ public class TileEntityRegister extends ForgeRegister<TileEntityType<?>> {
         }
 
         public TileEntityRegisterChain<T> regCustomRenderer(Supplier<Function<? super TileEntityRendererDispatcher, ? extends TileEntityRenderer<? super T>>> rendererFactory) {
-            runTaskOnClientSetup(() -> ClientRegistry.bindTileEntityRenderer(asRegistryObject().get(), rendererFactory.get()));
+            runTaskOnClientSetup(() -> ClientRegistry.bindTileEntityRenderer(asRegistryObject().get(), dispatcher -> new ProfiledTileEntityRenderer<T>(dispatcher, rendererFactory.get())));
             return this;
         }
     }

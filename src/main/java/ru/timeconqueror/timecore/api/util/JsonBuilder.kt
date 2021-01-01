@@ -25,7 +25,7 @@ class JSONObject(builder: StringBuilder) : JsonElement(builder) {
 
     val set = Setter(this)
 
-    inline fun section(name: String, block: JSONObject.() -> Unit) {
+    inline fun obj(name: String, block: JSONObject.() -> Unit) {
         checkFirst()
         builder.append("\"").append(name).append("\":{")
         block(JSONObject(builder))
@@ -59,14 +59,60 @@ class JSONObject(builder: StringBuilder) : JsonElement(builder) {
         builder.append("\"").append(this).append("\":").append(value)
     }
 
-    inline operator fun String.unaryMinus() = section(this) {}
+    inline operator fun String.unaryMinus() = obj(this) {}
 
     inline operator fun String.invoke(block: JSONObject.() -> Unit) {
-        section(this, block)
+        obj(this, block)
     }
 
     inline operator fun Int.invoke(block: JSONObject.() -> Unit) {
-        section(this.toString(), block)
+        obj(this.toString(), block)
+    }
+
+    /**
+     * Sets raw [rawJson] to provided value.
+     * It should be a valid json value with all quotes: property value, object or array.
+     * Raw object should be valid JSON String!
+     *
+     * Example for object:
+     * ```
+     * fun makeJson() {
+     *  val rawJsonObject = "{"property":"value"}"
+     *
+     *   return json {
+     *      "emissive" setRaw rawJsonObject
+     *   }
+     * }
+     * ```
+     * Results in:
+     * ```
+     *  {
+     *      "emissive" : {
+     *          "property":"value"
+     *      }
+     *  }
+     * ```
+     *
+     * Example for property value:
+     * ```
+     * fun makeJson() {
+     *  val rawPropVal = "\"value\""
+     *
+     *   return json {
+     *      "emissive" setRaw rawPropVal
+     *   }
+     * }
+     * ```
+     * Results in:
+     * ```
+     *  {
+     *      "emissive" : "value"
+     *  }
+     * ```
+     */
+    infix fun String.setRaw(rawJson: String) {
+        checkFirst()
+        builder.append("\"").append(this).append("\":").append(rawJson)
     }
 }
 
