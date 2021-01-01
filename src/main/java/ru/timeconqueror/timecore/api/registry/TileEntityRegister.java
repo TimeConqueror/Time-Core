@@ -6,6 +6,8 @@ import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent;
@@ -149,9 +151,14 @@ public class TileEntityRegister extends ForgeRegister<TileEntityType<?>> {
             super(holder);
         }
 
-        public TileEntityRegisterChain<T> regCustomRenderer(Supplier<Function<? super TileEntityRendererDispatcher, ? extends TileEntityRenderer<? super T>>> rendererFactory) {
-            runTaskOnClientSetup(() -> ClientRegistry.bindTileEntityRenderer(asRegistryObject().get(), dispatcher -> new ProfiledTileEntityRenderer<T>(dispatcher, rendererFactory.get())));
+        public TileEntityRegisterChain<T> regCustomRenderer(Supplier<Function<? super TileEntityRendererDispatcher, TileEntityRenderer<? super T>>> rendererFactory) {
+            clientSideOnly(() -> TileEntityRegister.regCustomRenderer(TileEntityRegister.this, asRegistryObject(), rendererFactory));
             return this;
         }
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    private static <T extends TileEntity> void regCustomRenderer(TileEntityRegister register, RegistryObject<TileEntityType<T>> registryObject, Supplier<Function<? super TileEntityRendererDispatcher, TileEntityRenderer<? super T>>> rendererFactory) {
+        register.runTaskOnClientSetup(() -> ClientRegistry.bindTileEntityRenderer(registryObject.get(), dispatcher -> new ProfiledTileEntityRenderer<>(dispatcher, rendererFactory.get())));
     }
 }

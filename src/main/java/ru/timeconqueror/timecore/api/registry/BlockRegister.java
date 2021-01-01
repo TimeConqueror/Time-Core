@@ -1,6 +1,8 @@
 package ru.timeconqueror.timecore.api.registry;
 
 import net.minecraft.block.Block;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.RenderTypeLookup;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
@@ -166,6 +168,21 @@ public class BlockRegister extends ForgeRegister<Block> {
          */
         public BlockRegisterChain<B> regDefaultBlockItem(@Nullable ItemGroup group) {
             return regDefaultBlockItem(group, itemRegistrator -> itemRegistrator.genModelFromBlockParent(new BlockModelLocation(getModId(), getName())));
+        }
+
+        /**
+         * Sets render layer for this block.
+         */
+        public BlockRegisterChain<B> setRenderLayer(Supplier<? extends RenderType> renderTypeSup) {
+            runTaskOnClientSetup(() -> RenderTypeLookup.setRenderLayer(asRegistryObject().get(), renderTypeSup.get()));
+            return this;
+        }
+
+        /**
+         * Sets render layer for this block.
+         */
+        public BlockRegisterChain<B> setRenderLayer(RenderType renderTypeSup) {
+            return setRenderLayer(() -> renderTypeSup);
         }
 
         /**

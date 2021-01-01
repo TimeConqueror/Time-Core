@@ -12,6 +12,7 @@ import ru.timeconqueror.timecore.api.registry.BlockRegister;
 import ru.timeconqueror.timecore.api.registry.util.AutoRegistrable;
 import ru.timeconqueror.timecore.api.registry.util.BlockPropsFactory;
 import ru.timeconqueror.timecore.block.DummyBlockWithTileEntity;
+import ru.timeconqueror.timecore.client.render.TimeRenderTypes;
 
 import static ru.timeconqueror.timecore.api.util.Hacks.promise;
 
@@ -40,6 +41,9 @@ public class BlockRegistryExample {
                     });
 
             REGISTER.register("test_dirt", () -> new Block(propsCreator.create()))
+                    .setRenderLayer(new TimeRenderTypes(null, null, 0, 0, false, false, () -> {
+                    }, () -> {
+                    }))
                     .genDefaultStateAndModel(new TextureLocation("minecraft", "block/dirt"));
 
             REGISTER.register("test_emerald_ore", () -> new Block(propsCreator.create()))

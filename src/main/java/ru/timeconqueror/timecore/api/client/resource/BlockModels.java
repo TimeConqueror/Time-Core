@@ -6,6 +6,27 @@ import static ru.timeconqueror.timecore.api.client.resource.JSONTimeResource.*;
 
 public class BlockModels {
     /**
+     * Creates block model with one texture for top & bottom, one for front, and one for side.
+     *
+     * @param topBottomTexture texture that will be applied to the top & bottom side.
+     * @param frontTexture     texture that will be applied to the front side.
+     * @param sideTexture      texture that will be applied to the all horizontal sides except front one.
+     * @see TextureLocation
+     */
+    public static BlockModel cubeOrientableModel(TextureLocation topBottomTexture, TextureLocation frontTexture, TextureLocation sideTexture) {
+        String json =
+                object(null, listOf(
+                        property("parent", "block/orientable"),
+                        object("textures", listOf(
+                                property("top", topBottomTexture.toString()),
+                                property("front", frontTexture.toString()),
+                                property("side", sideTexture.toString())
+                        ))
+                ));
+        return new BlockModel(json);
+    }
+
+    /**
      * Creates block model with one provided texture for all sides.
      *
      * @see TextureLocation
