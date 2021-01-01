@@ -134,6 +134,54 @@ public class MathUtils {
         return max;
     }
 
+    public static float min(float... vals) {
+        if (vals.length == 0) throw new IllegalArgumentException("Can't get minimum value from zero-sized array.");
+
+        float min = Float.MAX_VALUE;
+
+        for (float val : vals) {
+            min = Math.min(min, val);
+        }
+
+        return min;
+    }
+
+    public static float max(float... vals) {
+        if (vals.length == 0) throw new IllegalArgumentException("Can't get maximum value from zero-sized array.");
+
+        float max = Float.MIN_VALUE;
+
+        for (float val : vals) {
+            max = Math.max(max, val);
+        }
+
+        return max;
+    }
+
+    public static double min(double... vals) {
+        if (vals.length == 0) throw new IllegalArgumentException("Can't get minimum value from zero-sized array.");
+
+        double min = Double.MAX_VALUE;
+
+        for (double val : vals) {
+            min = Math.min(min, val);
+        }
+
+        return min;
+    }
+
+    public static double max(double... vals) {
+        if (vals.length == 0) throw new IllegalArgumentException("Can't get maximum value from zero-sized array.");
+
+        double max = Double.MIN_VALUE;
+
+        for (double val : vals) {
+            max = Math.max(max, val);
+        }
+
+        return max;
+    }
+
     public static double distSqr(Vector3i vec, Vector3d vec2) {
         return vec.distSqr(vec2.x, vec2.y, vec2.z, true);
     }
