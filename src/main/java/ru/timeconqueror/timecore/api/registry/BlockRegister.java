@@ -179,13 +179,6 @@ public class BlockRegister extends ForgeRegister<Block> {
         }
 
         /**
-         * Sets render layer for this block.
-         */
-        public BlockRegisterChain<B> setRenderLayer(RenderType renderTypeSup) {
-            return setRenderLayer(() -> renderTypeSup);
-        }
-
-        /**
          * Registers the default item block for this block. (which will place the block upon clicking)
          * It will be with the same registry location as block has.
          * It will also generate default item model automatically based on the block one.

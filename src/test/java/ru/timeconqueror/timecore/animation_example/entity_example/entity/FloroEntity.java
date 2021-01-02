@@ -35,7 +35,7 @@ import java.util.EnumSet;
  * If flags, from which task's mutex consists of, are disabled, then tasks with this mutex won't be run.
  * <p>
  * If task has higher priority (lower number), than system will check if current task with lower priority is interruptible.
- * If it is so, then it will be finished, and new task will task its place
+ * If it is so, then it will be finished, and new task will take its place
  * <p>
  * If task has a lower priority (higher number), it's checked by system if it can work in parallel (if mutex isn't the same).
  */
