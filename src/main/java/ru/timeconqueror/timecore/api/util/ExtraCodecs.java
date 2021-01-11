@@ -10,8 +10,6 @@ import net.minecraftforge.registries.ForgeRegistryEntry;
 import ru.timeconqueror.timecore.api.util.reflection.ReflectionHelper;
 
 import java.lang.reflect.Array;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.function.Function;
 
 public class ExtraCodecs {
@@ -21,17 +19,7 @@ public class ExtraCodecs {
     public static Codec<Direction> HORIZONTAL_DIRECTION = Codec.INT.xmap(Direction::from2DDataValue, Direction::get2DDataValue);
 
     public static <T extends Enum<T>, S> Codec<T> forEnum(Class<T> enumClass, Function<T, S> idSupplier, Codec<S> idCodec) {
-        T[] enumValues = ReflectionHelper.getEnumValues(enumClass);
-
-        Map<S, T> idLookup = new HashMap<>(enumValues.length);
-
-        for (T val : enumValues) {
-            if (idLookup.put(idSupplier.apply(val), val) != null) {
-                throw new IllegalArgumentException("Found duplication of id " + idSupplier.apply(val) + " for " + enumClass.getName());
-            }
-        }
-
-        return idCodec.xmap(idLookup::get, idSupplier);
+        return idCodec.xmap(EnumLookup.make(enumClass, idSupplier)::get, idSupplier);
     }
 
     /**

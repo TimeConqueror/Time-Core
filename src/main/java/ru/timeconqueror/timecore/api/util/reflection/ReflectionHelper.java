@@ -254,7 +254,6 @@ public class ReflectionHelper {
     }
 
     public static <E extends Enum<E>> E[] getEnumValues(Class<E> enumClass) {
-        UnlockedField<E[]> valuesField = ReflectionHelper.findField(enumClass, "$VALUES");
-        return valuesField.get(null);
+        return enumClass.getEnumConstants();
     }
 }
