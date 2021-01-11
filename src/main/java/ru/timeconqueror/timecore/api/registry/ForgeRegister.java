@@ -46,7 +46,7 @@ public abstract class ForgeRegister<T extends IForgeRegistryEntry<T>> extends Ti
         return holder;
     }
 
-    public void runTaskOnClientSetup(Runnable runnable) {
+    protected void runTaskOnClientSetup(Runnable runnable) {
         if (EnvironmentUtils.isOnPhysicalClient()) {
             Preconditions.checkNotNull(clientRunnables, "You attempted to call this method after FMLClientSetupEvent has been fired.");
             clientRunnables.add(runnable);

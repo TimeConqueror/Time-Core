@@ -41,7 +41,7 @@ public class BlockRegistryExample {
                     });
 
             REGISTER.register("test_dirt", () -> new Block(propsCreator.create()))
-                    .setRenderLayer(new TimeRenderTypes(null, null, 0, 0, false, false, () -> {
+                    .setRenderLayer(() -> new TimeRenderTypes(null, null, 0, 0, false, false, () -> {
                     }, () -> {
                     }))
                     .genDefaultStateAndModel(new TextureLocation("minecraft", "block/dirt"));

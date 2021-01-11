@@ -211,7 +211,6 @@ public class DrawHelper {
      * @param height Represents coordinate length along the axis Y.
      * @param zLevel z-coordinate.
      */
-    @Deprecated
     public static void drawTexturedRect(IVertexBuilder builder, MatrixStack matrixStack, float x0, float y0, float width, float height, float zLevel) {
         Matrix4f pose = matrixStack.last().pose();
 
@@ -220,7 +219,6 @@ public class DrawHelper {
         builder.vertex(pose, x0 + width, y0 + height, zLevel).uv(1, 1).endVertex();
         builder.vertex(pose, x0 + width, y0, zLevel).uv(1, 0).endVertex();
     }
-
 
     /**
      * Draws textured rectangle with autoexpandable width.
