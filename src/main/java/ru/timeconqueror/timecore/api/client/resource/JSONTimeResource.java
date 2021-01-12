@@ -60,4 +60,9 @@ public abstract class JSONTimeResource implements TimeResource {
     }
 
     public abstract String toJson();
+
+    @Override
+    public String toString() {
+        return toJson();
+    }
 }

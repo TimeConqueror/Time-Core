@@ -3,6 +3,7 @@ package ru.timeconqueror.timecore.api.util;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 public class CollectionUtils {
     public static <T> boolean contains(T[] array, T object) {
@@ -21,6 +22,27 @@ public class CollectionUtils {
         return false;
     }
 
+    public static <T> boolean allMatch(Iterable<T> iterable, Predicate<T> predicate) {
+        for (T obj : iterable) {
+            if (!predicate.test(obj)) return false;
+        }
+        return true;
+    }
+
+    public static <T> boolean anyMatch(Iterable<T> iterable, Predicate<T> predicate) {
+        for (T obj : iterable) {
+            if (predicate.test(obj)) return true;
+        }
+        return false;
+    }
+
+    public static <T> boolean noneMatch(Iterable<T> iterable, Predicate<T> predicate) {
+        for (T obj : iterable) {
+            if (predicate.test(obj)) return false;
+        }
+        return true;
+    }
+
     /**
      * Maps array to list by provided mapper function.
      *
@@ -29,7 +51,7 @@ public class CollectionUtils {
      * @param <T>    type in
      * @param <R>    type out
      */
-    public static <T, R> List<R> mapToList(T[] source, Function<T, R> mapper) {
+    public static <T, R> List<R> mapArrayToList(T[] source, Function<T, R> mapper) {
         List<R> list = new ArrayList<>(source.length);
 
         for (T t : source) {
@@ -48,7 +70,7 @@ public class CollectionUtils {
      * @param <T>              type in
      * @param <R>              type out
      */
-    public static <T, R> R[] map(T[] source, Function<Integer, R[]> mappedArrFactory, Function<T, R> mapper) {
+    public static <T, R> R[] mapArray(T[] source, Function<Integer, R[]> mappedArrFactory, Function<T, R> mapper) {
         R[] mapped = mappedArrFactory.apply(source.length);
 
         Requirements.arrayWithLength(mapped, source.length, "Mapped array should have the same length (" + source.length + ") as source array. Provided length:" + mapped.length);

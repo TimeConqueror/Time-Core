@@ -56,7 +56,7 @@ public interface ITimePacket {
                 onPacketReceived(packet, ctx, getWorld(ctx));
             } else {
                 if (EnvironmentUtils.isInDev()) {
-                    TimeCore.LOGGER.error("You've just sent packet {} to {} side, although it can be only handled on {} side!", packet.getClass().getName(), receptionSide, ctx.getDirection().getOriginationSide());
+                    TimeCore.LOGGER.error("You've just sent packet {} to {} side, although it can be only handled on {} side! Skipping...", packet.getClass().getName(), receptionSide, ctx.getDirection().getOriginationSide());
                 }
             }
             return true;

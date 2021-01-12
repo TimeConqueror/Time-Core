@@ -11,8 +11,12 @@ import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.core.Filter;
 import org.apache.logging.log4j.core.LoggerContext;
 import org.apache.logging.log4j.core.filter.MarkerFilter;
+import ru.timeconqueror.timecore.TimeCore;
 
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class EnvironmentUtils {
     /**
@@ -79,7 +83,7 @@ public class EnvironmentUtils {
     }
 
     private static void changeLogMarkerStates(boolean enable, Marker... markers) {
-        changeLogMarkerStates(enable, CollectionUtils.map(markers, String[]::new, Marker::getName));
+        changeLogMarkerStates(enable, CollectionUtils.mapArray(markers, String[]::new, Marker::getName));
     }
 
     private static void changeLogMarkerStates(boolean enable, String... markerNames) {
@@ -92,5 +96,41 @@ public class EnvironmentUtils {
         }
 
         context.updateLoggers();
+    }
+
+    /**
+     * Should be called only from the main thread!
+     * Disables or enables the provided {@code availableMarkers} depending on value, which is put in
+     * the system property named under {@code markerProperty}
+     * <p>
+     * Example of system property syntax:
+     * -Dtimecore.logging.markers=RESOURCE_SYSTEM,REVEALER,REGISTRY
+     *
+     * @param modId            modId of your mod
+     * @param markerProperty   name of system property from which values can be get
+     * @param availableMarkers markers, which can be enabled. By default they will be disabled.
+     */
+    public static void handleMarkerVisibility(String modId, String markerProperty, Marker[] availableMarkers) {
+        String markerPropValue = System.getProperty(markerProperty);
+        String[] markers = markerPropValue != null ? markerPropValue.split(",") : new String[0];
+
+        List<String> enabledMarkers = new ArrayList<>();
+        String[] disabledMarkers = Arrays.stream(availableMarkers)
+                .map(Marker::getName)
+                .filter(name -> {
+                    for (String enabled : markers) {
+                        if (name.equals(enabled)) {
+                            enabledMarkers.add(name);
+                            return false;
+                        }
+                    }
+
+                    return true;
+                }).toArray(String[]::new);
+
+        if (!enabledMarkers.isEmpty()) {
+            TimeCore.LOGGER.info("Enabled logger markers for mod id {}: {}", modId, enabledMarkers);
+        }
+        EnvironmentUtils.disableLogMarkers(disabledMarkers);
     }
 }

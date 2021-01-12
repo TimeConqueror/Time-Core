@@ -54,10 +54,18 @@ public class ModInitializer {
                 .filter(annotationData -> annotationData.getAnnotationType().equals(TIME_AUTO_REG_TYPE) || annotationData.getAnnotationType().equals(TIME_AUTO_REG_INIT_TYPE))
                 .forEach(annotationData -> {
                     try {
+                        String containerClassName = annotationData.getClassType().getClassName();
+                        Class<?> containerClass;
+                        try {
+                            containerClass = Class.forName(containerClassName);
+                        } catch (Throwable e) {
+                            throw new RuntimeException(String.format("There was an exception while trying to load %s", containerClassName));
+                        }
+
                         if (annotationData.getAnnotationType().equals(TIME_AUTO_REG_TYPE)) {
-                            processAutoRegistrable(annotationData, registerSubscriber);
+                            processAutoRegistrable(containerClass, annotationData, registerSubscriber);
                         } else {
-                            processTimeAutoRegInitMethod(annotationData, initMethodRegistrator);
+                            processTimeAutoRegInitMethod(containerClass, annotationData, initMethodRegistrator);
                         }
                     } catch (ClassNotFoundException e) {
                         throw new RuntimeException(e);
@@ -65,10 +73,7 @@ public class ModInitializer {
                 });
     }
 
-    private static void processAutoRegistrable(ModFileScanData.AnnotationData annotationData, Consumer<TimeRegister> registerSubscriber) throws ClassNotFoundException {
-        String containerClassName = annotationData.getClassType().getClassName();
-        Class<?> containerClass = Class.forName(containerClassName);
-
+    private static void processAutoRegistrable(Class<?> containerClass, ModFileScanData.AnnotationData annotationData, Consumer<TimeRegister> registerSubscriber) throws ClassNotFoundException {
         String fieldName = annotationData.getMemberName();
         UnlockedField<Object> field = ReflectionHelper.findField(containerClass, fieldName);
 
@@ -90,10 +95,7 @@ public class ModInitializer {
         }
     }
 
-    private static void processTimeAutoRegInitMethod(ModFileScanData.AnnotationData annotationData, Consumer<UnlockedMethod<?>> preConstructMethodRegistrator) throws ClassNotFoundException {
-        String containerClassName = annotationData.getClassType().getClassName();
-        Class<?> containerClass = Class.forName(containerClassName);
-
+    private static void processTimeAutoRegInitMethod(Class<?> containerClass, ModFileScanData.AnnotationData annotationData, Consumer<UnlockedMethod<?>> preConstructMethodRegistrator) throws ClassNotFoundException {
         String methodSignature = annotationData.getMemberName();
 
         StringBuilder methodName = new StringBuilder();

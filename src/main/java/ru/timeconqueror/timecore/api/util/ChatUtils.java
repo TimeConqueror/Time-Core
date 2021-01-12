@@ -20,7 +20,7 @@ public class ChatUtils {
      *
      * @param distanceIn distance from `fromPos`, in which players will be get a message.
      */
-    public static void sendMessageToAllNearby(BlockPos fromPos, ITextComponent msg, double distanceIn) {
+    public static void sendToAllNearby(BlockPos fromPos, ITextComponent msg, double distanceIn) {
         for (ServerPlayerEntity player : NetworkUtils.getPlayersNearby(fromPos, distanceIn)) {
             player.sendMessage(msg, player.getUUID());
         }

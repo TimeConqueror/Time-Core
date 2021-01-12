@@ -3,11 +3,14 @@ package ru.timeconqueror.timecore;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.spongepowered.asm.mixin.MixinEnvironment;
+import ru.timeconqueror.timecore.api.Markers;
 import ru.timeconqueror.timecore.api.TimeMod;
+import ru.timeconqueror.timecore.api.util.EnvironmentUtils;
 import ru.timeconqueror.timecore.api.util.reflection.ReflectionHelper;
 import ru.timeconqueror.timecore.devtools.StructureRevealer;
 
@@ -17,11 +20,14 @@ public final class TimeCore implements TimeMod {
     public static final Logger LOGGER = LogManager.getLogger(MODID);
     public static TimeCore INSTANCE = null;
 
+    private static final String MARKER_PROPERTY = "timecore.logging.markers";
+
     public TimeCore() {
         INSTANCE = this;
 
         checkForMixinBootstrap();
 
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
     }
 
@@ -30,6 +36,10 @@ public final class TimeCore implements TimeMod {
      */
     public static ResourceLocation rl(String path) {
         return new ResourceLocation(MODID, path);
+    }
+
+    private void onConstruct(FMLConstructModEvent event) {
+        EnvironmentUtils.handleMarkerVisibility(TimeCore.MODID, MARKER_PROPERTY, Markers.getAll());
     }
 
     private void setup(final FMLCommonSetupEvent event) {

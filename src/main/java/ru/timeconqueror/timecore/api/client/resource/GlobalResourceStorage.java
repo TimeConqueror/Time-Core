@@ -27,9 +27,9 @@ public enum GlobalResourceStorage {
     public void fill(Iterable<TimeResourceHolder> holders) {
         holders.forEach(holder -> holder.getResources().forEach((location, resource) -> {
             if (resources.put(location, resource.toBytes()) == null) {
-                TimeCore.LOGGER.debug(Markers.RESOURCE_SYSTEM, "Added new resource with location: {}. Content: {}", location, resource);
+                TimeCore.LOGGER.debug(Markers.RESOURCE_SYSTEM, "Added new resource with location: {}. Content: {}", location, resource.toString());
             } else {
-                TimeCore.LOGGER.debug(Markers.RESOURCE_SYSTEM, "Overridden resource with location: {}. New content: {}", location, resource);
+                TimeCore.LOGGER.debug(Markers.RESOURCE_SYSTEM, "Overridden resource with location: {}. New content: {}", location, resource.toString());
             }
         }));
     }
