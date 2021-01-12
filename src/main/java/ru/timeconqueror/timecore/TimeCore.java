@@ -28,7 +28,7 @@ public final class TimeCore implements TimeMod {
         checkForMixinBootstrap();
 
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::onConstruct);
     }
 
     /**
