@@ -27,7 +27,7 @@ public abstract class CodecSupplier {
     public static class EntityCodecSupplier extends CodecSupplier {
         private final int id;
 
-        public EntityCodecSupplier(Entity entity) {
+        public <T extends Entity & AnimatedObject<T>> EntityCodecSupplier(T entity) {
             this.id = entity.getId();
         }
 
@@ -54,7 +54,7 @@ public abstract class CodecSupplier {
     public static class TileEntityCodecSupplier extends CodecSupplier {
         private final BlockPos pos;
 
-        public TileEntityCodecSupplier(TileEntity tileEntity) {
+        public <T extends TileEntity & AnimatedObject<T>> TileEntityCodecSupplier(TileEntity tileEntity) {
             this.pos = tileEntity.getBlockPos();
         }
 

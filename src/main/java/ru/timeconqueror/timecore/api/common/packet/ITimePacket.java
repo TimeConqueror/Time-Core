@@ -8,6 +8,8 @@ import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.fml.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
+import ru.timeconqueror.timecore.TimeCore;
+import ru.timeconqueror.timecore.api.util.EnvironmentUtils;
 import ru.timeconqueror.timecore.api.util.Hacks;
 
 import java.io.IOException;
@@ -49,13 +51,18 @@ public interface ITimePacket {
          */
         default boolean handle(T packet, Supplier<NetworkEvent.Context> contextSupplier) {
             NetworkEvent.Context ctx = contextSupplier.get();
-            if (ctx.getDirection().getReceptionSide() == packet.getReceptionSide()) {
+            LogicalSide receptionSide = ctx.getDirection().getReceptionSide();
+            if (receptionSide == packet.getReceptionSide()) {
                 onPacketReceived(packet, ctx, getWorld(ctx));
-                return true;
-            } else return false;
+            } else {
+                if (EnvironmentUtils.isInDev()) {
+                    TimeCore.LOGGER.error("You've just sent packet {} to {} side, although it can be only handled on {} side!", packet.getClass().getName(), receptionSide, ctx.getDirection().getOriginationSide());
+                }
+            }
+            return true;
         }
 
-        @NotNull//TODO move to handler
+        @NotNull
         default World getWorld(NetworkEvent.Context ctx) {
             return FMLEnvironment.dist == Dist.CLIENT ? Hacks.bypassClassChecking(Minecraft.getInstance().level) : ctx.getSender().level;
         }
