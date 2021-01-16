@@ -3,9 +3,7 @@ package ru.timeconqueror.timecore.api.common.packet;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.world.World;
-import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.LogicalSide;
-import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.fml.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
 import ru.timeconqueror.timecore.TimeCore;
@@ -63,8 +61,9 @@ public interface ITimePacket {
         }
 
         @NotNull
+        @SuppressWarnings("ConstantConditions")
         default World getWorld(NetworkEvent.Context ctx) {
-            return FMLEnvironment.dist == Dist.CLIENT ? Hacks.bypassClassChecking(Minecraft.getInstance().level) : ctx.getSender().level;
+            return ctx.getDirection().getReceptionSide() == LogicalSide.CLIENT ? Hacks.bypassClassChecking(Minecraft.getInstance().level) : ctx.getSender().level;
         }
     }
 }
