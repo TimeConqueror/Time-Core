@@ -17,7 +17,7 @@ public class LRUCachedHashMap<K, V> {
     private Node<K, V> tail = null;
 
     public LRUCachedHashMap(int maxCacheSize) {
-        Requirements.greaterOrEqualsThan(maxCacheSize, 0);
+        Requirements.greaterOrEquals(maxCacheSize, 0);
         this.maxCacheSize = maxCacheSize;
     }
 

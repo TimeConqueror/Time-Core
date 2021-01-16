@@ -23,12 +23,12 @@ public class Requirements {
             throw new IllegalArgumentException("Number should be in range [" + min + ", " + max + "] (exclusive). Provided: " + number);
     }
 
-    public static void greaterOrEqualsThan(int number, int min) {
+    public static void greaterOrEquals(int number, int min) {
         if (number < min)
             throw new IllegalArgumentException("Provided number should be greater or equal " + min + ". Provided: " + number);
     }
 
-    public static void greaterOrEqualsThan(float number, float min) {
+    public static void greaterOrEquals(float number, float min) {
         if (number < min)
             throw new IllegalArgumentException("Provided number should be greater or equal " + min + ". Provided: " + number);
     }
@@ -53,12 +53,12 @@ public class Requirements {
             throw new IllegalArgumentException("Provided number should be less than " + max + ". Provided: " + number);
     }
 
-    public static void lessOrEqualsThan(int number, int max) {
+    public static void lessOrEquals(int number, int max) {
         if (number > max)
             throw new IllegalArgumentException("Provided number should be less or equals " + max + ". Provided: " + number);
     }
 
-    public static void lessOrEqualsThan(float number, float max) {
+    public static void lessOrEquals(float number, float max) {
         if (number > max)
             throw new IllegalArgumentException("Provided number should be less or equals " + max + ". Provided: " + number);
     }
