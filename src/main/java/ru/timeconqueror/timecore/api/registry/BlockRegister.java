@@ -105,7 +105,7 @@ import java.util.function.Supplier;
  *                  ItemPropsFactory miscGrouped = new ItemPropsFactory(ItemGroup.TAB_MISC);
  *
  *                  REGISTER.register("test_diamond", () -> new Item(miscGrouped.create()))
- *                          .genDefaultModel(new TextureLocation("minecraft", "item/diamond"));
+ *                          .defaultModel(new TextureLocation("minecraft", "item/diamond"));
  *               }
  *          }
  *      }
@@ -167,7 +167,7 @@ public class BlockRegister extends ForgeRegister<Block> {
          * @param group creative tab in which item will be placed. Can be null, which means that item will be placed nowhere.
          */
         public BlockRegisterChain<B> defaultBlockItem(@Nullable ItemGroup group) {
-            return defaultBlockItem(group, itemRegistrator -> itemRegistrator.genModelFromBlockParent(new BlockModelLocation(getModId(), getName())));
+            return defaultBlockItem(group, itemRegistrator -> itemRegistrator.modelFromBlockParent(new BlockModelLocation(getModId(), getName())));
         }
 
         /**
@@ -187,7 +187,7 @@ public class BlockRegister extends ForgeRegister<Block> {
          * @param blockModelLocation parent block model location for auto-generated item model based on block one.
          */
         public BlockRegisterChain<B> defaultBlockItem(@Nullable ItemGroup group, BlockModelLocation blockModelLocation) {
-            return defaultBlockItem(group, itemRegistrator -> itemRegistrator.genModelFromBlockParent(blockModelLocation));
+            return defaultBlockItem(group, itemRegistrator -> itemRegistrator.modelFromBlockParent(blockModelLocation));
         }
 
         /**
@@ -355,7 +355,7 @@ public class BlockRegister extends ForgeRegister<Block> {
          * Runs task for current registrator  on client setup.
          * Entry for {@link #asRegistryObject()} is already registered in this moment, so it can be retrieved inside this task.
          */
-        public BlockRegisterChain<B> onClientSetup(Consumer<BlockRegisterChain<B>> task) {
+        public BlockRegisterChain<B> doOnClientSetup(Consumer<BlockRegisterChain<B>> task) {
             runTaskOnClientSetup(() -> task.accept(this));
             return this;
         }

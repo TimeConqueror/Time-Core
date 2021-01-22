@@ -23,7 +23,7 @@ public class ItemRegistryExample {
             ItemPropsFactory miscGrouped = new ItemPropsFactory(ItemGroup.TAB_MISC);
 
             REGISTER.register("test_diamond", () -> new Item(miscGrouped.create()))
-                    .genDefaultModel(new TextureLocation("minecraft", "item/diamond"));
+                    .defaultModel(new TextureLocation("minecraft", "item/diamond"));
         }
     }
 }

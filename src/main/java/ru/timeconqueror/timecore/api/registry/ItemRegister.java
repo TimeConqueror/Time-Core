@@ -97,7 +97,7 @@ import java.util.function.Supplier;
  *                  ItemPropsFactory miscGrouped = new ItemPropsFactory(ItemGroup.TAB_MISC);
  *
  *                  REGISTER.register("test_diamond", () -> new Item(miscGrouped.create()))
- *                          .genDefaultModel(new TextureLocation("minecraft", "item/diamond"));
+ *                          .defaultModel(new TextureLocation("minecraft", "item/diamond"));
  *               }
  *          }
  *      }
@@ -150,32 +150,32 @@ public class ItemRegister extends ForgeRegister<Item> {
          *
          * @param parentType type of generated model: generated or handheld
          */
-        public ItemRegisterChain<I> genModel(StandardItemModelParents parentType) {
-            clientSideOnly(() -> genModel(parentType, new TextureLocation(getModId(), "item/" + getName())));
+        public ItemRegisterChain<I> model(StandardItemModelParents parentType) {
+            clientSideOnly(() -> model(parentType, new TextureLocation(getModId(), "item/" + getName())));
             return this;
         }
 
         /**
          * Creates and registers simple item model without the need of json file (via code) for bound item with one provided texture and "item/generated" parent model.
          */
-        public ItemRegisterChain<I> genDefaultModel(TextureLocation texture) {
-            clientSideOnly(() -> genModel(StandardItemModelParents.DEFAULT, texture));
+        public ItemRegisterChain<I> defaultModel(TextureLocation texture) {
+            clientSideOnly(() -> model(StandardItemModelParents.DEFAULT, texture));
             return this;
         }
 
         /**
          * Creates and registers simple item model without the need of json file (via code) for bound item with one provided texture and "item/handheld" parent model.
          */
-        public ItemRegisterChain<I> genHandheldModel(TextureLocation texture) {
-            clientSideOnly(() -> genModel(StandardItemModelParents.HANDHELD, texture));
+        public ItemRegisterChain<I> handheldModel(TextureLocation texture) {
+            clientSideOnly(() -> model(StandardItemModelParents.HANDHELD, texture));
             return this;
         }
 
         /**
          * Creates and registers simple item model without the need of json file (via code) for bound item with dependency on block model.
          */
-        public ItemRegisterChain<I> genModelFromBlockParent(BlockModelLocation parentBlockModelLocation) {
-            clientSideOnly(() -> genModel(new ItemModel(parentBlockModelLocation)));
+        public ItemRegisterChain<I> modelFromBlockParent(BlockModelLocation parentBlockModelLocation) {
+            clientSideOnly(() -> model(new ItemModel(parentBlockModelLocation)));
             return this;
         }
 
@@ -186,8 +186,8 @@ public class ItemRegister extends ForgeRegister<Item> {
          *                      but sometimes you will need to set model to use combination of several textures.
          *                      Vanilla uses it in, for example, spawn egg model where the layers are represented by base texture and overlay (spots).
          */
-        public ItemRegisterChain<I> genModel(StandardItemModelParents parent, TextureLocation... textureLayers) {
-            clientSideOnly(() -> genModel(parent.getModelLocation(), textureLayers));
+        public ItemRegisterChain<I> model(StandardItemModelParents parent, TextureLocation... textureLayers) {
+            clientSideOnly(() -> model(parent.getModelLocation(), textureLayers));
             return this;
         }
 
@@ -200,8 +200,8 @@ public class ItemRegister extends ForgeRegister<Item> {
          *                      but sometimes you will need to set model to use combination of several textures.
          *                      Vanilla uses it in, for example, spawn egg model where the layers are represented by base texture and overlay (spots).
          */
-        public ItemRegisterChain<I> genModel(ModelLocation parent, TextureLocation... textureLayers) {
-            clientSideOnly(() -> genModel(new ItemModel(parent).addTextureLayers(textureLayers)));
+        public ItemRegisterChain<I> model(ModelLocation parent, TextureLocation... textureLayers) {
+            clientSideOnly(() -> model(new ItemModel(parent).addTextureLayers(textureLayers)));
 
             return this;
         }
@@ -214,8 +214,8 @@ public class ItemRegister extends ForgeRegister<Item> {
          *                          likely should not be created outside lambda (except locations).
          *                          For details see {@link ItemModel}.
          */
-        public ItemRegisterChain<I> genModel(Supplier<ItemModel> itemModelSupplier) {
-            clientSideOnly(() -> genModel(itemModelSupplier.get()));
+        public ItemRegisterChain<I> model(Supplier<ItemModel> itemModelSupplier) {
+            clientSideOnly(() -> model(itemModelSupplier.get()));
             return this;
         }
 
@@ -225,7 +225,7 @@ public class ItemRegister extends ForgeRegister<Item> {
          * @param itemModel model for this item.
          *                  For details see {@link ItemModel}.
          */
-        public ItemRegisterChain<I> genModel(ItemModel itemModel) {
+        public ItemRegisterChain<I> model(ItemModel itemModel) {
             clientSideOnly(() -> resourceHolder.get().addItemModel(getRegistryName(), itemModel));
             return this;
         }
@@ -236,7 +236,7 @@ public class ItemRegister extends ForgeRegister<Item> {
          *
          * @param enName english localization location of item
          */
-        public ItemRegisterChain<I> genLangEntry(String enName) {
+        public ItemRegisterChain<I> name(String enName) {
             if (EnvironmentUtils.isInDev()) {
                 runTaskAfterRegistering(() -> ItemRegister.this.getLangGeneratorFacade().addItemEntry(asRegistryObject().get(), enName));
             }
@@ -250,12 +250,12 @@ public class ItemRegister extends ForgeRegister<Item> {
          * This method is only for common armor stuff names, like the "Diamond Helmet", where equipment slot ("Helmet") is the last word.<br>
          * The last word, which represents the equipment slot, will be framed automatically.<br>
          * <p>
-         * For uncommon names see {@link #genArmorLangEntry(String)} to set location directly.
+         * For uncommon names see {@link #nameArmor(String)} to set location directly.
          *
          * @param materialEnName the english location of material, will be the first word in the full location
          * @throws IllegalArgumentException if it is called for Items, that don't extend {@link ArmorItem}
          */
-        public ItemRegisterChain<I> genArmorLangEntryByMaterial(String materialEnName) {
+        public ItemRegisterChain<I> nameArmorByMaterial(String materialEnName) {
             if (EnvironmentUtils.isInDev()) {
                 runTaskAfterRegistering(() -> {
                     Item item = asRegistryObject().get();
@@ -275,12 +275,12 @@ public class ItemRegister extends ForgeRegister<Item> {
          * <p>
          * This method is only for uncommon armor stuff names, like the "Helmet of The Dark One", where "Helmet" is the first word, not the last.<br>
          * <p>
-         * For common names see {@link #genArmorLangEntryByMaterial(String)}
+         * For common names see {@link #nameArmorByMaterial(String)}
          *
          * @param enName english localization location of item
          * @throws IllegalArgumentException if it is called for Items, that don't extend {@link ArmorItem}
          */
-        public ItemRegisterChain<I> genArmorLangEntry(String enName) {
+        public ItemRegisterChain<I> nameArmor(String enName) {
             runTaskAfterRegistering(() -> {
                 Item item = asRegistryObject().get();
                 if (item instanceof ArmorItem) {
