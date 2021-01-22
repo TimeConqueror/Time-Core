@@ -10,8 +10,8 @@ import org.apache.logging.log4j.Logger;
 import org.spongepowered.asm.mixin.MixinEnvironment;
 import ru.timeconqueror.timecore.api.Markers;
 import ru.timeconqueror.timecore.api.TimeMod;
+import ru.timeconqueror.timecore.api.reflection.ReflectionHelper;
 import ru.timeconqueror.timecore.api.util.EnvironmentUtils;
-import ru.timeconqueror.timecore.api.util.reflection.ReflectionHelper;
 import ru.timeconqueror.timecore.devtools.StructureRevealer;
 
 @Mod(TimeCore.MODID)//todo add null check in ObjectHolder

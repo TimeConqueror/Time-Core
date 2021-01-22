@@ -1,4 +1,4 @@
-package ru.timeconqueror.timecore.api.util.reflection;
+package ru.timeconqueror.timecore.api.reflection;
 
 import com.google.common.base.Joiner;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
@@ -9,6 +9,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.Arrays;
 import java.util.Optional;
 
 public class ReflectionHelper {
@@ -145,7 +146,7 @@ public class ReflectionHelper {
      * Finds a method with the specified location and params in the given class and makes it accessible.
      * Note: for performance, store the returned value and avoid calling this repeatedly.
      * <p>
-     * Returns null if the method is not found and prints error stacktrace.
+     * Returns null if the method is not found.
      *
      * @param clazz      The class to find the field on.
      * @param methodName The location of the method to find.
@@ -154,11 +155,10 @@ public class ReflectionHelper {
      * @see #findMethod(Class, String, Class[])
      */
     public static <T> Optional<UnlockedMethod<T>> findMethodSoftly(Class<?> clazz, String methodName, Class<?>... params) {
-        try {
-            Method method = clazz.getDeclaredMethod(methodName, params);
-            return Optional.of(new UnlockedMethod<>(method));
-        } catch (Throwable e) {
-            e.printStackTrace();
+        for (Method declaredMethod : clazz.getDeclaredMethods()) {
+            if (declaredMethod.getName().equals(methodName) && Arrays.equals(declaredMethod.getParameterTypes(), params)) {
+                return Optional.of(new UnlockedMethod<>(declaredMethod));
+            }
         }
 
         return Optional.empty();
@@ -181,7 +181,7 @@ public class ReflectionHelper {
             Method method = clazz.getDeclaredMethod(methodName, params);
             return new UnlockedMethod<>(method);
         } catch (Throwable e) {
-            throw new RuntimeException("Can't retrieve method " + clazz.getName() + "#" + methodName + "(" + Joiner.on(",").join(params) + ")", e);
+            throw new RuntimeException("Can't retrieve method " + clazz.getName() + "#" + getPrettySignature(methodName, params), e);
         }
     }
 
@@ -255,5 +255,52 @@ public class ReflectionHelper {
 
     public static <E extends Enum<E>> E[] getEnumValues(Class<E> enumClass) {
         return enumClass.getEnumConstants();
+    }
+
+    public static String getPrettySignature(Class<?> owner, String methodName, Class<?>... params) {
+        return owner.getName() + "#" + getPrettySignature(methodName, params);
+    }
+
+    public static String getPrettySignature(String methodName, Class<?>... params) {
+        return methodName + "(" + Joiner.on(",").join(params) + ")";
+    }
+
+    public static String getDescriptorForClass(final Class<?> c) {
+        if (c.isPrimitive()) {
+            if (c == byte.class)
+                return "B";
+            if (c == char.class)
+                return "C";
+            if (c == double.class)
+                return "D";
+            if (c == float.class)
+                return "F";
+            if (c == int.class)
+                return "I";
+            if (c == long.class)
+                return "J";
+            if (c == short.class)
+                return "S";
+            if (c == boolean.class)
+                return "Z";
+            if (c == void.class)
+                return "V";
+            throw new RuntimeException("Unrecognized primitive " + c);
+        }
+        if (c.isArray()) return c.getName().replace('.', '/');
+        return ('L' + c.getName() + ';').replace('.', '/');
+    }
+
+    public static String getMethodSignature(Method m) {
+        return m.getName() + getMethodDescriptor(m);
+    }
+
+    public static String getMethodDescriptor(Method m) {
+        StringBuilder s = new StringBuilder("(");
+        for (final Class<?> c : (m.getParameterTypes())) {
+            s.append(getDescriptorForClass(c));
+        }
+        s.append(')');
+        return s + getDescriptorForClass(m.getReturnType());
     }
 }

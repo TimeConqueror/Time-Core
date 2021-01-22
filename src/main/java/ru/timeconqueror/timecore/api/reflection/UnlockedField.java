@@ -1,4 +1,4 @@
-package ru.timeconqueror.timecore.api.util.reflection;
+package ru.timeconqueror.timecore.api.reflection;
 
 import org.jetbrains.annotations.Nullable;
 

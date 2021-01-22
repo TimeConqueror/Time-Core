@@ -1,6 +1,6 @@
 package ru.timeconqueror.timecore.api.util;
 
-import ru.timeconqueror.timecore.api.util.reflection.ReflectionHelper;
+import ru.timeconqueror.timecore.api.reflection.ReflectionHelper;
 
 import java.util.HashMap;
 import java.util.Map;

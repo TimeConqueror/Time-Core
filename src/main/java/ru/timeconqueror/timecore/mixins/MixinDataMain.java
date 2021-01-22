@@ -5,9 +5,9 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import ru.timeconqueror.timecore.api.reflection.ReflectionHelper;
+import ru.timeconqueror.timecore.api.reflection.UnlockedField;
 import ru.timeconqueror.timecore.api.util.EnvironmentUtils;
-import ru.timeconqueror.timecore.api.util.reflection.ReflectionHelper;
-import ru.timeconqueror.timecore.api.util.reflection.UnlockedField;
 
 @Mixin(Main.class)
 public abstract class MixinDataMain {

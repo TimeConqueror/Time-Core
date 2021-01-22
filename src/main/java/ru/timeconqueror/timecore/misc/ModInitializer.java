@@ -9,13 +9,15 @@ import org.objectweb.asm.Type;
 import ru.timeconqueror.timecore.TimeCore;
 import ru.timeconqueror.timecore.api.client.resource.GlobalResourceStorage;
 import ru.timeconqueror.timecore.api.devtools.kotlin.KotlinAutomaticEventSubscriber;
+import ru.timeconqueror.timecore.api.reflection.ReflectionHelper;
+import ru.timeconqueror.timecore.api.reflection.UnlockedField;
+import ru.timeconqueror.timecore.api.reflection.UnlockedMethod;
+import ru.timeconqueror.timecore.api.reflection.provider.ClassHandler;
+import ru.timeconqueror.timecore.api.reflection.provider.ClassHandlers;
 import ru.timeconqueror.timecore.api.registry.ForgeRegister;
 import ru.timeconqueror.timecore.api.registry.TimeRegister;
 import ru.timeconqueror.timecore.api.registry.util.AutoRegistrable;
 import ru.timeconqueror.timecore.api.registry.util.AutoRegistrable.InitMethod;
-import ru.timeconqueror.timecore.api.util.reflection.ReflectionHelper;
-import ru.timeconqueror.timecore.api.util.reflection.UnlockedField;
-import ru.timeconqueror.timecore.api.util.reflection.UnlockedMethod;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -31,7 +33,7 @@ public class ModInitializer {
     public static synchronized void run(String modId, ModContainer modContainer, ModFileScanData scanResults, Class<?> modClass) {
         runKotlinAutomaticEventSubscriber(modId, modContainer, scanResults, modClass);
 
-        List<UnlockedMethod<?>> initMethods = new ArrayList<>();
+        List<Runnable> initMethods = new ArrayList<>();
         List<TimeRegister> registers = new ArrayList<>();
 
         setupAutoRegistries(scanResults, initMethods::add, registers::add);
@@ -49,7 +51,7 @@ public class ModInitializer {
         TimeCore.LOGGER.debug(LOADING, "Completed Automatic event subscribers for {}", modId);
     }
 
-    private static void setupAutoRegistries(ModFileScanData scanResults, Consumer<UnlockedMethod<?>> initMethodRegistrator, Consumer<TimeRegister> registerSubscriber) {
+    private static void setupAutoRegistries(ModFileScanData scanResults, Consumer<Runnable> initMethodRegistrator, Consumer<TimeRegister> registerSubscriber) {
         scanResults.getAnnotations().stream()
                 .filter(annotationData -> annotationData.getAnnotationType().equals(TIME_AUTO_REG_TYPE) || annotationData.getAnnotationType().equals(TIME_AUTO_REG_INIT_TYPE))
                 .forEach(annotationData -> {
@@ -95,33 +97,30 @@ public class ModInitializer {
         }
     }
 
-    private static void processTimeAutoRegInitMethod(Class<?> containerClass, ModFileScanData.AnnotationData annotationData, Consumer<UnlockedMethod<?>> preConstructMethodRegistrator) throws ClassNotFoundException {
+    private static void processTimeAutoRegInitMethod(Class<?> containerClass, ModFileScanData.AnnotationData annotationData, Consumer<Runnable> preConstructMethodRegistrator) throws ClassNotFoundException {
         String methodSignature = annotationData.getMemberName();
 
-        StringBuilder methodName = new StringBuilder();
-        for (char c : methodSignature.toCharArray()) {
-            if (c == '(') break;
-
-            methodName.append(c);
+        ClassHandler handler = ClassHandlers.findHandler(containerClass);
+        if (handler == null) {
+            throw new IllegalArgumentException("Can't handle class " + containerClass.getName() + ", because there's no " + ClassHandler.class.getName() + " found for it.");
         }
 
-        UnlockedMethod<?> initMethod = ReflectionHelper.findMethod(containerClass, methodName.toString());
+        UnlockedMethod<Object> initMethod = handler.findMethod(containerClass, methodSignature);
+        if (initMethod == null)
+            throw new NoSuchMethodError("Not found method " + methodSignature + " from class " + containerClass.getName());
+        handler.requireStatic(initMethod);
 
-        if (initMethod.isStatic()) {
-            Method nativeMethod = initMethod.getMethod();
-            if (nativeMethod.getParameterCount() == 0) {
-                preConstructMethodRegistrator.accept(initMethod);
-            } else if (nativeMethod.getParameterCount() == 1 && FMLConstructModEvent.class.isAssignableFrom(nativeMethod.getParameterTypes()[0])) {
-                FMLJavaModLoadingContext.get().getModEventBus().addListener(EventPriority.HIGHEST, event -> initMethod.invoke(null, event));//TODO seems this will be called on every event
-            } else {
-                throw new UnsupportedOperationException(InitMethod.class.getSimpleName() + " can be used only on methods without any parameters. Error is in: " + initMethod);
-            }
+        Method nativeMethod = initMethod.getMethod();
+        if (nativeMethod.getParameterCount() == 0) {
+            preConstructMethodRegistrator.accept(() -> handler.invokeStaticMethod(initMethod));
+        } else if (nativeMethod.getParameterCount() == 1 && FMLConstructModEvent.class.isAssignableFrom(nativeMethod.getParameterTypes()[0])) {
+            FMLJavaModLoadingContext.get().getModEventBus().addListener(EventPriority.HIGHEST, (FMLConstructModEvent event) -> handler.invokeStaticMethod(initMethod, event));
         } else {
-            throw new UnsupportedOperationException(InitMethod.class.getSimpleName() + " can be used only on static fields. Error is in: " + initMethod);
+            throw new UnsupportedOperationException(InitMethod.class.getSimpleName() + " can be used only on methods with " + FMLConstructModEvent.class.getName() + " parameter or without any parameters. Error is in: " + initMethod);
         }
     }
 
-    private static void processInitMethods(List<UnlockedMethod<?>> initMethods) {
-        initMethods.forEach(unlockedMethod -> unlockedMethod.invoke(null));
+    private static void processInitMethods(List<Runnable> initMethods) {
+        initMethods.forEach(Runnable::run);
     }
 }

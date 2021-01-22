@@ -7,7 +7,7 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.ForgeRegistryEntry;
-import ru.timeconqueror.timecore.api.util.reflection.ReflectionHelper;
+import ru.timeconqueror.timecore.api.reflection.ReflectionHelper;
 
 import java.lang.reflect.Array;
 import java.util.function.Function;

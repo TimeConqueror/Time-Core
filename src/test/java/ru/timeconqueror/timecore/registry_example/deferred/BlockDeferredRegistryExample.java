@@ -17,12 +17,12 @@ public class BlockDeferredRegistryExample {
     private static final BlockPropsFactory BLOCK_PROPS_CREATOR = new BlockPropsFactory(() -> Block.Properties.of(Material.STONE));
 
     public static RegistryObject<TestCobbleBlock> TEST_COBBLE = REGISTER.register("test_cobble", () -> new TestCobbleBlock(BLOCK_PROPS_CREATOR.create()))
-            .genDefaultStateAndModel(new TextureLocation("minecraft", "block/cobblestone"))
-            .regDefaultBlockItem(ItemGroup.TAB_MISC)
+            .oneVarStateAndCubeAllModel(new TextureLocation("minecraft", "block/cobblestone"))
+            .defaultBlockItem(ItemGroup.TAB_MISC)
 //          .genLangEntry("Test Cobble")
             .asRegistryObject();
 
     public static RegistryObject<Block> TEST_GRAVEL = REGISTER.register("test_gravel", () -> new Block(BLOCK_PROPS_CREATOR.create()))
-            .regDefaultBlockItem(ItemGroup.TAB_MISC)
+            .defaultBlockItem(ItemGroup.TAB_MISC)
             .asRegistryObject();
 }

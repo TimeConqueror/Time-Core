@@ -166,14 +166,14 @@ public class BlockRegister extends ForgeRegister<Block> {
          *
          * @param group creative tab in which item will be placed. Can be null, which means that item will be placed nowhere.
          */
-        public BlockRegisterChain<B> regDefaultBlockItem(@Nullable ItemGroup group) {
-            return regDefaultBlockItem(group, itemRegistrator -> itemRegistrator.genModelFromBlockParent(new BlockModelLocation(getModId(), getName())));
+        public BlockRegisterChain<B> defaultBlockItem(@Nullable ItemGroup group) {
+            return defaultBlockItem(group, itemRegistrator -> itemRegistrator.genModelFromBlockParent(new BlockModelLocation(getModId(), getName())));
         }
 
         /**
          * Sets render layer for this block.
          */
-        public BlockRegisterChain<B> setRenderLayer(Supplier<? extends RenderType> renderTypeSup) {
+        public BlockRegisterChain<B> renderLayer(Supplier<? extends RenderType> renderTypeSup) {
             runTaskOnClientSetup(() -> RenderTypeLookup.setRenderLayer(asRegistryObject().get(), renderTypeSup.get()));
             return this;
         }
@@ -186,8 +186,8 @@ public class BlockRegister extends ForgeRegister<Block> {
          * @param group              creative tab in which item will be placed. Can be null, which means that item will be placed nowhere.
          * @param blockModelLocation parent block model location for auto-generated item model based on block one.
          */
-        public BlockRegisterChain<B> regDefaultBlockItem(@Nullable ItemGroup group, BlockModelLocation blockModelLocation) {
-            return regDefaultBlockItem(group, itemRegistrator -> itemRegistrator.genModelFromBlockParent(blockModelLocation));
+        public BlockRegisterChain<B> defaultBlockItem(@Nullable ItemGroup group, BlockModelLocation blockModelLocation) {
+            return defaultBlockItem(group, itemRegistrator -> itemRegistrator.genModelFromBlockParent(blockModelLocation));
         }
 
         /**
@@ -198,8 +198,8 @@ public class BlockRegister extends ForgeRegister<Block> {
          * @param group        creative tab in which item will be placed. Can be null, which means that item will be placed nowhere.
          * @param itemSettings extra stuff, that you can do for that item, like generating item model.
          */
-        public BlockRegisterChain<B> regDefaultBlockItem(@Nullable ItemGroup group, Consumer<ItemRegisterChain<BlockItem>> itemSettings) {
-            return regDefaultBlockItem(new Item.Properties().tab(group), itemSettings);
+        public BlockRegisterChain<B> defaultBlockItem(@Nullable ItemGroup group, Consumer<ItemRegisterChain<BlockItem>> itemSettings) {
+            return defaultBlockItem(new Item.Properties().tab(group), itemSettings);
         }
 
         /**
@@ -210,8 +210,8 @@ public class BlockRegister extends ForgeRegister<Block> {
          * @param props        properties, that will be inserted in the item. Can also be created with {@link ItemPropsFactory}
          * @param itemSettings extra stuff, that you can do for that item, like generating item model.
          */
-        public BlockRegisterChain<B> regDefaultBlockItem(Item.Properties props, Consumer<ItemRegisterChain<BlockItem>> itemSettings) {
-            return regItem(() -> new BlockItem(asRegistryObject().get(), props), itemSettings);
+        public BlockRegisterChain<B> defaultBlockItem(Item.Properties props, Consumer<ItemRegisterChain<BlockItem>> itemSettings) {
+            return item(() -> new BlockItem(asRegistryObject().get(), props), itemSettings);
         }
 
         /**
@@ -221,7 +221,7 @@ public class BlockRegister extends ForgeRegister<Block> {
          * @param itemSupplier item factory, should return new item instance every time it's called.
          * @param itemSettings extra stuff, that you can do for that item, like generating item model.
          */
-        public <I extends Item> BlockRegisterChain<B> regItem(Supplier<I> itemSupplier, Consumer<ItemRegisterChain<I>> itemSettings) {
+        public <I extends Item> BlockRegisterChain<B> item(Supplier<I> itemSupplier, Consumer<ItemRegisterChain<I>> itemSettings) {
             ItemRegisterChain<I> itemRegisterChain = BlockRegister.this.itemRegister.register(getName(), itemSupplier);
             itemSettings.accept(itemRegisterChain);
             return this;
@@ -233,8 +233,8 @@ public class BlockRegister extends ForgeRegister<Block> {
          *
          * @param blockModelLocation location of block model, which will be called from blockstate json.
          */
-        public BlockRegisterChain<B> genDefaultState(BlockModelLocation blockModelLocation) {
-            clientSideOnly(() -> genState(BlockStateResource.fromBuilder(BlockStateResource.Builder.create().addDefaultVariant(blockModelLocation))));
+        public BlockRegisterChain<B> oneVariantState(BlockModelLocation blockModelLocation) {
+            clientSideOnly(() -> state(BlockStateResource.fromBuilder(BlockStateResource.Builder.create().addDefaultVariant(blockModelLocation))));
 
             return this;
         }
@@ -244,8 +244,8 @@ public class BlockRegister extends ForgeRegister<Block> {
          *
          * @param stateResourceSupplier factory, which should return new BlockStateResource instance every time it's called.
          */
-        public BlockRegisterChain<B> genState(Supplier<BlockStateResource> stateResourceSupplier) {
-            clientSideOnly(() -> genState(stateResourceSupplier.get()));
+        public BlockRegisterChain<B> state(Supplier<BlockStateResource> stateResourceSupplier) {
+            clientSideOnly(() -> state(stateResourceSupplier.get()));
             return this;
         }
 
@@ -254,7 +254,7 @@ public class BlockRegister extends ForgeRegister<Block> {
          *
          * @param stateResource blockstate file for this block.
          */
-        public BlockRegisterChain<B> genState(BlockStateResource stateResource) {
+        public BlockRegisterChain<B> state(BlockStateResource stateResource) {
             clientSideOnly(() -> resourceHolder.get().addBlockStateResource(getRegistryName(), stateResource));
 
             return this;
@@ -266,8 +266,8 @@ public class BlockRegister extends ForgeRegister<Block> {
          *
          * @param blockModelSupplier factory, which should return new BlockModel instance every time it's called.
          */
-        public BlockRegisterChain<B> genModelWithRegNamePath(Supplier<BlockModel> blockModelSupplier) {
-            clientSideOnly(() -> genModelWithRegNamePath(blockModelSupplier.get()));
+        public BlockRegisterChain<B> modelWithRegNamePath(Supplier<BlockModel> blockModelSupplier) {
+            clientSideOnly(() -> modelWithRegNamePath(blockModelSupplier.get()));
 
             return this;
         }
@@ -278,8 +278,8 @@ public class BlockRegister extends ForgeRegister<Block> {
          *
          * @param blockModel model for block.
          */
-        public BlockRegisterChain<B> genModelWithRegNamePath(BlockModel blockModel) {
-            clientSideOnly(() -> genModel(new BlockModelLocation(getModId(), getName()), blockModel));
+        public BlockRegisterChain<B> modelWithRegNamePath(BlockModel blockModel) {
+            clientSideOnly(() -> model(new BlockModelLocation(getModId(), getName()), blockModel));
 
             return this;
         }
@@ -290,8 +290,8 @@ public class BlockRegister extends ForgeRegister<Block> {
          * @param blockModelLocation location, where model will be located.
          * @param blockModelSupplier factory, which should return new BlockModel instance every time it's called.
          */
-        public BlockRegisterChain<B> genModel(BlockModelLocation blockModelLocation, Supplier<BlockModel> blockModelSupplier) {
-            clientSideOnly(() -> genModel(blockModelLocation, blockModelSupplier.get()));
+        public BlockRegisterChain<B> model(BlockModelLocation blockModelLocation, Supplier<BlockModel> blockModelSupplier) {
+            clientSideOnly(() -> model(blockModelLocation, blockModelSupplier.get()));
 
             return this;
         }
@@ -302,7 +302,7 @@ public class BlockRegister extends ForgeRegister<Block> {
          * @param blockModelLocation location, where model will be located.
          * @param blockModel         model for this block.
          */
-        public BlockRegisterChain<B> genModel(BlockModelLocation blockModelLocation, BlockModel blockModel) {
+        public BlockRegisterChain<B> model(BlockModelLocation blockModelLocation, BlockModel blockModel) {
             clientSideOnly(() -> resourceHolder.get().addBlockModel(blockModelLocation, blockModel));
 
             return this;
@@ -312,8 +312,8 @@ public class BlockRegister extends ForgeRegister<Block> {
          * Generates and loads the default blockstate json (with one model variant) and model (cube-all).
          * Requires texture with this path &lt;modid&gt;/textures/block/&lt;registry_key&gt;.png to be present
          */
-        public BlockRegisterChain<B> genDefaultStateAndModel() {
-            clientSideOnly(() -> genDefaultStateAndModel(new TextureLocation(getModId(), "block/" + getName())));
+        public BlockRegisterChain<B> oneVarStateAndCubeAllModel() {
+            clientSideOnly(() -> oneVarStateAndCubeAllModel(new TextureLocation(getModId(), "block/" + getName())));
 
             return this;
         }
@@ -323,10 +323,10 @@ public class BlockRegister extends ForgeRegister<Block> {
          *
          * @param textureLocation texture location, which block cube-all model will use for every side.
          */
-        public BlockRegisterChain<B> genDefaultStateAndModel(TextureLocation textureLocation) {
+        public BlockRegisterChain<B> oneVarStateAndCubeAllModel(TextureLocation textureLocation) {
             if (EnvironmentUtils.isOnPhysicalClient()) {
-                genModelWithRegNamePath(BlockModels.cubeAllModel(textureLocation));
-                genDefaultState(new BlockModelLocation(getModId(), getName()));
+                modelWithRegNamePath(BlockModels.cubeAllModel(textureLocation));
+                oneVariantState(new BlockModelLocation(getModId(), getName()));
             }
             return this;
         }
@@ -337,7 +337,7 @@ public class BlockRegister extends ForgeRegister<Block> {
          *
          * @param enName english localization location of block
          */
-        public BlockRegisterChain<B> genLangEntry(String enName) {
+        public BlockRegisterChain<B> name(String enName) {
             runTaskAfterRegistering(() -> BlockRegister.this.getLangGeneratorFacade().addBlockEntry(asRegistryObject().get(), enName));
             return this;
         }
@@ -346,7 +346,7 @@ public class BlockRegister extends ForgeRegister<Block> {
          * Runs task for current registrator directly after registering object.
          * Entry for {@link #asRegistryObject()} is already registered in this moment, so it can be retrieved inside this task.
          */
-        public BlockRegisterChain<B> addActionAfterRegistering(Consumer<BlockRegisterChain<B>> task) {
+        public BlockRegisterChain<B> doAfterRegistering(Consumer<BlockRegisterChain<B>> task) {
             runTaskAfterRegistering(() -> task.accept(this));
             return this;
         }
@@ -355,7 +355,7 @@ public class BlockRegister extends ForgeRegister<Block> {
          * Runs task for current registrator  on client setup.
          * Entry for {@link #asRegistryObject()} is already registered in this moment, so it can be retrieved inside this task.
          */
-        public BlockRegisterChain<B> addActionOnClientSetup(Consumer<BlockRegisterChain<B>> task) {
+        public BlockRegisterChain<B> onClientSetup(Consumer<BlockRegisterChain<B>> task) {
             runTaskOnClientSetup(() -> task.accept(this));
             return this;
         }
