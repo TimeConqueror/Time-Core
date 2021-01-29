@@ -335,7 +335,7 @@ public class BlockRegister extends ForgeRegister<Block> {
          * Adds block entry to {@link LangGeneratorFacade}, which will place all entries in en_us.json file upon {@link GatherDataEvent}.
          * Generator will generate entries only in {@code runData} launch mode.
          *
-         * @param enName english localization location of block
+         * @param enName english name of block
          */
         public BlockRegisterChain<B> name(String enName) {
             runAfterRegistering(() -> BlockRegister.this.getLangGeneratorFacade().addBlockEntry(asRegistryObject().get(), enName));

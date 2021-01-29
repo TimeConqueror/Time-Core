@@ -234,7 +234,7 @@ public class ItemRegister extends ForgeRegister<Item> {
          * Adds item entry to {@link LangGeneratorFacade}, which will place all entries in en_us.json file upon {@link GatherDataEvent}.
          * Generator will generate entries only in {@code runData} launch mode.
          *
-         * @param enName english localization location of item
+         * @param enName english name of item
          */
         public ItemRegisterChain<I> name(String enName) {
             if (EnvironmentUtils.isInDev()) {

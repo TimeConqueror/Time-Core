@@ -9,10 +9,13 @@ import net.minecraft.item.SpawnEggItem;
 import net.minecraft.world.gen.Heightmap;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.RegistryObject;
+import net.minecraftforge.fml.event.lifecycle.GatherDataEvent;
 import net.minecraftforge.registries.ForgeRegistries;
 import ru.timeconqueror.timecore.api.TimeMod;
 import ru.timeconqueror.timecore.api.client.resource.location.ItemModelLocation;
+import ru.timeconqueror.timecore.api.devtools.gen.lang.LangGeneratorFacade;
 import ru.timeconqueror.timecore.api.registry.util.AutoRegistrable;
+import ru.timeconqueror.timecore.api.util.EnvironmentUtils;
 
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -30,8 +33,8 @@ import java.util.function.Supplier;
  * <b>Features:</b>
  * If you need to register stuff,
  * your first step will be to call method
- * {@link #registerMob(String, EntityType.Builder, Supplier)},
- * {@link #registerLiving(String, EntityType.Builder, Supplier)} or
+ * {@link #registerMob(String, EntityType.Builder)},
+ * {@link #registerLiving(String, EntityType.Builder)} or
  * {@link #register(String, EntityType.Builder)}
  * depending on what entity you need to register.
  * Since this register has any extra available registering stuff, these methods will return Register Chain,
@@ -73,40 +76,36 @@ public class EntityRegister extends ForgeRegister<EntityType<?>> {
      * This method also returns {@link EntityRegisterChain} to provide extra methods, which you can apply to entry being registered.
      * All methods of {@link EntityRegisterChain} are optional.
      *
-     * @param attributes  entity attributes map with attributes as speed, max health, etc.
      * @param name        The item's name, will automatically have the modid as a namespace.
      * @param typeBuilder A builder for the entity type with provided settings.
      * @return A {@link EntityRegisterChain} for adding some extra stuff.
      * @see EntityRegisterChain
      */
-    public <T extends MobEntity> MobEntityRegisterChain<T> registerMob(String name, EntityType.Builder<T> typeBuilder, Supplier<AttributeModifierMap> attributes) {
-        EntityRegisterChain<T> chain = registerLiving(name, typeBuilder, attributes);
-        return new MobEntityRegisterChain<>(chain.holder, chain.type);
+    public <T extends MobEntity> MobRegisterChain<T> registerMob(String name, EntityType.Builder<T> typeBuilder) {
+        return new MobRegisterChain<>(registerLiving(name, typeBuilder));
     }
 
     /**
+     * Note: For {@link MobEntity} use {@link #registerMob(String, EntityType.Builder)}
+     * <p>
      * Adds living type to the queue, all entries from which will be registered later.
      * <p>
      * This method also returns {@link EntityRegisterChain} to provide extra methods, which you can apply to entry being registered.
      * All methods of {@link EntityRegisterChain} are optional.
      *
-     * @param attributes  entity attributes map with attributes as speed, max health, etc.
      * @param name        The item's name, will automatically have the modid as a namespace.
      * @param typeBuilder A builder for the entity type with provided settings.
      * @return A {@link EntityRegisterChain} for adding some extra stuff.
      * @see EntityRegisterChain
      */
-    public <T extends LivingEntity> EntityRegisterChain<T> registerLiving(String name, EntityType.Builder<T> typeBuilder, Supplier<AttributeModifierMap> attributes) {
-        EntityRegisterChain<T> chain = register(name, typeBuilder);
-
-        runOnCommonSetup(() -> GlobalEntityTypeAttributes.put(chain.holder.get(), attributes.get()));
-
-        return chain;
+    public <T extends LivingEntity> LivingRegisterChain<T> registerLiving(String name, EntityType.Builder<T> typeBuilder) {
+        EntityRegisterChain<T> chain = registerInternal(name, build(name, typeBuilder));
+        return new LivingRegisterChain<>(chain);
     }
 
     /**
-     * Note: For {@link MobEntity} use {@link #registerMob(String, EntityType.Builder, Supplier)}
-     * Note: For {@link LivingEntity} use {@link #registerLiving(String, EntityType.Builder, Supplier)}
+     * Note: For {@link MobEntity} use {@link #registerMob(String, EntityType.Builder)}
+     * Note: For {@link LivingEntity} use {@link #registerLiving(String, EntityType.Builder)}
      * <p>
      * Adds type to the queue, all entries from which will be registered later.
      * <p>
@@ -119,7 +118,25 @@ public class EntityRegister extends ForgeRegister<EntityType<?>> {
      * @see EntityRegisterChain
      */
     public <T extends Entity> EntityRegisterChain<T> register(String name, EntityType.Builder<T> typeBuilder) {
-        EntityType<T> type = typeBuilder.build(getModId() + ":" + name);
+        EntityType<T> type = build(name, typeBuilder);
+
+        if (type.getCategory() != EntityClassification.MISC) {
+            throw new IllegalArgumentException(String.format("Common entities can only have %s be equal to %s, but it currently has %s. If your entity is %s or %s, use #registerLiving or #registerMob instead.",
+                    EntityClassification.class.getName(),
+                    EntityClassification.MISC,
+                    LivingEntity.class.getName(),
+                    MobEntity.class.getName(),
+                    type.getCategory()));
+        }
+
+        return registerInternal(name, type);
+    }
+
+    private <T extends Entity> EntityType<T> build(String name, EntityType.Builder<T> builder) {
+        return builder.build(getModId() + ":" + name);
+    }
+
+    private <T extends Entity> EntityRegisterChain<T> registerInternal(String name, EntityType<T> type) {
         RegistryObject<EntityType<T>> holder = registerEntry(name, () -> type);
 
         return new EntityRegisterChain<>(holder, type);
@@ -191,6 +208,19 @@ public class EntityRegister extends ForgeRegister<EntityType<?>> {
         }
 
         /**
+         * Adds entity entry to {@link LangGeneratorFacade}, which will place all entries in en_us.json file upon {@link GatherDataEvent}.
+         * Generator will generate entries only in {@code runData} launch mode.
+         *
+         * @param enName english name of item
+         */
+        public EntityRegisterChain<T> name(String enName) {
+            if (EnvironmentUtils.isInDev()) {
+                runAfterRegistering(() -> EntityRegister.this.getLangGeneratorFacade().addEntityEntry(asRegistryObject().get(), enName));
+            }
+            return this;
+        }
+
+        /**
          * Returns the bound {@link EntityType}
          */
         public EntityType<T> retrieve() {
@@ -198,15 +228,34 @@ public class EntityRegister extends ForgeRegister<EntityType<?>> {
         }
     }
 
-    public class MobEntityRegisterChain<T extends MobEntity> extends EntityRegisterChain<T> {
-        protected MobEntityRegisterChain(RegistryObject<EntityType<T>> holder, EntityType<T> type) {
-            super(holder, type);
+    public class LivingRegisterChain<T extends LivingEntity> extends EntityRegisterChain<T> {
+        protected LivingRegisterChain(EntityRegisterChain<T> ancestor) {
+            super(ancestor.holder, ancestor.type);
+        }
+
+        /**
+         * Binds attribute map to the living type.
+         * Required for every living entity, which {@link EntityClassification} is not equal to {@link EntityClassification#MISC}
+         */
+        public LivingRegisterChain<T> attributes(Supplier<AttributeModifierMap> attributesSup) {
+            if (retrieve().getCategory() == EntityClassification.MISC) {
+                throw new UnsupportedOperationException(String.format("Entities with being %s equal to %s can't have attributes.", EntityClassification.class.getName(), EntityClassification.MISC));
+            }
+
+            runOnCommonSetup(() -> GlobalEntityTypeAttributes.put(retrieve(), attributesSup.get()));
+            return this;
+        }
+    }
+
+    public class MobRegisterChain<T extends MobEntity> extends LivingRegisterChain<T> {
+        protected MobRegisterChain(EntityRegisterChain<T> ancestor) {
+            super(ancestor);
         }
 
         /**
          * Sets up settings for spawning mob in world naturally
          */
-        public MobEntityRegisterChain<T> spawnSettings(EntitySpawnPlacementRegistry.PlacementType spawnType, Heightmap.Type heightMapType, EntitySpawnPlacementRegistry.IPlacementPredicate<T> spawnPredicate) {
+        public MobRegisterChain<T> spawnSettings(EntitySpawnPlacementRegistry.PlacementType spawnType, Heightmap.Type heightMapType, EntitySpawnPlacementRegistry.IPlacementPredicate<T> spawnPredicate) {
             runOnCommonSetup(() -> EntitySpawnPlacementRegistry.register(retrieve(), spawnType, heightMapType, spawnPredicate));
 
             return this;

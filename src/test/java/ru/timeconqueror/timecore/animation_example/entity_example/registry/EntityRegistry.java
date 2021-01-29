@@ -30,8 +30,9 @@ public class EntityRegistry {
             EntityType.Builder.of(FloroEntity::new, EntityClassification.MONSTER)
                     .setTrackingRange(80)
                     .setShouldReceiveVelocityUpdates(true)
-                    .sized(1, 2),
-            () -> FloroEntity.createAttributes().build())
+                    .sized(1, 2)
+    )
+            .attributes(() -> FloroEntity.createAttributes().build())
             .spawnEgg(0xFF00FF00, 0xFF000000, ItemGroup.TAB_MISC)
             .retrieve();
     public static final EntityType<FloroDirtProjectileEntity> FLORO_PROJ = REGISTER.register("floro_proj",
