@@ -22,7 +22,7 @@ public class FloroDirtProjectileEntity extends DamagingProjectileEntity implemen
     }
 
     public FloroDirtProjectileEntity(World world, LivingEntity thrower, float damage) {
-        super(EntityRegistry.FLORO_PROJECTILE_TYPE, world, thrower, damage);
+        super(EntityRegistry.FLORO_PROJ, world, thrower, damage);
     }
 
     @Override

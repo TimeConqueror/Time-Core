@@ -90,65 +90,69 @@ public class StructureRegister extends ForgeRegister<Structure<?>> {
         forgeBus.addListener(this::onWorldLoad);
     }
 
-    private void onCommonSetup(FMLCommonSetupEvent event) {
+    protected void onCommonSetup(FMLCommonSetupEvent event) {
+        super.onCommonSetup(event);
+
         event.enqueueWork(() -> {
-            ImmutableList.Builder<Structure<?>> noiseAffectedFeatures = ImmutableList.builder();
+            catchErrors("common setup event", () -> {
+                ImmutableList.Builder<Structure<?>> noiseAffectedFeatures = ImmutableList.builder();
 
 
-            structureInfoList.forEach(info -> {
-                Structure<?> structure = info.structure();
+                structureInfoList.forEach(info -> {
+                    Structure<?> structure = info.structure();
+
+                    /*
+                     * We need to add our structures into the map in Structure alongside vanilla
+                     * structures or else it will cause errors. Called by registerStructure.
+                     */
+                    Structure.STRUCTURES_REGISTRY.put(structure.getRegistryName().toString(), structure);
+
+                    if (info.props().transformSurroundingLand) {
+                        noiseAffectedFeatures.add(structure);
+                    }
+                });
+
+                Structure.NOISE_AFFECTING_FEATURES = noiseAffectedFeatures.addAll(Structure.NOISE_AFFECTING_FEATURES).build();
 
                 /*
-                 * We need to add our structures into the map in Structure alongside vanilla
-                 * structures or else it will cause errors. Called by registerStructure.
+                 * Adds the structure's spacing into several places so that the structure's spacing remains
+                 * correct in any dimension or worldtype instead of not spawning.
+                 *
+                 * However, it seems it doesn't always work for code made dimensions as they read from
+                 * this list beforehand. Use the WorldEvent.Load event in StructureTutorialMain to add
+                 * the structure spacing from this list into that dimension.
                  */
-                Structure.STRUCTURES_REGISTRY.put(structure.getRegistryName().toString(), structure);
+                DimensionStructuresSettings.DEFAULTS =
+                        ImmutableMap.<Structure<?>, StructureSeparationSettings>builder()
+                                .putAll(DimensionStructuresSettings.DEFAULTS)
+                                .putAll(structureInfoList.stream()
+                                        .collect(Collectors.<StructureInfo<?, ?>, Structure<?>, StructureSeparationSettings>
+                                                toMap(StructureInfo::structure, structureInfo -> structureInfo.separationSettings
+                                        )))
+                                .build();
 
-                if (info.props().transformSurroundingLand) {
-                    noiseAffectedFeatures.add(structure);
-                }
-            });
+                Registry<StructureFeature<?, ?>> registry = WorldGenRegistries.CONFIGURED_STRUCTURE_FEATURE;
 
-            Structure.NOISE_AFFECTING_FEATURES = noiseAffectedFeatures.addAll(Structure.NOISE_AFFECTING_FEATURES).build();
+                structureInfoList.forEach(structureInfo -> {
+                    structureInfo.setFeatureReadyToLoad();
+                    Registry.register(registry, new ResourceLocation(getModId(), "configured_" + structureInfo.regObject().getId()), structureInfo.getFeature());
 
-            /*
-             * Adds the structure's spacing into several places so that the structure's spacing remains
-             * correct in any dimension or worldtype instead of not spawning.
-             *
-             * However, it seems it doesn't always work for code made dimensions as they read from
-             * this list beforehand. Use the WorldEvent.Load event in StructureTutorialMain to add
-             * the structure spacing from this list into that dimension.
-             */
-            DimensionStructuresSettings.DEFAULTS =
-                    ImmutableMap.<Structure<?>, StructureSeparationSettings>builder()
-                            .putAll(DimensionStructuresSettings.DEFAULTS)
-                            .putAll(structureInfoList.stream()
-                                    .collect(Collectors.<StructureInfo<?, ?>, Structure<?>, StructureSeparationSettings>
-                                            toMap(StructureInfo::structure, structureInfo -> structureInfo.separationSettings
-                                    )))
-                            .build();
+                    // Ok so, this part may be hard to grasp but basically, just add your structure to this to
+                    // prevent any sort of crash or issue with other mod's custom ChunkGenerators. If they use
+                    // FlatGenerationSettings.STRUCTURES in it and you don't add your structure to it, the game
+                    // could crash later when you attempt to add the StructureSeparationSettings to the dimension.
+                    //
+                    // (It would also crash with superflat worldtype if you omit the below line
+                    //  and attempt to add the structure's StructureSeparationSettings to the world)
+                    //
+                    // Note: If you want your structure to spawn in superflat, remove the FlatChunkGenerator check
+                    // in StructureTutorialMain.addDimensionalSpacing and then create a superflat world, exit it,
+                    // and re-enter it and your structures will be spawning. I could not figure out why it needs
+                    // the restart but honestly, superflat is really buggy and shouldn't be your main focus in my opinion.
+                    FlatGenerationSettings.STRUCTURE_FEATURES.put(structureInfo.structure(), structureInfo.getFeature());
 
-            Registry<StructureFeature<?, ?>> registry = WorldGenRegistries.CONFIGURED_STRUCTURE_FEATURE;
-
-            structureInfoList.forEach(structureInfo -> {
-                structureInfo.setFeatureReadyToLoad();
-                Registry.register(registry, new ResourceLocation(getModId(), "configured_" + structureInfo.regObject().getId()), structureInfo.getFeature());
-
-                // Ok so, this part may be hard to grasp but basically, just add your structure to this to
-                // prevent any sort of crash or issue with other mod's custom ChunkGenerators. If they use
-                // FlatGenerationSettings.STRUCTURES in it and you don't add your structure to it, the game
-                // could crash later when you attempt to add the StructureSeparationSettings to the dimension.
-                //
-                // (It would also crash with superflat worldtype if you omit the below line
-                //  and attempt to add the structure's StructureSeparationSettings to the world)
-                //
-                // Note: If you want your structure to spawn in superflat, remove the FlatChunkGenerator check
-                // in StructureTutorialMain.addDimensionalSpacing and then create a superflat world, exit it,
-                // and re-enter it and your structures will be spawning. I could not figure out why it needs
-                // the restart but honestly, superflat is really buggy and shouldn't be your main focus in my opinion.
-                FlatGenerationSettings.STRUCTURE_FEATURES.put(structureInfo.structure(), structureInfo.getFeature());
-
-                structureInfo.tags.transferAndRemove(tags -> StructureTags.put(tags, structureInfo.structure()));
+                    structureInfo.tags.transferAndRemove(tags -> StructureTags.put(tags, structureInfo.structure()));
+                });
             });
         });
     }

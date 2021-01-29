@@ -174,7 +174,7 @@ public class BlockRegister extends ForgeRegister<Block> {
          * Sets render layer for this block.
          */
         public BlockRegisterChain<B> renderLayer(Supplier<? extends RenderType> renderTypeSup) {
-            runTaskOnClientSetup(() -> RenderTypeLookup.setRenderLayer(asRegistryObject().get(), renderTypeSup.get()));
+            runOnClientSetup(() -> RenderTypeLookup.setRenderLayer(asRegistryObject().get(), renderTypeSup.get()));
             return this;
         }
 
@@ -338,7 +338,7 @@ public class BlockRegister extends ForgeRegister<Block> {
          * @param enName english localization location of block
          */
         public BlockRegisterChain<B> name(String enName) {
-            runTaskAfterRegistering(() -> BlockRegister.this.getLangGeneratorFacade().addBlockEntry(asRegistryObject().get(), enName));
+            runAfterRegistering(() -> BlockRegister.this.getLangGeneratorFacade().addBlockEntry(asRegistryObject().get(), enName));
             return this;
         }
 
@@ -347,7 +347,7 @@ public class BlockRegister extends ForgeRegister<Block> {
          * Entry for {@link #asRegistryObject()} is already registered in this moment, so it can be retrieved inside this task.
          */
         public BlockRegisterChain<B> doAfterRegistering(Consumer<BlockRegisterChain<B>> task) {
-            runTaskAfterRegistering(() -> task.accept(this));
+            runAfterRegistering(() -> task.accept(this));
             return this;
         }
 
@@ -356,7 +356,7 @@ public class BlockRegister extends ForgeRegister<Block> {
          * Entry for {@link #asRegistryObject()} is already registered in this moment, so it can be retrieved inside this task.
          */
         public BlockRegisterChain<B> doOnClientSetup(Consumer<BlockRegisterChain<B>> task) {
-            runTaskOnClientSetup(() -> task.accept(this));
+            runOnClientSetup(() -> task.accept(this));
             return this;
         }
 

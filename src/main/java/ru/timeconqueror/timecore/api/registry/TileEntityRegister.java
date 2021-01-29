@@ -159,6 +159,6 @@ public class TileEntityRegister extends ForgeRegister<TileEntityType<?>> {
 
     @OnlyIn(Dist.CLIENT)
     private static <T extends TileEntity> void regCustomRenderer(TileEntityRegister register, RegistryObject<TileEntityType<T>> registryObject, Supplier<Function<? super TileEntityRendererDispatcher, TileEntityRenderer<? super T>>> rendererFactory) {
-        register.runTaskOnClientSetup(() -> ClientRegistry.bindTileEntityRenderer(registryObject.get(), dispatcher -> new ProfiledTileEntityRenderer<>(dispatcher, rendererFactory.get())));
+        register.runOnClientSetup(() -> ClientRegistry.bindTileEntityRenderer(registryObject.get(), dispatcher -> new ProfiledTileEntityRenderer<>(dispatcher, rendererFactory.get())));
     }
 }

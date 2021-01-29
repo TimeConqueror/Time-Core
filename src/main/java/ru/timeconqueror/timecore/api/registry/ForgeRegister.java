@@ -9,10 +9,12 @@ import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
+import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 import ru.timeconqueror.timecore.api.util.EnvironmentUtils;
 import ru.timeconqueror.timecore.api.util.Pair;
+import ru.timeconqueror.timecore.api.util.Temporal;
 import ru.timeconqueror.timecore.api.util.Wrapper;
 
 import java.util.ArrayList;
@@ -24,8 +26,9 @@ import java.util.function.Supplier;
 public abstract class ForgeRegister<T extends IForgeRegistryEntry<T>> extends TimeRegister {
     private final IForgeRegistry<T> registry;
     private Map<RegistryObject<T>, Supplier<T>> entries = new HashMap<>();
-    private List<Runnable> clientRunnables = new ArrayList<>();
-    private List<Runnable> regEventRunnables = new ArrayList<>();
+    private final Temporal<List<Runnable>> clientSetupTasks = Temporal.of(new ArrayList<>(), "You attempted to access client-setup tasks after " + FMLClientSetupEvent.class.getName() + " has been fired.");
+    private final Temporal<List<Runnable>> regEventTasks = Temporal.of(new ArrayList<>(), "You attempted to access register tasks after " + RegistryEvent.Register.class.getName() + " has been fired.");
+    private final Temporal<List<Runnable>> commonSetupTasks = Temporal.of(new ArrayList<>(), "You attempted to access common-setup tasks after " + FMLCommonSetupEvent.class.getName() + " has been fired.");
 
     public ForgeRegister(IForgeRegistry<T> reg, String modid) {
         super(modid);
@@ -46,24 +49,26 @@ public abstract class ForgeRegister<T extends IForgeRegistryEntry<T>> extends Ti
         return holder;
     }
 
-    protected void runTaskOnClientSetup(Runnable runnable) {
+    protected void runOnClientSetup(Runnable task) {
         if (EnvironmentUtils.isOnPhysicalClient()) {
-            Preconditions.checkNotNull(clientRunnables, "You attempted to call this method after FMLClientSetupEvent has been fired.");
-            clientRunnables.add(runnable);
+            clientSetupTasks.get().add(task);
         }
     }
 
-    protected void runTaskAfterRegistering(Runnable runnable) {
-        Preconditions.checkNotNull(regEventRunnables, "You attempted to call this method after RegistryEvent.Register has been fired.");
+    protected void runOnCommonSetup(Runnable task) {
+        commonSetupTasks.get().add(task);
+    }
 
-        regEventRunnables.add(runnable);
+    protected void runAfterRegistering(Runnable task) {
+        regEventTasks.get().add(task);
     }
 
     @Override
     public void regToBus(IEventBus modEventBus) {
         super.regToBus(modEventBus);
         modEventBus.register(new EventDispatcher());
-        modEventBus.addListener(EventPriority.LOWEST, this::onClientInit);
+        modEventBus.addListener(EventPriority.LOWEST, this::onClientSetup);
+        modEventBus.addListener(this::onCommonSetup);
     }
 
     private void onAllRegEvent(RegistryEvent.Register<? extends IForgeRegistryEntry<?>> event) {
@@ -91,15 +96,18 @@ public abstract class ForgeRegister<T extends IForgeRegistryEntry<T>> extends Ti
 
         entries = null;
 
-        catchErrors("finishing register event of type " + registry.getRegistrySuperType(), () -> regEventRunnables.forEach(Runnable::run));
-
-        regEventRunnables = null;
+        catchErrors("finishing register event of type " + registry.getRegistrySuperType(), () -> regEventTasks.remove().forEach(Runnable::run));
     }
 
-    protected void onClientInit(FMLClientSetupEvent event) {
+    protected void onClientSetup(FMLClientSetupEvent event) {
         event.enqueueWork(() -> {
-            catchErrors("client setup event", () -> clientRunnables.forEach(Runnable::run));
-            clientRunnables = null;
+            catchErrors("client setup event", () -> clientSetupTasks.remove().forEach(Runnable::run));
+        });
+    }
+
+    protected void onCommonSetup(FMLCommonSetupEvent event) {
+        event.enqueueWork(() -> {
+            catchErrors("common setup event", () -> commonSetupTasks.remove().forEach(Runnable::run));
         });
     }
 

@@ -118,7 +118,7 @@ public class ItemRegister extends ForgeRegister<Item> {
      * Adds entry in provided {@code entrySup} to the queue, all entries from which will be registered later.
      * <p>
      * This method also returns {@link ItemRegisterChain} to provide extra methods, which you can apply to entry being registered.
-     * All method of {@link ItemRegisterChain} are optional.
+     * All methods of {@link ItemRegisterChain} are optional.
      *
      * @param name     The item's name, will automatically have the modid as a namespace.
      * @param entrySup A factory for the new item, it should return a new instance every time it is called.
@@ -238,7 +238,7 @@ public class ItemRegister extends ForgeRegister<Item> {
          */
         public ItemRegisterChain<I> name(String enName) {
             if (EnvironmentUtils.isInDev()) {
-                runTaskAfterRegistering(() -> ItemRegister.this.getLangGeneratorFacade().addItemEntry(asRegistryObject().get(), enName));
+                runAfterRegistering(() -> ItemRegister.this.getLangGeneratorFacade().addItemEntry(asRegistryObject().get(), enName));
             }
             return this;
         }
@@ -257,7 +257,7 @@ public class ItemRegister extends ForgeRegister<Item> {
          */
         public ItemRegisterChain<I> nameArmorByMaterial(String materialEnName) {
             if (EnvironmentUtils.isInDev()) {
-                runTaskAfterRegistering(() -> {
+                runAfterRegistering(() -> {
                     Item item = asRegistryObject().get();
                     if (item instanceof ArmorItem) {
                         ItemRegister.this.getLangGeneratorFacade().addArmorEntryByMaterial((ArmorItem) item, materialEnName);
@@ -281,7 +281,7 @@ public class ItemRegister extends ForgeRegister<Item> {
          * @throws IllegalArgumentException if it is called for Items, that don't extend {@link ArmorItem}
          */
         public ItemRegisterChain<I> nameArmor(String enName) {
-            runTaskAfterRegistering(() -> {
+            runAfterRegistering(() -> {
                 Item item = asRegistryObject().get();
                 if (item instanceof ArmorItem) {
                     ItemRegister.this.getLangGeneratorFacade().addArmorEntry((ArmorItem) item, enName);
@@ -297,7 +297,7 @@ public class ItemRegister extends ForgeRegister<Item> {
          * Entry for {@link #asRegistryObject()} is already registered in this moment, so it can be retrieved inside this task.
          */
         public ItemRegisterChain<I> doAfterRegister(Consumer<ItemRegisterChain<I>> task) {
-            runTaskAfterRegistering(() -> task.accept(this));
+            runAfterRegistering(() -> task.accept(this));
             return this;
         }
 
@@ -306,7 +306,7 @@ public class ItemRegister extends ForgeRegister<Item> {
          * Entry for {@link #asRegistryObject()} is already registered in this moment, so it can be retrieved inside this task.
          */
         public ItemRegisterChain<I> doOnClientSetup(Consumer<ItemRegisterChain<I>> task) {
-            runTaskOnClientSetup(() -> task.accept(this));
+            runOnClientSetup(() -> task.accept(this));
             return this;
         }
     }
