@@ -1,13 +1,12 @@
 package ru.timeconqueror.timecore.api.registry;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.*;
 import net.minecraft.entity.ai.attributes.AttributeModifierMap;
 import net.minecraft.entity.ai.attributes.GlobalEntityTypeAttributes;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.SpawnEggItem;
+import net.minecraft.world.gen.Heightmap;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -30,7 +29,10 @@ import java.util.function.Supplier;
  *
  * <b>Features:</b>
  * If you need to register stuff,
- * your first step will be to call method {@link #register(String, EntityType.Builder)} or {@link #registerLiving(String, EntityType.Builder, Supplier)}
+ * your first step will be to call method
+ * {@link #registerMob(String, EntityType.Builder, Supplier)},
+ * {@link #registerLiving(String, EntityType.Builder, Supplier)} or
+ * {@link #register(String, EntityType.Builder)}
  * depending on what entity you need to register.
  * Since this register has any extra available registering stuff, these methods will return Register Chain,
  * which will have extra methods to apply.
@@ -66,7 +68,24 @@ public class EntityRegister extends ForgeRegister<EntityType<?>> {
     }
 
     /**
-     * Adds type to the queue, all entries from which will be registered later.
+     * Adds mob type to the queue, all entries from which will be registered later.
+     * <p>
+     * This method also returns {@link EntityRegisterChain} to provide extra methods, which you can apply to entry being registered.
+     * All methods of {@link EntityRegisterChain} are optional.
+     *
+     * @param attributes  entity attributes map with attributes as speed, max health, etc.
+     * @param name        The item's name, will automatically have the modid as a namespace.
+     * @param typeBuilder A builder for the entity type with provided settings.
+     * @return A {@link EntityRegisterChain} for adding some extra stuff.
+     * @see EntityRegisterChain
+     */
+    public <T extends MobEntity> EntityRegisterChain<T> registerMob(String name, EntityType.Builder<T> typeBuilder, Supplier<AttributeModifierMap> attributes) {
+        EntityRegisterChain<T> chain = registerLiving(name, typeBuilder, attributes);
+        return new MobEntityRegisterChain<>(chain.holder, chain.type);
+    }
+
+    /**
+     * Adds living type to the queue, all entries from which will be registered later.
      * <p>
      * This method also returns {@link EntityRegisterChain} to provide extra methods, which you can apply to entry being registered.
      * All methods of {@link EntityRegisterChain} are optional.
@@ -86,6 +105,7 @@ public class EntityRegister extends ForgeRegister<EntityType<?>> {
     }
 
     /**
+     * Note: For {@link MobEntity} use {@link #registerMob(String, EntityType.Builder, Supplier)}
      * Note: For {@link LivingEntity} use {@link #registerLiving(String, EntityType.Builder, Supplier)}
      * <p>
      * Adds type to the queue, all entries from which will be registered later.
@@ -175,6 +195,21 @@ public class EntityRegister extends ForgeRegister<EntityType<?>> {
          */
         public EntityType<T> retrieve() {
             return type;
+        }
+    }
+
+    public class MobEntityRegisterChain<T extends MobEntity> extends EntityRegisterChain<T> {
+        protected MobEntityRegisterChain(RegistryObject<EntityType<T>> holder, EntityType<T> type) {
+            super(holder, type);
+        }
+
+        /**
+         * Sets up settings for spawning mob in world naturally
+         */
+        public MobEntityRegisterChain<T> spawnSetting(EntitySpawnPlacementRegistry.PlacementType spawnType, Heightmap.Type heightMapType, EntitySpawnPlacementRegistry.IPlacementPredicate<T> spawnPredicate) {
+            runOnCommonSetup(() -> EntitySpawnPlacementRegistry.register(retrieve(), spawnType, heightMapType, spawnPredicate));
+
+            return this;
         }
     }
 }
