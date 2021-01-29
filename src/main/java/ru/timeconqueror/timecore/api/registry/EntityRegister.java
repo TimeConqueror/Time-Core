@@ -121,12 +121,12 @@ public class EntityRegister extends ForgeRegister<EntityType<?>> {
         EntityType<T> type = build(name, typeBuilder);
 
         if (type.getCategory() != EntityClassification.MISC) {
-            throw new IllegalArgumentException(String.format("Common entities can only have %s be equal to %s, but it currently has %s. If your entity is %s or %s, use #registerLiving or #registerMob instead.",
+            throw new IllegalArgumentException(String.format("Common entities can only have %s being equal to %s, but it currently has %s. If your entity is %s or %s, use #registerLiving or #registerMob instead.",
                     EntityClassification.class.getName(),
                     EntityClassification.MISC,
+                    type.getCategory(),
                     LivingEntity.class.getName(),
-                    MobEntity.class.getName(),
-                    type.getCategory()));
+                    MobEntity.class.getName()));
         }
 
         return registerInternal(name, type);
