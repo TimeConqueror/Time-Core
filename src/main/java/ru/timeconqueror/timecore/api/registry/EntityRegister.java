@@ -79,7 +79,7 @@ public class EntityRegister extends ForgeRegister<EntityType<?>> {
      * @return A {@link EntityRegisterChain} for adding some extra stuff.
      * @see EntityRegisterChain
      */
-    public <T extends MobEntity> EntityRegisterChain<T> registerMob(String name, EntityType.Builder<T> typeBuilder, Supplier<AttributeModifierMap> attributes) {
+    public <T extends MobEntity> MobEntityRegisterChain<T> registerMob(String name, EntityType.Builder<T> typeBuilder, Supplier<AttributeModifierMap> attributes) {
         EntityRegisterChain<T> chain = registerLiving(name, typeBuilder, attributes);
         return new MobEntityRegisterChain<>(chain.holder, chain.type);
     }
@@ -206,7 +206,7 @@ public class EntityRegister extends ForgeRegister<EntityType<?>> {
         /**
          * Sets up settings for spawning mob in world naturally
          */
-        public MobEntityRegisterChain<T> spawnSetting(EntitySpawnPlacementRegistry.PlacementType spawnType, Heightmap.Type heightMapType, EntitySpawnPlacementRegistry.IPlacementPredicate<T> spawnPredicate) {
+        public MobEntityRegisterChain<T> spawnSettings(EntitySpawnPlacementRegistry.PlacementType spawnType, Heightmap.Type heightMapType, EntitySpawnPlacementRegistry.IPlacementPredicate<T> spawnPredicate) {
             runOnCommonSetup(() -> EntitySpawnPlacementRegistry.register(retrieve(), spawnType, heightMapType, spawnPredicate));
 
             return this;
