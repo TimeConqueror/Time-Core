@@ -82,8 +82,6 @@ public class StructureRegister extends ForgeRegister<Structure<?>> {
     public void regToBus(IEventBus bus) {
         super.regToBus(bus);
 
-        bus.addListener(this::onCommonSetup);
-
         IEventBus forgeBus = MinecraftForge.EVENT_BUS;
 
         forgeBus.addListener(this::onBiomeLoad);
@@ -135,7 +133,7 @@ public class StructureRegister extends ForgeRegister<Structure<?>> {
 
                 structureInfoList.forEach(structureInfo -> {
                     structureInfo.setFeatureReadyToLoad();
-                    Registry.register(registry, new ResourceLocation(getModId(), "configured_" + structureInfo.regObject().getId()), structureInfo.getFeature());
+                    Registry.register(registry, new ResourceLocation(getModId(), "configured_" + structureInfo.regObject().getId().getPath()), structureInfo.getFeature());
 
                     // Ok so, this part may be hard to grasp but basically, just add your structure to this to
                     // prevent any sort of crash or issue with other mod's custom ChunkGenerators. If they use
