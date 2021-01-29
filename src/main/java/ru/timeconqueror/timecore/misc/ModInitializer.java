@@ -61,7 +61,7 @@ public class ModInitializer {
                         try {
                             containerClass = Class.forName(containerClassName);
                         } catch (Throwable e) {
-                            throw new RuntimeException(String.format("There was an exception while trying to load %s", containerClassName));
+                            throw new RuntimeException(String.format("There was an exception while trying to load %s", containerClassName), e);
                         }
 
                         if (annotationData.getAnnotationType().equals(TIME_AUTO_REG_TYPE)) {
