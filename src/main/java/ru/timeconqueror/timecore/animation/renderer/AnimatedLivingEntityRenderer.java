@@ -25,4 +25,9 @@ public abstract class AnimatedLivingEntityRenderer<T extends LivingEntity & Anim
 
         matrixStackIn.translate(0, 1.501F, 0);//Mojang, WTF???
     }
+
+    //copy from MobRenderer to prevent default name showing
+    protected boolean shouldShowName(T entityIn) {
+        return super.shouldShowName(entityIn) && (entityIn.shouldShowName() || entityIn.hasCustomName() && entityIn == this.entityRenderDispatcher.crosshairPickEntity);
+    }
 }
