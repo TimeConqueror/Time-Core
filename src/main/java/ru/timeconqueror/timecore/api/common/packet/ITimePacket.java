@@ -63,7 +63,7 @@ public interface ITimePacket {
         @NotNull
         @SuppressWarnings("ConstantConditions")
         default World getWorld(NetworkEvent.Context ctx) {
-            return ctx.getDirection().getReceptionSide() == LogicalSide.CLIENT ? Hacks.bypassClassChecking(Minecraft.getInstance().level) : ctx.getSender().level;
+            return ctx.getDirection().getReceptionSide() == LogicalSide.CLIENT ? Hacks.safeCast(Minecraft.getInstance().level) : ctx.getSender().level;
         }
     }
 }

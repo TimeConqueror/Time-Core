@@ -155,7 +155,7 @@ public class EntityRegister extends ForgeRegister<EntityType<?>> {
             super(holder);
             this.type = type;
         }
-
+//TODO add enName for spawn eggs
         /**
          * Registers simple spawn egg ({@link SpawnEggItem}) with name {@code spawn_$entityName} with default properties.
          * Automatically adds default json model for it.
