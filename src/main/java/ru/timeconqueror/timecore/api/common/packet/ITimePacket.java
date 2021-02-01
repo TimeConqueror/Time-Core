@@ -1,6 +1,5 @@
 package ru.timeconqueror.timecore.api.common.packet;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.LogicalSide;
@@ -8,7 +7,7 @@ import net.minecraftforge.fml.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
 import ru.timeconqueror.timecore.TimeCore;
 import ru.timeconqueror.timecore.api.util.EnvironmentUtils;
-import ru.timeconqueror.timecore.api.util.Hacks;
+import ru.timeconqueror.timecore.api.util.client.ClientProxy;
 
 import java.io.IOException;
 import java.util.function.Supplier;
@@ -63,7 +62,7 @@ public interface ITimePacket {
         @NotNull
         @SuppressWarnings("ConstantConditions")
         default World getWorld(NetworkEvent.Context ctx) {
-            return ctx.getDirection().getReceptionSide() == LogicalSide.CLIENT ? Hacks.safeCast(Minecraft.getInstance().level) : ctx.getSender().level;
+            return ctx.getDirection().getReceptionSide() == LogicalSide.CLIENT ? ClientProxy.world() : ctx.getSender().level;
         }
     }
 }

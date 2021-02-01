@@ -6,7 +6,7 @@ import net.minecraft.world.World;
 import ru.timeconqueror.timecore.api.util.Hacks;
 
 /**
- * Safe alternatives to common client stuff, which will only crash if you use it on the wrong side.
+ * Safe alternatives to client stuff, which will only crash if you use it on the wrong side.
  * It won't crash upon class loading.
  */
 public class ClientProxy {
