@@ -43,6 +43,7 @@ public interface ITimePacket {
         /**
          * Handles received packet.
          * If packet was sent from wrong side, it MUSTN'T be handled due to possible exploits. This method solves this problem.
+         * Is called from the main thread, so you don't need to enqueue actions within it.
          *
          * @return true if packet is handled (came from right side) or false if not
          */

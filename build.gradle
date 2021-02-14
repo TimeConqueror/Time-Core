@@ -166,7 +166,7 @@ dependencies {
             def modreference = "lib:$modartifact:$modversion"
 
             dependencies {
-                runtimeOnly fg.deobf(project.dependencies.create(modreference) {
+                implementation fg.deobf(project.dependencies.create(modreference) {
                     transitive = false
                 })
             }

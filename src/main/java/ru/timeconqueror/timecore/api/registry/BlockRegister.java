@@ -173,8 +173,8 @@ public class BlockRegister extends ForgeRegister<Block> {
         /**
          * Sets render layer for this block.
          */
-        public BlockRegisterChain<B> renderLayer(Supplier<? extends RenderType> renderTypeSup) {
-            runOnClientSetup(() -> RenderTypeLookup.setRenderLayer(asRegistryObject().get(), renderTypeSup.get()));
+        public BlockRegisterChain<B> renderLayer(Supplier<RenderTypeWrapper> renderTypeSup) {
+            clientSideOnly(() -> RenderTypeLookup.setRenderLayer(asRegistryObject().get(), renderTypeSup.get().get()));
             return this;
         }
 
@@ -370,6 +370,21 @@ public class BlockRegister extends ForgeRegister<Block> {
         public BlockRegisterChain<B> also(Consumer<BlockRegisterChain<B>> multipleSettings) {
             multipleSettings.accept(this);
             return this;
+        }
+    }
+
+    /**
+     * Hacky workaround, which allows to reference to render type from both sides without crashing with {@link NoClassDefFoundError}
+     */
+    public static class RenderTypeWrapper {
+        private final RenderType rt;
+
+        public RenderTypeWrapper(RenderType rt) {
+            this.rt = rt;
+        }
+
+        private RenderType get() {
+            return rt;
         }
     }
 }

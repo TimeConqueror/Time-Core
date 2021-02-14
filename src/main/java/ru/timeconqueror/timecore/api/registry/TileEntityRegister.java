@@ -129,7 +129,7 @@ public class TileEntityRegister extends ForgeRegister<TileEntityType<?>> {
      * Adds entry in provided {@code entrySup} to the queue, all entries from which will be registered later.
      * <p>
      * This method also returns {@link TileEntityRegisterChain} to provide extra methods, which you can apply to entry being registered.
-     * All method of {@link TileEntityRegisterChain} are optional.
+     * All methods of {@link TileEntityRegisterChain} are optional.
      *
      * @param name              The tile type's name, will automatically have the modid as a namespace.
      * @param tileEntityFactory A factory for the new tile, it should return a new instance every time it is called.
