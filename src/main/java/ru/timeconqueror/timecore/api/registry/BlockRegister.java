@@ -174,7 +174,7 @@ public class BlockRegister extends ForgeRegister<Block> {
          * Sets render layer for this block.
          */
         public BlockRegisterChain<B> renderLayer(Supplier<RenderTypeWrapper> renderTypeSup) {
-            clientSideOnly(() -> RenderTypeLookup.setRenderLayer(asRegistryObject().get(), renderTypeSup.get().get()));
+            runOnClientSetup(() -> RenderTypeLookup.setRenderLayer(asRegistryObject().get(), renderTypeSup.get().get()));
             return this;
         }
 
