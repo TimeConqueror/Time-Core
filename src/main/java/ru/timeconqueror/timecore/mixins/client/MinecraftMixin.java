@@ -9,13 +9,13 @@ import ru.timeconqueror.timecore.mod.common.config.MainConfig;
 
 @Mixin(Minecraft.class)
 public class MinecraftMixin {
-
-    @ModifyVariable(method = "doLoadLevel",
+    @ModifyVariable(method = "loadWorld",
             at = @At(
                     value = "STORE",
                     ordinal = 0
             ),
-            index = 11)
+            index = 13, // flag1
+            remap = false)
     private boolean suppressExperimentalWarning(boolean containsExperimentalFeatures) {
         if (containsExperimentalFeatures) {
             TimeCore.LOGGER.info("The world contains experimental features.");
