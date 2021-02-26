@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Stack;
 import java.util.function.Function;
 import java.util.function.Supplier;
-
+//TODO move addDefaultValueToComment & autoGenLangKey to settings
 /**
  * Improved builder which automatically adds lang keys, comments while building config properties.
  * Also it has a support of auto extendable lang prefixes.
@@ -77,7 +77,14 @@ public class ImprovedConfigBuilder extends ForgeConfigSpec.Builder {
         IConfigValueEditable valueEditable = (IConfigValueEditable) value;
 
 
-        if (defValueToComment) commentAdditions.add("Default: " + value.getDefault());
+        if (defValueToComment) {
+            Object defaultVal = value.getDefault();
+            if (defaultVal instanceof Enum) {
+                commentAdditions.add("Default: " + ((Enum) defaultVal).name());//TODO unhardcode
+            } else {
+                commentAdditions.add("Default: " + defaultVal);
+            }
+        }
 
         commentAdditions.forEach(valueEditable::addLineToComment);
         commentAdditions.clear();
