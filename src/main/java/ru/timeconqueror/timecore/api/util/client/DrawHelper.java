@@ -6,6 +6,7 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.vector.Matrix4f;
+import net.minecraft.util.math.vector.Vector3f;
 import org.lwjgl.opengl.GL11;
 import ru.timeconqueror.timecore.api.util.Requirements;
 
@@ -417,9 +418,9 @@ public class DrawHelper {
     }
 
     /**
-     * Adds filled bounding box to renderToBuffer buffer.
+     * Adds filled bounding box to provider vertex builder.
      * <p>
-     * Provided builder should have {@link DefaultVertexFormats#POSITION_COLOR} mode and {@link GL11#GL_QUADS} renderToBuffer type.
+     * Provided builder should have {@link DefaultVertexFormats#POSITION_COLOR} mode and {@link GL11#GL_QUADS} render type.
      */
     public static void drawFilledBoundingBox(MatrixStack matrixStack, IVertexBuilder builder, AxisAlignedBB bb, int argbColor) {
         float red = getRed(argbColor) / 255F;
@@ -465,6 +466,64 @@ public class DrawHelper {
         builder.vertex(matrix, minX, minY, maxZ).color(red, green, blue, alpha).endVertex();//5
         builder.vertex(matrix, maxX, minY, maxZ).color(red, green, blue, alpha).endVertex();//6
         builder.vertex(matrix, maxX, maxY, maxZ).color(red, green, blue, alpha).endVertex();//7
+    }
+
+    /**
+     * Adds line to renderToBuffer buffer.
+     * <p>
+     * Provided builder should have {@link DefaultVertexFormats#POSITION_COLOR} mode and {@link GL11#GL_LINES} render type.
+     *
+     * @param builder builder to which add vertices
+     * @param stack   matrix stack
+     * @param vec1    start vector
+     * @param vec2    end vector
+     * @param argb    color
+     */
+    public static void drawLine(IVertexBuilder builder, MatrixStack stack, Vector3f vec1, Vector3f vec2, int argb) {
+        drawLine(builder, stack, vec1.x(), vec1.y(), vec1.z(), vec2.x(), vec2.y(), vec2.z(), argb);
+    }
+
+    /**
+     * Adds line to renderToBuffer buffer.
+     * <p>
+     * Provided builder should have {@link DefaultVertexFormats#POSITION_COLOR} mode and {@link GL11#GL_LINES} render type.
+     *
+     * @param builder builder to which add vertices
+     * @param stack   matrix stack
+     * @param x0      start x coord
+     * @param y0      start y coord
+     * @param z0      start z coord
+     * @param x1      start x coord
+     * @param y1      start y coord
+     * @param z1      start z coord
+     * @param argb    color
+     */
+    public static void drawLine(IVertexBuilder builder, MatrixStack stack, float x0, float y0, float z0, float x1, float y1, float z1, int argb) {
+        drawLine(builder, stack, x0, y0, z0, x1, y1, z1, getRed(argb), getGreen(argb), getBlue(argb), getAlpha(argb));
+    }
+
+    /**
+     * Adds line to renderToBuffer buffer.
+     * <p>
+     * Provided builder should have {@link DefaultVertexFormats#POSITION_COLOR} mode and {@link GL11#GL_LINES} render type.
+     *
+     * @param builder builder to which add vertices
+     * @param stack   matrix stack
+     * @param x0      start x coord
+     * @param y0      start y coord
+     * @param z0      start z coord
+     * @param x1      start x coord
+     * @param y1      start y coord
+     * @param z1      start z coord
+     * @param r       red channel color. Range: [0, 255]
+     * @param g       green channel color. Range: [0, 255]
+     * @param b       blue channel color. Range: [0, 255]
+     * @param a       alpha channel color. Range: [0, 255]
+     */
+    public static void drawLine(IVertexBuilder builder, MatrixStack stack, float x0, float y0, float z0, float x1, float y1, float z1, int r, int g, int b, int a) {
+        Matrix4f pose = stack.last().pose();
+        builder.vertex(pose, x0, y0, z0).color(r, g, b, a).endVertex();
+        builder.vertex(pose, x1, y1, z1).color(r, g, b, a).endVertex();
     }
 
     public static class TexturedRect {
