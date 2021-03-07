@@ -1,8 +1,7 @@
 package ru.timeconqueror.timecore.api.client.resource;
 
 import ru.timeconqueror.timecore.api.client.resource.location.TextureLocation;
-
-import static ru.timeconqueror.timecore.api.client.resource.JSONTimeResource.*;
+import ru.timeconqueror.timecore.client.resource.InternalBlockModels;
 
 public class BlockModels {
     /**
@@ -14,16 +13,7 @@ public class BlockModels {
      * @see TextureLocation
      */
     public static BlockModel cubeOrientableModel(TextureLocation topBottomTexture, TextureLocation frontTexture, TextureLocation sideTexture) {
-        String json =
-                object(null, listOf(
-                        property("parent", "block/orientable"),
-                        object("textures", listOf(
-                                property("top", topBottomTexture.toString()),
-                                property("front", frontTexture.toString()),
-                                property("side", sideTexture.toString())
-                        ))
-                ));
-        return new BlockModel(json);
+        return InternalBlockModels.INSTANCE.cubeOrientable(topBottomTexture, frontTexture, sideTexture);
     }
 
     /**
@@ -32,13 +22,7 @@ public class BlockModels {
      * @see TextureLocation
      */
     public static BlockModel cubeAllModel(TextureLocation texture) {
-        String json = object(null, listOf(
-                property("parent", "block/cube_all"),
-                object("textures", listOf(
-                        property("all", texture.toString())
-                ))
-        ));
-        return new BlockModel(json);
+        return InternalBlockModels.INSTANCE.cubeAll(texture);
     }
 
     /**
@@ -50,15 +34,7 @@ public class BlockModels {
      * @see TextureLocation
      */
     public static BlockModel cubeBottomTopModel(TextureLocation textureTop, TextureLocation textureSide, TextureLocation textureBottom) {
-        String json = object(null, listOf(
-                property("parent", "block/cube_bottom_top"),
-                object("textures", listOf(
-                        property("top", textureTop.toString()),
-                        property("side", textureSide.toString()),
-                        property("bottom", textureBottom.toString())
-                ))
-        ));
-        return new BlockModel(json);
+        return InternalBlockModels.INSTANCE.cubeBottomTop(textureTop, textureSide, textureBottom);
     }
 
     /**
@@ -69,14 +45,7 @@ public class BlockModels {
      * @see TextureLocation
      */
     public static BlockModel cubeTopModel(TextureLocation textureTop, TextureLocation textureSideAndBottom) {
-        String json = object(null, listOf(
-                property("parent", "block/cube_top"),
-                object("textures", listOf(
-                        property("top", textureTop.toString()),
-                        property("side", textureSideAndBottom.toString())
-                ))
-        ));
-        return new BlockModel(json);
+        return InternalBlockModels.INSTANCE.cubeTop(textureTop, textureSideAndBottom);
     }
 
     /**
@@ -87,14 +56,7 @@ public class BlockModels {
      * @see TextureLocation
      */
     public static BlockModel cubeColumnModel(TextureLocation textureTopAndBottom, TextureLocation textureSide) {
-        String json = object(null, listOf(
-                property("parent", "block/cube_column"),
-                object("textures", listOf(
-                        property("end", textureTopAndBottom.toString()),
-                        property("side", textureSide.toString())
-                ))
-        ));
-        return new BlockModel(json);
+        return InternalBlockModels.INSTANCE.cubeColumn(textureTopAndBottom, textureSide);
     }
 
     /**
@@ -103,37 +65,22 @@ public class BlockModels {
      * @see TextureLocation
      */
     public static BlockModel crossModel(TextureLocation textureCross) {
-        String json = object(null, listOf(
-                property("parent", "block/cross"),
-                object("textures", listOf(
-                        property("cross", textureCross.toString())
-                ))
-        ));
-        return new BlockModel(json);
+        return InternalBlockModels.INSTANCE.cross(textureCross);
     }
 
     public static BlockModel stairsModel(TextureLocation bottom, TextureLocation top, TextureLocation side) {
-        return stairsModel("block/stairs", bottom, top, side);
+        return InternalBlockModels.INSTANCE.stairs(bottom, top, side);
     }
 
     public static BlockModel stairsInnerModel(TextureLocation bottom, TextureLocation top, TextureLocation side) {
-        return stairsModel("block/inner_stairs", bottom, top, side);
+        return InternalBlockModels.INSTANCE.stairsInner(bottom, top, side);
     }
 
     public static BlockModel stairsOuterModel(TextureLocation bottom, TextureLocation top, TextureLocation side) {
-        return stairsModel("block/outer_stairs", bottom, top, side);
+        return InternalBlockModels.INSTANCE.stairsOuter(bottom, top, side);
     }
 
-    private static BlockModel stairsModel(String parent, TextureLocation bottom, TextureLocation top, TextureLocation side) {
-        return new BlockModel(
-                object(null, listOf(
-                        property("parent", parent),
-                        object("textures", listOf(
-                                property("bottom", bottom.toString()),
-                                property("top", top.toString()),
-                                property("side", side.toString())
-                        ))
-                ))
-        );
+    public static BlockModel empty() {
+        return InternalBlockModels.INSTANCE.empty();
     }
 }
