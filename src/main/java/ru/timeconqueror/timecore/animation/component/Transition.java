@@ -306,13 +306,13 @@ public class Transition extends Animation {
         }
 
         public void apply(TimeModelRenderer piece, AnimationLayer layer, int existingTime) {
-            Vector3f interpolated = interpolate(rotations.getA(), rotations.getB(), existingTime);
+            Vector3f interpolated = interpolate(rotations.left(), rotations.right(), existingTime);
             AnimationUtils.applyRotation(piece, layer, interpolated);
 
-            interpolated = interpolate(positions.getA(), positions.getB(), existingTime);
+            interpolated = interpolate(positions.left(), positions.right(), existingTime);
             AnimationUtils.applyOffset(piece, layer, interpolated);
 
-            interpolated = interpolate(scales.getA(), scales.getB(), existingTime);
+            interpolated = interpolate(scales.left(), scales.right(), existingTime);
             AnimationUtils.applyScale(piece, layer, interpolated);
         }
     }

@@ -4,7 +4,7 @@ import net.minecraft.util.math.BlockPos;
 
 import java.util.Iterator;
 
-public class BlockUtils {
+public class BlockPosUtils {
 
     /**
      * Creates iterator for provided area.

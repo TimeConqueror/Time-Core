@@ -78,8 +78,8 @@ public class BoneOption {
 
     @NotNull
     static Vector3f calcCurrentVectorFor(Animation animation, @NotNull Pair<KeyFrame, KeyFrame> keyPair, Vector3f defaultStartVec, int existingTime) {
-        KeyFrame start = keyPair.getA();
-        KeyFrame end = keyPair.getB();
+        KeyFrame start = keyPair.left();
+        KeyFrame end = keyPair.right();
 
         Vector3f startVec;
         Vector3f endVec;
