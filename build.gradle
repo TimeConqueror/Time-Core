@@ -148,8 +148,6 @@ sourceSets.main.resources { srcDir 'src/generated/resources' }
 configurations {
     // configuration that holds jars to include in the jar
     implementation.extendsFrom(shade)
-
-    implementation.extendsFrom(handledImplementation)
 }
 
 dependencies {
@@ -170,14 +168,10 @@ dependencies {
         }
     }
 
-//    shade 'org.jetbrains:annotations:18.0.0'
+    shade 'org.jetbrains:annotations:20.1.0'
 
     shade "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
     shade "org.jetbrains.kotlin:kotlin-reflect"
-
-    handledImplementation("org.spongepowered:mixin:0.8") {
-        transitive = false
-    }
 }
 
 // Example for how to get properties into the manifest for reading by the runtime..
