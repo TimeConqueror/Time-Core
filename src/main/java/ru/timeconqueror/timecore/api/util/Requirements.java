@@ -1,6 +1,8 @@
 package ru.timeconqueror.timecore.api.util;
 
 import com.google.common.base.Preconditions;
+import net.minecraft.world.World;
+import ru.timeconqueror.timecore.api.exception.IllegalSideException;
 
 public class Requirements {
     public static void inRangeInclusive(int number, int min, int max) {
@@ -82,6 +84,28 @@ public class Requirements {
     public static <T> void notEmpty(T[] arr) {
         if (arr.length == 0) {
             throw new IllegalStateException("Provided array is empty.");
+        }
+    }
+
+    /**
+     * Requires code to be called only on server side.
+     *
+     * @throws IllegalSideException if is called on client side.
+     */
+    public static void onServer(World world) {
+        if (world.isClientSide()) {
+            IllegalSideException.notOnServer();
+        }
+    }
+
+    /**
+     * Requires code to be called only on client side.
+     *
+     * @throws IllegalSideException if is called on server side.
+     */
+    public static void onClient(World world) {
+        if (!world.isClientSide()) {
+            IllegalSideException.notOnClient();
         }
     }
 }
