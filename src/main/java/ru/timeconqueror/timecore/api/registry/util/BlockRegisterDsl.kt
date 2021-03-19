@@ -1,20 +1,31 @@
 package ru.timeconqueror.timecore.api.registry.util
 
 import net.minecraft.block.Block
+import net.minecraftforge.fml.RegistryObject
 import ru.timeconqueror.timecore.api.client.resource.BlockStateResource
 import ru.timeconqueror.timecore.api.client.resource.location.BlockModelLocation
 import ru.timeconqueror.timecore.api.client.resource.location.TextureLocation
 import ru.timeconqueror.timecore.api.registry.BlockRegister
 import ru.timeconqueror.timecore.api.registry.BlockRegister.BlockRegisterChain
 
-class BlockRegisterContext(val register: BlockRegister) {
-    infix fun <B : Block> String.represents(entrySupplier: () -> B): BlockChainContext<B> {
+operator fun BlockRegister.invoke(block: BlockRegisterContext<Block>.() -> Unit) {
+    block(BlockRegisterContext(this))
+}
+
+class BlockRegisterContext<B : Block>(val register: BlockRegister, private val chainConfigurator: ChainConfigurator<B>? = null) {
+    fun <E : B> groupSettings(groupConfigurator: ChainConfigurator<E>): BlockGroupContext<E> {
+        return BlockGroupContext(register, groupConfigurator)
+    }
+
+    infix fun <E : B> String.represents(entrySupplier: () -> E): BlockChainContext<E> {
         val chain = register.register(this, entrySupplier)
         return BlockChainContext(chain)
     }
 
-    infix fun <B : Block> BlockChainContext<B>.with(settings: BlockRegisterChain<B>.() -> Unit) {
+    infix fun <E : B> BlockChainContext<E>.with(settings: ChainConfigurator<E>): RegistryObject<E> {
+        chainConfigurator?.invoke(chain)
         chain.also { settings(it) }
+        return chain.asRegistryObject()
     }
 
     var BlockRegisterChain<*>.state: BlockStateResource
@@ -45,9 +56,13 @@ class BlockRegisterContext(val register: BlockRegister) {
 }
 
 class BlockChainContext<B : Block>(val chain: BlockRegisterChain<B>)
+typealias ChainConfigurator<B> = BlockRegisterChain<out B>.() -> Unit
 
-operator fun BlockRegister.invoke(block: BlockRegisterContext.() -> Unit) {
-    block(BlockRegisterContext(this))
+class BlockGroupContext<B : Block>(private val register: BlockRegister, private val chainConfigurator: ChainConfigurator<B>) {
+    infix fun applyFor(blockRegistrator: BlockRegisterContext<B>.() -> Unit) {
+        val blockRegisterContext = BlockRegisterContext(register, this.chainConfigurator)
+        blockRegistrator.invoke(blockRegisterContext)
+    }
 }
 
 val BlockRegisterChain<*>.defaultBml: BlockModelLocation get() = RegisterUtils.defaultBml(this)
