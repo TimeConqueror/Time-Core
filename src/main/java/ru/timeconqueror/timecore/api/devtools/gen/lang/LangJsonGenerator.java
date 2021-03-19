@@ -113,7 +113,7 @@ public class LangJsonGenerator {
         out.put(START_MARK, "");
         sectionMap.forEach((s, langSection) -> {
             if (!langSection.isEmpty()) {
-                out.put("_comment", langSection.getComment());
+//                out.put("_comment", langSection.getComment()); //sorry, gson doesn't allow it :c
                 langSection.sendEntries(out);
             }
         });
