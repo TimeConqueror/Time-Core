@@ -12,9 +12,8 @@ public class AnimationLoader {
             return new JsonAnimationParser().parseAnimations(location);
         } catch (Throwable e) {
             TimeCore.LOGGER.error("Can't load animation " + location.toString(), e);
+            throw new RuntimeException(e);
         }
-
-        throw new RuntimeException();//TODO add empty list with dummy animation
     }
 
     public static Animation loadAnimation(ResourceLocation location) {
