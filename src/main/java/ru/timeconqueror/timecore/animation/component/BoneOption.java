@@ -44,7 +44,7 @@ public class BoneOption {
      * <table>
      *     <tr><th>Result</th><th>Predicate</th></tr>
      *     <tr><td>null</td><td>if frames are null</td></tr>
-     *     <tr><td>Pair.of(null, firstFrame)</td><td>f time has not yet reached the first frame's one</td></tr>
+     *     <tr><td>Pair.of(null, firstFrame)</td><td>if time has not yet reached the first frame's one</td></tr>
      *     <tr><td>Pair.of(startFrame, endFrame)</td><td>if existing time is within these frames' time bounds</td></tr>
      *     <tr><td>Pair.of(lastFrame, null)</td><td>if existing time is behind time bounds of last frame</td></tr>
      * </table>
@@ -54,7 +54,7 @@ public class BoneOption {
      * @return start and end keyframes for provided animation time
      */
     @Nullable
-    static Pair<KeyFrame, KeyFrame> findKeyFrames(List<KeyFrame> frames, long existingTime) {
+    static Pair<KeyFrame, KeyFrame> findKeyFrames(@Nullable List<KeyFrame> frames, long existingTime) {
         if (frames == null) return null;
 
 //        if(frames.size() == 1) return new Pair<>(frames.get(0), null);
@@ -62,13 +62,13 @@ public class BoneOption {
         for (int i = 0; i < frames.size(); i++) {
             KeyFrame keyFrame = frames.get(i);
 
-            if (i == 0 && keyFrame.getStartTime() > existingTime) {
+            if (i == 0 && keyFrame.getTime() > existingTime) {
                 return Pair.of(null, keyFrame);
             } else if (i == frames.size() - 1) {
                 return Pair.of(keyFrame, null);
             }
 
-            if (keyFrame.getStartTime() <= existingTime && frames.get(i + 1).getStartTime() > existingTime) {
+            if (keyFrame.getTime() <= existingTime && frames.get(i + 1).getTime() > existingTime) {
                 return Pair.of(keyFrame, frames.get(i + 1));
             }
         }
@@ -91,7 +91,7 @@ public class BoneOption {
             startTime = 0;
         } else {
             startVec = start.getVec();
-            startTime = start.getStartTime();
+            startTime = start.getTime();
         }
 
         if (end == null) {
@@ -99,7 +99,7 @@ public class BoneOption {
             endTime = animation.getLength();
         } else {
             endVec = end.getVec();
-            endTime = end.getStartTime();
+            endTime = end.getTime();
         }
 
         return interpolate(startVec, endVec, startTime, endTime, existingTime);

@@ -302,7 +302,7 @@ public class Transition extends Animation {
         }
 
         private static Vector3f interpolate(KeyFrame start, KeyFrame end, int existingTime) {
-            return BoneOption.interpolate(start.getVec(), end.getVec(), start.getStartTime(), end.getStartTime(), existingTime);
+            return BoneOption.interpolate(start.getVec(), end.getVec(), start.getTime(), end.getTime(), existingTime);
         }
 
         public void apply(TimeModelRenderer piece, AnimationLayer layer, int existingTime) {

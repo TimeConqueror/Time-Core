@@ -6,11 +6,11 @@ public class KeyFrame {
     /**
      * in ms
      */
-    private final int startTime;
+    private final int time;
     private final Vector3f vec;
 
-    public KeyFrame(int startTime, Vector3f vec) {
-        this.startTime = startTime;
+    public KeyFrame(int time, Vector3f vec) {
+        this.time = time;
         this.vec = vec;
     }
 
@@ -18,15 +18,15 @@ public class KeyFrame {
         return new KeyFrame(startTime, modelIdleVec);
     }
 
-    public int getStartTime() {
-        return startTime;
+    public int getTime() {
+        return time;
     }
 
     public Vector3f getVec() {
         return vec;
     }
 
-    public KeyFrame withNewStartTime(int startTime) {
-        return new KeyFrame(startTime, vec);
+    public KeyFrame withNewTime(int time) {
+        return new KeyFrame(time, vec);
     }
 }

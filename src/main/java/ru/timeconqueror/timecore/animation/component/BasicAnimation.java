@@ -122,8 +122,8 @@ public class BasicAnimation extends Animation {
 
     private List<KeyFrame> reverseKeyFrames(List<KeyFrame> keyFrames) {
         return keyFrames.stream()
-                .sorted(Collections.reverseOrder(Comparator.comparingInt(KeyFrame::getStartTime)))
-                .map(keyFrame -> new KeyFrame(length - keyFrame.getStartTime(), keyFrame.getVec()))
+                .sorted(Collections.reverseOrder(Comparator.comparingInt(KeyFrame::getTime)))
+                .map(keyFrame -> new KeyFrame(length - keyFrame.getTime(), keyFrame.getVec()))
                 .collect(Collectors.toList());
     }
 
@@ -147,8 +147,8 @@ public class BasicAnimation extends Animation {
         private static KeyFrame calcEndKeyFrame(@Nullable List<KeyFrame> destKeyFrames, Vector3f modelIdleVec, int transitionTime /*may cause flicking? maybe -1?*/) {
             if (destKeyFrames != null && !destKeyFrames.isEmpty()) {
                 KeyFrame keyFrame = destKeyFrames.get(0);
-                if (keyFrame.getStartTime() == 0) {
-                    return keyFrame.withNewStartTime(transitionTime);
+                if (keyFrame.getTime() == 0) {
+                    return keyFrame.withNewTime(transitionTime);
                 }
             }
 
