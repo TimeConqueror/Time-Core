@@ -37,6 +37,7 @@ public class BoneOption {
         this.scales = scales;
     }
 
+
     /**
      * Finds start and end keyframes for provided animation time.
      * <p>
@@ -108,9 +109,9 @@ public class BoneOption {
     static Vector3f interpolate(Vector3f start, Vector3f end, int startTime, int endTime, int existingTime) {
         float factor = endTime - startTime == 0 ? 1 : (existingTime - startTime) / (float) (endTime - startTime);
 
-        float outX = MathUtils.interpolate(factor, start.x(), end.x());
-        float outY = MathUtils.interpolate(factor, start.y(), end.y());
-        float outZ = MathUtils.interpolate(factor, start.z(), end.z());
+        float outX = MathUtils.lerp(factor, start.x(), end.x());
+        float outY = MathUtils.lerp(factor, start.y(), end.y());
+        float outZ = MathUtils.lerp(factor, start.z(), end.z());
 
         return new Vector3f(outX, outY, outZ);
     }

@@ -46,7 +46,7 @@ public class MathUtils {
      * @param start  start point, can be also more than end
      * @param end    end point, can be also less than end
      */
-    public static float interpolate(float factor, float start, float end) {
+    public static float lerp(float factor, float start, float end) {
         return start + factor * (end - start);
     }
 
@@ -58,7 +58,7 @@ public class MathUtils {
      * @param start  start point, can be also more than end
      * @param end    end point, can be also less than end
      */
-    public static double interpolate(double factor, double start, double end) {
+    public static double lerp(double factor, double start, double end) {
         return start + factor * (end - start);
     }
 
