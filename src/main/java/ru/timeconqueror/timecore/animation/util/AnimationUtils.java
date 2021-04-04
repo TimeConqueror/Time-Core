@@ -15,9 +15,9 @@ public class AnimationUtils {
         rotationIn.mul(layer.getWeight());
 
         if (blendType == BlendType.OVERRIDE) {
-            piece.xRot = piece.startRotationAngles.x() + rotationIn.x();
-            piece.yRot = piece.startRotationAngles.y() + rotationIn.y();
-            piece.zRot = piece.startRotationAngles.z() + rotationIn.z();
+            piece.xRot = piece.startRotationRadians.x() + rotationIn.x();
+            piece.yRot = piece.startRotationRadians.y() + rotationIn.y();
+            piece.zRot = piece.startRotationRadians.z() + rotationIn.z();
         } else if (blendType == BlendType.ADDING) {
             piece.xRot += rotationIn.x();
             piece.yRot += rotationIn.y();

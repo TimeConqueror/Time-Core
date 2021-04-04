@@ -3,6 +3,7 @@ package ru.timeconqueror.timecore.animation.component;
 import net.minecraft.util.math.vector.Vector3f;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import ru.timeconqueror.timecore.animation.calculation.KeyFrameInterpolator;
 import ru.timeconqueror.timecore.animation.util.AnimationUtils;
 import ru.timeconqueror.timecore.api.animation.Animation;
 import ru.timeconqueror.timecore.api.animation.AnimationLayer;
@@ -54,7 +55,7 @@ public class BoneOption {
      * @param existingTime animation's existing time
      * @return start and end keyframes for provided animation time
      */
-    @Nullable
+    @Nullable//TODO check if needed for transitions
     static Pair<KeyFrame, KeyFrame> findKeyFrames(@Nullable List<KeyFrame> frames, long existingTime) {
         if (frames == null) return null;
 
@@ -77,7 +78,7 @@ public class BoneOption {
         return null;
     }
 
-    @NotNull
+    @NotNull//TODO check if needed for transitions
     static Vector3f calcCurrentVectorFor(Animation animation, @NotNull Pair<KeyFrame, KeyFrame> keyPair, Vector3f defaultStartVec, int existingTime) {
         KeyFrame start = keyPair.left();
         KeyFrame end = keyPair.right();
@@ -106,6 +107,7 @@ public class BoneOption {
         return interpolate(startVec, endVec, startTime, endTime, existingTime);
     }
 
+    //TODO check if needed for transitions
     static Vector3f interpolate(Vector3f start, Vector3f end, int startTime, int endTime, int existingTime) {
         float factor = endTime - startTime == 0 ? 1 : (existingTime - startTime) / (float) (endTime - startTime);
 
@@ -117,22 +119,19 @@ public class BoneOption {
     }
 
     public void apply(Animation animation, AnimationLayer layer, TimeModelRenderer piece, int existingTime) {
-        Pair<KeyFrame, KeyFrame> keyPair = findKeyFrames(rotations, existingTime);
-        if (keyPair != null) {
-            Vector3f rotateVec = calcCurrentVectorFor(animation, keyPair, new Vector3f(0, 0, 0), existingTime);
+        Vector3f rotateVec = KeyFrameInterpolator.calc(animation, rotations, new Vector3f(0, 0, 0), existingTime);
+        if (rotateVec != null) {
             AnimationUtils.applyRotation(piece, layer, rotateVec);
         }
 
-        keyPair = findKeyFrames(positions, existingTime);
-        if (keyPair != null) {
-            Vector3f posVec = calcCurrentVectorFor(animation, keyPair, piece.offset, existingTime);
+        Vector3f posVec = KeyFrameInterpolator.calc(animation, positions, piece.offset, existingTime);
+        if (posVec != null) {
             AnimationUtils.applyOffset(piece, layer, posVec);
         }
 
-        keyPair = findKeyFrames(scales, existingTime);
-        if (keyPair != null) {
-            Vector3f currentScale = piece.getScaleFactor();
-            Vector3f scaleVec = calcCurrentVectorFor(animation, keyPair, currentScale, existingTime);
+        Vector3f currentScale = piece.getScaleFactor();
+        Vector3f scaleVec = KeyFrameInterpolator.calc(animation, scales, currentScale, existingTime);
+        if (scaleVec != null) {
             AnimationUtils.applyScale(piece, layer, scaleVec);
         }
     }

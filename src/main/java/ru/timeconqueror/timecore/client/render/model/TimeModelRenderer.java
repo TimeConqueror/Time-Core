@@ -15,13 +15,13 @@ public class TimeModelRenderer extends ModelRenderer {
     private final Vector3f scaleFactor = new Vector3f(1, 1, 1);
     public List<TimeModelBox> cubes;
     public Vector3f offset = new Vector3f();
-    public Vector3f startRotationAngles;
+    public Vector3f startRotationRadians;
     private final String name;
 
     public TimeModelRenderer(TimeModel model, Vector3f rotationAngles, String name, @NotNull List<TimeModelBox> cubes, boolean neverRender) {
         super(model);
         this.name = name;
-        startRotationAngles = rotationAngles;
+        startRotationRadians = rotationAngles;
         this.xRot = rotationAngles.x();
         this.yRot = rotationAngles.y();
         this.zRot = rotationAngles.z();
@@ -85,9 +85,9 @@ public class TimeModelRenderer extends ModelRenderer {
     }
 
     private void resetData() {
-        xRot = startRotationAngles.x();
-        yRot = startRotationAngles.y();
-        zRot = startRotationAngles.z();
+        xRot = startRotationRadians.x();
+        yRot = startRotationRadians.y();
+        zRot = startRotationRadians.z();
 
         offset.set(0, 0, 0);
         scaleFactor.set(1, 1, 1);

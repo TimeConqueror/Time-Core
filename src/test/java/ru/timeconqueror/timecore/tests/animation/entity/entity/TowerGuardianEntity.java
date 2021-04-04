@@ -24,13 +24,18 @@ public class TowerGuardianEntity extends MonsterEntity implements AnimatedObject
         super(type, world);
 
         animationSystem = AnimationSystemBuilder.forEntity(this, world, builder ->
-                builder.addLayer(LAYER_WALKING, BlendType.ADDING, 1F), predefinedAnimations ->
-                predefinedAnimations.setWalkingAnimation(new AnimationStarter(EntityAnimations.towerGuardianWalk).setSpeed(3F), LAYER_WALKING));
+                builder.addLayer(LAYER_WALKING, BlendType.OVERRIDE, 1F), predefinedAnimations ->
+                predefinedAnimations.setIdleAnimation(new AnimationStarter(EntityAnimations.towerGuardianWalk).setSpeed(1F), LAYER_WALKING));
     }
 
     @Override
     public @NotNull AnimationSystem<TowerGuardianEntity> getSystem() {
         return animationSystem;
+    }
+
+    @Override
+    protected void registerGoals() {
+//        goalSelector.addGoal(0, new WaterAvoidingRandomWalkingGoal(this, 1.0D));//mutex 1
     }
 
     public static AttributeModifierMap.MutableAttribute createAttributes() {

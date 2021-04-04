@@ -189,4 +189,20 @@ public class MathUtils {
     public static double distSqr(Vector3i vec, Entity entity) {
         return vec.distSqr(entity.getX(), entity.getY(), entity.getZ(), true);
     }
+
+    public static float toRadians(float degrees) {
+        return degrees / 180.0F * (float) Math.PI;
+    }
+
+    public static float toDegrees(float radians) {
+        return radians * 180.0F / (float) Math.PI;
+    }
+
+    public static double toRadians(double degrees) {
+        return Math.toRadians(degrees);
+    }
+
+    public static double toDegrees(double radians) {
+        return Math.toDegrees(radians);
+    }
 }
