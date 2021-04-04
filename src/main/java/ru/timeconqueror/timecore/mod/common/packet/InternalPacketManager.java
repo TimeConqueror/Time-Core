@@ -23,6 +23,8 @@ public class InternalPacketManager {
             .regPacket(S2CStartAnimationMsg.class, new S2CStartAnimationMsg.Handler(), NetworkDirection.PLAY_TO_CLIENT)
             .regPacket(S2CEndAnimationMsg.class, new S2CEndAnimationMsg.Handler(), NetworkDirection.PLAY_TO_CLIENT)
             .regPacket(S2CSyncAnimationsMsg.class, new S2CSyncAnimationsMsg.Handler(), NetworkDirection.PLAY_TO_CLIENT)
+            .regPacket(CoffeeCapabilityDataMsg.class, CoffeeCapabilityDataMsg.Handler.INSTANCE, NetworkDirection.PLAY_TO_CLIENT)
+            .regPacket(CoffeeCapabilityDataMsg.class, CoffeeCapabilityDataMsg.Handler.INSTANCE, NetworkDirection.PLAY_TO_SERVER)
             .asChannel();
 
     public static <MSG> void sendToPlayer(ServerPlayerEntity player, MSG message) {

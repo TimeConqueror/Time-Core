@@ -12,6 +12,7 @@ import ru.timeconqueror.timecore.api.Markers;
 import ru.timeconqueror.timecore.api.TimeMod;
 import ru.timeconqueror.timecore.api.reflection.ReflectionHelper;
 import ru.timeconqueror.timecore.api.util.EnvironmentUtils;
+import ru.timeconqueror.timecore.common.capability.CoffeeCapabilityManager;
 import ru.timeconqueror.timecore.devtools.StructureRevealer;
 
 @Mod(TimeCore.MODID)//todo add null check in ObjectHolder
@@ -22,10 +23,14 @@ public final class TimeCore implements TimeMod {
 
     private static final String MARKER_PROPERTY = "timecore.logging.markers";
 
+    private final CoffeeCapabilityManager capabilityManager;
+
     public TimeCore() {
         INSTANCE = this;
 
         checkForMixinBootstrap();
+
+        capabilityManager = new CoffeeCapabilityManager();
 
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::onConstruct);
@@ -44,6 +49,7 @@ public final class TimeCore implements TimeMod {
 
     private void setup(final FMLCommonSetupEvent event) {
         ReflectionHelper.initClass(StructureRevealer.class);
+        capabilityManager.addDefaultAttachers();
     }
 
     private static void checkForMixinBootstrap() {
@@ -56,4 +62,7 @@ public final class TimeCore implements TimeMod {
         }
     }
 
+    public CoffeeCapabilityManager getCapabilityManager() {
+        return capabilityManager;
+    }
 }
