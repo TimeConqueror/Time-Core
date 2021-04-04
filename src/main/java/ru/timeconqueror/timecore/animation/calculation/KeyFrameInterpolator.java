@@ -29,12 +29,47 @@ public class KeyFrameInterpolator {
     }
 
     @Nullable
-    public static Vector3f calc(Animation animation, List<KeyFrame> frames, Vector3f defaultStartVec, int existingTime) {
-        return new KeyFrameInterpolator(animation, frames, defaultStartVec, existingTime).calc();
+    public static Vector3f findInterpolationVec(Animation animation, List<KeyFrame> frames, Vector3f defaultStartVec, int existingTime) {
+        return new KeyFrameInterpolator(animation, frames, defaultStartVec, existingTime).findInterpolationVec();
+    }
+
+    public static Vector3f interpolateLinear(Animation animation, KeyFrame before, KeyFrame after, Vector3f defaultStartVec, int existingTime) {
+        Vector3f startVec;
+        Vector3f endVec;
+        int startTime;
+        int endTime;
+
+        if (before == null) {
+            startVec = defaultStartVec;
+            startTime = 0;
+        } else {
+            startVec = before.getVec();
+            startTime = before.getTime();
+        }
+
+        if (after == null) {
+            endVec = startVec;
+            endTime = animation.getLength();
+        } else {
+            endVec = after.getVec();
+            endTime = after.getTime();
+        }
+
+        return lerp(startVec, endVec, startTime, endTime, existingTime);
+    }
+
+    public static Vector3f lerp(Vector3f start, Vector3f end, int startTime, int endTime, int existingTime) {
+        float factor = MathUtils.percentage(existingTime, startTime, endTime);
+
+        float outX = MathUtils.lerp(factor, start.x(), end.x());
+        float outY = MathUtils.lerp(factor, start.y(), end.y());
+        float outZ = MathUtils.lerp(factor, start.z(), end.z());
+
+        return new Vector3f(outX, outY, outZ);
     }
 
     @Nullable
-    private Vector3f calc() {
+    private Vector3f findInterpolationVec() {
         if (frames == null || frames.isEmpty()) return null;
 
         findKeyFrames(frames, existingTime);
@@ -43,7 +78,7 @@ public class KeyFrameInterpolator {
         if (smoothInterpolation) {
             return interpolateSmoothly();
         } else {
-            return interpolateLinear();
+            return interpolateLinear(animation, before, after, defaultStartVec, existingTime);
         }
     }
 
@@ -148,40 +183,5 @@ public class KeyFrameInterpolator {
         float t3 = t * t2;
 
         return (2 * p1 - 2 * p2 + v0 + v1) * t3 + (-3 * p1 + 3 * p2 - 2 * v0 - v1) * t2 + v0 * t + p1;
-    }
-
-    private Vector3f interpolateLinear() {
-        Vector3f startVec;
-        Vector3f endVec;
-        int startTime;
-        int endTime;
-
-        if (before == null) {
-            startVec = defaultStartVec;
-            startTime = 0;
-        } else {
-            startVec = before.getVec();
-            startTime = before.getTime();
-        }
-
-        if (after == null) {
-            endVec = startVec;
-            endTime = animation.getLength();
-        } else {
-            endVec = after.getVec();
-            endTime = after.getTime();
-        }
-
-        return lerp(startVec, endVec, startTime, endTime, existingTime);
-    }
-
-    private static Vector3f lerp(Vector3f start, Vector3f end, int startTime, int endTime, int existingTime) {
-        float factor = MathUtils.percentage(existingTime, startTime, endTime);
-
-        float outX = MathUtils.lerp(factor, start.x(), end.x());
-        float outY = MathUtils.lerp(factor, start.y(), end.y());
-        float outZ = MathUtils.lerp(factor, start.z(), end.z());
-
-        return new Vector3f(outX, outY, outZ);
     }
 }

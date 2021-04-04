@@ -5,6 +5,7 @@ import net.minecraft.util.math.vector.Vector3f;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ru.timeconqueror.timecore.TimeCore;
+import ru.timeconqueror.timecore.animation.calculation.KeyFrameInterpolator;
 import ru.timeconqueror.timecore.api.animation.Animation;
 import ru.timeconqueror.timecore.api.animation.AnimationLayer;
 import ru.timeconqueror.timecore.api.client.render.model.ITimeModel;
@@ -134,11 +135,8 @@ public class BasicAnimation extends Animation {
 
         private static KeyFrame calcStartKeyFrame(BasicAnimation sourceAnimation, @Nullable List<KeyFrame> sourceKeyFrames, Vector3f modelIdleVec, int existingTime) {
             if (sourceKeyFrames != null) {
-                Pair<KeyFrame, KeyFrame> keyPair = BoneOption.findKeyFrames(sourceKeyFrames, existingTime);
-                if (keyPair != null) {
-                    Vector3f vec = BoneOption.calcCurrentVectorFor(sourceAnimation, keyPair, modelIdleVec, existingTime);
-                    return new KeyFrame(0, vec);
-                }
+                Vector3f vec = KeyFrameInterpolator.findInterpolationVec(sourceAnimation, sourceKeyFrames, modelIdleVec, existingTime);
+                if (vec != null) return new KeyFrame(0, vec);
             }
 
             return KeyFrame.createIdleKeyFrame(0, modelIdleVec);

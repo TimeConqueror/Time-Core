@@ -5,6 +5,7 @@ import net.minecraft.util.math.vector.Vector3f;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ru.timeconqueror.timecore.TimeCore;
+import ru.timeconqueror.timecore.animation.calculation.KeyFrameInterpolator;
 import ru.timeconqueror.timecore.animation.util.AnimationUtils;
 import ru.timeconqueror.timecore.api.animation.Animation;
 import ru.timeconqueror.timecore.api.animation.AnimationLayer;
@@ -237,9 +238,9 @@ public class Transition extends Animation {
             super(source);
         }
 
-        private static KeyFrame calcStartKeyFrame(Animation sourceAnimation, @Nullable Pair<KeyFrame, KeyFrame> sourceKeyFrames, Vector3f modelIdleVec, int existingTime) {
-            if (sourceKeyFrames != null) {
-                Vector3f vec = BoneOption.calcCurrentVectorFor(sourceAnimation, sourceKeyFrames, modelIdleVec, existingTime);
+        private static KeyFrame calcStartKeyFrame(Animation sourceAnimation, @Nullable Pair<KeyFrame, KeyFrame> sourceFrames, Vector3f modelIdleVec, int existingTime) {
+            if (sourceFrames != null) {
+                Vector3f vec = KeyFrameInterpolator.interpolateLinear(sourceAnimation, sourceFrames.left(), sourceFrames.right(), modelIdleVec, existingTime);
                 return new KeyFrame(0, vec);
             }
 
@@ -301,18 +302,18 @@ public class Transition extends Animation {
             this.scales = scales;
         }
 
-        private static Vector3f interpolate(KeyFrame start, KeyFrame end, int existingTime) {
-            return BoneOption.interpolate(start.getVec(), end.getVec(), start.getTime(), end.getTime(), existingTime);
+        private static Vector3f lerp(KeyFrame start, KeyFrame end, int existingTime) {
+            return KeyFrameInterpolator.lerp(start.getVec(), end.getVec(), start.getTime(), end.getTime(), existingTime);
         }
 
         public void apply(TimeModelRenderer piece, AnimationLayer layer, int existingTime) {
-            Vector3f interpolated = interpolate(rotations.left(), rotations.right(), existingTime);
+            Vector3f interpolated = lerp(rotations.left(), rotations.right(), existingTime);
             AnimationUtils.applyRotation(piece, layer, interpolated);
 
-            interpolated = interpolate(positions.left(), positions.right(), existingTime);
+            interpolated = lerp(positions.left(), positions.right(), existingTime);
             AnimationUtils.applyOffset(piece, layer, interpolated);
 
-            interpolated = interpolate(scales.left(), scales.right(), existingTime);
+            interpolated = lerp(scales.left(), scales.right(), existingTime);
             AnimationUtils.applyScale(piece, layer, interpolated);
         }
     }
