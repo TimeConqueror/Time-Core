@@ -1,6 +1,5 @@
 package ru.timeconqueror.timecore.api.registry;
 
-import com.google.common.base.Preconditions;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
@@ -11,13 +10,12 @@ import net.minecraftforge.fml.network.NetworkRegistry;
 import net.minecraftforge.fml.network.simple.SimpleChannel;
 import ru.timeconqueror.timecore.api.TimeMod;
 import ru.timeconqueror.timecore.api.common.packet.ITimePacket;
+import ru.timeconqueror.timecore.api.registry.base.RunnableStoringRegister;
 import ru.timeconqueror.timecore.api.registry.util.AutoRegistrable;
 import ru.timeconqueror.timecore.mod.common.packet.InternalPacketManager;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
@@ -88,9 +86,8 @@ import java.util.function.Supplier;
  * <p>
  * Examples can be seen at {@link InternalPacketManager}
  */
-public class PacketRegister extends TimeRegister {
+public class PacketRegister extends RunnableStoringRegister {
     private HashMap<SimpleChannel, Integer> lastIndexes = new HashMap<>();
-    private List<Runnable> runnables = new ArrayList<>();
 
     public PacketRegister(String modid) {
         super(modid);
@@ -132,12 +129,10 @@ public class PacketRegister extends TimeRegister {
      * Registers new packet.
      */
     public <T extends ITimePacket> void regPacket(SimpleChannel channel, Class<T> packetClass, ITimePacket.ITimePacketHandler<T> packetHandler, NetworkDirection direction) {
-        Preconditions.checkNotNull(runnables, "You attempted to call this method after FMLCommonSetupEvent has been fired.");
-
-        runnables.add(() -> channel.messageBuilder(packetClass, getAndIncreaseIndex(channel), direction)
-                .encoder((t, buffer) -> {
+        add(() -> channel.messageBuilder(packetClass, getAndIncreaseIndex(channel), direction)
+                .encoder((msg, buffer) -> {
                     try {
-                        packetHandler.encode(t, buffer);
+                        packetHandler.encode(msg, buffer);
                     } catch (IOException e) {
                         throw new RuntimeException("Can't encode packet: " + e.getMessage(), e);
                     }
@@ -163,9 +158,8 @@ public class PacketRegister extends TimeRegister {
     }
 
     private void onInit(FMLCommonSetupEvent event) {
-        catchErrors("common setup event", () -> runnables.forEach(Runnable::run));
+        catchErrors(FMLCommonSetupEvent.class, this::runAll);
 
-        runnables = null;
         lastIndexes = null;
     }
 

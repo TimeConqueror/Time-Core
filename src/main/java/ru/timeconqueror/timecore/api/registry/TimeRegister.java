@@ -1,5 +1,6 @@
 package ru.timeconqueror.timecore.api.registry;
 
+import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
 import org.jetbrains.annotations.Nullable;
@@ -49,6 +50,10 @@ public abstract class TimeRegister {
 
     public @Nullable Class<?> getOwner() {
         return owner;
+    }
+
+    public void catchErrors(Class<? extends Event> eventClass, Runnable runnable) {
+        catchErrors(eventClass.getName(), runnable);
     }
 
     public void catchErrors(String action, Runnable runnable) {
