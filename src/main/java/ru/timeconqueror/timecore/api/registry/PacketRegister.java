@@ -5,6 +5,8 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent;
+import net.minecraftforge.fml.network.NetworkDirection;
+import net.minecraftforge.fml.network.NetworkEvent;
 import net.minecraftforge.fml.network.NetworkRegistry;
 import net.minecraftforge.fml.network.simple.SimpleChannel;
 import ru.timeconqueror.timecore.api.TimeMod;
@@ -129,10 +131,10 @@ public class PacketRegister extends TimeRegister {
     /**
      * Registers new packet.
      */
-    public <T extends ITimePacket> void regPacket(SimpleChannel channel, Class<T> packetClass, ITimePacket.ITimePacketHandler<T> packetHandler) {
+    public <T extends ITimePacket> void regPacket(SimpleChannel channel, Class<T> packetClass, ITimePacket.ITimePacketHandler<T> packetHandler, NetworkDirection direction) {
         Preconditions.checkNotNull(runnables, "You attempted to call this method after FMLCommonSetupEvent has been fired.");
 
-        runnables.add(() -> channel.messageBuilder(packetClass, getAndIncreaseIndex(channel))
+        runnables.add(() -> channel.messageBuilder(packetClass, getAndIncreaseIndex(channel), direction)
                 .encoder((t, buffer) -> {
                     try {
                         packetHandler.encode(t, buffer);
@@ -147,7 +149,10 @@ public class PacketRegister extends TimeRegister {
                         throw new RuntimeException("Can't decode packet: " + e.getMessage(), e);
                     }
                 })
-                .consumer(packetHandler::handle)
+                .consumer((msg, contextSupplier) -> {
+                    NetworkEvent.Context ctx = contextSupplier.get();
+                    packetHandler.handle(msg, ctx);
+                })
                 .add());
     }
 
@@ -185,8 +190,8 @@ public class PacketRegister extends TimeRegister {
         /**
          * Registers the packet to the bound channel.
          */
-        public <T extends ITimePacket> PacketRegisterChain regPacket(Class<T> packetClass, ITimePacket.ITimePacketHandler<T> packetHandler) {
-            PacketRegister.this.regPacket(channel, packetClass, packetHandler);
+        public <T extends ITimePacket> PacketRegisterChain regPacket(Class<T> packetClass, ITimePacket.ITimePacketHandler<T> packetHandler, NetworkDirection direction) {
+            PacketRegister.this.regPacket(channel, packetClass, packetHandler, direction);
             return this;
         }
 

@@ -2,8 +2,6 @@ package ru.timeconqueror.timecore.common.packet.animation;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.world.World;
-import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
 import ru.timeconqueror.timecore.TimeCore;
@@ -33,11 +31,6 @@ public class S2CSyncAnimationsMsg implements ITimePacket {
 		this.entityId = entityId;
 	}
 
-	@Override
-	public @NotNull LogicalSide getReceptionSide() {
-		return LogicalSide.CLIENT;
-	}
-
 	public static class Handler implements ITimePacketHandler<S2CSyncAnimationsMsg> {
 
 		@Override
@@ -56,24 +49,28 @@ public class S2CSyncAnimationsMsg implements ITimePacket {
 		}
 
 		@Override
-		public void onPacketReceived(S2CSyncAnimationsMsg packet, NetworkEvent.Context ctx, World world) {
-			String errorMessage = null;
+		public boolean handle(S2CSyncAnimationsMsg packet, NetworkEvent.Context ctx) {
+			ctx.enqueueWork(() -> {
+				String errorMessage = null;
 
-			Entity entity = world.getEntity(packet.entityId);
-			if (entity == null) {
-				errorMessage = "Client received an animation, but entity wasn't found on client.";
-			} else if (!(entity instanceof AnimatedObject<?>)) {
-				errorMessage = "Provided entity id belongs to entity, which is not an inheritor of " + AnimatedObject.class;
-			}
+				Entity entity = getWorld(ctx).getEntity(packet.entityId);
+				if (entity == null) {
+					errorMessage = "Client received an animation, but entity wasn't found on client.";
+				} else if (!(entity instanceof AnimatedObject<?>)) {
+					errorMessage = "Provided entity id belongs to entity, which is not an inheritor of " + AnimatedObject.class;
+				}
 
-			if (errorMessage == null) {
-				Map<String, AnimationWatcher> layerMap = packet.layerMap;
-				BaseAnimationManager animationManager = (BaseAnimationManager) ((AnimatedObject<?>) entity).getActionManager().getAnimationManager();
+				if (errorMessage == null) {
+					Map<String, AnimationWatcher> layerMap = packet.layerMap;
+					BaseAnimationManager animationManager = (BaseAnimationManager) ((AnimatedObject<?>) entity).getActionManager().getAnimationManager();
 
-				layerMap.forEach((name, watcher) -> animationManager.getLayer(name).setAnimationWatcher(watcher));
-			} else {
-				TimeCore.LOGGER.error(errorMessage);
-			}
+					layerMap.forEach((name, watcher) -> animationManager.getLayer(name).setAnimationWatcher(watcher));
+				} else {
+					TimeCore.LOGGER.error(errorMessage);
+				}
+			});
+
+			return true;
 		}
 	}
 }

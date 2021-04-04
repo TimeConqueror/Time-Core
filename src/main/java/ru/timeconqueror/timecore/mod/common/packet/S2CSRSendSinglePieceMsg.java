@@ -1,8 +1,6 @@
 package ru.timeconqueror.timecore.mod.common.packet;
 
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.world.World;
-import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
 import ru.timeconqueror.timecore.TimeCore;
@@ -18,11 +16,6 @@ public class S2CSRSendSinglePieceMsg implements ITimePacket {
 
     public S2CSRSendSinglePieceMsg(StructureData data) {
         this.data = data;
-    }
-
-    @Override
-    public @NotNull LogicalSide getReceptionSide() {
-        return LogicalSide.CLIENT;
     }
 
     public static class Handler implements ITimePacketHandler<S2CSRSendSinglePieceMsg> {
@@ -43,13 +36,16 @@ public class S2CSRSendSinglePieceMsg implements ITimePacket {
         }
 
         @Override
-        public void onPacketReceived(S2CSRSendSinglePieceMsg packet, NetworkEvent.Context ctx, World world) {
-            Optional<StructureRevealer> instance = StructureRevealer.getInstance();
-            if (instance.isPresent()) {
-                instance.get().structureRenderer.trackStructurePiece(packet.data);
-            } else {
-                TimeCore.LOGGER.warn("Server has sent you a structure revealing packet, but structure revealer is turned off on client!");
-            }
+        public boolean handle(S2CSRSendSinglePieceMsg packet, NetworkEvent.Context ctx) {
+            ctx.enqueueWork(() -> {
+                Optional<StructureRevealer> instance = StructureRevealer.getInstance();
+                if (instance.isPresent()) {
+                    instance.get().structureRenderer.trackStructurePiece(packet.data);
+                } else {
+                    TimeCore.LOGGER.warn("Server has sent you a structure revealing packet, but structure revealer is turned off on client!");
+                }
+            });
+            return true;
         }
     }
 }

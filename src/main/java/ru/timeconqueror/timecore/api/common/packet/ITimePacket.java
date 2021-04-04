@@ -5,20 +5,11 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
-import ru.timeconqueror.timecore.TimeCore;
-import ru.timeconqueror.timecore.api.util.EnvironmentUtils;
 import ru.timeconqueror.timecore.api.util.client.ClientProxy;
 
 import java.io.IOException;
-import java.util.function.Supplier;
 
 public interface ITimePacket {
-    /**
-     * Should return the side, where packet can be read.
-     */
-    @NotNull
-    LogicalSide getReceptionSide();
-
     interface ITimePacketHandler<T extends ITimePacket> {
         /**
          * Encodes provided {@code packet} to {@code buffer}.
@@ -38,27 +29,13 @@ public interface ITimePacket {
         @NotNull
         T decode(PacketBuffer buffer) throws IOException;
 
-        void onPacketReceived(T packet, NetworkEvent.Context ctx, World world);
-
         /**
          * Handles received packet.
-         * If packet was sent from wrong side, it MUSTN'T be handled due to possible exploits. This method solves this problem.
-         * Is called from the main thread, so you don't need to enqueue actions within it.
+         * Called from the network thread, so you should be careful about enqueueing stuff to the main thread using {@link NetworkEvent.Context#enqueueWork(Runnable)}.
          *
-         * @return true if packet is handled (came from right side) or false if not
+         * @return true if handled successfully. If the method returns false, client may or may not be disconnected from server
          */
-        default boolean handle(T packet, Supplier<NetworkEvent.Context> contextSupplier) {
-            NetworkEvent.Context ctx = contextSupplier.get();
-            LogicalSide receptionSide = ctx.getDirection().getReceptionSide();
-            if (receptionSide == packet.getReceptionSide()) {
-                onPacketReceived(packet, ctx, getWorld(ctx));
-            } else {
-                if (EnvironmentUtils.isInDev()) {
-                    TimeCore.LOGGER.error("You've just sent packet {} to {} side, although it can be only handled on {} side! Skipping...", packet.getClass().getName(), receptionSide, ctx.getDirection().getOriginationSide());
-                }
-            }
-            return true;
-        }
+        boolean handle(T packet, NetworkEvent.Context ctx);
 
         @NotNull
         @SuppressWarnings("ConstantConditions")

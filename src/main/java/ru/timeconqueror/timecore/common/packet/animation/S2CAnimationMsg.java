@@ -1,8 +1,6 @@
 package ru.timeconqueror.timecore.common.packet.animation;
 
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.world.World;
-import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
 import ru.timeconqueror.timecore.api.animation.AnimatedObject;
@@ -15,11 +13,6 @@ public abstract class S2CAnimationMsg implements ITimePacket {
     protected S2CAnimationMsg(CodecSupplier codecSupplier, String layerName) {
         this.codecSupplier = codecSupplier;
         this.layerName = layerName;
-    }
-
-    @Override
-    public @NotNull LogicalSide getReceptionSide() {
-        return LogicalSide.CLIENT;
     }
 
     public abstract static class Handler<T extends S2CAnimationMsg> implements ITimePacketHandler<T> {
@@ -48,10 +41,14 @@ public abstract class S2CAnimationMsg implements ITimePacket {
         public abstract void onPacket(T packet, AnimatedObject<?> provider, String layerName, NetworkEvent.Context ctx);
 
         @Override
-        public void onPacketReceived(T packet, NetworkEvent.Context ctx, World world) {
-            AnimatedObject<?> animatedObject = packet.codecSupplier.construct(world);
+        public boolean handle(T packet, NetworkEvent.Context ctx) {
+            ctx.enqueueWork(() -> {
+                AnimatedObject<?> animatedObject = packet.codecSupplier.construct(getWorld(ctx));
 
-            onPacket(packet, animatedObject, packet.layerName, ctx);
+                onPacket(packet, animatedObject, packet.layerName, ctx);
+            });
+
+            return true;
         }
     }
 
