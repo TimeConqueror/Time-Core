@@ -285,6 +285,14 @@ publishing {
     }
 }
 
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
+    kotlinOptions {
+        freeCompilerArgs = Arrays.asList("-Xjvm-default=all")
+        jvmTarget = "1.8"
+        languageVersion = "1.4"
+    }
+}
+
 task printVersion {
     println("Compiled version: $version")
 }
