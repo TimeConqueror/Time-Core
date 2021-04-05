@@ -18,10 +18,14 @@ interface ICoffeeCapability<T : ICapabilityProvider> {
     fun getOwnerSerializer(): CapabilityOwnerSerializer<T>
     fun getCapability(): Capability<out ICoffeeCapability<T>>
 
-    fun serializeProperties(predicate: Predicate<CoffeeProperty<*>>, nbt: CompoundNBT, clientSide: Boolean): Boolean {
+    fun serializeProperties(
+        serializePredicate: Predicate<CoffeeProperty<*>>,
+        nbt: CompoundNBT,
+        clientSide: Boolean
+    ): Boolean {
         var hasChanges = false
         for (property in getProperties()) {
-            if (property.isClientDependent() == clientSide && predicate.test(property)) {
+            if (property.isClientDependent() == clientSide && serializePredicate.test(property)) {
                 property.serialize(nbt)
                 hasChanges = true
             }
@@ -41,22 +45,38 @@ interface ICoffeeCapability<T : ICapabilityProvider> {
         }
     }
 
-    fun createDataMessageIfHasChanges(
+    fun createDataPacket(
         world: World,
         owner: T,
         clientSide: Boolean,
-        predicate: Predicate<CoffeeProperty<*>>
-    ) = CoffeeCapabilityDataMsg.createIfHasChanges(world, owner, this, clientSide, predicate)
+        syncPredicate: Predicate<CoffeeProperty<*>>
+    ) = CoffeeCapabilityDataMsg.create(world, owner, this, clientSide, syncPredicate)
 
+    /**
+     * Checks if properties of capability has changed and if yes, sends them.
+     * Works in both directions.
+     */
     fun detectAndSendChanges(world: World, owner: T) {
-        val clientSide = world.isClientSide()
-
-        val message = createDataMessageIfHasChanges(world, owner, clientSide, Predicate { prop ->
+        sendData(world, owner) { prop ->
             if (prop.changed) {
                 prop.changed = false
                 true
             } else false
-        })
+        }
+    }
+
+    /**
+     * Synchronizes all capability data.
+     * Works in both directions.
+     */
+    fun sendAllData(world: World, owner: T) {
+        sendData(world, owner) { true }
+    }
+
+    private fun sendData(world: World, owner: T, predicate: Predicate<CoffeeProperty<*>>) {
+        val clientSide = world.isClientSide()
+
+        val message = createDataPacket(world, owner, clientSide, predicate)
 
         if (message != null) {
             if (clientSide) {
@@ -68,5 +88,4 @@ interface ICoffeeCapability<T : ICapabilityProvider> {
     }
 
     fun onSendChangesToClients(channel: SimpleChannel, data: Any) {}
-
 }

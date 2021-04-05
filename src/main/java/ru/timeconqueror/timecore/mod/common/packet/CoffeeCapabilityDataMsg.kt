@@ -13,30 +13,49 @@ import ru.timeconqueror.timecore.common.capability.ICoffeeCapability
 import ru.timeconqueror.timecore.common.capability.property.CoffeeProperty
 import java.util.function.Predicate
 
-class CoffeeCapabilityDataMsg(val capabilityName: String, val ownerData: CompoundNBT, val capabilityData: CompoundNBT) :
+sealed class CoffeeCapabilityDataMsg(
+    val capabilityName: String,
+    val ownerData: CompoundNBT,
+    val capabilityData: CompoundNBT
+) :
     ITimePacket {
+
     companion object {
         fun <T : ICapabilityProvider> create(
             world: World,
             owner: T,
             cap: ICoffeeCapability<T>,
-            capabilityData: CompoundNBT
+            capabilityData: CompoundNBT,
+            clientSide: Boolean
         ): CoffeeCapabilityDataMsg {
-            return CoffeeCapabilityDataMsg(cap.getCapability().name, CompoundNBT().apply {
+            return create(clientSide, cap.getCapability().name, CompoundNBT().apply {
                 cap.getOwnerSerializer().serializeOwner(world, owner, this)
             }, capabilityData)
         }
 
-        fun <T : ICapabilityProvider> createIfHasChanges(
+        private fun create(
+            clientSide: Boolean,
+            capabilityName: String,
+            ownerData: CompoundNBT,
+            capabilityData: CompoundNBT
+        ): CoffeeCapabilityDataMsg {
+            return if (clientSide) {
+                C2SCoffeeCapabilityDataMsg(capabilityName, ownerData, capabilityData)
+            } else {
+                S2CCoffeeCapabilityDataMsg(capabilityName, ownerData, capabilityData)
+            }
+        }
+
+        fun <T : ICapabilityProvider> create(
             world: World,
             owner: T,
             cap: ICoffeeCapability<T>,
             clientSide: Boolean,
-            predicate: Predicate<CoffeeProperty<*>>
+            syncPredicate: Predicate<CoffeeProperty<*>>
         ): CoffeeCapabilityDataMsg? {
             val nbt = CompoundNBT()
-            return if (cap.serializeProperties(predicate, nbt, clientSide)) {
-                create(world, owner, cap, nbt)
+            return if (cap.serializeProperties(syncPredicate, nbt, clientSide)) {
+                create(world, owner, cap, nbt, clientSide)
             } else null
         }
 
@@ -58,19 +77,20 @@ class CoffeeCapabilityDataMsg(val capabilityName: String, val ownerData: Compoun
         }
     }
 
-    object Handler : ITimePacket.ITimePacketHandler<CoffeeCapabilityDataMsg> {
-
-        override fun encode(dataMsg: CoffeeCapabilityDataMsg, buf: PacketBuffer) {
+    abstract class Handler<T : CoffeeCapabilityDataMsg> : ITimePacket.ITimePacketHandler<T> {
+        final override fun encode(dataMsg: T, buf: PacketBuffer) {
+            buf.writeBoolean(dataMsg is C2SCoffeeCapabilityDataMsg)
             buf.writeUtf(dataMsg.capabilityName)
             buf.writeNbt(dataMsg.ownerData)
             buf.writeNbt(dataMsg.capabilityData)
         }
 
-        override fun decode(buf: PacketBuffer): CoffeeCapabilityDataMsg {
-            return CoffeeCapabilityDataMsg(buf.readUtf(), buf.readNbt()!!, buf.readNbt()!!)
+        final override fun decode(buf: PacketBuffer): T {
+            val sentFromClient = buf.readBoolean()
+            return create(sentFromClient, buf.readUtf(), buf.readNbt()!!, buf.readNbt()!!) as T
         }
 
-        override fun handle(msg: CoffeeCapabilityDataMsg, ctx: NetworkEvent.Context): Boolean {
+        final override fun handle(msg: T, ctx: NetworkEvent.Context): Boolean {
             val fromClient = ctx.direction.receptionSide == LogicalSide.SERVER
 
             ctx.enqueueWork {
@@ -79,6 +99,14 @@ class CoffeeCapabilityDataMsg(val capabilityName: String, val ownerData: Compoun
 
             return true
         }
-
     }
 }
+
+object ServerHandler : CoffeeCapabilityDataMsg.Handler<C2SCoffeeCapabilityDataMsg>()
+object ClientHandler : CoffeeCapabilityDataMsg.Handler<S2CCoffeeCapabilityDataMsg>()
+
+class C2SCoffeeCapabilityDataMsg(capabilityName: String, ownerData: CompoundNBT, capabilityData: CompoundNBT) :
+    CoffeeCapabilityDataMsg(capabilityName, ownerData, capabilityData)
+
+class S2CCoffeeCapabilityDataMsg(capabilityName: String, ownerData: CompoundNBT, capabilityData: CompoundNBT) :
+    CoffeeCapabilityDataMsg(capabilityName, ownerData, capabilityData)
