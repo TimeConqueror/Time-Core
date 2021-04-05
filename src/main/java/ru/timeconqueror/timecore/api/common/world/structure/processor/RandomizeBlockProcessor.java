@@ -12,32 +12,39 @@ import net.minecraft.world.gen.feature.template.Template;
 import org.jetbrains.annotations.Nullable;
 import ru.timeconqueror.timecore.api.init.TStructureProcessorTypes;
 import ru.timeconqueror.timecore.api.util.ExtraCodecs;
+import ru.timeconqueror.timecore.api.util.MathUtils;
 import ru.timeconqueror.timecore.api.util.RandHelper;
 
 public class RandomizeBlockProcessor extends StructureProcessor {
     public static final Codec<RandomizeBlockProcessor> CODEC = RecordCodecBuilder.create(instance ->
             instance
                     .group(ExtraCodecs.BLOCK.fieldOf("to_replace").forGetter(p -> p.toReplace),
-                            ExtraCodecs.BLOCK.fieldOf("randomized").forGetter(p -> p.randomized))
+                            ExtraCodecs.BLOCK.fieldOf("by").forGetter(p -> p.replacement))
                     .apply(instance, RandomizeBlockProcessor::new)
     );
 
     private final Block toReplace;
-    private final Block randomized;
+    private final Block replacement;
+    private final int chance;
 
-    public RandomizeBlockProcessor(Block toReplace, Block randomized) {
+    public RandomizeBlockProcessor(Block toReplace, Block replacement) {
+        this(toReplace, replacement, 10);
+    }
+
+    public RandomizeBlockProcessor(Block toReplace, Block replacement, int chance) {
         this.toReplace = toReplace;
-        this.randomized = randomized;
+        this.replacement = replacement;
+        this.chance = MathUtils.coerceInRange(chance, 0, 100);
     }
 
     @Nullable
     @Override
-    public Template.BlockInfo process(IWorldReader world, BlockPos blockPos_, BlockPos blockPos1_, Template.BlockInfo blockInfo_, Template.BlockInfo blockInfo, PlacementSettings placementSettings_, @Nullable Template template) {
-        if (blockInfo.state.getBlock() == toReplace && RandHelper.chance(placementSettings_.getRandom(blockInfo.pos), 10)) {
-            return new Template.BlockInfo(blockInfo.pos, randomized.defaultBlockState(), blockInfo.nbt);
+    public Template.BlockInfo process(IWorldReader world, BlockPos templatePosition, BlockPos pieceBottomCenter, Template.BlockInfo original, Template.BlockInfo modified, PlacementSettings settings, @Nullable Template template) {
+        if (modified.state.getBlock() == toReplace && RandHelper.chance(settings.getRandom(modified.pos), chance)) {
+            return new Template.BlockInfo(modified.pos, replacement.defaultBlockState(), modified.nbt);
         }
 
-        return blockInfo;
+        return modified;
     }
 
     @Override
