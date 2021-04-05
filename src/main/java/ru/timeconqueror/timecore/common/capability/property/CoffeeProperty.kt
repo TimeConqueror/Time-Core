@@ -20,11 +20,12 @@ class CoffeeProperty<T>(val name: String, private var value: T, val serializer: 
             field = value
         }
 
-    override operator fun getValue(thisRef: Any, property: KProperty<*>): T {
-        return value
-    }
+    override operator fun getValue(thisRef: Any, property: KProperty<*>) = get()
 
-    override fun setValue(thisRef: Any, property: KProperty<*>, value: T) {
+    override fun setValue(thisRef: Any, property: KProperty<*>, value: T) = set(value)
+
+    fun get() = value
+    fun set(value: T) {
         this.changed = true
         this.value = value
     }
