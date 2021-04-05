@@ -22,8 +22,8 @@ import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import ru.timeconqueror.timecore.mod.common.config.MainConfig;
 import ru.timeconqueror.timecore.mod.common.packet.InternalPacketManager;
-import ru.timeconqueror.timecore.mod.common.packet.S2CSRClearPiecesMsg;
-import ru.timeconqueror.timecore.mod.common.packet.S2CSRSendSinglePieceMsg;
+import ru.timeconqueror.timecore.mod.common.packet.S2CSRClearPiecesPacket;
+import ru.timeconqueror.timecore.mod.common.packet.S2CSRSendSinglePiecePacket;
 
 import java.util.*;
 import java.util.stream.Stream;
@@ -98,7 +98,7 @@ public class StructureRevealer {
     private void refreshAllStructureData(ServerPlayerEntity playerIn) {
         ChunkManager chunkManager = playerIn.getLevel().getChunkSource().chunkMap;
 
-        InternalPacketManager.sendToPlayer(playerIn, new S2CSRClearPiecesMsg());
+        InternalPacketManager.sendToPlayer(playerIn, new S2CSRClearPiecesPacket());
 
         ChunkManagerHooks.getLoadedChunksIterable(chunkManager).forEach(chunkHolder -> {
 
@@ -106,7 +106,7 @@ public class StructureRevealer {
                     .anyMatch(player -> player.getUUID().equals(playerIn.getUUID()))) {
 
                 getSubscribedStructuresInChunk(playerIn.getLevel(), playerIn, chunkHolder.getPos()).forEach(data -> {
-                    InternalPacketManager.sendToPlayer(playerIn, new S2CSRSendSinglePieceMsg(data));
+                    InternalPacketManager.sendToPlayer(playerIn, new S2CSRSendSinglePiecePacket(data));
                 });
             }
         });
@@ -131,7 +131,7 @@ public class StructureRevealer {
                 if (player != null) {
                     recentlyWatchedChunks.get(uuid)
                             .forEach(chunkPos -> getSubscribedStructuresInChunk(player.getLevel(), player, chunkPos)
-                                    .forEach(data -> InternalPacketManager.sendToPlayer(player, new S2CSRSendSinglePieceMsg(data))));
+                                    .forEach(data -> InternalPacketManager.sendToPlayer(player, new S2CSRSendSinglePiecePacket(data))));
                 }
             });
             recentlyWatchedChunks.clear();

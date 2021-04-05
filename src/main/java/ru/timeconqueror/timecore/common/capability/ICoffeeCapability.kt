@@ -7,7 +7,7 @@ import net.minecraftforge.common.capabilities.ICapabilityProvider
 import net.minecraftforge.fml.network.simple.SimpleChannel
 import ru.timeconqueror.timecore.common.capability.owner.serializer.CapabilityOwnerSerializer
 import ru.timeconqueror.timecore.common.capability.property.CoffeeProperty
-import ru.timeconqueror.timecore.mod.common.packet.CoffeeCapabilityDataMsg
+import ru.timeconqueror.timecore.mod.common.packet.CoffeeCapabilityDataPacket
 import ru.timeconqueror.timecore.mod.common.packet.InternalPacketManager
 import java.util.function.Predicate
 
@@ -50,7 +50,7 @@ interface ICoffeeCapability<T : ICapabilityProvider> {
         owner: T,
         clientSide: Boolean,
         syncPredicate: Predicate<CoffeeProperty<*>>
-    ) = CoffeeCapabilityDataMsg.create(world, owner, this, clientSide, syncPredicate)
+    ) = CoffeeCapabilityDataPacket.create(world, owner, this, clientSide, syncPredicate)
 
     /**
      * Checks if properties of capability has changed and if yes, sends them.

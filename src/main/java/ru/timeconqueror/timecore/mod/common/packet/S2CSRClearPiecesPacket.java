@@ -9,21 +9,21 @@ import ru.timeconqueror.timecore.devtools.StructureRevealer;
 
 import java.util.Optional;
 
-public class S2CSRClearPiecesMsg implements ITimePacket {
-    public static class Handler implements ITimePacketHandler<S2CSRClearPiecesMsg> {
+public class S2CSRClearPiecesPacket implements ITimePacket {
+    public static class Handler implements ITimePacketHandler<S2CSRClearPiecesPacket> {
         @Override
-        public void encode(S2CSRClearPiecesMsg packet, PacketBuffer buffer) {
+        public void encode(S2CSRClearPiecesPacket packet, PacketBuffer buffer) {
 
         }
 
         @NotNull
         @Override
-        public S2CSRClearPiecesMsg decode(PacketBuffer buffer) {
-            return new S2CSRClearPiecesMsg();
+        public S2CSRClearPiecesPacket decode(PacketBuffer buffer) {
+            return new S2CSRClearPiecesPacket();
         }
 
         @Override
-        public boolean handle(S2CSRClearPiecesMsg packet, NetworkEvent.Context ctx) {
+        public boolean handle(S2CSRClearPiecesPacket packet, NetworkEvent.Context ctx) {
             ctx.enqueueWork(() -> {
                 Optional<StructureRevealer> instance = StructureRevealer.getInstance();
                 if (instance.isPresent()) {
