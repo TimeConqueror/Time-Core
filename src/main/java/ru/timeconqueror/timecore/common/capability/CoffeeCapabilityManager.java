@@ -15,7 +15,7 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import ru.timeconqueror.timecore.common.capability.listener.CoffeeAttachCapabilityListener;
 import ru.timeconqueror.timecore.common.capability.listener.CoffeeKeepPlayerCapabilityListener;
-import ru.timeconqueror.timecore.common.capability.listener.CoffeeSendUpdatesCapabilityListener;
+import ru.timeconqueror.timecore.common.capability.listener.CoffeeOnPlayerJoinedSendCapabilityListener;
 import ru.timeconqueror.timecore.common.capability.owner.CapabilityOwner;
 import ru.timeconqueror.timecore.common.capability.owner.attach.AttachableCoffeeCapability;
 import ru.timeconqueror.timecore.common.capability.owner.attach.CoffeeCapabilityAttacher;
@@ -68,12 +68,27 @@ public class CoffeeCapabilityManager {
                 ((CoffeeCapabilityGetter<TileEntity, IEnergyStorage>) (target, facing) -> ((IEnergyStorageProvider) target).getEnergyStorage(facing)).supply());
     }
 
-    public <T extends INBT> void enableKeepingPlayerCapability(Function<PlayerEntity, INBTSerializable<T>> extractor) {
-        MinecraftForge.EVENT_BUS.register(new CoffeeKeepPlayerCapabilityListener<>(extractor));
+    /**
+     * Enables automatic capability transfer on player death
+     *
+     * @param capabilityExtractor function, which should extract needed capability from the player
+     */
+    public <T extends INBT> void enableKeepingPlayerCapability(Function<PlayerEntity, INBTSerializable<T>> capabilityExtractor) {
+        MinecraftForge.EVENT_BUS.register(new CoffeeKeepPlayerCapabilityListener<>(capabilityExtractor));
     }
 
-    public void enableSendingPlayerCapabilityUpdates(Consumer<PlayerEntity> onUpdate) {
-        MinecraftForge.EVENT_BUS.register(new CoffeeSendUpdatesCapabilityListener(onUpdate));
+    /**
+     * Enables automatic capability syncing on such actions as:
+     * <ol>
+     *  <li>Player joined the world</li>
+     *  <li>Player changed the world</li>
+     *  <li>Player respawned</li>
+     * </ol>
+     *
+     * @param onSyncRequest function, which should send needed data to the client
+     */
+    public void enableSyncingPlayerCapabilityOnJoin(Consumer<PlayerEntity> onSyncRequest) {
+        MinecraftForge.EVENT_BUS.register(new CoffeeOnPlayerJoinedSendCapabilityListener(onSyncRequest));
     }
 
     public AttachableCoffeeCapability<? extends ICapabilityProvider, ? extends ICoffeeCapability<?>> getAttachableCoffeeCapability(String name) {

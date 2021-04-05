@@ -34,7 +34,7 @@ public class CapabilityOwner<T extends ICapabilityProvider> {
         @Override
         public void serializeOwner(World world, Entity owner, CompoundNBT nbt) {
             nbt.putInt("id", owner.getId());
-        }
+        }//FIXME not uuid?
 
         @Override
         public Entity deserializeOwner(World world, CompoundNBT nbt) {

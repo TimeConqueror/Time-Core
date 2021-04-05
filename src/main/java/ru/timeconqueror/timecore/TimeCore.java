@@ -49,7 +49,7 @@ public final class TimeCore implements TimeMod {
 
     private void setup(final FMLCommonSetupEvent event) {
         ReflectionHelper.initClass(StructureRevealer.class);
-        capabilityManager.addDefaultAttachers();
+        event.enqueueWork(capabilityManager::addDefaultAttachers);
     }
 
     private static void checkForMixinBootstrap() {
