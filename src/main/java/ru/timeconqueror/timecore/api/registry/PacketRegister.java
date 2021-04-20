@@ -146,7 +146,7 @@ public class PacketRegister extends RunnableStoringRegister {
                 })
                 .consumer((msg, contextSupplier) -> {
                     NetworkEvent.Context ctx = contextSupplier.get();
-                    packetHandler.handle(msg, ctx);
+                    return packetHandler.handle(msg, ctx);
                 })
                 .add());
     }
