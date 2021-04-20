@@ -34,6 +34,17 @@ public class MathUtils {
      * @param min    minimum value, inclusive.
      * @param max    maximum value, inclusive.
      */
+    public static long coerceInRange(long number, long min, long max) {
+        return Math.min(Math.max(number, min), max);
+    }
+
+    /**
+     * Coerces number in provided range.
+     *
+     * @param number number to coerce
+     * @param min    minimum value, inclusive.
+     * @param max    maximum value, inclusive.
+     */
     public static double coerceInRange(double number, double min, double max) {
         return Math.min(Math.max(number, min), max);
     }

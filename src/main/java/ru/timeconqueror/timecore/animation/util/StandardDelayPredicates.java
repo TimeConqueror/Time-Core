@@ -11,7 +11,7 @@ public class StandardDelayPredicates {
     }
 
     public static Predicate<AnimationWatcher> onEnd() {
-        return watcher -> watcher.getExistingTime() >= watcher.getAnimation().getLength();
+        return watcher -> watcher.getExistingTime() == watcher.getAnimationLength();
     }
 
     public static Predicate<AnimationWatcher> whenPassed(int animationTime) {
@@ -22,7 +22,7 @@ public class StandardDelayPredicates {
         Requirements.inRangeInclusive(percents, 0, 1);
 
         return watcher -> {
-            float length = watcher.getAnimation().getLength();
+            float length = watcher.getAnimationLength();
             float existingTime = watcher.getExistingTime();
 
             return existingTime >= length * percents;

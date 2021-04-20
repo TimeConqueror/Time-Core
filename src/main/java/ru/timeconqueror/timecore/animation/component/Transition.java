@@ -61,7 +61,7 @@ public class Transition extends Animation {
     };
     private static final Animation.TransitionFactory IDLE_END_TRANSITION_FACTORY = new Animation.TransitionFactory(DUMMY_ANIMATION) {
         @Override
-        public @Nullable List<TransitionBoneOption> createBoneOptions(Animation dest, ITimeModel model, int existingTime, int transitionTime) {
+        public @Nullable List<BoneOption> createBoneOptions(Animation dest, ITimeModel model, int existingTime, int transitionTime) {
             throw new UnsupportedOperationException("Idle End Transition Factory shouldn't be used with source animation");
         }
 
@@ -83,7 +83,7 @@ public class Transition extends Animation {
     @Nullable
     private final Animation destAnimation;
     private final ResourceLocation id;
-    private List<TransitionBoneOption> options = new ArrayList<>();
+    private List<BoneOption> options = new ArrayList<>();
 
     private Transition(int transitionLength, String name, @Nullable Animation destAnimation) {
         this.transitionLength = transitionLength;
@@ -116,7 +116,7 @@ public class Transition extends Animation {
 
                 Pair<KeyFrame, KeyFrame> scales = Pair.of(startKeyFrame, endKeyFrame);
 
-                transition.options.add(new TransitionBoneOption(name, rotations, positions, scales));
+                transition.options.add(new BoneOption(name, rotations, positions, scales));
             }
         });
 
@@ -154,7 +154,7 @@ public class Transition extends Animation {
     private static Animation create(@NotNull Animation source, @NotNull Animation dest, ITimeModel model, int existingTime, int transitionTime) {
         Animation.TransitionFactory sourceTFactory = source.getTransitionFactory();
 
-        List<TransitionBoneOption> options = sourceTFactory.createBoneOptions(dest, model, existingTime, transitionTime);
+        List<BoneOption> options = sourceTFactory.createBoneOptions(dest, model, existingTime, transitionTime);
         if (options == null) {
             return createFromIdleState(dest, model, transitionTime);
         }
@@ -248,7 +248,7 @@ public class Transition extends Animation {
         }
 
         @Override
-        public java.util.@Nullable List<Transition.TransitionBoneOption> createBoneOptions(Animation dest, ITimeModel model, int existingTime, int transitionTime) {
+        public @Nullable List<BoneOption> createBoneOptions(Animation dest, ITimeModel model, int existingTime, int transitionTime) {
             Transition source = getSourceTyped();
             if (source.options == null || source.options.isEmpty()) {
                 return null;
@@ -256,7 +256,7 @@ public class Transition extends Animation {
 
             Animation.TransitionFactory destFactory = dest.getTransitionFactory();
 
-            List<Transition.TransitionBoneOption> transitionBones = new ArrayList<>();
+            List<BoneOption> transitionBones = new ArrayList<>();
             source.options.forEach(sourceBone -> {
                 TimeModelRenderer piece = model.getPiece(sourceBone.name);
                 if (piece != null) {
@@ -275,7 +275,7 @@ public class Transition extends Animation {
                     endKeyFrame = destFactory.getDestKeyFrame(piece, sourceBone.name, OptionType.SCALE, transitionTime);
                     Pair<KeyFrame, KeyFrame> scales = Pair.of(startKeyFrame, endKeyFrame);
 
-                    transitionBones.add(new Transition.TransitionBoneOption(sourceBone.name, rotations, positions, scales));
+                    transitionBones.add(new BoneOption(sourceBone.name, rotations, positions, scales));
                 }
             });
 
@@ -288,14 +288,14 @@ public class Transition extends Animation {
         }
     }
 
-    public static class TransitionBoneOption {
+    public static class BoneOption {
         private final String name;
 
         private final Pair<KeyFrame, KeyFrame> rotations;
         private final Pair<KeyFrame, KeyFrame> positions;
         private final Pair<KeyFrame, KeyFrame> scales;
 
-        public TransitionBoneOption(String boneName, Pair<KeyFrame, KeyFrame> rotations, Pair<KeyFrame, KeyFrame> positions, Pair<KeyFrame, KeyFrame> scales) {
+        public BoneOption(String boneName, Pair<KeyFrame, KeyFrame> rotations, Pair<KeyFrame, KeyFrame> positions, Pair<KeyFrame, KeyFrame> scales) {
             this.name = boneName;
             this.rotations = rotations;
             this.positions = positions;

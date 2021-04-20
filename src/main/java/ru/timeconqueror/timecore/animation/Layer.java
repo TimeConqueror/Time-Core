@@ -44,6 +44,7 @@ public class Layer implements AnimationLayer {
     }
 
     @Override
+    @SuppressWarnings("ConstantConditions")
     public @Nullable Animation getCurrentAnimation() {
         return hasAnimation() ? getAnimationWatcher().getAnimation() : null;
     }

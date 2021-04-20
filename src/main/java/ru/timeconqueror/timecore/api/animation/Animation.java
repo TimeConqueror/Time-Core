@@ -99,7 +99,7 @@ public abstract class Animation {
 		 * @param transitionTime time of transition between source and destination animations.
 		 */
 		@Nullable
-		public abstract List<Transition.TransitionBoneOption> createBoneOptions(Animation dest, ITimeModel model, int existingTime, int transitionTime);
+		public abstract List<Transition.BoneOption> createBoneOptions(Animation dest, ITimeModel model, int existingTime, int transitionTime);
 
 		/**
 		 * Returns destination keyframe of provided type for transition animation.

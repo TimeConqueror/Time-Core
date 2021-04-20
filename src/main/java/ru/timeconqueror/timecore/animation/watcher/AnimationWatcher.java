@@ -8,6 +8,7 @@ import ru.timeconqueror.timecore.animation.util.WatcherSerializer;
 import ru.timeconqueror.timecore.api.animation.Animation;
 import ru.timeconqueror.timecore.api.animation.AnimationConstants;
 import ru.timeconqueror.timecore.api.client.render.model.ITimeModel;
+import ru.timeconqueror.timecore.api.util.MathUtils;
 import ru.timeconqueror.timecore.api.util.Requirements;
 
 import javax.annotation.OverridingMethodsMustInvokeSuper;
@@ -58,10 +59,6 @@ public class AnimationWatcher {
 		}
 	}
 
-	public boolean isAnimationEnded(long time) {
-		return time > startTime.get() + Math.round(animation.getLength() / speed);
-	}
-
 	public void resetTimer() {
 		startTime.set(System.currentTimeMillis());
 	}
@@ -70,8 +67,12 @@ public class AnimationWatcher {
 		return animation;
 	}
 
+	public boolean isAnimationEnded(long time) {
+		return time > startTime.get() + Math.round(animation.getLength() / speed);
+	}
+
 	public int getExistingTime(long time) {
-		return (int) ((int) (time - (startTime.get())) * speed);
+		return (int) MathUtils.coerceInRange((time - startTime.get()) * speed, 0, animation.getLength());
 	}
 
 	public int getExistingTime() {

@@ -126,7 +126,7 @@ public class FloroEntity extends MonsterEntity implements IRangedAttackMob, Anim
         goalSelector.addGoal(3, new SwimGoal(this));//mutex 4
         goalSelector.addGoal(4, new AvoidEntityGoal<>(this, WolfEntity.class, 6.0F, 1.0D, 1.2D));//mutex 1
 
-        goalSelector.addGoal(5, new AnimatedRangedAttackGoal<>(this, RANGED_ATTACK_ACTION.get(), 1.0F, 16.0F));//mutex 3
+//        goalSelector.addGoal(5, new AnimatedRangedAttackGoal<>(this, RANGED_ATTACK_ACTION.get(), 1.0F, 16.0F));//mutex 3
 
         goalSelector.addGoal(6, new WaterAvoidingRandomWalkingGoal(this, 1.0D));//mutex 1
         goalSelector.addGoal(7, new LookAtGoal(this, PlayerEntity.class, 8.0F));//mutex 2

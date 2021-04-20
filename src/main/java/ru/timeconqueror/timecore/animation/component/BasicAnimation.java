@@ -154,7 +154,7 @@ public class BasicAnimation extends Animation {
         }
 
         @Override
-        public @Nullable List<Transition.TransitionBoneOption> createBoneOptions(Animation dest, ITimeModel model, int existingTime, int transitionTime) {
+        public @Nullable List<Transition.BoneOption> createBoneOptions(Animation dest, ITimeModel model, int existingTime, int transitionTime) {
             BasicAnimation source = getSourceTyped();
             if (source.getOptions() == null || source.getOptions().isEmpty()) {
                 return null;
@@ -162,7 +162,7 @@ public class BasicAnimation extends Animation {
 
             Animation.TransitionFactory destFactory = dest.getTransitionFactory();
 
-            List<Transition.TransitionBoneOption> transitionBones = new ArrayList<>();
+            List<Transition.BoneOption> transitionBones = new ArrayList<>();
             source.getOptions().forEach((name, sourceBone) -> {
                 TimeModelRenderer piece = model.getPiece(name);
                 if (piece != null) {
@@ -181,7 +181,7 @@ public class BasicAnimation extends Animation {
                     endKeyFrame = destFactory.getDestKeyFrame(piece, name, OptionType.SCALE, transitionTime);
                     Pair<KeyFrame, KeyFrame> scales = Pair.of(startKeyFrame, endKeyFrame);
 
-                    transitionBones.add(new Transition.TransitionBoneOption(name, rotations, positions, scales));
+                    transitionBones.add(new Transition.BoneOption(name, rotations, positions, scales));
                 }
             });
 

@@ -150,6 +150,9 @@ configurations {
     implementation.extendsFrom(shade)
 }
 
+compileJava.options.encoding = "UTF-8"
+compileTestJava.options.encoding = "UTF-8"
+
 dependencies {
     minecraft 'net.minecraftforge:forge:1.16.5-36.1.0'
 
