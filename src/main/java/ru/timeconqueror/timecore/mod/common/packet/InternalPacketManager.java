@@ -7,9 +7,9 @@ import net.minecraftforge.fml.network.simple.SimpleChannel;
 import ru.timeconqueror.timecore.TimeCore;
 import ru.timeconqueror.timecore.api.registry.PacketRegister;
 import ru.timeconqueror.timecore.api.registry.util.AutoRegistrable;
-import ru.timeconqueror.timecore.common.packet.animation.S2CEndAnimationMsg;
-import ru.timeconqueror.timecore.common.packet.animation.S2CStartAnimationMsg;
-import ru.timeconqueror.timecore.common.packet.animation.S2CSyncAnimationsMsg;
+import ru.timeconqueror.timecore.mod.common.packet.animation.S2CEndAnimationMsg;
+import ru.timeconqueror.timecore.mod.common.packet.animation.S2CStartAnimationMsg;
+import ru.timeconqueror.timecore.mod.common.packet.animation.S2CSyncAnimationsMsg;
 
 public class InternalPacketManager {
     @AutoRegistrable
@@ -25,6 +25,7 @@ public class InternalPacketManager {
             .regPacket(S2CSyncAnimationsMsg.class, new S2CSyncAnimationsMsg.Handler(), NetworkDirection.PLAY_TO_CLIENT)
             .regPacket(S2CCoffeeCapabilityDataPacket.class, CoffeeCapabilityDataPacket.Handler.ClientHandler.INSTANCE, NetworkDirection.PLAY_TO_CLIENT)
             .regPacket(C2SCoffeeCapabilityDataPacket.class, CoffeeCapabilityDataPacket.Handler.ServerHandler.INSTANCE, NetworkDirection.PLAY_TO_SERVER)
+            .regPacket(S2CKickPlayerFromSPPacket.class, new S2CKickPlayerFromSPPacket.Handler(), NetworkDirection.PLAY_TO_CLIENT)
             .asChannel();
 
     public static <MSG> void sendToPlayer(ServerPlayerEntity player, MSG message) {

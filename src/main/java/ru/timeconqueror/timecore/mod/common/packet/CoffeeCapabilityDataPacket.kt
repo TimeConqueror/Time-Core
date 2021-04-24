@@ -8,7 +8,7 @@ import net.minecraftforge.common.util.LazyOptional
 import net.minecraftforge.fml.LogicalSide
 import net.minecraftforge.fml.network.NetworkEvent
 import ru.timeconqueror.timecore.TimeCore
-import ru.timeconqueror.timecore.api.common.packet.ITimePacket
+import ru.timeconqueror.timecore.api.common.packet.ITimePacketHandler
 import ru.timeconqueror.timecore.common.capability.ICoffeeCapability
 import ru.timeconqueror.timecore.common.capability.property.CoffeeProperty
 import java.util.function.Predicate
@@ -17,8 +17,7 @@ sealed class CoffeeCapabilityDataPacket(
     val capabilityName: String,
     val ownerData: CompoundNBT,
     val capabilityData: CompoundNBT
-) :
-    ITimePacket {
+) {
 
     companion object {
         fun <T : ICapabilityProvider> create(
@@ -77,7 +76,8 @@ sealed class CoffeeCapabilityDataPacket(
         }
     }
 
-    sealed class Handler<T : CoffeeCapabilityDataPacket> : ITimePacket.ITimePacketHandler<T> {
+    sealed class Handler<T : CoffeeCapabilityDataPacket> :
+        ITimePacketHandler<T> {
         final override fun encode(dataMsg: T, buf: PacketBuffer) {
             buf.writeBoolean(dataMsg is C2SCoffeeCapabilityDataPacket)
             buf.writeUtf(dataMsg.capabilityName)

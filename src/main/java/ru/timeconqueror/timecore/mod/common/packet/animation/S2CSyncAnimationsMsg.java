@@ -1,4 +1,4 @@
-package ru.timeconqueror.timecore.common.packet.animation;
+package ru.timeconqueror.timecore.mod.common.packet.animation;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.network.PacketBuffer;
@@ -10,11 +10,11 @@ import ru.timeconqueror.timecore.animation.ServerAnimationManager;
 import ru.timeconqueror.timecore.animation.util.AnimationSerializer;
 import ru.timeconqueror.timecore.animation.watcher.AnimationWatcher;
 import ru.timeconqueror.timecore.api.animation.AnimatedObject;
-import ru.timeconqueror.timecore.api.common.packet.ITimePacket;
+import ru.timeconqueror.timecore.api.common.packet.ITimePacketHandler;
 
 import java.util.Map;
 
-public class S2CSyncAnimationsMsg implements ITimePacket {
+public class S2CSyncAnimationsMsg {
 	//server side only
 	private ServerAnimationManager<?> serverAnimationManager;
 	// client side only

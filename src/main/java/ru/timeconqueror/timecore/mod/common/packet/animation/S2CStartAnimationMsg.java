@@ -1,4 +1,4 @@
-package ru.timeconqueror.timecore.common.packet.animation;
+package ru.timeconqueror.timecore.mod.common.packet.animation;
 
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.network.NetworkEvent;

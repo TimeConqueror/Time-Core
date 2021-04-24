@@ -9,7 +9,7 @@ import net.minecraftforge.fml.network.NetworkEvent;
 import net.minecraftforge.fml.network.NetworkRegistry;
 import net.minecraftforge.fml.network.simple.SimpleChannel;
 import ru.timeconqueror.timecore.api.TimeMod;
-import ru.timeconqueror.timecore.api.common.packet.ITimePacket;
+import ru.timeconqueror.timecore.api.common.packet.ITimePacketHandler;
 import ru.timeconqueror.timecore.api.registry.base.RunnableStoringRegister;
 import ru.timeconqueror.timecore.api.registry.util.AutoRegistrable;
 import ru.timeconqueror.timecore.mod.common.packet.InternalPacketManager;
@@ -128,7 +128,7 @@ public class PacketRegister extends RunnableStoringRegister {
     /**
      * Registers new packet.
      */
-    public <T extends ITimePacket> void regPacket(SimpleChannel channel, Class<T> packetClass, ITimePacket.ITimePacketHandler<T> packetHandler, NetworkDirection direction) {
+    public <T> void regPacket(SimpleChannel channel, Class<T> packetClass, ITimePacketHandler<T> packetHandler, NetworkDirection direction) {
         add(() -> channel.messageBuilder(packetClass, getAndIncreaseIndex(channel), direction)
                 .encoder((msg, buffer) -> {
                     try {
@@ -184,7 +184,7 @@ public class PacketRegister extends RunnableStoringRegister {
         /**
          * Registers the packet to the bound channel.
          */
-        public <T extends ITimePacket> PacketRegisterChain regPacket(Class<T> packetClass, ITimePacket.ITimePacketHandler<T> packetHandler, NetworkDirection direction) {
+        public <T> PacketRegisterChain regPacket(Class<T> packetClass, ITimePacketHandler<T> packetHandler, NetworkDirection direction) {
             PacketRegister.this.regPacket(channel, packetClass, packetHandler, direction);
             return this;
         }

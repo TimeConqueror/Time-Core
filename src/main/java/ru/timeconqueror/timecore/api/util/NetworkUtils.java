@@ -1,5 +1,6 @@
 package ru.timeconqueror.timecore.api.util;
 
+import com.google.common.annotations.Beta;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.math.BlockPos;
@@ -7,6 +8,8 @@ import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
+import ru.timeconqueror.timecore.mod.common.packet.InternalPacketManager;
+import ru.timeconqueror.timecore.mod.common.packet.S2CKickPlayerFromSPPacket;
 
 import java.util.List;
 import java.util.Optional;
@@ -66,5 +69,18 @@ public class NetworkUtils {
      */
     public static Optional<ServerPlayerEntity> getPlayer(UUID uuid) {
         return Optional.ofNullable(ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayer(uuid));
+    }
+
+    /**
+     * Kicks player from current server.
+     * We need this method because if server is integrated (SP) it freezes the client on disconnect.
+     */
+    @Beta // not tested
+    public static void kickPlayer(ServerPlayerEntity player, ITextComponent reason) {
+        if (EnvironmentUtils.isOnPhysicalClient()) {// if it's an integrated server
+            InternalPacketManager.sendToPlayer(player, new S2CKickPlayerFromSPPacket(reason)); //TODO test
+        } else {
+            player.connection.disconnect(reason);
+        }
     }
 }
