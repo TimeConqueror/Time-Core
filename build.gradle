@@ -15,7 +15,7 @@ buildscript {
     dependencies {
 //        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '4.1.+', changing: true
         classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '4.1.7-patched'
-        classpath 'org.spongepowered:mixingradle:0.7-SNAPSHOT'
+        classpath 'org.spongepowered:mixingradle:0.7-SNAPSHOT-patched'
     }
 }
 
@@ -40,6 +40,8 @@ java.toolchain.languageVersion = JavaLanguageVersion.of(8) // Mojang ships Java 
 
 mixin {
     add sourceSets.main, "mixins.timecore.refmap.json"
+
+    addManualRefmap("src/main/resources/manual_refmap.json")
 }
 
 repositories {
@@ -51,6 +53,10 @@ repositories {
     maven {
         name = 'sponge'
         url = 'https://repo.spongepowered.org/repository/maven-public'
+    }
+    maven {
+        name = "TimeConqueror's Maven"
+        url = "https://repo.repsy.io/mvn/timeconqueror/mc/"
     }
 }
 
@@ -157,7 +163,7 @@ compileJava.options.encoding = "UTF-8"
 compileTestJava.options.encoding = "UTF-8"
 
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.16.5-36.1.0'
+    minecraft 'net.minecraftforge:forge:1.16.5-36.1.12'
 
     if (file("runtimeMods").exists()) {
         file("runtimeMods").eachFile { file ->
@@ -179,7 +185,7 @@ dependencies {
     shade "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
     shade "org.jetbrains.kotlin:kotlin-reflect"
 
-//    annotationProcessor("org.spongepowered:mixin:0.8.2:processor")
+    annotationProcessor("org.spongepowered:mixin:0.8.3-SNAPSHOT-patched:processor")
 }
 
 // Example for how to get properties into the manifest for reading by the runtime..
@@ -236,7 +242,7 @@ task sourcesJar(type: Jar) {
 }
 
 def mavenLink1 = "C:/IJ Projects/Maven"
-def mavenLink2 = "${project.projectDir.absolutePath.replace("\\", "/")}/maven"
+def inProjectMaven = "${project.projectDir.absolutePath.replace("\\", "/")}/maven"
 
 def mavenLinkRepsy = "https://repo.repsy.io/mvn/${secretProps.repsy.user}/${secretProps.repsy.repo_name}"
 
@@ -279,7 +285,7 @@ publishing {
             url mavenLink1
         }
         maven {
-            url mavenLink2
+            url inProjectMaven
         }
         if(secretProps != null) {
             maven {

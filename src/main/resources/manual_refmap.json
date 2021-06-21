@@ -1,0 +1,15 @@
+{
+  "mappings": {
+    "ru/timeconqueror/timecore/mixins/NoiseChunkGeneratorMixin": {
+      "lambda$fillFromNoise$6": "Lnet/minecraft/world/gen/NoiseChunkGenerator;func_236089_a_(Lnet/minecraft/util/math/ChunkPos;Lit/unimi/dsi/fastutil/objects/ObjectList;IILit/unimi/dsi/fastutil/objects/ObjectList;Lnet/minecraft/world/gen/feature/structure/StructureStart;)V"
+    }
+  },
+  "data": {
+    "searge": {
+      "ru/timeconqueror/timecore/mixins/NoiseChunkGeneratorMixin": {
+        "Lnet/minecraft/world/gen/feature/structure/StructurePiece;isCloseToChunk(Lnet/minecraft/util/math/ChunkPos;I)Z": "Lnet/minecraft/world/gen/feature/structure/StructurePiece;func_214810_a(Lnet/minecraft/util/math/ChunkPos;I)Z",
+        "lambda$fillFromNoise$6": "Lnet/minecraft/world/gen/NoiseChunkGenerator;func_236089_a_(Lnet/minecraft/util/math/ChunkPos;Lit/unimi/dsi/fastutil/objects/ObjectList;IILit/unimi/dsi/fastutil/objects/ObjectList;Lnet/minecraft/world/gen/feature/structure/StructureStart;)V"
+      }
+    }
+  }
+}
