@@ -192,6 +192,8 @@ dependencies {
 jar {
     from sourceSets.main.output
 
+    exclude()
+
     from { configurations.shade.collect { it.isDirectory() ? it : zipTree(it) } }
 
     manifest {
@@ -239,6 +241,11 @@ task devJar(type: Jar) {
 task sourcesJar(type: Jar) {
     from sourceSets.main.java.srcDirs
     it.archiveClassifier = 'sources'
+}
+
+
+processResources {
+    exclude 'manual_refmap.json'
 }
 
 def mavenLink1 = "C:/IJ Projects/Maven"
