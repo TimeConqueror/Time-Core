@@ -163,7 +163,7 @@ compileJava.options.encoding = "UTF-8"
 compileTestJava.options.encoding = "UTF-8"
 
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.16.5-36.1.12'
+    minecraft 'net.minecraftforge:forge:1.16.5-36.1.32'
 
     if (file("runtimeMods").exists()) {
         file("runtimeMods").eachFile { file ->
@@ -185,7 +185,7 @@ dependencies {
     shade "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
     shade "org.jetbrains.kotlin:kotlin-reflect"
 
-    annotationProcessor("org.spongepowered:mixin:0.8.3-SNAPSHOT-patched:processor")
+//    annotationProcessor("org.spongepowered:mixin:0.8.3-SNAPSHOT-patched:processor")
 }
 
 // Example for how to get properties into the manifest for reading by the runtime..
