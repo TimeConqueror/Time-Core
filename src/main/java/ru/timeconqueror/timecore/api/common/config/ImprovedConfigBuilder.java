@@ -5,6 +5,7 @@ import net.minecraftforge.fml.ModLoadingContext;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import ru.timeconqueror.timecore.common.config.ConfigValueModifier;
 import ru.timeconqueror.timecore.common.config.QuickConfigValue;
 
 import java.util.ArrayList;
@@ -74,9 +75,6 @@ public class ImprovedConfigBuilder extends ForgeConfigSpec.Builder {
      */
     @Override
     public <T> ForgeConfigSpec.ConfigValue<T> define(List<String> path, ForgeConfigSpec.ValueSpec value, Supplier<T> defaultSupplier) {
-        IConfigValueEditable valueEditable = (IConfigValueEditable) value;
-
-
         if (defValueToComment) {
             Object defaultVal = value.getDefault();
             if (defaultVal instanceof Enum) {
@@ -86,11 +84,11 @@ public class ImprovedConfigBuilder extends ForgeConfigSpec.Builder {
             }
         }
 
-        commentAdditions.forEach(valueEditable::addLineToComment);
+        ConfigValueModifier.addLinesToComment(value, commentAdditions);
         commentAdditions.clear();
 
         if (autoLangKey)
-            valueEditable.setLangKey("cfg." + modid + "." + StringUtils.join(i18nPrefix, '.') + StringUtils.join(path, '.'));
+            ConfigValueModifier.setLangKey(value, "cfg." + modid + "." + StringUtils.join(i18nPrefix, '.') + StringUtils.join(path, '.'));
 
         return super.define(path, value, defaultSupplier);
     }

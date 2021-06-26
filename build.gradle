@@ -185,7 +185,9 @@ dependencies {
     shade "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
     shade "org.jetbrains.kotlin:kotlin-reflect"
 
-//    annotationProcessor("org.spongepowered:mixin:0.8.3-SNAPSHOT-patched:processor")
+    if (System.getProperty("idea.sync.active") != "true") {
+        annotationProcessor("org.spongepowered:mixin:0.8.3-SNAPSHOT-patched:processor")
+    }
 }
 
 // Example for how to get properties into the manifest for reading by the runtime..

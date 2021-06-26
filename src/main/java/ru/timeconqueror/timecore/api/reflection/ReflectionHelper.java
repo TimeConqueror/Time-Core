@@ -15,6 +15,10 @@ import java.util.Optional;
 public class ReflectionHelper {
     private static final UnlockedField<Field> F_MODIFIERS = findField(Field.class, "modifiers");
 
+    static {
+        F_MODIFIERS.getField().setAccessible(true);
+    }
+
     public static boolean isFinal(Field f) {
         return Modifier.isFinal(f.getModifiers());
     }
@@ -32,13 +36,8 @@ public class ReflectionHelper {
      */
     public static void unfinalize(Field f) throws IllegalAccessException {
         if (isFinal(f)) {
-            if (isStatic(f)) {
-                Field modifiersField = F_MODIFIERS.getField();
-                modifiersField.setAccessible(true);
-                modifiersField.setInt(f, f.getModifiers() & ~Modifier.FINAL);
-            } else {
-                f.setInt(f, f.getModifiers() & ~Modifier.FINAL);
-            }
+            Field modifiersField = F_MODIFIERS.getField();
+            modifiersField.setInt(f, f.getModifiers() & ~Modifier.FINAL);
         }
     }
 
