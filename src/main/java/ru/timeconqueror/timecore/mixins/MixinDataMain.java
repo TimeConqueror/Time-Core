@@ -9,7 +9,7 @@ import ru.timeconqueror.timecore.api.reflection.ReflectionHelper;
 import ru.timeconqueror.timecore.api.reflection.UnlockedField;
 import ru.timeconqueror.timecore.api.util.EnvironmentUtils;
 
-@Mixin(Main.class)
+@Mixin(value = Main.class, remap = false)
 public abstract class MixinDataMain {
     @Inject(method = "main",
             at = @At(value = "INVOKE",
