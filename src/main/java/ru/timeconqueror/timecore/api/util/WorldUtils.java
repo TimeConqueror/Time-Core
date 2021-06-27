@@ -4,6 +4,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import ru.timeconqueror.timecore.TimeCore;
 
@@ -17,7 +18,7 @@ public class WorldUtils {
 
     public static <T> void forTypedTileWithWarn(PlayerEntity player, World world, BlockPos pos, Class<T> clazz, Consumer<T> action) {
         forTypedTile(world, pos, clazz, action, message -> {
-            NetworkUtils.sendMessage(player, new StringTextComponent(message));
+            NetworkUtils.sendMessage(player, new StringTextComponent(message).withStyle(TextFormatting.RED));
             TimeCore.LOGGER.warn(message, new IllegalAccessException());
         });
     }
@@ -36,14 +37,14 @@ public class WorldUtils {
         TileEntity tile = world.getBlockEntity(pos);
 
         if (tile == null) {
-            errorHandler.accept("Can't handle this tile, because it's null on " + pos);
+            errorHandler.accept("Error. There's no tile on " + pos);//TODO localize here and in LootGames, TODO "more info in logs, where will be current block"
             return;
         }
 
         if (clazz.isInstance(tile)) {
             action.accept((T) tile);
         } else {
-            errorHandler.accept("Can't handle this tile, because it's " + tile.getClass().getName() + " instead of " + clazz.getName() + " on " + pos);
+            errorHandler.accept("Error. There's a tile " + tile.getClass().getName() + " instead of " + clazz.getName() + " on " + pos);
         }
     }
 }
