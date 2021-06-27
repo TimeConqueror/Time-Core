@@ -8,8 +8,8 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.ForgeRegistryEntry;
 import ru.timeconqueror.timecore.api.reflection.ReflectionHelper;
+import ru.timeconqueror.timecore.api.util.lookups.EnumLookup;
 
-import java.lang.reflect.Array;
 import java.util.function.Function;
 
 public class ExtraCodecs {
@@ -19,7 +19,7 @@ public class ExtraCodecs {
     public static Codec<Direction> HORIZONTAL_DIRECTION = Codec.INT.xmap(Direction::from2DDataValue, Direction::get2DDataValue);
 
     public static <T extends Enum<T>, S> Codec<T> forEnum(Class<T> enumClass, Function<T, S> idSupplier, Codec<S> idCodec) {
-        return idCodec.xmap(EnumLookup.make(enumClass, idSupplier)::get, idSupplier);
+        return idCodec.xmap(EnumLookup.make(enumClass, idSupplier)::by, idSupplier);
     }
 
     /**
@@ -40,16 +40,8 @@ public class ExtraCodecs {
         }
     }
 
-    @SuppressWarnings("unchecked")
     public static <T extends Enum<T>> Codec<T> forEnumByOrdinal(Class<T> enumClass) {
-        T[] enumValues = ReflectionHelper.getEnumValues(enumClass);
-
-        T[] idLookup = (T[]) Array.newInstance(enumClass, enumValues.length);
-
-        for (T val : enumValues) {
-            idLookup[val.ordinal()] = val;
-        }
-
-        return Codec.INT.xmap(id -> idLookup[id], Enum::ordinal);
+        T[] values = ReflectionHelper.getEnumValues(enumClass);
+        return Codec.INT.xmap(ordinal -> values[ordinal], Enum::ordinal);
     }
 }
