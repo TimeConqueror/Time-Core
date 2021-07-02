@@ -1,5 +1,3 @@
-@file:Suppress("ConvertTwoComparisonsToRangeCheck")
-
 package ru.timeconqueror.timecore.api.util
 
 import net.minecraft.world.World
