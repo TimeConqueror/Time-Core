@@ -250,7 +250,6 @@ processResources {
     exclude 'manual_refmap.json'
 }
 
-def mavenLink1 = "C:/IJ Projects/Maven"
 def inProjectMaven = "${project.projectDir.absolutePath.replace("\\", "/")}/maven"
 
 def mavenLinkRepsy = "https://repo.repsy.io/mvn/${secretProps.repsy.user}/${secretProps.repsy.repo_name}"
@@ -290,9 +289,6 @@ publishing {
         }
     }
     repositories {
-        maven {
-            url mavenLink1
-        }
         maven {
             url inProjectMaven
         }
