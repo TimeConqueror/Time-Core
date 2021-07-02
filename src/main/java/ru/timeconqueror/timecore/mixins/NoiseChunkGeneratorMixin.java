@@ -11,8 +11,7 @@ import ru.timeconqueror.timecore.api.common.world.structure.INoNoiseStructurePie
 @Mixin(NoiseChunkGenerator.class)
 public class NoiseChunkGeneratorMixin {
     @Redirect(method = "lambda$fillFromNoise$6",
-            at = @At(value = "INVOKE", target = "Lnet/minecraft/world/gen/feature/structure/StructurePiece;isCloseToChunk(Lnet/minecraft/util/math/ChunkPos;I)Z"),
-            remap = false
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/world/gen/feature/structure/StructurePiece;isCloseToChunk(Lnet/minecraft/util/math/ChunkPos;I)Z")
     )
     private static boolean disableNoiseForSomePieces(StructurePiece piece, ChunkPos pos, int int_) {
         return !(piece instanceof INoNoiseStructurePiece) && piece.isCloseToChunk(pos, int_);
