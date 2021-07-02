@@ -1,90 +1,433 @@
-package ru.timeconqueror.timecore.api.util;
+@file:Suppress("ConvertTwoComparisonsToRangeCheck")
 
-import com.google.common.base.Preconditions;
-import net.minecraft.world.World;
-import ru.timeconqueror.timecore.api.exception.IllegalSideException;
+package ru.timeconqueror.timecore.api.util
 
-public class Requirements {
-    public static void inRangeInclusive(int number, int min, int max) {
-        if (number < min || number > max)
-            throw new IllegalArgumentException("Number should be in range [" + min + ", " + max + "] (inclusive). Provided: " + number);
+import net.minecraft.world.World
+import ru.timeconqueror.timecore.api.exception.IllegalSideException
+
+object Requirements {
+    /**
+     * Requires the provided number to be in inclusive range from [min] to [max]
+     * Throws exception if it isn't in this range.
+     *
+     * @param number    number to check
+     * @param min       minimum value
+     * @param max       maximum value
+     * @param valueName name of the number being checked. Used for more readable exception.
+     * @throws IllegalArgumentException if number is not in inclusive range.
+     */
+    @JvmOverloads
+    @JvmStatic
+    fun inRangeInclusive(number: Int, min: Int, max: Int, valueName: String = NUMBER) {
+        require(number in min..max) { "Provided $valueName (=$number) should be in range [$min, $max] (inclusive)" }
     }
 
-    public static void inRangeInclusive(float number, float min, float max) {
-        if (number < min || number > max)
-            throw new IllegalArgumentException("Number should be in range [" + min + ", " + max + "] (inclusive). Provided: " + number);
+    /**
+     * Requires the provided number to be in inclusive range from [min] to [max]
+     * Throws exception if it isn't in this range.
+     *
+     * @param number    number to check
+     * @param min       minimum value
+     * @param max       maximum value
+     * @param valueName name of the number being checked. Used for more readable exception.
+     * @throws IllegalArgumentException if number is not in inclusive range.
+     */
+    @JvmOverloads
+    @JvmStatic
+    fun inRangeInclusive(number: Long, min: Long, max: Long, valueName: String = NUMBER) {
+        require(number in min..max) { "Provided $valueName (=$number) should be in range [$min, $max] (inclusive)" }
     }
 
-    public static void inRangeExclusive(int number, int min, int max) {
-        if (number <= min || number >= max)
-            throw new IllegalArgumentException("Number should be in range [" + min + ", " + max + "] (exclusive). Provided: " + number);
+    /**
+     * Requires the provided number to be in inclusive range from [min] to [max]
+     * Throws exception if it isn't in this range.
+     *
+     * @param number    number to check
+     * @param min       minimum value
+     * @param max       maximum value
+     * @param valueName name of the number being checked. Used for more readable exception.
+     * @throws IllegalArgumentException if number is not in inclusive range.
+     */
+    @JvmOverloads
+    @JvmStatic
+    fun inRangeInclusive(number: Float, min: Float, max: Float, valueName: String = NUMBER) {
+        require(number in min..max) { "Provided $valueName (=$number) should be in range [$min, $max] (inclusive)" }
     }
 
-    public static void inRangeExclusive(float number, float min, float max) {
-        if (number <= min || number >= max)
-            throw new IllegalArgumentException("Number should be in range [" + min + ", " + max + "] (exclusive). Provided: " + number);
+    /**
+     * Requires the provided number to be in inclusive range from [min] to [max]
+     * Throws exception if it isn't in this range.
+     *
+     * @param number    number to check
+     * @param min       minimum value
+     * @param max       maximum value
+     * @param valueName name of the number being checked. Used for more readable exception.
+     * @throws IllegalArgumentException if number is not in inclusive range.
+     */
+    @JvmOverloads
+    @JvmStatic
+    fun inRangeInclusive(number: Double, min: Double, max: Double, valueName: String = NUMBER) {
+        require(number in min..max) { "Provided $valueName (=$number) should be in range [$min, $max] (inclusive)" }
     }
 
-    public static void greaterOrEquals(int number, int min) {
-        if (number < min)
-            throw new IllegalArgumentException("Provided number should be greater or equal " + min + ". Provided: " + number);
+    /**
+     * Requires the provided number to be in exclusive range from [min] to [max]
+     * Throws exception if it isn't in this range.
+     *
+     * @param number    number to check
+     * @param min       minimum value
+     * @param max       maximum value
+     * @param valueName name of the number being checked. Used for more readable exception.
+     * @throws IllegalArgumentException if number is not in exclusive range.
+     */
+    @JvmOverloads
+    @JvmStatic
+    fun inRangeExclusive(number: Int, min: Int, max: Int, valueName: String = NUMBER) {
+        require(number > min && number < max) { "Provided $valueName (=$number) should be in range ($min, $max) (exclusive)" }
     }
 
-    public static void greaterOrEquals(float number, float min) {
-        if (number < min)
-            throw new IllegalArgumentException("Provided number should be greater or equal " + min + ". Provided: " + number);
+    /**
+     * Requires the provided number to be in exclusive range from [min] to [max]
+     * Throws exception if it isn't in this range.
+     *
+     * @param number    number to check
+     * @param min       minimum value
+     * @param max       maximum value
+     * @param valueName name of the number being checked. Used for more readable exception.
+     * @throws IllegalArgumentException if number is not in exclusive range.
+     */
+    @JvmOverloads
+    @JvmStatic
+    fun inRangeExclusive(number: Long, min: Long, max: Long, valueName: String = NUMBER) {
+        require(number > min && number < max) { "Provided $valueName (=$number) should be in range ($min, $max) (exclusive)" }
     }
 
-    public static void greaterThan(int number, int min) {
-        if (number <= min)
-            throw new IllegalArgumentException("Provided number should be greater than " + min + ". Provided: " + number);
+    /**
+     * Requires the provided number to be in exclusive range from [min] to [max]
+     * Throws exception if it isn't in this range.
+     *
+     * @param number    number to check
+     * @param min       minimum value
+     * @param max       maximum value
+     * @param valueName name of the number being checked. Used for more readable exception.
+     * @throws IllegalArgumentException if number is not in exclusive range.
+     */
+    @JvmOverloads
+    @JvmStatic
+    fun inRangeExclusive(number: Float, min: Float, max: Float, valueName: String = NUMBER) {
+        require(number > min && number < max) { "Provided $valueName (=$number) should be in range ($min, $max) (exclusive)" }
     }
 
-    public static void greaterThan(float number, float min) {
-        if (number <= min)
-            throw new IllegalArgumentException("Provided number should be greater than " + min + ". Provided: " + number);
+    /**
+     * Requires the provided number to be in exclusive range from [min] to [max]
+     * Throws exception if it isn't in this range.
+     *
+     * @param number    number to check
+     * @param min       minimum value
+     * @param max       maximum value
+     * @param valueName name of the number being checked. Used for more readable exception.
+     * @throws IllegalArgumentException if number is not in exclusive range.
+     */
+    @JvmOverloads
+    @JvmStatic
+    fun inRangeExclusive(number: Double, min: Double, max: Double, valueName: String = NUMBER) {
+        require(number > min && number < max) { "Provided $valueName (=$number) should be in range ($min, $max) (exclusive)" }
     }
 
-    public static void lessThan(int number, int max) {
-        if (number >= max)
-            throw new IllegalArgumentException("Provided number should be less than " + max + ". Provided: " + number);
+    /**
+     * Requires the provided number to be greater or equal [min]
+     * Throws exception if this condition is not met.
+     *
+     * @param number    number to check
+     * @param min       minimum value
+     * @param valueName name of the number being checked. Used for more readable exception.
+     * @throws IllegalArgumentException if number is less then [min].
+     */
+    @JvmOverloads
+    @JvmStatic
+    fun greaterOrEquals(number: Int, min: Int, valueName: String = NUMBER) {
+        require(number >= min) { "Provided $valueName (=$number) should be greater or equal to $min" }
     }
 
-    public static void lessThan(float number, float max) {
-        if (number >= max)
-            throw new IllegalArgumentException("Provided number should be less than " + max + ". Provided: " + number);
+    /**
+     * Requires the provided number to be greater or equal [min]
+     * Throws exception if this condition is not met.
+     *
+     * @param number    number to check
+     * @param min       minimum value
+     * @param valueName name of the number being checked. Used for more readable exception.
+     * @throws IllegalArgumentException if number is less then [min].
+     */
+    @JvmOverloads
+    @JvmStatic
+    fun greaterOrEquals(number: Long, min: Long, valueName: String = NUMBER) {
+        require(number >= min) { "Provided $valueName (=$number) should be greater or equal to $min" }
     }
 
-    public static void lessOrEquals(int number, int max) {
-        if (number > max)
-            throw new IllegalArgumentException("Provided number should be less or equals " + max + ". Provided: " + number);
+    /**
+     * Requires the provided number to be greater or equal [min]
+     * Throws exception if this condition is not met.
+     *
+     * @param number    number to check
+     * @param min       minimum value
+     * @param valueName name of the number being checked. Used for more readable exception.
+     * @throws IllegalArgumentException if number is less then [min].
+     */
+    @JvmOverloads
+    @JvmStatic
+    fun greaterOrEquals(number: Float, min: Float, valueName: String = NUMBER) {
+        require(number >= min) { "Provided $valueName (=$number) should be greater or equal to $min" }
     }
 
-    public static void lessOrEquals(float number, float max) {
-        if (number > max)
-            throw new IllegalArgumentException("Provided number should be less or equals " + max + ". Provided: " + number);
+    /**
+     * Requires the provided number to be greater or equal [min]
+     * Throws exception if this condition is not met.
+     *
+     * @param number    number to check
+     * @param min       minimum value
+     * @param valueName name of the number being checked. Used for more readable exception.
+     * @throws IllegalArgumentException if number is less then [min].
+     */
+    @JvmOverloads
+    @JvmStatic
+    fun greaterOrEquals(number: Double, min: Double, valueName: String = NUMBER) {
+        require(number >= min) { "Provided $valueName (=$number) should be greater or equal to $min" }
     }
 
-    public static <T> void arrayWithLength(T[] arr, int length) {
-        arrayWithLength(arr, length, "Provided array should have length " + length + ". Provided: " + arr.length);
+    /**
+     * Requires the provided number to be greater than [min]
+     * Throws exception if this condition is not met.
+     *
+     * @param number    number to check
+     * @param min       minimum value
+     * @param valueName name of the number being checked. Used for more readable exception.
+     * @throws IllegalArgumentException if number is less or equal [min].
+     */
+    @JvmOverloads
+    @JvmStatic
+    fun greaterThan(number: Int, min: Int, valueName: String = NUMBER) {
+        require(number > min) { "Provided $valueName (=$number) should be greater than $min" }
     }
 
-    public static <T> void arrayWithLength(T[] arr, int length, String errorMessage) {
-        Preconditions.checkNotNull(arr);
-        if (arr.length != length)
-            throw new IllegalArgumentException(errorMessage);
+    /**
+     * Requires the provided number to be greater than [min]
+     * Throws exception if this condition is not met.
+     *
+     * @param number    number to check
+     * @param min       minimum value
+     * @param valueName name of the number being checked. Used for more readable exception.
+     * @throws IllegalArgumentException if number is less or equal [min].
+     */
+    @JvmOverloads
+    @JvmStatic
+    fun greaterThan(number: Long, min: Long, valueName: String = NUMBER) {
+        require(number > min) { "Provided $valueName (=$number) should be greater than $min" }
     }
 
-    public static void instanceOf(Object obj, Class<?> clazz) {
-        if (!clazz.isInstance(obj)) {
-            throw new IllegalArgumentException("Provided object should be an instance of " + clazz + ". Provided: " + obj.getClass());
-        }
+    /**
+     * Requires the provided number to be greater than [min]
+     * Throws exception if this condition is not met.
+     *
+     * @param number    number to check
+     * @param min       minimum value
+     * @param valueName name of the number being checked. Used for more readable exception.
+     * @throws IllegalArgumentException if number is less or equal [min].
+     */
+    @JvmOverloads
+    @JvmStatic
+    fun greaterThan(number: Float, min: Float, valueName: String = NUMBER) {
+        require(number > min) { "Provided $valueName (=$number) should be greater than $min" }
     }
 
-    public static <T> void notEmpty(T[] arr) {
-        if (arr.length == 0) {
-            throw new IllegalStateException("Provided array is empty.");
-        }
+    /**
+     * Requires the provided number to be greater than [min]
+     * Throws exception if this condition is not met.
+     *
+     * @param number    number to check
+     * @param min       minimum value
+     * @param valueName name of the number being checked. Used for more readable exception.
+     * @throws IllegalArgumentException if number is less or equal [min].
+     */
+    @JvmOverloads
+    @JvmStatic
+    fun greaterThan(number: Double, min: Double, valueName: String = NUMBER) {
+        require(number > min) { "Provided $valueName (=$number) should be greater than $min" }
+    }
+
+    /**
+     * Requires the provided number to be less than [max]
+     * Throws exception if this condition is not met.
+     *
+     * @param number    number to check
+     * @param max       maximum value
+     * @param valueName name of the number being checked. Used for more readable exception.
+     * @throws IllegalArgumentException if number is greater or equal [max].
+     */
+    @JvmOverloads
+    @JvmStatic
+    fun lessThan(number: Int, max: Int, valueName: String = NUMBER) {
+        require(number < max) { "Provided $valueName (=$number) should be less than $max" }
+    }
+
+    /**
+     * Requires the provided number to be less than [max]
+     * Throws exception if this condition is not met.
+     *
+     * @param number    number to check
+     * @param max       maximum value
+     * @param valueName name of the number being checked. Used for more readable exception.
+     * @throws IllegalArgumentException if number is greater or equal [max].
+     */
+    @JvmOverloads
+    @JvmStatic
+    fun lessThan(number: Long, max: Long, valueName: String = NUMBER) {
+        require(number < max) { "Provided $valueName (=$number) should be less than $max" }
+    }
+
+    /**
+     * Requires the provided number to be less than [max]
+     * Throws exception if this condition is not met.
+     *
+     * @param number    number to check
+     * @param max       maximum value
+     * @param valueName name of the number being checked. Used for more readable exception.
+     * @throws IllegalArgumentException if number is greater or equal [max].
+     */
+    @JvmOverloads
+    @JvmStatic
+    fun lessThan(number: Float, max: Float, valueName: String = NUMBER) {
+        require(number < max) { "Provided $valueName (=$number) should be less than $max" }
+    }
+
+    /**
+     * Requires the provided number to be less than [max]
+     * Throws exception if this condition is not met.
+     *
+     * @param number    number to check
+     * @param max       maximum value
+     * @param valueName name of the number being checked. Used for more readable exception.
+     * @throws IllegalArgumentException if number is greater or equal [max].
+     */
+    @JvmOverloads
+    @JvmStatic
+    fun lessThan(number: Double, max: Double, valueName: String = NUMBER) {
+        require(number < max) { "Provided $valueName (=$number) should be less than $max" }
+    }
+
+    /**
+     * Requires the provided number to be less or equal to [max]
+     * Throws exception if this condition is not met.
+     *
+     * @param number    number to check
+     * @param max       maximum value
+     * @param valueName name of the number being checked. Used for more readable exception.
+     * @throws IllegalArgumentException if number is greater than [max].
+     */
+    @JvmOverloads
+    @JvmStatic
+    fun lessOrEquals(number: Int, max: Int, valueName: String = NUMBER) {
+        require(number <= max) { "Provided $valueName (=$number) should be less or equal to $max" }
+    }
+
+    /**
+     * Requires the provided number to be less or equal to [max]
+     * Throws exception if this condition is not met.
+     *
+     * @param number    number to check
+     * @param max       maximum value
+     * @param valueName name of the number being checked. Used for more readable exception.
+     * @throws IllegalArgumentException if number is greater than [max].
+     */
+    @JvmOverloads
+    @JvmStatic
+    fun lessOrEquals(number: Long, max: Long, valueName: String = NUMBER) {
+        require(number <= max) { "Provided $valueName (=$number) should be less or equal to $max" }
+    }
+
+    /**
+     * Requires the provided number to be less or equal to [max]
+     * Throws exception if this condition is not met.
+     *
+     * @param number    number to check
+     * @param max       maximum value
+     * @param valueName name of the number being checked. Used for more readable exception.
+     * @throws IllegalArgumentException if number is greater than [max].
+     */
+    @JvmOverloads
+    @JvmStatic
+    fun lessOrEquals(number: Float, max: Float, valueName: String = NUMBER) {
+        require(number <= max) { "Provided $valueName (=$number) should be less or equal to $max" }
+    }
+
+    /**
+     * Requires the provided number to be less or equal to [max]
+     * Throws exception if this condition is not met.
+     *
+     * @param number    number to check
+     * @param max       maximum value
+     * @param valueName name of the number being checked. Used for more readable exception.
+     * @throws IllegalArgumentException if number is greater than [max].
+     */
+    @JvmOverloads
+    @JvmStatic
+    fun lessOrEquals(number: Double, max: Double, valueName: String = NUMBER) {
+        require(number <= max) { "Provided $valueName (=$number) should be less or equal to $max" }
+    }
+
+    /**
+     * Requires the provided [array] to have the required [length]
+     * Throws exception if this condition is not met.
+     *
+     * @param array     array to check
+     * @param length    required length
+     * @param arrayName name of the array being checked. Used for more readable exception.
+     * @throws IllegalArgumentException if [array] doesn't have the required [length].
+     */
+    @JvmOverloads
+    @JvmStatic
+    fun <T> arrayWithLength(array: Array<T>, length: Int, arrayName: String? = null) {
+        require(array.size == length) { "Provided array ${arrayName.transformIfNotNull { "'$it'" }} (with length = ${array.size}) should have length $length" }
+    }
+
+    /**
+     * Requires the provided [object][obj] to extend provided [class][clazz]
+     * Throws exception if this condition is not met.
+     *
+     * @param obj     object to check
+     * @param clazz   class, which the the provided object should extend
+     * @param objName name of the object being checked. Used for more readable exception.
+     * @throws IllegalArgumentException if the object doesn't extend the provided class.
+     */
+    @JvmOverloads
+    @JvmStatic
+    fun instanceOf(obj: Any, clazz: Class<*>, objName: String? = null) {
+        require(clazz.isInstance(obj)) { "Provided object ${objName.transformIfNotNull { "'$it'" }} (class = ${clazz.name}) should extend ${clazz.name}" }
+    }
+
+    /**
+     * Requires the provided array to be not empty.
+     *
+     * @param arr       array to check
+     * @param arrayName name of the array being checked. Used for more readable exception.
+     * @throws IllegalArgumentException if empty array was provided.
+     */
+    @JvmOverloads
+    @JvmStatic
+    fun <T> notEmpty(arr: Array<T>, arrayName: String? = null) {
+        require(arr.isNotEmpty()) { "Provided array ${arrayName.transformIfNotNull { "'$it'" }} shouldn't be empty" }
+    }
+
+    /**
+     * Requires the provided collection to be not empty.
+     *
+     * @param collection     collection to check
+     * @param collectionName name of the collection being checked. Used for more readable exception.
+     * @throws IllegalArgumentException if empty collection was provided.
+     */
+    @JvmOverloads
+    @JvmStatic
+    fun <T> notEmpty(collection: Collection<T>, collectionName: String? = null) {
+        require(collection.isNotEmpty()) { "Provided collection ${collectionName.transformIfNotNull { "'$it'" }} shouldn't be empty" }
     }
 
     /**
@@ -92,9 +435,10 @@ public class Requirements {
      *
      * @throws IllegalSideException if is called on client side.
      */
-    public static void onServer(World world) {
+    @JvmStatic
+    fun onServer(world: World) {
         if (world.isClientSide()) {
-            IllegalSideException.notOnServer();
+            IllegalSideException.notOnServer()
         }
     }
 
@@ -103,9 +447,12 @@ public class Requirements {
      *
      * @throws IllegalSideException if is called on server side.
      */
-    public static void onClient(World world) {
+    @JvmStatic
+    fun onClient(world: World) {
         if (!world.isClientSide()) {
-            IllegalSideException.notOnClient();
+            IllegalSideException.notOnClient()
         }
     }
+
+    private const val NUMBER = "number"
 }

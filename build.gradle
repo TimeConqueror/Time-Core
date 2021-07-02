@@ -310,7 +310,7 @@ publishing {
 
 tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
     kotlinOptions {
-        freeCompilerArgs = Arrays.asList("-Xjvm-default=all")
+        freeCompilerArgs = Arrays.asList("-Xjvm-default=all -Xopt-in=kotlin.RequiresOptIn")
         jvmTarget = "1.8"
         languageVersion = "1.4"
     }
