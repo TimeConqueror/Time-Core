@@ -1,25 +1,18 @@
+ext.buildPropsFile = file("build.properties")
+
 ext.updateConfigs = new Runnable() {
     @Override
     void run() {
-        file "python/data.properties" withReader {
-            def prop = new Properties()
-            prop.load(it)
-            ext.dataProps = new ConfigSlurper().parse prop
-        }
+        ext.buildProps = parseConfig(buildPropsFile)
+        ext.secretProps = parseConfig(file("secret.properties"))
+    }
+}
 
-        file "build.properties" withReader {
-            def prop = new Properties()
-            prop.load(it)
-            ext.buildProps = new ConfigSlurper().parse prop
-        }
-
-        if(file("secret.properties").exists()) {
-            file "secret.properties" withReader {
-                def prop = new Properties()
-                prop.load(it)
-                ext.secretProps = new ConfigSlurper().parse prop
-            }
-        }
+static def parseConfig(File config) {
+    config.withReader {
+        def prop = new Properties()
+        prop.load(it)
+        return (new ConfigSlurper().parse(prop))
     }
 }
 

@@ -17,22 +17,6 @@ def update_version_if_required():
     write_properties(DATA_PROPERTIES_PATH, storage)
 
 
-def increment_build_version():
-    storage = parse_properties(DATA_PROPERTIES_PATH)
-    project_props = parse_properties(PROJECT_PROPERTIES_PATH)
-
-    check_version_change(storage, project_props[RELEASE_KEY])
-
-    prev_build_version = int(storage[BUILD_VERSION_KEY])
-    new_build_version = str(prev_build_version + 1)
-
-    storage[BUILD_VERSION_KEY] = new_build_version
-
-    write_properties(DATA_PROPERTIES_PATH, storage)
-
-    pass
-
-
 def check_version_change(storage, new_version):
     if RELEASE_KEY not in storage.keys():
         storage[RELEASE_KEY] = "not_defined"

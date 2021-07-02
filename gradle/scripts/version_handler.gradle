@@ -7,25 +7,27 @@ ext.versionGetter = new Supplier<String>() {
     String get() {
         def version = "${buildProps.mc_version}-${buildProps.timecore.release_version}"
 
-        if(buildProps.version_type == "build"){
+        if (!buildProps.isRelease.toBoolean()) {
             version += ".build"
 
-            if(dataProps.timecore.release_version != buildProps.timecore.release_version){//if that's a new manually typed version
-                version += "1"
-            } else {
-                version += "${dataProps.timecore.build_version}"
-            }
+            version += "${buildProps.build_number}"
         }
 
         return version
     }
 }
 
-task incrementBuild(type:Exec) {
-    onlyIf {buildProps.version_type == "build"}
+task incrementBuild {
+    doFirst {
+        if (!buildProps.isRelease.toBoolean()) {
+            buildProps.build_number = (buildProps.build_number.toString().toInteger()) + 1
+        } else {
+            buildProps.build_number = 1
+        }
 
-    workingDir "python/scripts"
-
-    commandLine 'python', 'increment_build_version.py'
+        buildPropsFile.withWriter {
+            buildProps.toProperties().store(it, "")
+        }
+    }
 }
 jar.finalizedBy(incrementBuild)
