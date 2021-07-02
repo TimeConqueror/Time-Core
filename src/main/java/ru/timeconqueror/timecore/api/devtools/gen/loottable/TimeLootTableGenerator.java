@@ -85,6 +85,6 @@ public class TimeLootTableGenerator implements IDataProvider {
     @NotNull
     @Override
     public String getName() {
-        return "Time LootTables";
+        return "TimeCore LootTable Generator";
     }
 }

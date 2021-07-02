@@ -64,6 +64,6 @@ public class TimeAdvancementGenerator implements IDataProvider {
 
     @Override
     public String getName() {
-        return "TimeCore Advancements";
+        return "TimeCore Advancement Generator";
     }
 }
