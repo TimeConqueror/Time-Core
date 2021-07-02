@@ -200,15 +200,15 @@ jar {
 
     manifest {
         attributes([
-                "Specification-Title"        : "timecore",
-                "Specification-Vendor"       : "Time_Conqueror",
-                "Specification-Version"      : "1", // We are version 1 of ourselves
-                "Implementation-Title"       : project.name,
-                "Implementation-Version"     : archiveVersion,
-                "Implementation-Vendor"      : "Time_Conqueror",
-                "Implementation-Timestamp"   : new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
+                "Specification-Title"     : "timecore",
+                "Specification-Vendor"    : "Time_Conqueror",
+                "Specification-Version"   : "1", // We are version 1 of ourselves
+                "Implementation-Title"    : project.name,
+                "Implementation-Version"  : archiveVersion,
+                "Implementation-Vendor"   : "Time_Conqueror",
+                "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
 
-                "MixinConfigs"               : "mixins.timecore.json"
+                "MixinConfigs"            : "mixins.timecore.json"
         ])
     }
 
@@ -224,15 +224,15 @@ task devJar(type: Jar) {
 
     manifest {
         attributes([
-                "Specification-Title"        : "timecore",
-                "Specification-Vendor"       : "Time_Conqueror",
-                "Specification-Version"      : "1", // We are version 1 of ourselves
-                "Implementation-Title"       : project.name,
-                "Implementation-Version"     : archiveVersion,
-                "Implementation-Vendor"      : "Time_Conqueror",
-                "Implementation-Timestamp"   : new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
+                "Specification-Title"     : "timecore",
+                "Specification-Vendor"    : "Time_Conqueror",
+                "Specification-Version"   : "1", // We are version 1 of ourselves
+                "Implementation-Title"    : project.name,
+                "Implementation-Version"  : archiveVersion,
+                "Implementation-Vendor"   : "Time_Conqueror",
+                "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
 
-                "MixinConfigs"               : "mixins.timecore.json"
+                "MixinConfigs"            : "mixins.timecore.json"
         ])
     }
 
@@ -256,7 +256,7 @@ def mavenLinkRepsy = "https://repo.repsy.io/mvn/${secretProps.repsy.user}/${secr
 
 publishing {
     publications {
-        mavenJava(MavenPublication) {p ->
+        mavenJava(MavenPublication) { p ->
 
             artifact jar
             artifact devJar
@@ -266,25 +266,12 @@ publishing {
 //                def dependenciesNode = asNode().appendNode('dependencies')
 //
 //                //Iterate over the compile dependencies (we don't want the test ones), adding a <dependency> node for each
-//                configurations.customCompile.allDependencies.each {
-//                    def dependencyNode = dependenciesNode.appendNode('dependency')
-//                    dependencyNode.appendNode('groupId', it.group)
-//                    dependencyNode.appendNode('artifactId', it.name)
-//                    dependencyNode.appendNode('version', it.version)
-//                }
-//                //Iterate over the compile dependencies (we don't want the test ones), adding a <dependency> node for each
 //                configurations.shade.allDependencies.each {
 //                    def dependencyNode = dependenciesNode.appendNode('dependency')
 //                    dependencyNode.appendNode('groupId', it.group)
 //                    dependencyNode.appendNode('artifactId', it.name)
 //                    dependencyNode.appendNode('version', it.version)
 //                }
-//
-//                def repositoriesNode = asNode().appendNode('repositories')
-//
-//                def repoSpongeNode = repositoriesNode.appendNode('repository')
-//                repoSpongeNode.appendNode('name', 'Sponge Repo')
-//                repoSpongeNode.appendNode('url', 'https://repo.spongepowered.org/maven')
 //            }
         }
     }
@@ -292,7 +279,7 @@ publishing {
         maven {
             url inProjectMaven
         }
-        if(secretProps != null) {
+        if (secretProps != null) {
             maven {
                 url mavenLinkRepsy
                 credentials {
