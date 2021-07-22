@@ -281,7 +281,7 @@ public class StructureRegister extends ForgeRegister<Structure<?>> {
         /**
          * Creates new instance of TimeStructureSeparationSettings
          *
-         * @param spacing    maximum distance apart in chunks between spawn attempts
+         * @param spacing    average distance apart in chunks between spawn attempts
          * @param separation minimum distance apart in chunks between spawn attempts
          */
         public static TimeStructureSeparationSettings create(int spacing, int separation) {

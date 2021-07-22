@@ -5,8 +5,8 @@ import net.minecraftforge.fml.ModLoadingContext;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import ru.timeconqueror.timecore.common.config.ConfigValueModifier;
 import ru.timeconqueror.timecore.common.config.QuickConfigValue;
+import ru.timeconqueror.timecore.common.config.ValueSpecAccessor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -84,11 +84,11 @@ public class ImprovedConfigBuilder extends ForgeConfigSpec.Builder {
             }
         }
 
-        ConfigValueModifier.addLinesToComment(value, commentAdditions);
+        ValueSpecAccessor.addLinesToComment(value, commentAdditions);
         commentAdditions.clear();
 
         if (autoLangKey)
-            ConfigValueModifier.setLangKey(value, "cfg." + modid + "." + StringUtils.join(i18nPrefix, '.') + StringUtils.join(path, '.'));
+            ValueSpecAccessor.setLangKey(value, "cfg." + modid + "." + StringUtils.join(i18nPrefix, '.') + StringUtils.join(path, '.'));
 
         return super.define(path, value, defaultSupplier);
     }

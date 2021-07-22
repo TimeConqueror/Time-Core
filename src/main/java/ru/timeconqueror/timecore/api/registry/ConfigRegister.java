@@ -58,6 +58,7 @@ import java.util.List;
  * <p>
  * Examples can be seen at {@link TimeCoreConfigManager}
  */
+//TODO add reload command, add warning about some variables, that they will work after restart
 public class ConfigRegister extends TimeRegister {
     private final ArrayList<Config> CONFIG_LIST = new ArrayList<>();
     private List<Runnable> runnables = new ArrayList<>();
