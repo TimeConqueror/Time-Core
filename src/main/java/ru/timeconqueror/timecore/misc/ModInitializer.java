@@ -77,12 +77,12 @@ public class ModInitializer {
 
     private static void processAutoRegistrable(Class<?> containerClass, ModFileScanData.AnnotationData annotationData, Consumer<TimeRegister> registerSubscriber) throws ClassNotFoundException {
         String fieldName = annotationData.getMemberName();
-        UnlockedField<Object> field = ReflectionHelper.findField(containerClass, fieldName);
+        UnlockedField<?, Object> field = ReflectionHelper.findField(containerClass, fieldName);
 
         processAutoRegistrableOnField(containerClass, field, registerSubscriber);
     }
 
-    private static void processAutoRegistrableOnField(Class<?> containerClass, UnlockedField<Object> field, Consumer<TimeRegister> registerSubscriber) {
+    private static void processAutoRegistrableOnField(Class<?> containerClass, UnlockedField<?, Object> field, Consumer<TimeRegister> registerSubscriber) {
         if (field.isStatic()) {
             if (TimeRegister.class.isAssignableFrom(field.getField().getType())) {
                 TimeRegister register = (TimeRegister) field.get(null);
@@ -105,7 +105,7 @@ public class ModInitializer {
             throw new IllegalArgumentException("Can't handle class " + containerClass.getName() + ", because there's no " + ClassHandler.class.getName() + " found for it.");
         }
 
-        UnlockedMethod<Object> initMethod = handler.findMethod(containerClass, methodSignature);
+        UnlockedMethod<?, Object> initMethod = handler.findMethod(containerClass, methodSignature);
         if (initMethod == null)
             throw new NoSuchMethodError("Not found method " + methodSignature + " from class " + containerClass.getName());
         handler.requireStatic(initMethod);

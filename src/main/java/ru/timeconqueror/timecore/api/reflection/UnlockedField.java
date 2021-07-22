@@ -7,9 +7,10 @@ import java.lang.reflect.Field;
 /**
  * Wrapper for field, unlocks the access to it.
  *
+ * @param <O> owner type.
  * @param <T> field type.
  */
-public class UnlockedField<T> {
+public class UnlockedField<O, T> {
     private final Field field;
     private boolean finalized;
 
@@ -27,7 +28,7 @@ public class UnlockedField<T> {
      * @param fieldOwner owner of field. If the underlying field is static, the obj argument is ignored; it may be null.
      */
     @SuppressWarnings("unchecked")
-    public T get(@Nullable Object fieldOwner) {
+    public T get(@Nullable O fieldOwner) {
         try {
             return (T) field.get(fieldOwner);
         } catch (IllegalAccessException e) {
@@ -54,7 +55,7 @@ public class UnlockedField<T> {
      * @param fieldOwner owner of field. If the underlying field is static, the methodOwner argument is ignored; it may be null.
      * @param newVal     new value to put in the field of provided {@code fieldOwner}
      */
-    public void set(@Nullable Object fieldOwner, T newVal) {
+    public void set(@Nullable O fieldOwner, T newVal) {
         if (finalized) {
             try {
                 ReflectionHelper.unfinalize(field);

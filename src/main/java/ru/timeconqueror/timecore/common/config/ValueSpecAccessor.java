@@ -7,8 +7,8 @@ import ru.timeconqueror.timecore.api.reflection.UnlockedField;
 import java.util.List;
 
 public class ValueSpecAccessor {
-    private static final UnlockedField<String> fValueSpecComment = ReflectionHelper.findField(ValueSpec.class, "comment");
-    private static final UnlockedField<String> fValueSpecLangKey = ReflectionHelper.findField(ValueSpec.class, "langKey");
+    private static final UnlockedField<ValueSpec, String> fValueSpecComment = ReflectionHelper.findField(ValueSpec.class, "comment");
+    private static final UnlockedField<ValueSpec, String> fValueSpecLangKey = ReflectionHelper.findField(ValueSpec.class, "langKey");
 
     public static void addLinesToComment(ValueSpec spec, List<String> additions) {
         String comment = fValueSpecComment.get(spec);

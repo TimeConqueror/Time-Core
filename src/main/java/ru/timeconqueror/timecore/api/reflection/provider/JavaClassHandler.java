@@ -13,19 +13,19 @@ public class JavaClassHandler implements ClassHandler {
     }
 
     @Override
-    public <R> boolean isStatic(UnlockedMethod<R> method) {
+    public <O, R> boolean isStatic(UnlockedMethod<O, R> method) {
         return method.isStatic();
     }
 
     @Override
-    public <R> void requireStatic(UnlockedMethod<R> method) {
+    public <O, R> void requireStatic(UnlockedMethod<O, R> method) {
         if (!isStatic(method)) {
             throw new IllegalArgumentException("Method " + method + " should be static!");
         }
     }
 
     @Override
-    public <R> UnlockedMethod<R> findMethod(Class<?> clazz, String signature) {
+    public <O, R> UnlockedMethod<O, R> findMethod(Class<O> clazz, String signature) {
         for (Method declaredMethod : clazz.getDeclaredMethods()) {
             if (ReflectionHelper.getMethodSignature(declaredMethod).equals(signature)) {
                 return new UnlockedMethod<>(declaredMethod);
@@ -35,7 +35,7 @@ public class JavaClassHandler implements ClassHandler {
     }
 
     @Override
-    public <R> Object invokeStaticMethod(UnlockedMethod<R> method, Object... args) {
+    public <O, R> Object invokeStaticMethod(UnlockedMethod<O, R> method, Object... args) {
         return method.invoke(null, args);
     }
 }

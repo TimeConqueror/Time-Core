@@ -13,7 +13,7 @@ import java.util.Arrays;
 import java.util.Optional;
 
 public class ReflectionHelper {
-    private static final UnlockedField<Field> F_MODIFIERS = findField(Field.class, "modifiers");
+    private static final UnlockedField<Field, Integer> F_MODIFIERS = findField(Field.class, "modifiers");
 
     static {
         F_MODIFIERS.getField().setAccessible(true);
@@ -87,7 +87,7 @@ public class ReflectionHelper {
      * @return The field with the specified location in the given class or null if the field is not found.
      * @see #findField(Class, String)
      */
-    public static <T> Optional<UnlockedField<T>> findFieldSoftly(Class<?> clazz, String fieldName) {
+    public static <O, T> Optional<UnlockedField<O, T>> findFieldSoftly(Class<O> clazz, String fieldName) {
         try {
             Field f = clazz.getDeclaredField(fieldName);
             return Optional.of(new UnlockedField<>(f));
@@ -109,7 +109,7 @@ public class ReflectionHelper {
      * @return The field with the specified location in the given class or throws an exception.
      * @see #findFieldSoftly(Class, String)
      */
-    public static <T> UnlockedField<T> findField(Class<?> clazz, String fieldName) {
+    public static <O, T> UnlockedField<O, T> findField(Class<O> clazz, String fieldName) {
         try {
             Field f = clazz.getDeclaredField(fieldName);
             return new UnlockedField<>(f);
@@ -130,7 +130,7 @@ public class ReflectionHelper {
      * @param srgName The searge obfuscated location of the field to find.
      * @return The field with the specified location in the given class or null if the field is not found.
      */
-    public static <T, C> Optional<UnlockedField<T>> findObfFieldSoftly(Class<C> clazz, String srgName) {
+    public static <O, T> Optional<UnlockedField<O, T>> findObfFieldSoftly(Class<O> clazz, String srgName) {
         try {
             Field f = ObfuscationReflectionHelper.findField(clazz, srgName);
             return Optional.of(new UnlockedField<>(f));
@@ -145,7 +145,7 @@ public class ReflectionHelper {
      * Finds a method with the specified location and params in the given class and makes it accessible.
      * Note: for performance, store the returned value and avoid calling this repeatedly.
      * <p>
-     * Returns null if the method is not found.
+     * Returns empty optional if the method is not found.
      *
      * @param clazz      The class to find the field on.
      * @param methodName The location of the method to find.
@@ -153,7 +153,7 @@ public class ReflectionHelper {
      * @return The method with the specified location in the given class or null if the method is not found.
      * @see #findMethod(Class, String, Class[])
      */
-    public static <T> Optional<UnlockedMethod<T>> findMethodSoftly(Class<?> clazz, String methodName, Class<?>... params) {
+    public static <O, T> Optional<UnlockedMethod<O, T>> findMethodSoftly(Class<O> clazz, String methodName, Class<?>... params) {
         for (Method declaredMethod : clazz.getDeclaredMethods()) {
             if (declaredMethod.getName().equals(methodName) && Arrays.equals(declaredMethod.getParameterTypes(), params)) {
                 return Optional.of(new UnlockedMethod<>(declaredMethod));
@@ -175,7 +175,7 @@ public class ReflectionHelper {
      * @return The field with the specified location in the given class or throws an exception.
      * @see #findMethodSoftly(Class, String, Class[])
      */
-    public static <T> UnlockedMethod<T> findMethod(Class<?> clazz, String methodName, Class<?>... params) {
+    public static <O, T> UnlockedMethod<O, T> findMethod(Class<O> clazz, String methodName, Class<?>... params) {
         try {
             Method method = clazz.getDeclaredMethod(methodName, params);
             return new UnlockedMethod<>(method);
@@ -190,14 +190,14 @@ public class ReflectionHelper {
      * Finds a method with the specified location and params in the given class and makes it accessible.
      * Note: for performance, store the returned value and avoid calling this repeatedly.
      * <p>
-     * Returns null if the method is not found and prints error stacktrace.
+     * Returns empty optional if the method is not found and prints error stacktrace.
      *
      * @param clazz   The class to find the field on.
      * @param srgName The searge obfuscated location of the method to find.
      * @param params  The parameter classes of the method to find.
      * @return The method with the specified location in the given class or null if the method is not found.
      */
-    public static <T> Optional<UnlockedMethod<T>> findObfMethodSoftly(Class<?> clazz, String srgName, Class<?>... params) {
+    public static <O, T> Optional<UnlockedMethod<O, T>> findObfMethodSoftly(Class<O> clazz, String srgName, Class<?>... params) {
         try {
             Method method = ObfuscationReflectionHelper.findMethod(clazz, srgName, params);
             return Optional.of(new UnlockedMethod<>(method));

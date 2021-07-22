@@ -6,9 +6,10 @@ import java.lang.reflect.Method;
 /**
  * Wrapper for method, unlocks the access to it.
  *
+ * @param <O> owner type.
  * @param <T> method return type.
  */
-public class UnlockedMethod<T> {
+public class UnlockedMethod<O, T> {
     private final Method method;
 
     public UnlockedMethod(Method method) {
@@ -25,7 +26,8 @@ public class UnlockedMethod<T> {
      * @param params      the parameters used for the method call.
      * @return object return by method or null if the method has {@code void} modifier.
      */
-    public T invoke(Object methodOwner, Object... params) {
+    @SuppressWarnings("unchecked")
+    public T invoke(O methodOwner, Object... params) {
         try {
             return (T) method.invoke(methodOwner, params);
         } catch (IllegalAccessException | InvocationTargetException e) {
