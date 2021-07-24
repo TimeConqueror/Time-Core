@@ -18,7 +18,7 @@ import java.util.Objects;
  * You can also control what should be sent to client
  * and what should be only used for saving.
  */
-public class SyncableTile extends SimpleTile {
+public abstract class SyncableTile extends SimpleTile {
     public SyncableTile(TileEntityType<?> tileEntityTypeIn) {
         super(tileEntityTypeIn);
     }

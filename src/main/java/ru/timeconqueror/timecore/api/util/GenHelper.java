@@ -262,23 +262,35 @@ public class GenHelper {
     }
 
     public static int getAverageFirstFreeHeight(ChunkGenerator chunkGenerator, int x, int z, int x1, int z1) {
-        return MathUtils.average(getBoxCornerFirstFreeHeights(chunkGenerator, x, z, x1, z1));
+        return getAverageFirstFreeHeight(chunkGenerator, x, z, x1, z1, Heightmap.Type.WORLD_SURFACE_WG);
+    }
+
+    public static int getAverageFirstFreeHeight(ChunkGenerator chunkGenerator, int x, int z, int x1, int z1, Heightmap.Type type) {
+        return MathUtils.average(getBoxCornerFirstFreeHeights(chunkGenerator, x, z, x1, z1, type));
     }
 
     public static int getMinFirstFreeHeight(ChunkGenerator chunkGenerator, int x, int z, int x1, int z1) {
-        return MathUtils.min(getBoxCornerFirstFreeHeights(chunkGenerator, x, z, x1, z1));
+        return getMinFirstFreeHeight(chunkGenerator, x, z, x1, z1, Heightmap.Type.WORLD_SURFACE_WG);
+    }
+
+    public static int getMinFirstFreeHeight(ChunkGenerator chunkGenerator, int x, int z, int x1, int z1, Heightmap.Type type) {
+        return MathUtils.min(getBoxCornerFirstFreeHeights(chunkGenerator, x, z, x1, z1, type));
     }
 
     public static int getMaxFirstFreeHeight(ChunkGenerator chunkGenerator, int x, int z, int x1, int z1) {
-        return MathUtils.max(getBoxCornerFirstFreeHeights(chunkGenerator, x, z, x1, z1));
+        return getMaxFirstFreeHeight(chunkGenerator, x, z, x1, z1, Heightmap.Type.WORLD_SURFACE_WG);
     }
 
-    private static int[] getBoxCornerFirstFreeHeights(ChunkGenerator chunkGenerator, int x, int z, int x1, int z1) {
+    public static int getMaxFirstFreeHeight(ChunkGenerator chunkGenerator, int x, int z, int x1, int z1, Heightmap.Type type) {
+        return MathUtils.max(getBoxCornerFirstFreeHeights(chunkGenerator, x, z, x1, z1, type));
+    }
+
+    private static int[] getBoxCornerFirstFreeHeights(ChunkGenerator chunkGenerator, int x, int z, int x1, int z1, Heightmap.Type type) {
         return new int[]{
-                chunkGenerator.getFirstFreeHeight(x, z, Heightmap.Type.WORLD_SURFACE_WG),
-                chunkGenerator.getFirstFreeHeight(x1, z, Heightmap.Type.WORLD_SURFACE_WG),
-                chunkGenerator.getFirstFreeHeight(x, z1, Heightmap.Type.WORLD_SURFACE_WG),
-                chunkGenerator.getFirstFreeHeight(x1, z1, Heightmap.Type.WORLD_SURFACE_WG)
+                chunkGenerator.getFirstFreeHeight(x, z, type),
+                chunkGenerator.getFirstFreeHeight(x1, z, type),
+                chunkGenerator.getFirstFreeHeight(x, z1, type),
+                chunkGenerator.getFirstFreeHeight(x1, z1, type)
         };
     }
 
