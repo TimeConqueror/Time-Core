@@ -33,13 +33,13 @@ import java.util.function.Supplier;
 
 public class CoffeeCapabilityManager {
 
-    private final ArrayList<AttachableCoffeeCapability<? extends ICapabilityProvider, ? extends ICoffeeCapability<?>>> attachableCapabilities = new ArrayList<>();
+    private final ArrayList<AttachableCoffeeCapability<? extends ICapabilityProvider, ? extends CoffeeCapability<?>>> attachableCapabilities = new ArrayList<>();
 
     public CoffeeCapabilityManager() {
         MinecraftForge.EVENT_BUS.register(new CoffeeAttachCapabilityListener());
     }
 
-    public <T extends ICapabilityProvider, C extends ICoffeeCapability<T>> void attachCoffeeCapability(CapabilityOwner<T> owner, Capability<C> capability, Predicate<T> predicate, Supplier<CoffeeCapabilityGetter<T, C>> getters) {
+    public <T extends ICapabilityProvider, C extends CoffeeCapability<T>> void attachCoffeeCapability(CapabilityOwner<T> owner, Capability<C> capability, Predicate<T> predicate, Supplier<CoffeeCapabilityGetter<T, C>> getters) {
         attachCapability(owner, capability, predicate, getters);
         attachableCapabilities.add(new AttachableCoffeeCapability<>(owner, capability));
     }
@@ -48,7 +48,7 @@ public class CoffeeCapabilityManager {
         owner.getAttachers().add(new CoffeeCapabilityAttacher<>(capability, predicate, getters));
     }
 
-    public <T extends ICapabilityProvider, C extends ICoffeeCapability<T>> void attachStaticCoffeeCapability(CapabilityOwner<T> owner, Capability<C> capability, Predicate<T> predicate, Function<T, C> factory) {
+    public <T extends ICapabilityProvider, C extends CoffeeCapability<T>> void attachStaticCoffeeCapability(CapabilityOwner<T> owner, Capability<C> capability, Predicate<T> predicate, Function<T, C> factory) {
         attachStaticCapability(owner, capability, predicate, factory);
         attachableCapabilities.add(new AttachableCoffeeCapability<>(owner, capability));
     }
@@ -91,8 +91,8 @@ public class CoffeeCapabilityManager {
         MinecraftForge.EVENT_BUS.register(new CoffeeOnPlayerJoinedSendCapabilityListener(onSyncRequest));
     }
 
-    public AttachableCoffeeCapability<? extends ICapabilityProvider, ? extends ICoffeeCapability<?>> getAttachableCoffeeCapability(String name) {
-        for (AttachableCoffeeCapability<? extends ICapabilityProvider, ? extends ICoffeeCapability<?>> capability : attachableCapabilities) {
+    public AttachableCoffeeCapability<? extends ICapabilityProvider, ? extends CoffeeCapability<?>> getAttachableCoffeeCapability(String name) {
+        for (AttachableCoffeeCapability<? extends ICapabilityProvider, ? extends CoffeeCapability<?>> capability : attachableCapabilities) {
             if (capability.getCapability().getName().equals(name)) {
                 return capability;
             }

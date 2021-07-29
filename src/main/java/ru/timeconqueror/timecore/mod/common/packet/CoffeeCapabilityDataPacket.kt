@@ -9,7 +9,7 @@ import net.minecraftforge.fml.LogicalSide
 import net.minecraftforge.fml.network.NetworkEvent
 import ru.timeconqueror.timecore.TimeCore
 import ru.timeconqueror.timecore.api.common.packet.ITimePacketHandler
-import ru.timeconqueror.timecore.common.capability.ICoffeeCapability
+import ru.timeconqueror.timecore.common.capability.CoffeeCapability
 import ru.timeconqueror.timecore.common.capability.property.CoffeeProperty
 import java.util.function.Predicate
 
@@ -23,7 +23,7 @@ sealed class CoffeeCapabilityDataPacket(
         fun <T : ICapabilityProvider> create(
             world: World,
             owner: T,
-            cap: ICoffeeCapability<T>,
+            cap: CoffeeCapability<T>,
             capabilityData: CompoundNBT,
             clientSide: Boolean
         ): CoffeeCapabilityDataPacket {
@@ -48,17 +48,17 @@ sealed class CoffeeCapabilityDataPacket(
         fun <T : ICapabilityProvider> create(
             world: World,
             owner: T,
-            cap: ICoffeeCapability<T>,
+            cap: CoffeeCapability<T>,
             clientSide: Boolean,
             syncPredicate: Predicate<CoffeeProperty<*>>
         ): CoffeeCapabilityDataPacket? {
             val nbt = CompoundNBT()
-            return if (cap.serializeProperties(syncPredicate, nbt, clientSide)) {
+            return if (cap.serialize(syncPredicate, nbt, clientSide)) {
                 create(world, owner, cap, nbt, clientSide)
             } else null
         }
 
-        private fun handlePacket(packet: CoffeeCapabilityDataPacket, world: World, fromClient: Boolean) {
+        private fun handlePacket(packet: CoffeeCapabilityDataPacket, world: World, sentFromClient: Boolean) {
             val capability = TimeCore.INSTANCE.capabilityManager.getAttachableCoffeeCapability(packet.capabilityName)
             if (capability != null) {
 
@@ -66,10 +66,10 @@ sealed class CoffeeCapabilityDataPacket(
                 val owner: ICapabilityProvider? = ownerSerializer.deserializeOwner(world, packet.ownerData)
 
                 if (owner != null) {
-                    val cap: LazyOptional<out ICoffeeCapability<*>> = owner.getCapability(capability.capability, null)
+                    val cap: LazyOptional<out CoffeeCapability<*>> = owner.getCapability(capability.capability, null)
 
                     cap.ifPresent {
-                        it.deserializeProperties(packet.capabilityData, fromClient)
+                        it.deserialize(packet.capabilityData, sentFromClient)
                     }
                 }
             }
@@ -91,10 +91,10 @@ sealed class CoffeeCapabilityDataPacket(
         }
 
         final override fun handle(msg: T, ctx: NetworkEvent.Context): Boolean {
-            val fromClient = ctx.direction.receptionSide == LogicalSide.SERVER
+            val sentFromClient = ctx.direction.receptionSide == LogicalSide.SERVER
 
             ctx.enqueueWork {
-                handlePacket(msg, getWorld(ctx), fromClient)
+                handlePacket(msg, getWorld(ctx), sentFromClient)
             }
 
             return true
