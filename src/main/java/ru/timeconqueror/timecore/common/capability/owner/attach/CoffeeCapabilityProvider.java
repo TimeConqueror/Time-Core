@@ -7,10 +7,9 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.common.util.NonNullSupplier;
+import org.jetbrains.annotations.NotNull;
 import ru.timeconqueror.timecore.common.capability.owner.attach.getter.CoffeeCapabilityGetter;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
@@ -29,22 +28,16 @@ public class CoffeeCapabilityProvider<T> implements ICapabilityProvider, INBTSer
         getter.getCapability(target, null);
     }
 
-    @Nonnull
     @Override
-    public <C> LazyOptional<C> getCapability(@Nonnull Capability<C> capability, @Nullable Direction side) {
+    @NotNull
+    public <C> LazyOptional<C> getCapability(@NotNull Capability<C> capability, @Nullable Direction side) {
         CoffeeCapabilityGetter<T, ?> getter = getters.get(capability.getName());
 
         if (getter != null) {
             C cap = (C) getter.getCapability(target, side);
 
             if (cap != null) {
-                return LazyOptional.of(new NonNullSupplier<C>() {
-                    @Nonnull
-                    @Override
-                    public C get() {
-                        return cap;
-                    }
-                });
+                return LazyOptional.of(() -> cap);
             }
         }
 

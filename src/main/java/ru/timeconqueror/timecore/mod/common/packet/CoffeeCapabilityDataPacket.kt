@@ -61,7 +61,6 @@ sealed class CoffeeCapabilityDataPacket(
         private fun handlePacket(packet: CoffeeCapabilityDataPacket, world: World, sentFromClient: Boolean) {
             val capability = TimeCore.INSTANCE.capabilityManager.getAttachableCoffeeCapability(packet.capabilityName)
             if (capability != null) {
-
                 val ownerSerializer = capability.owner.serializer
                 val owner: ICapabilityProvider? = ownerSerializer.deserializeOwner(world, packet.ownerData)
 

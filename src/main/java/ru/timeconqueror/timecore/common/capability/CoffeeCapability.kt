@@ -41,7 +41,7 @@ abstract class CoffeeCapability<T : ICapabilityProvider> : PropertyContainer(), 
         sendData(world, owner) { true }
     }
 
-    open fun sendChangesToClients(channel: SimpleChannel, data: Any) {}
+    abstract fun sendChangesToClients(channel: SimpleChannel, data: Any)
 
     private fun sendData(world: World, owner: T, predicate: Predicate<CoffeeProperty<*>>) {
         val clientSide = world.isClientSide()
@@ -63,4 +63,14 @@ abstract class CoffeeCapability<T : ICapabilityProvider> : PropertyContainer(), 
         clientSide: Boolean,
         syncPredicate: Predicate<CoffeeProperty<*>>
     ) = CoffeeCapabilityDataPacket.create(world, owner, this, clientSide, syncPredicate)
+
+    override fun serializeNBT(): CompoundNBT {
+        val compound = CompoundNBT()
+        serialize({ true }, compound, false)
+        return compound
+    }
+
+    override fun deserializeNBT(nbt: CompoundNBT) {
+        deserialize(nbt)
+    }
 }

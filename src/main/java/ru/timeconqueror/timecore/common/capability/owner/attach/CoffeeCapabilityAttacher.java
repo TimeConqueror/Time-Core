@@ -10,12 +10,12 @@ public class CoffeeCapabilityAttacher<T, C> {
 
     private final Capability<C> capability;
     private final Predicate<T> predicate;
-    Supplier<CoffeeCapabilityGetter<T, C>> getters;
+    Supplier<CoffeeCapabilityGetter<T, C>> getterFactory;
 
-    public CoffeeCapabilityAttacher(Capability<C> capability, Predicate<T> predicate, Supplier<CoffeeCapabilityGetter<T, C>> getters) {
+    public CoffeeCapabilityAttacher(Capability<C> capability, Predicate<T> predicate, Supplier<CoffeeCapabilityGetter<T, C>> getterFactory) {
         this.capability = capability;
         this.predicate = predicate;
-        this.getters = getters;
+        this.getterFactory = getterFactory;
     }
 
     public Capability<C> getCapability() {
@@ -26,7 +26,7 @@ public class CoffeeCapabilityAttacher<T, C> {
         return predicate;
     }
 
-    public Supplier<CoffeeCapabilityGetter<T, C>> getGetters() {
-        return getters;
+    public Supplier<CoffeeCapabilityGetter<T, C>> getGetterFactory() {
+        return getterFactory;
     }
 }
