@@ -98,7 +98,7 @@ open class PropertyContainer {
         }
         for ((name, container) in containers) {
             if (nbt.contains(name)) {
-                container.deserialize(nbt)
+                container.deserialize(nbt.getCompound(name))
             }
         }
     }
@@ -109,7 +109,7 @@ open class PropertyContainer {
         }
         for ((name, container) in containers) {
             if (nbt.contains(name)) {
-                container.deserialize(nbt, sentFromClient)
+                container.deserialize(nbt.getCompound(name), sentFromClient)
             }
         }
     }
