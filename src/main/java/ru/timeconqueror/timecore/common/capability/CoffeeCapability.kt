@@ -6,6 +6,7 @@ import net.minecraftforge.common.capabilities.Capability
 import net.minecraftforge.common.capabilities.ICapabilityProvider
 import net.minecraftforge.common.util.INBTSerializable
 import net.minecraftforge.fml.network.simple.SimpleChannel
+import ru.timeconqueror.timecore.api.common.tile.SerializationType
 import ru.timeconqueror.timecore.common.capability.owner.serializer.CapabilityOwnerSerializer
 import ru.timeconqueror.timecore.common.capability.property.CoffeeProperty
 import ru.timeconqueror.timecore.common.capability.property.container.PropertyContainer
@@ -66,7 +67,7 @@ abstract class CoffeeCapability<T : ICapabilityProvider> : PropertyContainer(), 
 
     override fun serializeNBT(): CompoundNBT {
         val compound = CompoundNBT()
-        serialize({ true }, compound, false)
+        serialize({ true }, compound, false, SerializationType.SAVE)
         return compound
     }
 

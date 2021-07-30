@@ -1,6 +1,7 @@
 package ru.timeconqueror.timecore.common.capability.property
 
 import net.minecraft.nbt.CompoundNBT
+import ru.timeconqueror.timecore.api.common.tile.SerializationType
 import ru.timeconqueror.timecore.common.capability.property.serializer.IPropertySerializer
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
@@ -9,7 +10,11 @@ class CoffeeProperty<T>(val name: String, private var value: T, val serializer: 
     ReadWriteProperty<Any, T> {
 
     private var externalChangable = value is IChangable
-    private var clientDependent = false
+
+    var clientDependent = false
+        private set
+
+    private var shouldBeSynced = false
 
     var changed = false
         get() = externalChangable && (value as IChangable).changed || field
@@ -30,8 +35,10 @@ class CoffeeProperty<T>(val name: String, private var value: T, val serializer: 
         this.value = value
     }
 
-    fun serialize(nbt: CompoundNBT) {
-        serializer.serialize(name, value, nbt)
+    fun serialize(nbt: CompoundNBT, type: SerializationType) {
+        if (type == SerializationType.SAVE || shouldBeSynced) {
+            serializer.serialize(name, value, nbt)
+        }
     }
 
     fun deserialize(nbt: CompoundNBT) {
@@ -52,5 +59,8 @@ class CoffeeProperty<T>(val name: String, private var value: T, val serializer: 
         return this
     }
 
-    fun isClientDependent() = clientDependent
+    fun synced(): CoffeeProperty<T> {
+        shouldBeSynced = true
+        return this
+    }
 }

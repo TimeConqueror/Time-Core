@@ -9,6 +9,7 @@ import net.minecraftforge.fml.LogicalSide
 import net.minecraftforge.fml.network.NetworkEvent
 import ru.timeconqueror.timecore.TimeCore
 import ru.timeconqueror.timecore.api.common.packet.ITimePacketHandler
+import ru.timeconqueror.timecore.api.common.tile.SerializationType
 import ru.timeconqueror.timecore.common.capability.CoffeeCapability
 import ru.timeconqueror.timecore.common.capability.property.CoffeeProperty
 import java.util.function.Predicate
@@ -53,7 +54,7 @@ sealed class CoffeeCapabilityDataPacket(
             syncPredicate: Predicate<CoffeeProperty<*>>
         ): CoffeeCapabilityDataPacket? {
             val nbt = CompoundNBT()
-            return if (cap.serialize(syncPredicate, nbt, clientSide)) {
+            return if (cap.serialize(syncPredicate, nbt, clientSide, SerializationType.SYNC)) {
                 create(world, owner, cap, nbt, clientSide)
             } else null
         }
