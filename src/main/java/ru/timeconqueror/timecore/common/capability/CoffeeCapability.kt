@@ -15,6 +15,11 @@ import ru.timeconqueror.timecore.mod.common.packet.InternalPacketManager
 import java.util.function.Predicate
 import javax.annotation.ParametersAreNonnullByDefault
 
+//TODO property enums,
+//TODO custom properties,
+//TODO move all extra attach (keep after death, etc) to properties
+//TODO doNotSync, doNotSave
+//ToDO check client dependent caps being saved on server?
 @ParametersAreNonnullByDefault
 abstract class CoffeeCapability<T : ICapabilityProvider> : PropertyContainer(), INBTSerializable<CompoundNBT> {
 
