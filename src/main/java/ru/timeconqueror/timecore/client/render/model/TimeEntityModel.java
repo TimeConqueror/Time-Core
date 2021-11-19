@@ -10,9 +10,9 @@ import ru.timeconqueror.timecore.api.client.render.model.ITimeModel;
 import java.util.List;
 
 public class TimeEntityModel<T extends Entity> extends EntityModel<T> implements ITimeModel {
-    private final ITimeModel model;
+    private final TimeModel model;
 
-    public TimeEntityModel(ITimeModel model) {
+    public TimeEntityModel(TimeModel model) {
         this.model = model;
     }
 

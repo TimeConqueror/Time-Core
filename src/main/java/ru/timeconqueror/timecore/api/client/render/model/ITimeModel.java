@@ -1,7 +1,5 @@
 package ru.timeconqueror.timecore.api.client.render.model;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.vertex.IVertexBuilder;
 import org.jetbrains.annotations.Nullable;
 import ru.timeconqueror.timecore.client.render.model.TimeModelRenderer;
 
@@ -16,8 +14,6 @@ public interface ITimeModel {
     String getName();
 
     ITimeModel setScaleMultiplier(float scaleMultiplier);
-
-    void renderToBuffer(MatrixStack matrixStackIn, IVertexBuilder bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha);
 
     List<TimeModelRenderer> getPieces();
 
