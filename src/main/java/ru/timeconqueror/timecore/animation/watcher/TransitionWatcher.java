@@ -3,8 +3,10 @@ package ru.timeconqueror.timecore.animation.watcher;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
+import ru.timeconqueror.timecore.TimeCore;
 import ru.timeconqueror.timecore.animation.AnimationRegistry;
 import ru.timeconqueror.timecore.animation.AnimationStarter;
+import ru.timeconqueror.timecore.animation.component.BasicAnimation;
 import ru.timeconqueror.timecore.animation.component.Transition;
 import ru.timeconqueror.timecore.animation.util.WatcherSerializer;
 import ru.timeconqueror.timecore.api.animation.Animation;
@@ -14,6 +16,9 @@ import ru.timeconqueror.timecore.api.util.Requirements;
 import java.util.Objects;
 
 public class TransitionWatcher extends AnimationWatcher {
+    public static final Animation TRANSITION = new BasicAnimation(false, TimeCore.rl("internal/transition"), "transition", 0, null) {
+    };
+
     private final int transitionTime;
     @Nullable
     private final AnimationStarter.AnimationData destination;
@@ -23,11 +28,11 @@ public class TransitionWatcher extends AnimationWatcher {
 
     //from null source
     public TransitionWatcher(int transitionTime, @Nullable AnimationStarter.AnimationData destination) {
-        this(null, 0, transitionTime, destination);
+        this(TRANSITION, 0, transitionTime, destination);
     }
 
     public TransitionWatcher(@Nullable Animation source, int sourceExistingTime, int transitionTime, @Nullable AnimationStarter.AnimationData destination) {
-        super(null, 1.0F, destination);
+        super(TRANSITION, 1.0F, destination);
 
         Requirements.greaterOrEquals(transitionTime, 0);
 
@@ -54,8 +59,8 @@ public class TransitionWatcher extends AnimationWatcher {
         return destination != null ? new AnimationWatcher(destination) : null;
     }
 
-    public @Nullable Animation getDestination() {
-        return destination != null ? destination.getAnimation() : null;
+    public Animation getDestination() {
+        return destination != null ? destination.getAnimation() : Animation.NULL;
     }
 
     @Override

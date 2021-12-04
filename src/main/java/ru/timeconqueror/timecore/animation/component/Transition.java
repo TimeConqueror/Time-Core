@@ -18,66 +18,6 @@ import java.util.List;
 import java.util.function.Consumer;
 
 public class Transition extends Animation {
-    private static final Animation DUMMY_ANIMATION = new Animation() {
-        private final ResourceLocation id = new ResourceLocation(TimeCore.MODID, "internal/" + getName());
-
-        @Override
-        public void apply(ITimeModel model, AnimationLayer layer, int existingTime) {
-        }
-
-        @Override
-        public String getName() {
-            return "dummy";
-        }
-
-        @Override
-        public ResourceLocation getId() {
-            return id;
-        }
-
-        @Override
-        public int getLength() {
-            return 0;
-        }
-
-        @Override
-        public boolean isLooped() {
-            return false;
-        }
-
-        @Override
-        public @NotNull Animation.TransitionFactory getTransitionFactory() {
-            return IDLE_END_TRANSITION_FACTORY;
-        }
-
-        @Override
-        public void forEachBone(Consumer<String> action) {
-        }
-
-        @Override
-        public Animation reverse() {
-            throw new UnsupportedOperationException();
-        }
-    };
-    private static final Animation.TransitionFactory IDLE_END_TRANSITION_FACTORY = new Animation.TransitionFactory(DUMMY_ANIMATION) {
-        @Override
-        public @Nullable List<BoneOption> createBoneOptions(Animation dest, ITimeModel model, int existingTime, int transitionTime) {
-            throw new UnsupportedOperationException("Idle End Transition Factory shouldn't be used with source animation");
-        }
-
-        @Override
-        public @NotNull KeyFrame getDestKeyFrame(TimeModelRenderer piece, String boneName, OptionType optionType, int transitionTime) {
-            if (optionType == OptionType.ROTATION) {
-                return KeyFrame.createIdleKeyFrame(transitionTime, new Vector3f(0, 0, 0));
-            } else if (optionType == OptionType.POSITION) {
-                return KeyFrame.createIdleKeyFrame(transitionTime, piece.offset);
-            } else if (optionType == OptionType.SCALE) {
-                return KeyFrame.createIdleKeyFrame(transitionTime, piece.getScaleFactor());
-            }
-
-            throw new UnsupportedOperationException("Can't handle " + optionType + " option type");
-        }
-    };
     private final int transitionLength;
     private final String name;
     @Nullable
@@ -128,7 +68,7 @@ public class Transition extends Animation {
 
         if (source != null) {
             Animation.TransitionFactory transitionFactory = source.getTransitionFactory();
-            transition.options = transitionFactory.createBoneOptions(DUMMY_ANIMATION, model, existingTime, transitionTime);
+            transition.options = transitionFactory.createBoneOptions(Animation.NULL, model, existingTime, transitionTime);
         }
 
         return transition;

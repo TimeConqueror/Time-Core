@@ -20,6 +20,7 @@ import javax.annotation.ParametersAreNonnullByDefault
 //TODO move all extra attach (keep after death, etc) to properties
 //TODO doNotSync, doNotSave
 //ToDO check client dependent caps being saved on server?
+//TODO store owner inside the cap so people don't bother creating their own sendAllData & sendChangesToClients without args
 @ParametersAreNonnullByDefault
 abstract class CoffeeCapability<T : ICapabilityProvider> : PropertyContainer(), INBTSerializable<CompoundNBT> {
 

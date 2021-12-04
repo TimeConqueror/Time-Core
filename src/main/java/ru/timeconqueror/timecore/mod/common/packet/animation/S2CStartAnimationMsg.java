@@ -36,7 +36,7 @@ public class S2CStartAnimationMsg extends S2CAnimationMsg {
             String errorMessage = null;
 
             if (animation == null) {
-                errorMessage = "Client received an animation, which is not registered on client.";
+                errorMessage = "Client received an animation, which is not registered on client.";//TODO add anim name
             }
 
             if (errorMessage == null) {

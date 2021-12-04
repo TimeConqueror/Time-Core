@@ -91,7 +91,7 @@ public abstract class BaseAnimationManager implements AnimationManager {
 
             AnimationWatcher watcher = layer.getAnimationWatcher();
 
-            if (watcher != null && watcher.getAnimation() != null) {
+            if (watcher != null) {
                 applyAnimation(model, layer, watcher, currentTime);
             }
         }

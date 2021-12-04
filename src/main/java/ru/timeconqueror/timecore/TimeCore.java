@@ -8,14 +8,20 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.spongepowered.asm.mixin.MixinEnvironment;
+import ru.timeconqueror.timecore.animation.AnimationRegistry;
+import ru.timeconqueror.timecore.animation.watcher.TransitionWatcher;
 import ru.timeconqueror.timecore.api.Markers;
 import ru.timeconqueror.timecore.api.TimeMod;
+import ru.timeconqueror.timecore.api.animation.Animation;
 import ru.timeconqueror.timecore.api.reflection.ReflectionHelper;
 import ru.timeconqueror.timecore.api.util.EnvironmentUtils;
 import ru.timeconqueror.timecore.common.capability.CoffeeCapabilityManager;
 import ru.timeconqueror.timecore.devtools.StructureRevealer;
 
 @Mod(TimeCore.MODID)//todo add null check in ObjectHolder
+//TODO setDealyPredicate -> setDelay
+//TODO full time delayed actions
+//TODO add readable exception when there's no animation file, for now it's just nullpointer
 public final class TimeCore implements TimeMod {
     public static final String MODID = "timecore";
     public static final Logger LOGGER = LogManager.getLogger(MODID);
@@ -50,6 +56,9 @@ public final class TimeCore implements TimeMod {
     private void setup(final FMLCommonSetupEvent event) {
         ReflectionHelper.initClass(StructureRevealer.class);
         event.enqueueWork(capabilityManager::addDefaultAttachers);
+
+        AnimationRegistry.registerAnimation(Animation.NULL);
+        AnimationRegistry.registerAnimation(TransitionWatcher.TRANSITION);
     }
 
     private static void checkForMixinBootstrap() {

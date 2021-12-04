@@ -3,6 +3,8 @@ package ru.timeconqueror.timecore.api.animation;
 import net.minecraft.util.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import ru.timeconqueror.timecore.TimeCore;
+import ru.timeconqueror.timecore.animation.component.BasicAnimation;
 import ru.timeconqueror.timecore.animation.component.KeyFrame;
 import ru.timeconqueror.timecore.animation.component.Transition;
 import ru.timeconqueror.timecore.api.client.render.model.ITimeModel;
@@ -12,6 +14,9 @@ import java.util.List;
 import java.util.function.Consumer;
 
 public abstract class Animation {
+	@SuppressWarnings("StaticInitializerReferencesSubClass")
+	public static final Animation NULL = new BasicAnimation(false, TimeCore.rl("internal/null"), "null", 0, null);
+
 	public abstract void apply(ITimeModel model, AnimationLayer layer, int existingTime);
 
 	/**

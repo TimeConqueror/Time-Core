@@ -45,13 +45,13 @@ public class Layer implements AnimationLayer {
 
     @Override
     @SuppressWarnings("ConstantConditions")
-    public @Nullable Animation getCurrentAnimation() {
-        return hasAnimation() ? getAnimationWatcher().getAnimation() : null;
+    public Animation getCurrentAnimation() {
+        return hasAnimation() ? getAnimationWatcher().getAnimation() : Animation.NULL;
     }
 
     @Override
     public boolean hasAnimation() {
-        return getAnimationWatcher() != null && getAnimationWatcher().getAnimation() != null;
+        return getAnimationWatcher() != null && getAnimationWatcher().getAnimation() != Animation.NULL;
     }
 
     void setAnimation(AnimationStarter.AnimationData data) {
@@ -71,7 +71,7 @@ public class Layer implements AnimationLayer {
             if (transitionTime == 0) {
                 animationWatcher = null;
             } else {
-                if (!(animationWatcher instanceof TransitionWatcher && ((TransitionWatcher) animationWatcher).getDestination() == null)) {
+                if (!(animationWatcher instanceof TransitionWatcher && ((TransitionWatcher) animationWatcher).getDestination() == Animation.NULL)) {
                     animationWatcher = new TransitionWatcher(animationWatcher.getAnimation(), animationWatcher.getExistingTime(), transitionTime, null);
                 }
             }
