@@ -49,6 +49,10 @@ class JSONObject(builder: StringBuilder) : JsonElement(builder) {
         builder.append("\"").append(this).append("\":\"").append(value).append("\"")
     }
 
+    infix fun String.set(value: BlockModelLocation) {
+        set(value.toString())
+    }
+
     infix fun String.set(value: Int) {
         checkFirst()
         builder.append("\"").append(this).append("\":").append(value)
@@ -67,6 +71,16 @@ class JSONObject(builder: StringBuilder) : JsonElement(builder) {
 
     inline operator fun Int.invoke(block: JSONObject.() -> Unit) {
         obj(this.toString(), block)
+    }
+
+    inline operator fun String.get(vararg array: JSONObject.() -> Unit) {
+        array(this) {
+            array.forEach(::obj)
+        }
+    }
+
+    inline operator fun String.get(emptyMarker: Unit) {
+        array(this) {}
     }
 
     /**
