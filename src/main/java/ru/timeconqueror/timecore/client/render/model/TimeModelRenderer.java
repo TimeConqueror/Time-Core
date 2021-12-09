@@ -48,8 +48,6 @@ public class TimeModelRenderer extends ModelRenderer {
                 matrixStackIn.popPose();
             }
         }
-
-        resetData();
     }
 
     @Override
@@ -84,7 +82,7 @@ public class TimeModelRenderer extends ModelRenderer {
         }
     }
 
-    private void resetData() {
+    protected void reset() {
         xRot = startRotationRadians.x();
         yRot = startRotationRadians.y();
         zRot = startRotationRadians.z();

@@ -80,16 +80,27 @@ public class TimeModel extends Model implements ITimeModel {
         return pieceMap.get(pieceName);
     }
 
+    /**
+     * Should be called before animation applying & render.
+     */
+    public void reset() {
+        for (TimeModelRenderer piece : pieceMap.values()) {
+            piece.reset();
+        }
+    }
+
     @Override
     public void renderToBuffer(MatrixStack matrixStackIn, IVertexBuilder bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha) {
-        if (pieces != null) {
-            matrixStackIn.scale(scaleMultiplier, scaleMultiplier, scaleMultiplier);
-
-            for (TimeModelRenderer piece : pieces) {
-                piece.render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
-            }
-
-            matrixStackIn.scale(1 / scaleMultiplier, 1 / scaleMultiplier, 1 / scaleMultiplier);
+        if (pieces == null) {
+            return;
         }
+
+        matrixStackIn.scale(scaleMultiplier, scaleMultiplier, scaleMultiplier);
+
+        for (TimeModelRenderer piece : pieces) {
+            piece.render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
+        }
+
+        matrixStackIn.scale(1 / scaleMultiplier, 1 / scaleMultiplier, 1 / scaleMultiplier);
     }
 }

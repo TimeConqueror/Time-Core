@@ -29,6 +29,11 @@ public class TimeEntityModel<T extends Entity> extends EntityModel<T> implements
     }
 
     @Override
+    public void reset() {
+        model.reset();
+    }
+
+    @Override
     public void setupAnim(T entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
 
     }
