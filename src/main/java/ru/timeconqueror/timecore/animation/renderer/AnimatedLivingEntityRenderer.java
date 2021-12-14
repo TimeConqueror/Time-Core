@@ -21,6 +21,16 @@ public abstract class AnimatedLivingEntityRenderer<T extends LivingEntity & Anim
         super.render(entity, entityYaw, partialTicks, matrixStack, buffer, packedLight);
     }
 
+    protected void setupAnimations(T living, MatrixStack stack, float partialTicks) {
+
+    }
+
+    @Override
+    protected void setupRotations(T entityLiving, MatrixStack matrixStackIn, float ageInTicks, float rotationYaw, float partialTicks) {
+        super.setupRotations(entityLiving, matrixStackIn, ageInTicks, rotationYaw, partialTicks);
+        setupAnimations(entityLiving, matrixStackIn, partialTicks);
+    }
+
     @Override
     protected void scale(T entitylivingbaseIn, MatrixStack matrixStackIn, float partialTickTime) {
         super.scale(entitylivingbaseIn, matrixStackIn, partialTickTime);

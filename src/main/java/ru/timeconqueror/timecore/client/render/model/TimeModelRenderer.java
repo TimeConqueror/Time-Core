@@ -10,7 +10,8 @@ import net.minecraft.util.math.vector.Vector4f;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
-
+//TODO add method to control it so nobody hasn't dig into how it works
+//TODO name rotation be radians, because for now it's unclear
 public class TimeModelRenderer extends ModelRenderer {
     private final Vector3f scaleFactor = new Vector3f(1, 1, 1);
     public List<TimeModelBox> cubes;
