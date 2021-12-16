@@ -285,7 +285,8 @@ public class StructureRegister extends ForgeRegister<Structure<?>> {
          * @param separation minimum distance apart in chunks between spawn attempts
          */
         public static TimeStructureSeparationSettings create(int spacing, int separation) {
-            if (spacing < separation) throw new IllegalArgumentException("Spacing can't be less than separation. ");
+            if (spacing <= separation)
+                throw new IllegalArgumentException("Spacing should be strictly higher than separation. ");
             return new TimeStructureSeparationSettings(spacing, separation);
         }
 
