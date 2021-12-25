@@ -1,12 +1,13 @@
 package ru.timeconqueror.timecore.api.registry;
 
 import net.minecraft.entity.*;
-import net.minecraft.entity.ai.attributes.AttributeModifierMap;
-import net.minecraft.entity.ai.attributes.GlobalEntityTypeAttributes;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemGroup;
-import net.minecraft.item.SpawnEggItem;
-import net.minecraft.world.gen.Heightmap;
+import net.minecraft.world.entity.*;
+import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
+import net.minecraft.world.entity.ai.attributes.DefaultAttributes;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.SpawnEggItem;
+import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.fml.event.lifecycle.GatherDataEvent;
@@ -81,7 +82,7 @@ public class EntityRegister extends ForgeRegister<EntityType<?>> {
      * @return A {@link EntityRegisterChain} for adding some extra stuff.
      * @see EntityRegisterChain
      */
-    public <T extends MobEntity> MobRegisterChain<T> registerMob(String name, EntityType.Builder<T> typeBuilder) {
+    public <T extends Mob> MobRegisterChain<T> registerMob(String name, EntityType.Builder<T> typeBuilder) {
         return new MobRegisterChain<>(registerLiving(name, typeBuilder));
     }
 
@@ -120,13 +121,13 @@ public class EntityRegister extends ForgeRegister<EntityType<?>> {
     public <T extends Entity> EntityRegisterChain<T> register(String name, EntityType.Builder<T> typeBuilder) {
         EntityType<T> type = build(name, typeBuilder);
 
-        if (type.getCategory() != EntityClassification.MISC) {
+        if (type.getCategory() != MobCategory.MISC) {
             throw new IllegalArgumentException(String.format("Common entities can only have %s being equal to %s, but it currently has %s. If your entity is %s or %s, use #registerLiving or #registerMob instead.",
-                    EntityClassification.class.getName(),
-                    EntityClassification.MISC,
+                    MobCategory.class.getName(),
+                    MobCategory.MISC,
                     type.getCategory(),
                     LivingEntity.class.getName(),
-                    MobEntity.class.getName()));
+                    Mob.class.getName()));
         }
 
         return registerInternal(name, type);
@@ -156,6 +157,7 @@ public class EntityRegister extends ForgeRegister<EntityType<?>> {
             this.type = type;
         }
 //TODO add enName for spawn eggs
+
         /**
          * Registers simple spawn egg ({@link SpawnEggItem}) with name {@code spawn_$entityName} with default properties.
          * Automatically adds default json model for it.
@@ -164,7 +166,7 @@ public class EntityRegister extends ForgeRegister<EntityType<?>> {
          * @param secondaryArgb secondary color
          * @param tab           creative tab where item will be placed
          */
-        public EntityRegisterChain<T> spawnEgg(int primaryArgb, int secondaryArgb, ItemGroup tab) {
+        public EntityRegisterChain<T> spawnEgg(int primaryArgb, int secondaryArgb, CreativeModeTab tab) {
             return spawnEgg(primaryArgb, secondaryArgb, new Item.Properties().tab(tab));
         }
 
@@ -237,17 +239,17 @@ public class EntityRegister extends ForgeRegister<EntityType<?>> {
          * Binds attribute map to the living type.
          * Required for every living entity, which {@link EntityClassification} is not equal to {@link EntityClassification#MISC}
          */
-        public LivingRegisterChain<T> attributes(Supplier<AttributeModifierMap> attributesSup) {
-            if (retrieve().getCategory() == EntityClassification.MISC) {
-                throw new UnsupportedOperationException(String.format("Entities with being %s equal to %s can't have attributes.", EntityClassification.class.getName(), EntityClassification.MISC));
+        public LivingRegisterChain<T> attributes(Supplier<AttributeSupplier> attributesSup) {
+            if (retrieve().getCategory() == MobCategory.MISC) {
+                throw new UnsupportedOperationException(String.format("Entities with being %s equal to %s can't have attributes.", MobCategory.class.getName(), MobCategory.MISC));
             }
 
-            runOnCommonSetup(() -> GlobalEntityTypeAttributes.put(retrieve(), attributesSup.get()));
+            runOnCommonSetup(() -> DefaultAttributes.put(retrieve(), attributesSup.get()));
             return this;
         }
     }
 
-    public class MobRegisterChain<T extends MobEntity> extends LivingRegisterChain<T> {
+    public class MobRegisterChain<T extends Mob> extends LivingRegisterChain<T> {
         protected MobRegisterChain(EntityRegisterChain<T> ancestor) {
             super(ancestor);
         }
@@ -255,8 +257,8 @@ public class EntityRegister extends ForgeRegister<EntityType<?>> {
         /**
          * Sets up settings for spawning mob in world naturally
          */
-        public MobRegisterChain<T> spawnSettings(EntitySpawnPlacementRegistry.PlacementType spawnType, Heightmap.Type heightMapType, EntitySpawnPlacementRegistry.IPlacementPredicate<T> spawnPredicate) {
-            runOnCommonSetup(() -> EntitySpawnPlacementRegistry.register(retrieve(), spawnType, heightMapType, spawnPredicate));
+        public MobRegisterChain<T> spawnSettings(SpawnPlacements.Type spawnType, Heightmap.Types heightMapType, SpawnPlacements.SpawnPredicate<T> spawnPredicate) {
+            runOnCommonSetup(() -> SpawnPlacements.register(retrieve(), spawnType, heightMapType, spawnPredicate));
 
             return this;
         }

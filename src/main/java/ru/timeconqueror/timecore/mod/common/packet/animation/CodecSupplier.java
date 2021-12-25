@@ -1,28 +1,28 @@
 package ru.timeconqueror.timecore.mod.common.packet.animation;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import ru.timeconqueror.timecore.animation.EnumAnimatedObjectType;
 import ru.timeconqueror.timecore.api.animation.AnimatedObject;
 
 public abstract class CodecSupplier {
-    public static CodecSupplier fromBuffer(PacketBuffer packetBuffer) {
+    public static CodecSupplier fromBuffer(FriendlyByteBuf packetBuffer) {
         return EnumAnimatedObjectType.values()[packetBuffer.readInt()].getCodec(packetBuffer);
     }
 
-    public void toBuffer(PacketBuffer buffer) {
+    public void toBuffer(FriendlyByteBuf buffer) {
         buffer.writeInt(getType().ordinal());
         encode(buffer);
     }
 
     protected abstract EnumAnimatedObjectType getType();
 
-    protected abstract void encode(PacketBuffer buffer);
+    protected abstract void encode(FriendlyByteBuf buffer);
 
-    public abstract AnimatedObject<?> construct(World world);
+    public abstract AnimatedObject<?> construct(Level world);
 
     public static class EntityCodecSupplier extends CodecSupplier {
         private final int id;
@@ -31,12 +31,12 @@ public abstract class CodecSupplier {
             this.id = entity.getId();
         }
 
-        public EntityCodecSupplier(PacketBuffer buffer) {
+        public EntityCodecSupplier(FriendlyByteBuf buffer) {
             this.id = buffer.readInt();
         }
 
         @Override
-        protected void encode(PacketBuffer buffer) {
+        protected void encode(FriendlyByteBuf buffer) {
             buffer.writeInt(id);
         }
 
@@ -46,7 +46,7 @@ public abstract class CodecSupplier {
         }
 
         @Override
-        public AnimatedObject<?> construct(World world) {
+        public AnimatedObject<?> construct(Level world) {
             return (AnimatedObject<?>) world.getEntity(id);
         }
     }
@@ -54,21 +54,21 @@ public abstract class CodecSupplier {
     public static class TileEntityCodecSupplier extends CodecSupplier {
         private final BlockPos pos;
 
-        public <T extends TileEntity & AnimatedObject<T>> TileEntityCodecSupplier(TileEntity tileEntity) {
+        public <T extends BlockEntity & AnimatedObject<T>> TileEntityCodecSupplier(BlockEntity tileEntity) {
             this.pos = tileEntity.getBlockPos();
         }
 
-        public TileEntityCodecSupplier(PacketBuffer buffer) {
+        public TileEntityCodecSupplier(FriendlyByteBuf buffer) {
             this.pos = buffer.readBlockPos();
         }
 
         @Override
-        protected void encode(PacketBuffer buffer) {
+        protected void encode(FriendlyByteBuf buffer) {
             buffer.writeBlockPos(pos);
         }
 
         @Override
-        public AnimatedObject<?> construct(World world) {
+        public AnimatedObject<?> construct(Level world) {
             return (AnimatedObject<?>) world.getBlockEntity(pos);
         }
 

@@ -1,8 +1,8 @@
 package ru.timeconqueror.timecore.api.util;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.util.math.vector.Vector3i;
+import net.minecraft.core.Vec3i;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.phys.Vec3;
 
 public class MathUtils {
     /**
@@ -193,11 +193,11 @@ public class MathUtils {
         return max;
     }
 
-    public static double distSqr(Vector3i vec, Vector3d vec2) {
+    public static double distSqr(Vec3i vec, Vec3 vec2) {
         return vec.distSqr(vec2.x, vec2.y, vec2.z, true);
     }
 
-    public static double distSqr(Vector3i vec, Entity entity) {
+    public static double distSqr(Vec3i vec, Entity entity) {
         return vec.distSqr(entity.getX(), entity.getY(), entity.getZ(), true);
     }
 

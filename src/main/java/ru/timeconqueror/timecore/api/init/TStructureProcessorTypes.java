@@ -1,6 +1,6 @@
 package ru.timeconqueror.timecore.api.init;
 
-import net.minecraft.world.gen.feature.template.IStructureProcessorType;
+import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProcessorType;
 import ru.timeconqueror.timecore.TimeCore;
 import ru.timeconqueror.timecore.api.common.world.structure.processor.RandomizeBlockProcessor;
 import ru.timeconqueror.timecore.api.registry.StructureProcessorTypeRegister;
@@ -10,5 +10,5 @@ public class TStructureProcessorTypes {
     @AutoRegistrable
     private static final StructureProcessorTypeRegister REGISTER = new StructureProcessorTypeRegister(TimeCore.MODID);
 
-    public static final IStructureProcessorType<RandomizeBlockProcessor> RANDOMIZE_BLOCK_PROCESSOR = REGISTER.register("randomize_block", RandomizeBlockProcessor.CODEC);
+    public static final StructureProcessorType<RandomizeBlockProcessor> RANDOMIZE_BLOCK_PROCESSOR = REGISTER.register("randomize_block", RandomizeBlockProcessor.CODEC);
 }

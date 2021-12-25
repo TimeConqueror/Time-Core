@@ -1,36 +1,36 @@
 package ru.timeconqueror.timecore.animation.renderer;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
-import net.minecraft.client.renderer.IRenderTypeBuffer;
-import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
-import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ResourceLocation;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import ru.timeconqueror.timecore.api.animation.AnimatedObject;
 import ru.timeconqueror.timecore.api.client.render.model.ITimeModel;
 import ru.timeconqueror.timecore.client.render.model.TimeModel;
 
-public abstract class AnimatedTileEntityRenderer<T extends TileEntity & AnimatedObject<T>> extends TileEntityRenderer<T> {
+public abstract class AnimatedTileEntityRenderer<T extends BlockEntity & AnimatedObject<T>> implements BlockEntityRenderer<T> {
     protected TimeModel model;
 
-    public AnimatedTileEntityRenderer(TileEntityRendererDispatcher rendererDispatcherIn, TimeModel model) {
-        super(rendererDispatcherIn);
+    public AnimatedTileEntityRenderer(TimeModel model) {
         this.model = model;
     }
 
     @Override
-    public void render(T tileEntityIn, float partialTicks, MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int combinedLightIn, int combinedOverlayIn) {
+    public void render(T tileEntityIn, float partialTicks, PoseStack matrixStackIn, MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn) {
         tileEntityIn.getSystem().getAnimationManager().applyAnimations(getModel());
 
         ResourceLocation texture = getTexture(tileEntityIn);
-        this.renderer.textureManager.bind(texture);
+
+        RenderType renderType = model.renderType(texture);
 
         matrixStackIn.pushPose();
 
         matrixStackIn.translate(0.5F, 0, 0.5F);
 
         matrixStackIn.scale(-1, -1, 1);
-        model.renderToBuffer(matrixStackIn, bufferIn.getBuffer(model.renderType(texture)), combinedLightIn, combinedOverlayIn, 1, 1, 1, 1);
+        model.renderToBuffer(matrixStackIn, bufferIn.getBuffer(renderType), combinedLightIn, combinedOverlayIn, 1, 1, 1, 1);
 
         matrixStackIn.popPose();
     }

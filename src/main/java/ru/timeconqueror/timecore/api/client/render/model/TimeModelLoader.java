@@ -1,10 +1,10 @@
 package ru.timeconqueror.timecore.api.client.render.model;
 
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRenderer;
-import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
-import net.minecraft.entity.Entity;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.Entity;
 import ru.timeconqueror.timecore.client.render.model.JsonModelParser;
 import ru.timeconqueror.timecore.client.render.model.TimeEntityModel;
 import ru.timeconqueror.timecore.client.render.model.TimeModel;
@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 public class TimeModelLoader {
 
     /**
-     * Loads single json model to be used in {@link TileEntityRenderer} or smth like that.
+     * Loads single json model to be used in {@link BlockEntityRenderer} or smth like that.
      * <font color=yellow>Won't be loaded if file contains multiple models.</font>
      * <p>
      * If you want to load model for an entity, then use {@link #loadJsonEntityModel(ResourceLocation, Function)}
@@ -38,7 +38,7 @@ public class TimeModelLoader {
     }
 
     /**
-     * Loads json model list to be used in {@link TileEntityRenderer} or smth like that.
+     * Loads json model list to be used in {@link BlockEntityRenderer} or smth like that.
      * Why is this list? That's because file may contain multiple models.
      * <p>
      * If you want to load model for an entity, then use {@link #loadJsonEntityModel(ResourceLocation, Function)}

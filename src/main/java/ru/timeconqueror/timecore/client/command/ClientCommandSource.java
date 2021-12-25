@@ -1,4 +1,4 @@
-//package ru.timeconqueror.timecore.client.command;
+package ru.timeconqueror.timecore.client.command;//package ru.timeconqueror.timecore.client.command;
 //
 //import net.minecraft.client.Minecraft;
 //import net.minecraft.client.entity.player.ClientPlayerEntity;

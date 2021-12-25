@@ -1,10 +1,10 @@
 package ru.timeconqueror.timecore.mixins.accessor.client;
 
-import net.minecraft.client.network.play.ClientPlayNetHandler;
+import net.minecraft.client.multiplayer.ClientPacketListener;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
 
-@Mixin(ClientPlayNetHandler.class)
+@Mixin(ClientPacketListener.class)
 public interface ViewDistanceProvider {
     @Accessor
     int getServerChunkRadius();

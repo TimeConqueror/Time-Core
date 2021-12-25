@@ -13,7 +13,7 @@ import ru.timeconqueror.timecore.api.util.EnvironmentUtils;
 public abstract class MixinDataMain {
     @Inject(method = "main",
             at = @At(value = "INVOKE",
-                    target = "Lnet/minecraftforge/fml/DatagenModLoader;begin(Ljava/util/Set;Ljava/nio/file/Path;Ljava/util/Collection;Ljava/util/Collection;Ljava/util/Set;ZZZZZZLjava/lang/String;Ljava/io/File;)V"))
+                    target = "Lnet/minecraftforge/data/loading/DatagenModLoader;begin(Ljava/util/Set;Ljava/nio/file/Path;Ljava/util/Collection;Ljava/util/Collection;Ljava/util/Set;ZZZZZZLjava/lang/String;Ljava/io/File;)V"))
     private static void onStart(String[] args, CallbackInfo ci) {
         UnlockedField<EnvironmentUtils, Boolean> fIsInDataMode = ReflectionHelper.findField(EnvironmentUtils.class, "isInDataMode");
         fIsInDataMode.set(null, true);

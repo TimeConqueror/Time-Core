@@ -1,6 +1,6 @@
 package ru.timeconqueror.timecore.api.util;
 
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.core.BlockPos;
 
 import java.util.Iterator;
 
@@ -14,7 +14,7 @@ public class BlockPosUtils {
         return () -> new Iterator<BlockPos>() {
 
             long xyz;
-            final BlockPos.Mutable pos = startPos.mutable();
+            final BlockPos.MutableBlockPos pos = startPos.mutable();
             final long xyzSize = (long) xSize * ySize * zSize;
 
             @Override

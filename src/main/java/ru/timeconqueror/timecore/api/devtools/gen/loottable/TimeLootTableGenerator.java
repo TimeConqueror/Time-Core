@@ -5,13 +5,13 @@ import com.google.common.collect.Multimap;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import net.minecraft.data.DataGenerator;
-import net.minecraft.data.DirectoryCache;
-import net.minecraft.data.IDataProvider;
-import net.minecraft.loot.LootParameterSets;
-import net.minecraft.loot.LootTable;
-import net.minecraft.loot.LootTableManager;
-import net.minecraft.loot.ValidationTracker;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.data.DataProvider;
+import net.minecraft.data.HashCache;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.storage.loot.LootTable;
+import net.minecraft.world.level.storage.loot.LootTables;
+import net.minecraft.world.level.storage.loot.ValidationContext;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import org.jetbrains.annotations.NotNull;
 import ru.timeconqueror.timecore.TimeCore;
 
@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class TimeLootTableGenerator implements IDataProvider {
+public class TimeLootTableGenerator implements DataProvider {
     private static final Gson GSON = (new GsonBuilder()).setPrettyPrinting().disableHtmlEscaping().create();
     private final DataGenerator dataGenerator;
     private final List<LootTableSet> setList = new ArrayList<>();
@@ -35,7 +35,7 @@ public class TimeLootTableGenerator implements IDataProvider {
     }
 
     @Override
-    public void run(@NotNull DirectoryCache cache) {
+    public void run(@NotNull HashCache cache) {
         Path outputFolder = this.dataGenerator.getOutputFolder();
         Map<ResourceLocation, LootTable> map = Maps.newHashMap();
 
@@ -49,7 +49,7 @@ public class TimeLootTableGenerator implements IDataProvider {
             });
         });
 
-        ValidationTracker validationtracker = new ValidationTracker(LootParameterSets.ALL_PARAMS, (p_229442_0_) -> null, map::get);
+        ValidationContext validationtracker = new ValidationContext(LootContextParamSets.ALL_PARAMS, (p_229442_0_) -> null, map::get);
 
         validate(map, validationtracker);
 
@@ -64,7 +64,7 @@ public class TimeLootTableGenerator implements IDataProvider {
                 Path path = getPath(outputFolder, resourceLocation);
 
                 try {
-                    IDataProvider.save(GSON, cache, LootTableManager.serialize(lootTable), path);
+                    DataProvider.save(GSON, cache, LootTables.serialize(lootTable), path);
                 } catch (IOException ioexception) {
                     TimeCore.LOGGER.error("Couldn't save loot table {}", path, ioexception);
                 }
@@ -73,8 +73,8 @@ public class TimeLootTableGenerator implements IDataProvider {
         }
     }
 
-    protected void validate(Map<ResourceLocation, LootTable> map, ValidationTracker validationtracker) {
-        map.forEach((resourceLocation, lootTable) -> LootTableManager.validate(validationtracker, resourceLocation, lootTable));
+    protected void validate(Map<ResourceLocation, LootTable> map, ValidationContext validationtracker) {
+        map.forEach((resourceLocation, lootTable) -> LootTables.validate(validationtracker, resourceLocation, lootTable));
     }
 
     public TimeLootTableGenerator addSet(LootTableSet set) {

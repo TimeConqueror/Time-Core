@@ -1,7 +1,7 @@
 package ru.timeconqueror.timecore.animation.watcher;
 
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
 import ru.timeconqueror.timecore.TimeCore;
 import ru.timeconqueror.timecore.animation.AnimationRegistry;
@@ -112,7 +112,7 @@ public class TransitionWatcher extends AnimationWatcher {
 
     public static class Serializer implements WatcherSerializer<TransitionWatcher> {
         @Override
-        public void serialize(TransitionWatcher watcher, PacketBuffer buffer) {
+        public void serialize(TransitionWatcher watcher, FriendlyByteBuf buffer) {
             boolean hasSource = watcher.source != null;
             buffer.writeBoolean(hasSource);
             if (hasSource) {
@@ -131,7 +131,7 @@ public class TransitionWatcher extends AnimationWatcher {
         }
 
         @Override
-        public TransitionWatcher deserialize(PacketBuffer buffer) {
+        public TransitionWatcher deserialize(FriendlyByteBuf buffer) {
             boolean hasSource = buffer.readBoolean();
 
             Animation source = null;

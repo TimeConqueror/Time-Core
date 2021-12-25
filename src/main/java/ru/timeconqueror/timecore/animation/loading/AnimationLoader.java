@@ -1,6 +1,6 @@
 package ru.timeconqueror.timecore.animation.loading;
 
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 import ru.timeconqueror.timecore.TimeCore;
 import ru.timeconqueror.timecore.api.animation.Animation;
 

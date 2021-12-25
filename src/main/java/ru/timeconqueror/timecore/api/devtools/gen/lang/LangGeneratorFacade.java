@@ -1,11 +1,11 @@
 package ru.timeconqueror.timecore.api.devtools.gen.lang;
 
-import net.minecraft.block.Block;
-import net.minecraft.entity.EntityType;
-import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.item.ArmorItem;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemGroup;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.item.ArmorItem;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.level.block.Block;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -47,7 +47,7 @@ public class LangGeneratorFacade {
     private final LangJsonGenerator generator = new LangJsonGenerator();
     private final HashMap<String, LangSection<?>> sections = new LinkedHashMap<>();
 
-    private final LangSection<ItemGroup> itemGroupSection = addSection(DefaultSections.ITEM_GROUPS.get());
+    private final LangSection<CreativeModeTab> itemGroupSection = addSection(DefaultSections.ITEM_GROUPS.get());
     private final LangSection<Block> blockSection = addSection(DefaultSections.BLOCKS.get());
     private final LangSection<Item> itemSection = addSection(DefaultSections.ITEMS.get());
     private final LangSection<ArmorItem> armorSection = addSection(DefaultSections.ARMOR.get());
@@ -100,7 +100,7 @@ public class LangGeneratorFacade {
      * @param itemGroup item group for which english location will be added to file
      * @param enName    english localization location of item group
      */
-    public void addItemGroupEntry(ItemGroup itemGroup, String enName) {
+    public void addItemGroupEntry(CreativeModeTab itemGroup, String enName) {
         if (shouldSave()) {
             itemGroupSection.addEntry(itemGroup, enName);
         }
@@ -120,7 +120,7 @@ public class LangGeneratorFacade {
      */
     public void addArmorEntryByMaterial(ArmorItem item, String materialEnName) {
         if (shouldSave()) {
-            EquipmentSlotType equipmentSlot = item.getSlot();
+            EquipmentSlot equipmentSlot = item.getSlot();
 
             String fullLocalizedName;
             switch (equipmentSlot) {

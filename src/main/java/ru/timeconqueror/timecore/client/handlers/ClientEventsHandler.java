@@ -1,11 +1,11 @@
 package ru.timeconqueror.timecore.client.handlers;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.multiplayer.PlayerController;
-import net.minecraft.util.Hand;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.client.multiplayer.MultiPlayerGameMode;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.HitResult;
 import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -20,17 +20,17 @@ public class ClientEventsHandler {
 
         if (mc.player != null && mc.player.isCreative() && event.getButton() == GLFW.GLFW_MOUSE_BUTTON_RIGHT && event.getAction() == GLFW.GLFW_PRESS) {
             if (TKeyBinds.toggleReplaceMode.isDown()) {
-                RayTraceResult hitResult = mc.hitResult;
+                HitResult hitResult = mc.hitResult;
 
-                if (hitResult != null && hitResult.getType() == RayTraceResult.Type.BLOCK) {
-                    BlockRayTraceResult blockTraceResult = (BlockRayTraceResult) hitResult;
+                if (hitResult != null && hitResult.getType() == HitResult.Type.BLOCK) {
+                    BlockHitResult blockTraceResult = (BlockHitResult) hitResult;
 
                     BlockPos pos = blockTraceResult.getBlockPos();
                     if (!mc.level.isEmptyBlock(pos)) {
-                        PlayerController controller = mc.gameMode;
+                        MultiPlayerGameMode controller = mc.gameMode;
 
                         controller.startDestroyBlock(pos, blockTraceResult.getDirection());
-                        controller.useItemOn(mc.player, mc.level, Hand.MAIN_HAND, blockTraceResult);
+                        controller.useItemOn(mc.player, mc.level, InteractionHand.MAIN_HAND, blockTraceResult);
                     }
                 }
 

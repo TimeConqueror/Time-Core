@@ -1,7 +1,7 @@
 package ru.timeconqueror.timecore.mod.common.packet;
 
-import net.minecraft.network.PacketBuffer;
-import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraftforge.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
 import ru.timeconqueror.timecore.TimeCore;
 import ru.timeconqueror.timecore.api.common.packet.SimplePacketHandler;
@@ -21,7 +21,7 @@ public class S2CSRSendSinglePiecePacket {
     public static class Handler extends SimplePacketHandler<S2CSRSendSinglePiecePacket> {
 
         @Override
-        public void encode(S2CSRSendSinglePiecePacket packet, PacketBuffer buffer) {
+        public void encode(S2CSRSendSinglePiecePacket packet, FriendlyByteBuf buffer) {
             StructureData data = packet.data;
 
             BufferUtils.encodeBoundingBox(data.getBoundingBox(), buffer);
@@ -30,7 +30,7 @@ public class S2CSRSendSinglePiecePacket {
         }
 
         @Override
-        public @NotNull S2CSRSendSinglePiecePacket decode(PacketBuffer buffer) {
+        public @NotNull S2CSRSendSinglePiecePacket decode(FriendlyByteBuf buffer) {
             StructureData data = new StructureData(BufferUtils.decodeBoundingBox(buffer), buffer.readResourceLocation(), buffer.readResourceLocation());
             return new S2CSRSendSinglePiecePacket(data);
         }

@@ -1,18 +1,17 @@
 package ru.timeconqueror.timecore.client.render.model;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.vertex.IVertexBuilder;
-import net.minecraft.client.renderer.model.ModelRenderer;
-import net.minecraft.util.math.vector.Matrix3f;
-import net.minecraft.util.math.vector.Matrix4f;
-import net.minecraft.util.math.vector.Vector3f;
-import net.minecraft.util.math.vector.Vector4f;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.math.Matrix3f;
+import com.mojang.math.Matrix4f;
+import com.mojang.math.Vector3f;
+import com.mojang.math.Vector4f;
+import net.minecraft.client.model.geom.ModelPart;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
-//TODO add method to control it so nobody hasn't dig into how it works
-//TODO name rotation be radians, because for now it's unclear
-public class TimeModelRenderer extends ModelRenderer {
+
+public class TimeModelRenderer extends ModelPart {
     private final Vector3f scaleFactor = new Vector3f(1, 1, 1);
     public List<TimeModelBox> cubes;
     public Vector3f offset = new Vector3f();
@@ -31,7 +30,7 @@ public class TimeModelRenderer extends ModelRenderer {
     }
 
     @Override
-    public void render(MatrixStack matrixStackIn, IVertexBuilder bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha) {
+    public void render(PoseStack matrixStackIn, VertexConsumer bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha) {
         if (this.visible) {
             if (!this.cubes.isEmpty() || !this.children.isEmpty()) {
                 matrixStackIn.pushPose();
@@ -42,7 +41,7 @@ public class TimeModelRenderer extends ModelRenderer {
 
                 this.compile(matrixStackIn.last(), bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
 
-                for (ModelRenderer modelrenderer : this.children) {
+                for (ModelPart modelrenderer : this.children) {
                     modelrenderer.render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
                 }
 
@@ -52,18 +51,18 @@ public class TimeModelRenderer extends ModelRenderer {
     }
 
     @Override
-    public void translateAndRotate(MatrixStack matrixStackIn) {
+    public void translateAndRotate(PoseStack matrixStackIn) {
         matrixStackIn.translate(offset.x() * (1 / 16F) * scaleFactor.x(), offset.y() * (1 / 16F) * scaleFactor.y(), offset.z() * (1 / 16F) * scaleFactor.z());
 
         super.translateAndRotate(matrixStackIn);
     }
 
-    private void compile(MatrixStack.Entry matrixEntryIn, IVertexBuilder bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha) {
+    private void compile(PoseStack.Pose matrixEntryIn, VertexConsumer bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha) {
         Matrix4f matrix4f = matrixEntryIn.pose();
         Matrix3f matrix3f = matrixEntryIn.normal();
 
         for (TimeModelBox box : this.cubes) {
-            for (TexturedQuad quads : box.getQuads()) {
+            for (Polygon quads : box.getQuads()) {
                 Vector3f vector3f = quads.normal.copy();
                 vector3f.transform(matrix3f);
                 float f = vector3f.x();
@@ -71,7 +70,7 @@ public class TimeModelRenderer extends ModelRenderer {
                 float f2 = vector3f.z();
 
                 for (int i = 0; i < 4; ++i) {
-                    ModelRenderer.PositionTextureVertex vertex = quads.vertices[i];
+                    ModelPart.Vertex vertex = quads.vertices[i];
                     float f3 = vertex.pos.x() / 16.0F;
                     float f4 = vertex.pos.y() / 16.0F;
                     float f5 = vertex.pos.z() / 16.0F;

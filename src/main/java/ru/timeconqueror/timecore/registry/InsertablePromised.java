@@ -1,6 +1,6 @@
 package ru.timeconqueror.timecore.registry;
 
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 import ru.timeconqueror.timecore.api.registry.util.Promised;
 
 public class InsertablePromised<T> extends Promised<T> {

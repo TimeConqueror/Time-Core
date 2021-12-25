@@ -1,7 +1,7 @@
 package ru.timeconqueror.timecore.client.render.model;
 
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 
 import java.util.function.Function;
 

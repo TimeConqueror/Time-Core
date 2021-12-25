@@ -1,10 +1,10 @@
 package ru.timeconqueror.timecore.api.util;
 
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.phys.AABB;
 
 public class BufferUtils {
-    public static void encodeBoundingBox(AxisAlignedBB boundingBox, PacketBuffer bufferTo) {
+    public static void encodeBoundingBox(AABB boundingBox, FriendlyByteBuf bufferTo) {
         bufferTo.writeDouble(boundingBox.minX);
         bufferTo.writeDouble(boundingBox.minY);
         bufferTo.writeDouble(boundingBox.minZ);
@@ -13,8 +13,8 @@ public class BufferUtils {
         bufferTo.writeDouble(boundingBox.maxZ);
     }
 
-    public static AxisAlignedBB decodeBoundingBox(PacketBuffer bufferFrom) {
-        return new AxisAlignedBB(
+    public static AABB decodeBoundingBox(FriendlyByteBuf bufferFrom) {
+        return new AABB(
                 bufferFrom.readDouble(),
                 bufferFrom.readDouble(),
                 bufferFrom.readDouble(),

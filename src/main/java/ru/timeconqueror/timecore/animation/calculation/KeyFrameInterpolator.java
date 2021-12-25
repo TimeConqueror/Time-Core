@@ -1,6 +1,6 @@
 package ru.timeconqueror.timecore.animation.calculation;
 
-import net.minecraft.util.math.vector.Vector3f;
+import com.mojang.math.Vector3f;
 import org.jetbrains.annotations.Nullable;
 import ru.timeconqueror.timecore.animation.component.CatmullRomKeyFrame;
 import ru.timeconqueror.timecore.animation.component.KeyFrame;

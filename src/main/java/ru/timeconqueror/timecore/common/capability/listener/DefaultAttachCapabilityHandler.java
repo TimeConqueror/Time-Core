@@ -1,10 +1,10 @@
 package ru.timeconqueror.timecore.common.capability.listener;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.world.World;
-import net.minecraft.world.chunk.Chunk;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -21,7 +21,7 @@ import java.util.ArrayList;
 public class DefaultAttachCapabilityHandler {
 
     @SubscribeEvent
-    public static void onTileAttachCapability(AttachCapabilitiesEvent<TileEntity> event) {
+    public static void onTileAttachCapability(AttachCapabilitiesEvent<BlockEntity> event) {
         tryAttachCapability(event, CapabilityOwner.TILE_ENTITY);
     }
 
@@ -37,12 +37,12 @@ public class DefaultAttachCapabilityHandler {
 //    }
 
     @SubscribeEvent
-    public static void onWorldAttachCapability(AttachCapabilitiesEvent<World> event) {
+    public static void onWorldAttachCapability(AttachCapabilitiesEvent<Level> event) {
         tryAttachCapability(event, CapabilityOwner.WORLD);
     }
 
     @SubscribeEvent
-    public static void onChunkAttachCapability(AttachCapabilitiesEvent<Chunk> event) {
+    public static void onChunkAttachCapability(AttachCapabilitiesEvent<LevelChunk> event) {
         tryAttachCapability(event, CapabilityOwner.CHUNK);
     }
 

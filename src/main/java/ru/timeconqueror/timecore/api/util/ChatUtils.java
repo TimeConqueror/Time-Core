@@ -1,12 +1,12 @@
 package ru.timeconqueror.timecore.api.util;
 
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.IFormattableTextComponent;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.ChatFormatting;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Player;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -20,8 +20,8 @@ public class ChatUtils {
      *
      * @param distanceIn distance from `fromPos`, in which players will be get a message.
      */
-    public static void sendToAllNearby(BlockPos fromPos, ITextComponent msg, double distanceIn) {
-        for (ServerPlayerEntity player : NetworkUtils.getPlayersNearby(fromPos, distanceIn)) {
+    public static void sendToAllNearby(BlockPos fromPos, Component msg, double distanceIn) {
+        for (ServerPlayer player : NetworkUtils.getPlayersNearby(fromPos, distanceIn)) {
             player.sendMessage(msg, player.getUUID());
         }
     }
@@ -29,7 +29,7 @@ public class ChatUtils {
     /**
      * Changes format (usually color) of provided message.
      */
-    public static IFormattableTextComponent format(IFormattableTextComponent msg, TextFormatting... formats) {
+    public static MutableComponent format(MutableComponent msg, ChatFormatting... formats) {
         return msg.withStyle(formats);
     }
 
@@ -41,7 +41,7 @@ public class ChatUtils {
      * @param extraInfo extra info that is present as the "name->value" pair array
      */
     @SafeVarargs
-    public static void sendInformativeError(String modId, PlayerEntity player, String msg, Pair<String, Object>... extraInfo) {
+    public static void sendInformativeError(String modId, Player player, String msg, Pair<String, Object>... extraInfo) {
         sendInformativeError(modId, player, msg, new Exception(""));
     }
 
@@ -54,9 +54,9 @@ public class ChatUtils {
      * @param extraInfo extra info that is present as the "name->value" pair array
      */
     @SafeVarargs
-    public static void sendInformativeError(String modId, PlayerEntity player, String msg, Exception exception, Pair<String, Object>... extraInfo) {
-        NetworkUtils.sendMessage(player, new TranslationTextComponent("msg.timecore.chat_error_header").withStyle(TextFormatting.RED).append(msg));
-        NetworkUtils.sendMessage(player, new TranslationTextComponent("msg.timecore.chat_error_contact_us").withStyle(TextFormatting.RED).append(modId));
+    public static void sendInformativeError(String modId, Player player, String msg, Exception exception, Pair<String, Object>... extraInfo) {
+        NetworkUtils.sendMessage(player, new TranslatableComponent("msg.timecore.chat_error_header").withStyle(ChatFormatting.RED).append(msg));
+        NetworkUtils.sendMessage(player, new TranslatableComponent("msg.timecore.chat_error_contact_us").withStyle(ChatFormatting.RED).append(modId));
         LOGGER.error(msg);
         LOGGER.error("Extra information: " + Arrays.toString(extraInfo));
         LOGGER.error(exception);

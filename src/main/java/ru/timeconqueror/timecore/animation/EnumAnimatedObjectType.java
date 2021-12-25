@@ -1,6 +1,6 @@
 package ru.timeconqueror.timecore.animation;
 
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.network.FriendlyByteBuf;
 import ru.timeconqueror.timecore.mod.common.packet.animation.CodecSupplier;
 import ru.timeconqueror.timecore.mod.common.packet.animation.CodecSupplier.EntityCodecSupplier;
 import ru.timeconqueror.timecore.mod.common.packet.animation.CodecSupplier.TileEntityCodecSupplier;
@@ -11,15 +11,15 @@ public enum EnumAnimatedObjectType {
     TILE_ENTITY(TileEntityCodecSupplier::new, NetworkDispatcher.forTileEntity()),
     ENTITY(EntityCodecSupplier::new, NetworkDispatcher.forEntity());
 
-    private final Function<PacketBuffer, CodecSupplier> codecFactory;
+    private final Function<FriendlyByteBuf, CodecSupplier> codecFactory;
     private final NetworkDispatcher<?> networkDispatcher;
 
-    EnumAnimatedObjectType(Function<PacketBuffer, CodecSupplier> codecFactory, NetworkDispatcher<?> networkDispatcher) {
+    EnumAnimatedObjectType(Function<FriendlyByteBuf, CodecSupplier> codecFactory, NetworkDispatcher<?> networkDispatcher) {
         this.codecFactory = codecFactory;
         this.networkDispatcher = networkDispatcher;
     }
 
-    public CodecSupplier getCodec(PacketBuffer buffer) {
+    public CodecSupplier getCodec(FriendlyByteBuf buffer) {
         return codecFactory.apply(buffer);
     }
 

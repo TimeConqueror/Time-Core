@@ -4,22 +4,21 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.ParseResults;
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import net.minecraft.command.CommandException;
-import net.minecraft.command.CommandSource;
-import net.minecraft.util.text.*;
-import net.minecraft.util.text.event.ClickEvent;
-import net.minecraft.util.text.event.HoverEvent;
+import net.minecraft.ChatFormatting;
+import net.minecraft.commands.CommandRuntimeException;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.network.chat.*;
 import ru.timeconqueror.timecore.TimeCore;
 
 public class ClientCommandManager {
-    private static final CommandDispatcher<CommandSource> CLIENT_DISPATCHER = new CommandDispatcher<>();
+    private static final CommandDispatcher<CommandSourceStack> CLIENT_DISPATCHER = new CommandDispatcher<>();
 
     /**
      * Handles provided command on the client side.
      *
      * @return false, if provided command is unknown for client side, otherwise returns true.
      */
-    public static boolean handleCommand(CommandSource source, String command) {
+    public static boolean handleCommand(CommandSourceStack source, String command) {
         StringReader commandReader = new StringReader(command);
         if (commandReader.canRead() && commandReader.peek() == '/') {
             commandReader.skip();
@@ -29,28 +28,28 @@ public class ClientCommandManager {
             return handleCommandWithThrowing(source, commandReader);
 
             //Catch clauses copied from Commands#handleCommand
-        } catch (CommandException e) {
+        } catch (CommandRuntimeException e) {
             source.sendFailure(e.getComponent());
         } catch (CommandSyntaxException e) {
-            source.sendFailure(TextComponentUtils.fromMessage(e.getRawMessage()));
+            source.sendFailure(ComponentUtils.fromMessage(e.getRawMessage()));
             if (e.getInput() != null && e.getCursor() >= 0) {
                 int k = Math.min(e.getInput().length(), e.getCursor());
-                IFormattableTextComponent itextcomponent1 = new StringTextComponent("").withStyle(TextFormatting.GRAY).withStyle((style) -> style.withClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, command)));
+                MutableComponent itextcomponent1 = new TextComponent("").withStyle(ChatFormatting.GRAY).withStyle((style) -> style.withClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, command)));
                 if (k > 10) {
                     itextcomponent1.append("...");
                 }
 
                 itextcomponent1.append(e.getInput().substring(Math.max(0, k - 10), k));
                 if (k < e.getInput().length()) {
-                    ITextComponent itextcomponent2 = (new StringTextComponent(e.getInput().substring(k))).withStyle(TextFormatting.RED, TextFormatting.UNDERLINE);
+                    Component itextcomponent2 = (new TextComponent(e.getInput().substring(k))).withStyle(ChatFormatting.RED, ChatFormatting.UNDERLINE);
                     itextcomponent1.append(itextcomponent2);
                 }
 
-                itextcomponent1.append((new TranslationTextComponent("command.context.here")).withStyle(TextFormatting.RED, TextFormatting.ITALIC));
+                itextcomponent1.append((new TranslatableComponent("command.context.here")).withStyle(ChatFormatting.RED, ChatFormatting.ITALIC));
                 source.sendFailure(itextcomponent1);
             }
         } catch (Exception e) {
-            IFormattableTextComponent itextcomponent = new StringTextComponent(e.getMessage() == null ? e.getClass().getName() : e.getMessage());
+            MutableComponent itextcomponent = new TextComponent(e.getMessage() == null ? e.getClass().getName() : e.getMessage());
             if (TimeCore.LOGGER.isDebugEnabled()) {
                 StackTraceElement[] astacktraceelement = e.getStackTrace();
 
@@ -59,14 +58,14 @@ public class ClientCommandManager {
                 }
             }
 
-            source.sendFailure((new TranslationTextComponent("command.failed")).withStyle((style) -> style.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, itextcomponent))));
+            source.sendFailure((new TranslatableComponent("command.failed")).withStyle((style) -> style.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, itextcomponent))));
         }
 
         return true;
     }
 
-    private static boolean handleCommandWithThrowing(CommandSource source, StringReader commandReader) throws CommandSyntaxException {
-        ParseResults<CommandSource> parseResults = CLIENT_DISPATCHER.parse(commandReader, source);
+    private static boolean handleCommandWithThrowing(CommandSourceStack source, StringReader commandReader) throws CommandSyntaxException {
+        ParseResults<CommandSourceStack> parseResults = CLIENT_DISPATCHER.parse(commandReader, source);
         if (canBeHandled(parseResults)) {
             CLIENT_DISPATCHER.execute(parseResults);
 
@@ -79,7 +78,7 @@ public class ClientCommandManager {
     /**
      * Checks for unknown command exception, so determines if command can be handled on client.
      */
-    private static boolean canBeHandled(ParseResults<CommandSource> parseResults) {
+    private static boolean canBeHandled(ParseResults<CommandSourceStack> parseResults) {
         if (parseResults.getReader().canRead()) {
             return !parseResults.getContext().getRange().isEmpty();
         }
@@ -87,7 +86,7 @@ public class ClientCommandManager {
         return true;
     }
 
-    public static CommandDispatcher<CommandSource> getClientDispatcher() {
+    public static CommandDispatcher<CommandSourceStack> getClientDispatcher() {
         return CLIENT_DISPATCHER;
     }
 }

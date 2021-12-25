@@ -1,6 +1,6 @@
 package ru.timeconqueror.timecore.common;
 
-import net.minecraft.entity.LivingEntity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.common.MinecraftForge;
 import ru.timeconqueror.timecore.animation.internal.AnimationEventHandler;
 import ru.timeconqueror.timecore.api.common.event.LivingUpdateEndEvent;

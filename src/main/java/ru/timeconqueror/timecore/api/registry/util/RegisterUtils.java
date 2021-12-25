@@ -1,6 +1,6 @@
 package ru.timeconqueror.timecore.api.registry.util;
 
-import net.minecraft.block.Block;
+import net.minecraft.world.level.block.Block;
 import ru.timeconqueror.timecore.api.client.resource.location.BlockModelLocation;
 import ru.timeconqueror.timecore.api.client.resource.location.TextureLocation;
 import ru.timeconqueror.timecore.api.registry.BlockRegister;

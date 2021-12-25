@@ -1,12 +1,12 @@
 package ru.timeconqueror.timecore.common.capability.owner;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
-import net.minecraft.world.chunk.Chunk;
+import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import ru.timeconqueror.timecore.common.capability.owner.attach.CoffeeCapabilityAttacher;
 import ru.timeconqueror.timecore.common.capability.owner.serializer.CapabilityOwnerSerializer;
@@ -15,16 +15,16 @@ import java.util.ArrayList;
 
 public class CapabilityOwner<T extends ICapabilityProvider> {
 
-    public static final CapabilityOwner<TileEntity> TILE_ENTITY = new CapabilityOwner<>(new CapabilityOwnerSerializer<TileEntity>() {
+    public static final CapabilityOwner<BlockEntity> TILE_ENTITY = new CapabilityOwner<>(new CapabilityOwnerSerializer<BlockEntity>() {
         @Override
-        public void serializeOwner(World world, TileEntity owner, CompoundNBT nbt) {
+        public void serializeOwner(Level world, BlockEntity owner, CompoundTag nbt) {
             nbt.putInt("x", owner.getBlockPos().getX());
             nbt.putInt("y", owner.getBlockPos().getY());
             nbt.putInt("z", owner.getBlockPos().getZ());
         }
 
         @Override
-        public TileEntity deserializeOwner(World world, CompoundNBT nbt) {
+        public BlockEntity deserializeOwner(Level world, CompoundTag nbt) {
             BlockPos pos = new BlockPos(nbt.getInt("x"), nbt.getInt("y"), nbt.getInt("z"));
             return world.getBlockEntity(pos);
         }
@@ -32,38 +32,38 @@ public class CapabilityOwner<T extends ICapabilityProvider> {
 
     public static final CapabilityOwner<Entity> ENTITY = new CapabilityOwner<>(new CapabilityOwnerSerializer<Entity>() {
         @Override
-        public void serializeOwner(World world, Entity owner, CompoundNBT nbt) {
+        public void serializeOwner(Level world, Entity owner, CompoundTag nbt) {
             nbt.putInt("id", owner.getId());
         }//FIXME not uuid?
 
         @Override
-        public Entity deserializeOwner(World world, CompoundNBT nbt) {
+        public Entity deserializeOwner(Level world, CompoundTag nbt) {
             return world.getEntity(nbt.getInt("id"));
         }
     });
 
-    public static final CapabilityOwner<World> WORLD = new CapabilityOwner<>(new CapabilityOwnerSerializer<World>() {
+    public static final CapabilityOwner<Level> WORLD = new CapabilityOwner<>(new CapabilityOwnerSerializer<Level>() {
 
         @Override
-        public void serializeOwner(World world, World owner, CompoundNBT nbt) {
+        public void serializeOwner(Level world, Level owner, CompoundTag nbt) {
         }
 
         @Override
-        public World deserializeOwner(World world, CompoundNBT nbt) {
+        public Level deserializeOwner(Level world, CompoundTag nbt) {
             return world;
         }
 
     });
 
-    public static final CapabilityOwner<Chunk> CHUNK = new CapabilityOwner<>(new CapabilityOwnerSerializer<Chunk>() {
+    public static final CapabilityOwner<LevelChunk> CHUNK = new CapabilityOwner<>(new CapabilityOwnerSerializer<LevelChunk>() {
         @Override
-        public void serializeOwner(World world, Chunk owner, CompoundNBT nbt) {
+        public void serializeOwner(Level world, LevelChunk owner, CompoundTag nbt) {
             nbt.putInt("x", owner.getPos().x);
             nbt.putInt("z", owner.getPos().z);
         }
 
         @Override
-        public Chunk deserializeOwner(World world, CompoundNBT nbt) {
+        public LevelChunk deserializeOwner(Level world, CompoundTag nbt) {
             return world.getChunk(nbt.getInt("x"), nbt.getInt("z"));
         }
     });

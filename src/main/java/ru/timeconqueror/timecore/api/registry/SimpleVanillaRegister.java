@@ -1,6 +1,6 @@
 package ru.timeconqueror.timecore.api.registry;
 
-import net.minecraft.util.registry.Registry;
+import net.minecraft.core.Registry;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import ru.timeconqueror.timecore.api.registry.util.Promised;
 

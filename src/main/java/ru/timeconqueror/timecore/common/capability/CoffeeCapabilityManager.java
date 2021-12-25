@@ -1,8 +1,8 @@
 package ru.timeconqueror.timecore.common.capability;
 
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.nbt.INBT;
-import net.minecraft.tileentity.TileEntity;
+import net.minecraft.nbt.Tag;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
@@ -54,13 +54,13 @@ public class CoffeeCapabilityManager {
 
     public void addDefaultAttachers() {
         attachDynamicCapability(CapabilityOwner.TILE_ENTITY, CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, (tile) -> tile instanceof IItemHandlerProvider,
-                ((CoffeeCapabilityGetter<TileEntity, IItemHandler>) (target, facing) -> ((IItemHandlerProvider) target).getItemHandler(facing)).supply());
+                ((CoffeeCapabilityGetter<BlockEntity, IItemHandler>) (target, facing) -> ((IItemHandlerProvider) target).getItemHandler(facing)).supply());
 
         attachDynamicCapability(CapabilityOwner.TILE_ENTITY, CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, (tile) -> tile instanceof IFluidHandlerProvider,
-                ((CoffeeCapabilityGetter<TileEntity, IFluidHandler>) (target, facing) -> ((IFluidHandlerProvider) target).getFluidHandler(facing)).supply());
+                ((CoffeeCapabilityGetter<BlockEntity, IFluidHandler>) (target, facing) -> ((IFluidHandlerProvider) target).getFluidHandler(facing)).supply());
 
         attachDynamicCapability(CapabilityOwner.TILE_ENTITY, CapabilityEnergy.ENERGY, (tile) -> tile instanceof IEnergyStorageProvider,
-                ((CoffeeCapabilityGetter<TileEntity, IEnergyStorage>) (target, facing) -> ((IEnergyStorageProvider) target).getEnergyStorage(facing)).supply());
+                ((CoffeeCapabilityGetter<BlockEntity, IEnergyStorage>) (target, facing) -> ((IEnergyStorageProvider) target).getEnergyStorage(facing)).supply());
     }
 
     /**
@@ -68,7 +68,7 @@ public class CoffeeCapabilityManager {
      *
      * @param capabilityExtractor function, which should extract needed capability from the player
      */
-    public <T extends INBT> void enableKeepingPlayerCapability(Function<PlayerEntity, INBTSerializable<T>> capabilityExtractor) {
+    public <T extends Tag> void enableKeepingPlayerCapability(Function<Player, INBTSerializable<T>> capabilityExtractor) {
         MinecraftForge.EVENT_BUS.register(new CoffeeKeepPlayerCapabilityListener<>(capabilityExtractor));
     }
 
@@ -82,7 +82,7 @@ public class CoffeeCapabilityManager {
      *
      * @param onSyncRequest function, which should send needed data to the client
      */
-    public void enableSyncingPlayerCapabilityOnJoin(Consumer<PlayerEntity> onSyncRequest) {
+    public void enableSyncingPlayerCapabilityOnJoin(Consumer<Player> onSyncRequest) {
         MinecraftForge.EVENT_BUS.register(new CoffeeOnPlayerJoinedSendCapabilityListener(onSyncRequest));
     }
 

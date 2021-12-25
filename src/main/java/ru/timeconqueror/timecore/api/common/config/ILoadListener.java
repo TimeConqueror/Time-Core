@@ -1,7 +1,7 @@
 package ru.timeconqueror.timecore.api.common.config;
 
-import net.minecraftforge.fml.config.ModConfig;
+import net.minecraftforge.fml.event.config.ModConfigEvent;
 
 public interface ILoadListener {
-    void onEveryLoad(ModConfig.ModConfigEvent event);
+    void onEveryLoad(ModConfigEvent event);
 }

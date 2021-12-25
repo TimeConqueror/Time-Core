@@ -1,9 +1,9 @@
 package net.minecraft.server;
 
-import net.minecraft.world.storage.SaveFormat;
+import net.minecraft.world.level.storage.LevelStorageSource;
 
 public class MinecraftServerHooks {
-    public static SaveFormat.LevelSave getStorageSource(MinecraftServer server) {
+    public static LevelStorageSource.LevelStorageAccess getStorageSource(MinecraftServer server) {
         return server.storageSource;
     }
 }

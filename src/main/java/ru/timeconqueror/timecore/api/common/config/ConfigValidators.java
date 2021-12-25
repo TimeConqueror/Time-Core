@@ -1,6 +1,6 @@
 package ru.timeconqueror.timecore.api.common.config;
 
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 
 import java.util.function.Predicate;
 

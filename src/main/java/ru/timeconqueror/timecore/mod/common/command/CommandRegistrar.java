@@ -1,9 +1,9 @@
 package ru.timeconqueror.timecore.mod.common.command;
 
 import com.mojang.brigadier.CommandDispatcher;
-import net.minecraft.command.CommandSource;
-import net.minecraft.command.arguments.ArgumentSerializer;
-import net.minecraft.command.arguments.ArgumentTypes;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.synchronization.ArgumentTypes;
+import net.minecraft.commands.synchronization.EmptyArgumentSerializer;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -16,12 +16,12 @@ import ru.timeconqueror.timecore.api.common.command.argument.StructureArgument;
 public class CommandRegistrar {
     @SubscribeEvent
     public static void onSetup(FMLCommonSetupEvent event) {
-        ArgumentTypes.register("timecore.structure", StructureArgument.class, new ArgumentSerializer<>(StructureArgument::new));
+        ArgumentTypes.register("timecore.structure", StructureArgument.class, new EmptyArgumentSerializer<>(StructureArgument::new));
     }
 
     @SubscribeEvent//TODO move to client commands event
     public static void onClient(FMLClientSetupEvent event) {
-        CommandDispatcher<CommandSource> commandDispatcher = ClientCommandDispatcher.get();
+        CommandDispatcher<CommandSourceStack> commandDispatcher = ClientCommandDispatcher.get();
         TimeCoreCommand.registerClient(commandDispatcher);
     }
 
@@ -29,7 +29,7 @@ public class CommandRegistrar {
     public static class ForgeBusCommandRegistrar {
         @SubscribeEvent
         public static void onServerStart(RegisterCommandsEvent event) {
-            CommandDispatcher<CommandSource> commandDispatcher = event.getDispatcher();
+            CommandDispatcher<CommandSourceStack> commandDispatcher = event.getDispatcher();
             TimeCoreCommand.register(commandDispatcher);
         }
     }

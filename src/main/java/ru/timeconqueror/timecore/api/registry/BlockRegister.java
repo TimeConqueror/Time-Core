@@ -1,11 +1,11 @@
 package ru.timeconqueror.timecore.api.registry;
 
-import net.minecraft.block.Block;
+import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.RenderTypeLookup;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemGroup;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.level.block.Block;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.RegistryObject;
@@ -154,7 +154,7 @@ public class BlockRegister extends ForgeRegister<Block> {
         itemRegister.regToBus(modEventBus);
     }
 
-    public class BlockRegisterChain<B extends Block> extends ForgeRegister.RegisterChain<B> {
+    public class BlockRegisterChain<B extends Block> extends RegisterChain<B> {
         private BlockRegisterChain(RegistryObject<B> holder) {
             super(holder);
         }
@@ -166,7 +166,7 @@ public class BlockRegister extends ForgeRegister<Block> {
          *
          * @param group creative tab in which item will be placed. Can be null, which means that item will be placed nowhere.
          */
-        public BlockRegisterChain<B> defaultBlockItem(@Nullable ItemGroup group) {
+        public BlockRegisterChain<B> defaultBlockItem(@Nullable CreativeModeTab group) {
             return defaultBlockItem(group, itemRegistrator -> itemRegistrator.modelFromBlockParent(new BlockModelLocation(getModId(), getName())));
         }
 
@@ -174,7 +174,7 @@ public class BlockRegister extends ForgeRegister<Block> {
          * Sets render layer for this block.
          */
         public BlockRegisterChain<B> renderLayer(Supplier<RenderTypeWrapper> renderTypeSup) {
-            runOnClientSetup(() -> RenderTypeLookup.setRenderLayer(asRegistryObject().get(), renderTypeSup.get().get()));
+            runOnClientSetup(() -> ItemBlockRenderTypes.setRenderLayer(asRegistryObject().get(), renderTypeSup.get().get()));
             return this;
         }
 
@@ -186,7 +186,7 @@ public class BlockRegister extends ForgeRegister<Block> {
          * @param group              creative tab in which item will be placed. Can be null, which means that item will be placed nowhere.
          * @param blockModelLocation parent block model location for auto-generated item model based on block one.
          */
-        public BlockRegisterChain<B> defaultBlockItem(@Nullable ItemGroup group, BlockModelLocation blockModelLocation) {
+        public BlockRegisterChain<B> defaultBlockItem(@Nullable CreativeModeTab group, BlockModelLocation blockModelLocation) {
             return defaultBlockItem(group, itemRegistrator -> itemRegistrator.modelFromBlockParent(blockModelLocation));
         }
 
@@ -198,7 +198,7 @@ public class BlockRegister extends ForgeRegister<Block> {
          * @param group        creative tab in which item will be placed. Can be null, which means that item will be placed nowhere.
          * @param itemSettings extra stuff, that you can do for that item, like generating item model.
          */
-        public BlockRegisterChain<B> defaultBlockItem(@Nullable ItemGroup group, Consumer<ItemRegisterChain<BlockItem>> itemSettings) {
+        public BlockRegisterChain<B> defaultBlockItem(@Nullable CreativeModeTab group, Consumer<ItemRegisterChain<BlockItem>> itemSettings) {
             return defaultBlockItem(new Item.Properties().tab(group), itemSettings);
         }
 

@@ -1,9 +1,9 @@
 package ru.timeconqueror.timecore.mixins.client;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.resources.DownloadingPackFinder;
-import net.minecraft.resources.IReloadableResourceManager;
-import net.minecraft.resources.ResourcePackList;
+import net.minecraft.client.resources.ClientPackSource;
+import net.minecraft.server.packs.repository.PackRepository;
+import net.minecraft.server.packs.resources.ReloadableResourceManager;
 import net.minecraftforge.fml.client.ClientModLoader;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -16,7 +16,7 @@ import ru.timeconqueror.timecore.client.resource.TimePackFinder;
 @Mixin(value = ClientModLoader.class, remap = false)
 public abstract class ClientModelLoaderMixin {
     @Inject(method = "begin", at = @At(value = "TAIL"))
-    private static void injectCustomPack(Minecraft minecraft, ResourcePackList defaultResourcePacks, IReloadableResourceManager mcResourceManager, DownloadingPackFinder metadataSerializer, CallbackInfo ci) {
+    private static void injectCustomPack(Minecraft minecraft, PackRepository defaultResourcePacks, ReloadableResourceManager mcResourceManager, ClientPackSource metadataSerializer, CallbackInfo ci) {
         TimeCore.LOGGER.debug(Markers.RESOURCE_SYSTEM, "Adding TimePackFinder to resourcepack list.");
         defaultResourcePacks.addPackFinder(new TimePackFinder());
     }

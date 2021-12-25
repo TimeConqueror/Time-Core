@@ -2,10 +2,10 @@ package ru.timeconqueror.timecore.api.util;
 
 import it.unimi.dsi.fastutil.ints.Int2IntMap;
 import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
-import net.minecraft.util.Direction;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.gen.ChunkGenerator;
-import net.minecraft.world.gen.Heightmap;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.level.chunk.ChunkGenerator;
+import net.minecraft.world.level.levelgen.Heightmap;
 
 import java.util.function.BiConsumer;
 import java.util.function.BiPredicate;
@@ -24,7 +24,7 @@ public class GenHelper {
      *                  <font color="yellow">Note, that these positions are RELATIVE, not absolute!</font>
      */
     public static void genHollowCircle(int radius, Direction.Axis direction, Consumer<BlockPos> generator) {
-        BlockPos.Mutable pos = new BlockPos.Mutable();
+        BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
         genHollowCircle(radius, (x, y) -> {
             applyDirection(pos, x, y, 0, direction);
             generator.accept(pos);
@@ -42,7 +42,7 @@ public class GenHelper {
      *                  <font color="yellow">Note, that these positions are RELATIVE, not absolute!</font>
      */
     public static void genHollowCyl(int radius, int height, Direction.Axis direction, Consumer<BlockPos> generator) {
-        BlockPos.Mutable pos = new BlockPos.Mutable();
+        BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
         genHollowCircle(radius, (x, y) -> {
             for (int depth = 0; depth < height; depth++) {
                 applyDirection(pos, x, y, depth, direction);
@@ -62,7 +62,7 @@ public class GenHelper {
      *                  <font color="yellow">Note, that these positions are RELATIVE, not absolute!</font>
      */
     public static void genFilledCircle(int radius, Direction.Axis direction, Consumer<BlockPos> generator) {
-        BlockPos.Mutable pos = new BlockPos.Mutable();
+        BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
         genFilledCircle(radius, (line) -> {
             for (int x = line.getX0(); x >= line.getX1(); x--) {
                 applyDirection(pos, x, line.getY(), 0, direction);
@@ -74,7 +74,7 @@ public class GenHelper {
     public static void genFilledBorderedCircle(int radius, Direction.Axis direction, IBorderGenerator borderGenerator, Consumer<BlockPos> filledPartGenerator) {
         genHollowCircle(radius, direction, borderGenerator::gen);
 
-        BlockPos.Mutable pos = new BlockPos.Mutable();
+        BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
 
         fillConvexPolygon(0, 0, radius, (x, y) -> {
             applyDirection(pos, x, y, 0, direction);
@@ -82,7 +82,7 @@ public class GenHelper {
         }, (x, y) -> filledPartGenerator.accept(applyDirection(pos, x, y, 0, direction)));
     }
 
-    private static BlockPos.Mutable applyDirection(BlockPos.Mutable pos, int x, int y, int z, Direction.Axis direction) {
+    private static BlockPos.MutableBlockPos applyDirection(BlockPos.MutableBlockPos pos, int x, int y, int z, Direction.Axis direction) {
         switch (direction) {
             case X:
                 return pos.set(z, y, x);
@@ -262,30 +262,30 @@ public class GenHelper {
     }
 
     public static int getAverageFirstFreeHeight(ChunkGenerator chunkGenerator, int x, int z, int x1, int z1) {
-        return getAverageFirstFreeHeight(chunkGenerator, x, z, x1, z1, Heightmap.Type.WORLD_SURFACE_WG);
+        return getAverageFirstFreeHeight(chunkGenerator, x, z, x1, z1, Heightmap.Types.WORLD_SURFACE_WG);
     }
 
-    public static int getAverageFirstFreeHeight(ChunkGenerator chunkGenerator, int x, int z, int x1, int z1, Heightmap.Type type) {
+    public static int getAverageFirstFreeHeight(ChunkGenerator chunkGenerator, int x, int z, int x1, int z1, Heightmap.Types type) {
         return MathUtils.average(getBoxCornerFirstFreeHeights(chunkGenerator, x, z, x1, z1, type));
     }
 
     public static int getMinFirstFreeHeight(ChunkGenerator chunkGenerator, int x, int z, int x1, int z1) {
-        return getMinFirstFreeHeight(chunkGenerator, x, z, x1, z1, Heightmap.Type.WORLD_SURFACE_WG);
+        return getMinFirstFreeHeight(chunkGenerator, x, z, x1, z1, Heightmap.Types.WORLD_SURFACE_WG);
     }
 
-    public static int getMinFirstFreeHeight(ChunkGenerator chunkGenerator, int x, int z, int x1, int z1, Heightmap.Type type) {
+    public static int getMinFirstFreeHeight(ChunkGenerator chunkGenerator, int x, int z, int x1, int z1, Heightmap.Types type) {
         return MathUtils.min(getBoxCornerFirstFreeHeights(chunkGenerator, x, z, x1, z1, type));
     }
 
     public static int getMaxFirstFreeHeight(ChunkGenerator chunkGenerator, int x, int z, int x1, int z1) {
-        return getMaxFirstFreeHeight(chunkGenerator, x, z, x1, z1, Heightmap.Type.WORLD_SURFACE_WG);
+        return getMaxFirstFreeHeight(chunkGenerator, x, z, x1, z1, Heightmap.Types.WORLD_SURFACE_WG);
     }
 
-    public static int getMaxFirstFreeHeight(ChunkGenerator chunkGenerator, int x, int z, int x1, int z1, Heightmap.Type type) {
+    public static int getMaxFirstFreeHeight(ChunkGenerator chunkGenerator, int x, int z, int x1, int z1, Heightmap.Types type) {
         return MathUtils.max(getBoxCornerFirstFreeHeights(chunkGenerator, x, z, x1, z1, type));
     }
 
-    private static int[] getBoxCornerFirstFreeHeights(ChunkGenerator chunkGenerator, int x, int z, int x1, int z1, Heightmap.Type type) {
+    private static int[] getBoxCornerFirstFreeHeights(ChunkGenerator chunkGenerator, int x, int z, int x1, int z1, Heightmap.Types type) {
         return new int[]{
                 chunkGenerator.getFirstFreeHeight(x, z, type),
                 chunkGenerator.getFirstFreeHeight(x1, z, type),

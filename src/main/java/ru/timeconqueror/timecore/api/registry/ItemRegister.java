@@ -1,7 +1,7 @@
 package ru.timeconqueror.timecore.api.registry;
 
-import net.minecraft.item.ArmorItem;
-import net.minecraft.item.Item;
+import net.minecraft.world.item.ArmorItem;
+import net.minecraft.world.item.Item;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent;
@@ -138,7 +138,7 @@ public class ItemRegister extends ForgeRegister<Item> {
         LoadingOnlyStorage.addResourceHolder(resourceHolder.remove());
     }
 
-    public class ItemRegisterChain<I extends Item> extends ForgeRegister.RegisterChain<I> {
+    public class ItemRegisterChain<I extends Item> extends RegisterChain<I> {
         private ItemRegisterChain(RegistryObject<I> holder) {
             super(holder);
         }

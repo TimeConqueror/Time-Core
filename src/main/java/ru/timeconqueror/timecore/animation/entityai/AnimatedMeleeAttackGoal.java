@@ -1,4 +1,4 @@
-//package ru.timeconqueror.timecore.animation.entityai;
+package ru.timeconqueror.timecore.animation.entityai;//package ru.timeconqueror.timecore.animation.entityai;
 //
 //import net.minecraft.entity.CreatureEntity;
 //import net.minecraft.entity.LivingEntity;

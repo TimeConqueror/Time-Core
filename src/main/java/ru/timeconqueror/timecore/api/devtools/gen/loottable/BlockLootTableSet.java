@@ -1,41 +1,44 @@
 package ru.timeconqueror.timecore.api.devtools.gen.loottable;
 
-import net.minecraft.advancements.criterion.EnchantmentPredicate;
-import net.minecraft.advancements.criterion.ItemPredicate;
-import net.minecraft.advancements.criterion.MinMaxBounds;
-import net.minecraft.advancements.criterion.StatePropertiesPredicate;
-import net.minecraft.block.Block;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.FlowerPotBlock;
-import net.minecraft.block.SlabBlock;
-import net.minecraft.enchantment.Enchantments;
-import net.minecraft.item.Item;
-import net.minecraft.item.Items;
+import net.minecraft.advancements.critereon.EnchantmentPredicate;
+import net.minecraft.advancements.critereon.ItemPredicate;
+import net.minecraft.advancements.critereon.MinMaxBounds;
+import net.minecraft.advancements.critereon.StatePropertiesPredicate;
 import net.minecraft.loot.*;
 import net.minecraft.loot.conditions.*;
-import net.minecraft.loot.functions.ApplyBonus;
-import net.minecraft.loot.functions.CopyName;
-import net.minecraft.loot.functions.ExplosionDecay;
-import net.minecraft.loot.functions.SetCount;
-import net.minecraft.state.Property;
-import net.minecraft.state.properties.SlabType;
-import net.minecraft.util.IItemProvider;
-import net.minecraft.util.IStringSerializable;
+import net.minecraft.util.StringRepresentable;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.enchantment.Enchantments;
+import net.minecraft.world.level.ItemLike;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.FlowerPotBlock;
+import net.minecraft.world.level.block.SlabBlock;
+import net.minecraft.world.level.block.state.properties.Property;
+import net.minecraft.world.level.block.state.properties.SlabType;
+import net.minecraft.world.level.storage.loot.*;
+import net.minecraft.world.level.storage.loot.entries.LootItem;
+import net.minecraft.world.level.storage.loot.entries.LootPoolEntryContainer;
+import net.minecraft.world.level.storage.loot.functions.*;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
+import net.minecraft.world.level.storage.loot.predicates.*;
 
 import java.util.function.Function;
 
 public abstract class BlockLootTableSet extends LootTableSet {
-    protected static final ILootCondition.IBuilder SILK_TOUCH = MatchTool.toolMatches(ItemPredicate.Builder.item().hasEnchantment(new EnchantmentPredicate(Enchantments.SILK_TOUCH, MinMaxBounds.IntBound.atLeast(1))));
-    protected static final ILootCondition.IBuilder NO_SILK_TOUCH = SILK_TOUCH.invert();
-    protected static final ILootCondition.IBuilder SHEARS = MatchTool.toolMatches(ItemPredicate.Builder.item().of(Items.SHEARS));
-    protected static final ILootCondition.IBuilder SILK_TOUCH_OR_SHEARS = SHEARS.or(SILK_TOUCH);
-    protected static final ILootCondition.IBuilder NOT_SILK_TOUCH_OR_SHEARS = SILK_TOUCH_OR_SHEARS.invert();
+    protected static final LootItemCondition.Builder SILK_TOUCH = MatchTool.toolMatches(ItemPredicate.Builder.item().hasEnchantment(new EnchantmentPredicate(Enchantments.SILK_TOUCH, MinMaxBounds.Ints.atLeast(1))));
+    protected static final LootItemCondition.Builder NO_SILK_TOUCH = SILK_TOUCH.invert();
+    protected static final LootItemCondition.Builder SHEARS = MatchTool.toolMatches(ItemPredicate.Builder.item().of(Items.SHEARS));
+    protected static final LootItemCondition.Builder SILK_TOUCH_OR_SHEARS = SHEARS.or(SILK_TOUCH);
+    protected static final LootItemCondition.Builder NOT_SILK_TOUCH_OR_SHEARS = SILK_TOUCH_OR_SHEARS.invert();
 
     /**
      * Removes some items from a stack, if there was an explosion. Each item has a chance of 1/explosion radius to be lost.
      */
-    protected static <T> T applyExplosionDecay(ILootFunctionConsumer<T> lootFunctionConsumer) {
-        return lootFunctionConsumer.apply(ExplosionDecay.explosionDecay());
+    protected static <T> T applyExplosionDecay(FunctionUserBuilder<T> lootFunctionConsumer) {
+        return lootFunctionConsumer.apply(ApplyExplosionDecay.explosionDecay());
     }
 
     /**
@@ -43,8 +46,8 @@ public abstract class BlockLootTableSet extends LootTableSet {
      * If there was no explosion, this condition always passes.
      * If there was an explosion, the chance of passing depends on the distance to the explosion and the explosion radius.
      */
-    protected static <T> T applyPartiallySurvivingOnExplosion(ILootConditionConsumer<T> conditionConsumer) {
-        return conditionConsumer.when(SurvivesExplosion.survivesExplosion());
+    protected static <T> T applyPartiallySurvivingOnExplosion(ConditionUserBuilder<T> conditionConsumer) {
+        return conditionConsumer.when(ExplosionCondition.survivesExplosion());
     }
 
     /**
@@ -52,9 +55,9 @@ public abstract class BlockLootTableSet extends LootTableSet {
      *
      * @param drop item to drop
      */
-    protected static LootTable.Builder createSingleItemTable(IItemProvider drop) {
+    protected static LootTable.Builder createSingleItemTable(ItemLike drop) {
         return LootTable.lootTable()
-                .withPool(applyPartiallySurvivingOnExplosion(LootPool.lootPool().setRolls(ConstantRange.exactly(1)).add(ItemLootEntry.lootTableItem(drop))));
+                .withPool(applyPartiallySurvivingOnExplosion(LootPool.lootPool().setRolls(ConstantIntValue.exactly(1)).add(LootItem.lootTableItem(drop))));
     }
 
     /**
@@ -65,9 +68,9 @@ public abstract class BlockLootTableSet extends LootTableSet {
      * @param condition   condition, on which {@code defaultDrop} will be dropped
      * @param alternative alternative entry on {@code condition} fail
      */
-    protected static LootTable.Builder createSelfDropDispatchTable(Block defaultDrop, ILootCondition.IBuilder condition, LootEntry.Builder<?> alternative) {
+    protected static LootTable.Builder createSelfDropDispatchTable(Block defaultDrop, LootItemCondition.Builder condition, LootPoolEntryContainer.Builder<?> alternative) {
         return LootTable.lootTable()
-                .withPool(LootPool.lootPool().setRolls(ConstantRange.exactly(1)).add(ItemLootEntry.lootTableItem(defaultDrop).when(condition).otherwise(alternative)));
+                .withPool(LootPool.lootPool().setRolls(ConstantIntValue.exactly(1)).add(LootItem.lootTableItem(defaultDrop).when(condition).otherwise(alternative)));
     }
 
     /**
@@ -77,7 +80,7 @@ public abstract class BlockLootTableSet extends LootTableSet {
      * @param silkTouchDrop block to drop when silk touch is applied
      * @param alternative   alternative entry when collected without silk touch
      */
-    protected static LootTable.Builder createSilkTouchDispatchTable(Block silkTouchDrop, LootEntry.Builder<?> alternative) {
+    protected static LootTable.Builder createSilkTouchDispatchTable(Block silkTouchDrop, LootPoolEntryContainer.Builder<?> alternative) {
         return createSelfDropDispatchTable(silkTouchDrop, SILK_TOUCH, alternative);
     }
 
@@ -88,7 +91,7 @@ public abstract class BlockLootTableSet extends LootTableSet {
      * @param dropOnShearsCut         block to drop when shears are applied
      * @param noShearAlternativeEntry alternative entry when collected without shears
      */
-    protected static LootTable.Builder createOnShearsCutDispatchTable(Block dropOnShearsCut, LootEntry.Builder<?> noShearAlternativeEntry) {
+    protected static LootTable.Builder createOnShearsCutDispatchTable(Block dropOnShearsCut, LootPoolEntryContainer.Builder<?> noShearAlternativeEntry) {
         return createSelfDropDispatchTable(dropOnShearsCut, SHEARS, noShearAlternativeEntry);
     }
 
@@ -99,7 +102,7 @@ public abstract class BlockLootTableSet extends LootTableSet {
      * @param dropOnSilkTouchOrShears block to drop when shears or silk touch are applied
      * @param alternative             alternative entry when collected without shears or silk touch
      */
-    protected static LootTable.Builder createSilkTouchOrShearsCutDispatchTable(Block dropOnSilkTouchOrShears, LootEntry.Builder<?> alternative) {
+    protected static LootTable.Builder createSilkTouchOrShearsCutDispatchTable(Block dropOnSilkTouchOrShears, LootPoolEntryContainer.Builder<?> alternative) {
         return createSelfDropDispatchTable(dropOnSilkTouchOrShears, SILK_TOUCH_OR_SHEARS, alternative);
     }
 
@@ -110,8 +113,8 @@ public abstract class BlockLootTableSet extends LootTableSet {
      * @param silkTouchDrop        block to drop when shears or silk touch are applied
      * @param dropWithoutSilkTouch alternative drop on collecting without shears or silk touch
      */
-    protected static LootTable.Builder createSilkTouchDispatchTable(Block silkTouchDrop, IItemProvider dropWithoutSilkTouch) {
-        return createSilkTouchDispatchTable(silkTouchDrop, applyPartiallySurvivingOnExplosion(ItemLootEntry.lootTableItem(dropWithoutSilkTouch)));
+    protected static LootTable.Builder createSilkTouchDispatchTable(Block silkTouchDrop, ItemLike dropWithoutSilkTouch) {
+        return createSilkTouchDispatchTable(silkTouchDrop, applyPartiallySurvivingOnExplosion(LootItem.lootTableItem(dropWithoutSilkTouch)));
     }
 
     /**
@@ -120,9 +123,9 @@ public abstract class BlockLootTableSet extends LootTableSet {
      * @param drop  something to drop
      * @param range range, from which random amount of {@code drop} will be chosen
      */
-    protected static LootTable.Builder createSingleItemTable(IItemProvider drop, IRandomRange range) {
+    protected static LootTable.Builder createSingleItemTable(ItemLike drop, RandomIntGenerator range) {
         return LootTable.lootTable()
-                .withPool(LootPool.lootPool().setRolls(ConstantRange.exactly(1)).add(applyExplosionDecay(ItemLootEntry.lootTableItem(drop).apply(SetCount.setCount(range)))));
+                .withPool(LootPool.lootPool().setRolls(ConstantIntValue.exactly(1)).add(applyExplosionDecay(LootItem.lootTableItem(drop).apply(SetItemCountFunction.setCount(range)))));
     }
 
     /**
@@ -133,8 +136,8 @@ public abstract class BlockLootTableSet extends LootTableSet {
      * @param alternativeDrop  drop on collecting without silk touch
      * @param alternativeRange range, from which random amount of {@code alternativeDrop} will be chosen
      */
-    protected static LootTable.Builder createSilkTouchDispatchTable(Block silkTouchDrop, IItemProvider alternativeDrop, IRandomRange alternativeRange) {
-        return createSilkTouchDispatchTable(silkTouchDrop, applyExplosionDecay(ItemLootEntry.lootTableItem(alternativeDrop).apply(SetCount.setCount(alternativeRange))));
+    protected static LootTable.Builder createSilkTouchDispatchTable(Block silkTouchDrop, ItemLike alternativeDrop, RandomIntGenerator alternativeRange) {
+        return createSilkTouchDispatchTable(silkTouchDrop, applyExplosionDecay(LootItem.lootTableItem(alternativeDrop).apply(SetItemCountFunction.setCount(alternativeRange))));
     }
 
     /**
@@ -143,9 +146,9 @@ public abstract class BlockLootTableSet extends LootTableSet {
      *
      * @param dropOnSilkTouch block to drop when silk touch is applied
      */
-    protected static LootTable.Builder createSilkTouchOnlyTable(IItemProvider dropOnSilkTouch) {
+    protected static LootTable.Builder createSilkTouchOnlyTable(ItemLike dropOnSilkTouch) {
         return LootTable.lootTable()
-                .withPool(LootPool.lootPool().when(SILK_TOUCH).setRolls(ConstantRange.exactly(1)).add(ItemLootEntry.lootTableItem(dropOnSilkTouch)));
+                .withPool(LootPool.lootPool().when(SILK_TOUCH).setRolls(ConstantIntValue.exactly(1)).add(LootItem.lootTableItem(dropOnSilkTouch)));
     }
 
     /**
@@ -153,10 +156,10 @@ public abstract class BlockLootTableSet extends LootTableSet {
      *
      * @param flower flower to drop
      */
-    protected static LootTable.Builder createPotAndFlowerTable(IItemProvider flower) {
+    protected static LootTable.Builder createPotAndFlowerTable(ItemLike flower) {
         return LootTable.lootTable()
-                .withPool(applyPartiallySurvivingOnExplosion(LootPool.lootPool().setRolls(ConstantRange.exactly(1)).add(ItemLootEntry.lootTableItem(Blocks.FLOWER_POT))))
-                .withPool(applyPartiallySurvivingOnExplosion(LootPool.lootPool().setRolls(ConstantRange.exactly(1)).add(ItemLootEntry.lootTableItem(flower))));
+                .withPool(applyPartiallySurvivingOnExplosion(LootPool.lootPool().setRolls(ConstantIntValue.exactly(1)).add(LootItem.lootTableItem(Blocks.FLOWER_POT))))
+                .withPool(applyPartiallySurvivingOnExplosion(LootPool.lootPool().setRolls(ConstantIntValue.exactly(1)).add(LootItem.lootTableItem(flower))));
     }
 
     /**
@@ -166,9 +169,9 @@ public abstract class BlockLootTableSet extends LootTableSet {
      */
     protected static LootTable.Builder createSlabItemTable(Block slab) {
         return LootTable.lootTable()
-                .withPool(LootPool.lootPool().setRolls(ConstantRange.exactly(1))
-                        .add(applyExplosionDecay(ItemLootEntry.lootTableItem(slab).apply(
-                                SetCount.setCount(ConstantRange.exactly(2)).when(BlockStateProperty.hasBlockStateProperties(slab).setProperties(StatePropertiesPredicate.Builder.properties().hasProperty(SlabBlock.TYPE, SlabType.DOUBLE)))))));
+                .withPool(LootPool.lootPool().setRolls(ConstantIntValue.exactly(1))
+                        .add(applyExplosionDecay(LootItem.lootTableItem(slab).apply(
+                                SetItemCountFunction.setCount(ConstantIntValue.exactly(2)).when(LootItemBlockStatePropertyCondition.hasBlockStateProperties(slab).setProperties(StatePropertiesPredicate.Builder.properties().hasProperty(SlabBlock.TYPE, SlabType.DOUBLE)))))));
     }
 
     /**
@@ -179,10 +182,10 @@ public abstract class BlockLootTableSet extends LootTableSet {
      * @param propertyIn property, which value should be checked for equality
      * @param value      of provided {@code propertyIn} which will be checked for equality
      */
-    protected static <T extends Comparable<T> & IStringSerializable> LootTable.Builder createSinglePropConditionTable(Block drop, Property<T> propertyIn, T value) {
+    protected static <T extends Comparable<T> & StringRepresentable> LootTable.Builder createSinglePropConditionTable(Block drop, Property<T> propertyIn, T value) {
         return LootTable.lootTable()
-                .withPool(applyPartiallySurvivingOnExplosion(LootPool.lootPool().setRolls(ConstantRange.exactly(1))
-                        .add(ItemLootEntry.lootTableItem(drop).when(BlockStateProperty.hasBlockStateProperties(drop).setProperties(StatePropertiesPredicate.Builder.properties().hasProperty(propertyIn, value))))));
+                .withPool(applyPartiallySurvivingOnExplosion(LootPool.lootPool().setRolls(ConstantIntValue.exactly(1))
+                        .add(LootItem.lootTableItem(drop).when(LootItemBlockStatePropertyCondition.hasBlockStateProperties(drop).setProperties(StatePropertiesPredicate.Builder.properties().hasProperty(propertyIn, value))))));
     }
 
     /**
@@ -195,8 +198,8 @@ public abstract class BlockLootTableSet extends LootTableSet {
      */
     protected static LootTable.Builder createNameableTileEntityTable(Block drop) {
         return LootTable.lootTable()
-                .withPool(applyPartiallySurvivingOnExplosion(LootPool.lootPool().setRolls(ConstantRange.exactly(1))
-                        .add(ItemLootEntry.lootTableItem(drop).apply(CopyName.copyName(CopyName.Source.BLOCK_ENTITY)))));
+                .withPool(applyPartiallySurvivingOnExplosion(LootPool.lootPool().setRolls(ConstantIntValue.exactly(1))
+                        .add(LootItem.lootTableItem(drop).apply(CopyNameFunction.copyName(CopyNameFunction.NameSource.BLOCK_ENTITY)))));
     }
 
     /**
@@ -205,10 +208,10 @@ public abstract class BlockLootTableSet extends LootTableSet {
      *
      * @param dropWithShears block to drop when shears are applied
      */
-    protected static LootTable.Builder createShearsOnlyTable(IItemProvider dropWithShears) {
+    protected static LootTable.Builder createShearsOnlyTable(ItemLike dropWithShears) {
         return LootTable.lootTable()
-                .withPool(LootPool.lootPool().setRolls(ConstantRange.exactly(1))
-                        .when(SHEARS).add(ItemLootEntry.lootTableItem(dropWithShears)));
+                .withPool(LootPool.lootPool().setRolls(ConstantIntValue.exactly(1))
+                        .when(SHEARS).add(LootItem.lootTableItem(dropWithShears)));
     }
 
     /**
@@ -217,11 +220,11 @@ public abstract class BlockLootTableSet extends LootTableSet {
      * for fortune levels.
      */
     protected static LootTable.Builder createDropTableForLeaves(Block silkTouchDrop, Block alternativeDrop, float... secondDropChances) {
-        return createSilkTouchOrShearsCutDispatchTable(silkTouchDrop, applyPartiallySurvivingOnExplosion(ItemLootEntry.lootTableItem(alternativeDrop)).when(TableBonus.bonusLevelFlatChance(Enchantments.BLOCK_FORTUNE, secondDropChances)))
-                .withPool(LootPool.lootPool().setRolls(ConstantRange.exactly(1))
-                        .when(NOT_SILK_TOUCH_OR_SHEARS).add(applyExplosionDecay(ItemLootEntry.lootTableItem(Items.STICK)
-                                .apply(SetCount.setCount(RandomValueRange.between(1.0F, 2.0F))))
-                                .when(TableBonus.bonusLevelFlatChance(Enchantments.BLOCK_FORTUNE, 0.02F, 0.022222223F, 0.025F, 0.033333335F, 0.1F))));
+        return createSilkTouchOrShearsCutDispatchTable(silkTouchDrop, applyPartiallySurvivingOnExplosion(LootItem.lootTableItem(alternativeDrop)).when(BonusLevelTableCondition.bonusLevelFlatChance(Enchantments.BLOCK_FORTUNE, secondDropChances)))
+                .withPool(LootPool.lootPool().setRolls(ConstantIntValue.exactly(1))
+                        .when(NOT_SILK_TOUCH_OR_SHEARS).add(applyExplosionDecay(LootItem.lootTableItem(Items.STICK)
+                                .apply(SetItemCountFunction.setCount(RandomValueBounds.between(1.0F, 2.0F))))
+                                .when(BonusLevelTableCondition.bonusLevelFlatChance(Enchantments.BLOCK_FORTUNE, 0.02F, 0.022222223F, 0.025F, 0.033333335F, 0.1F))));
     }
 
     /**
@@ -229,15 +232,15 @@ public abstract class BlockLootTableSet extends LootTableSet {
      * when the loot condition is met,
      * applying fortune to only the second argument.
      */
-    protected static LootTable.Builder createDropWithBonusItemTable(Item dropAlways, Item rareDrop, ILootCondition.IBuilder conditionBuilder) {
+    protected static LootTable.Builder createDropWithBonusItemTable(Item dropAlways, Item rareDrop, LootItemCondition.Builder conditionBuilder) {
         return applyExplosionDecay(LootTable.lootTable()
                 .withPool(LootPool.lootPool()
-                        .add(ItemLootEntry.lootTableItem(dropAlways)
+                        .add(LootItem.lootTableItem(dropAlways)
                                 .when(conditionBuilder)
-                                .otherwise(ItemLootEntry.lootTableItem(rareDrop))))
+                                .otherwise(LootItem.lootTableItem(rareDrop))))
                 .withPool(LootPool.lootPool().when(conditionBuilder)
-                        .add(ItemLootEntry.lootTableItem(rareDrop)
-                                .apply(ApplyBonus.addBonusBinomialDistributionCount(Enchantments.BLOCK_FORTUNE, 0.5714286F, 3)))));
+                        .add(LootItem.lootTableItem(rareDrop)
+                                .apply(ApplyBonusCount.addBonusBinomialDistributionCount(Enchantments.BLOCK_FORTUNE, 0.5714286F, 3)))));
     }
 
     public static LootTable.Builder noDrop() {
@@ -245,8 +248,8 @@ public abstract class BlockLootTableSet extends LootTableSet {
     }
 
     @Override
-    public LootParameterSet getParameterSet() {
-        return LootParameterSets.BLOCK;
+    public LootContextParamSet getParameterSet() {
+        return LootContextParamSets.BLOCK;
     }
 
     public void registerFlowerPotDrop(Block pot) {

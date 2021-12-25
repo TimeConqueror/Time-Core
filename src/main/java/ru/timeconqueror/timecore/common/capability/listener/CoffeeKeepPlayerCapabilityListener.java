@@ -1,18 +1,18 @@
 package ru.timeconqueror.timecore.common.capability.listener;
 
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.nbt.INBT;
+import net.minecraft.nbt.Tag;
+import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 import java.util.function.Function;
 
-public class CoffeeKeepPlayerCapabilityListener<T extends INBT> {
+public class CoffeeKeepPlayerCapabilityListener<T extends Tag> {
 
-    private final Function<PlayerEntity, INBTSerializable<T>> extractor;
+    private final Function<Player, INBTSerializable<T>> extractor;
 
-    public CoffeeKeepPlayerCapabilityListener(Function<PlayerEntity, INBTSerializable<T>> extractor) {
+    public CoffeeKeepPlayerCapabilityListener(Function<Player, INBTSerializable<T>> extractor) {
         this.extractor = extractor;
     }
 

@@ -1,6 +1,6 @@
 package ru.timeconqueror.timecore.animation.watcher;
 
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.network.FriendlyByteBuf;
 import org.jetbrains.annotations.Nullable;
 import ru.timeconqueror.timecore.animation.AnimationRegistry;
 import ru.timeconqueror.timecore.animation.AnimationStarter;
@@ -158,7 +158,7 @@ public class AnimationWatcher {
 	}
 
 	public static class Serializer implements WatcherSerializer<AnimationWatcher> {
-		public void serialize(AnimationWatcher watcher, PacketBuffer buffer) {
+		public void serialize(AnimationWatcher watcher, FriendlyByteBuf buffer) {
 			buffer.writeResourceLocation(watcher.getAnimation().getId());
 			buffer.writeInt(watcher.getExistingTime());
 			buffer.writeFloat(watcher.speed);
@@ -170,7 +170,7 @@ public class AnimationWatcher {
 			}
 		}
 
-		public AnimationWatcher deserialize(PacketBuffer buffer) {
+		public AnimationWatcher deserialize(FriendlyByteBuf buffer) {
 			Animation animation = AnimationRegistry.getAnimation(buffer.readResourceLocation());
 			int existingTime = buffer.readInt();
 			float speed = buffer.readFloat();

@@ -1,6 +1,6 @@
 package ru.timeconqueror.timecore.animation.component;
 
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 import ru.timeconqueror.timecore.animation.AnimationStarter;
 import ru.timeconqueror.timecore.animation.util.StandardDelayPredicates;
 import ru.timeconqueror.timecore.animation.watcher.AnimationWatcher;

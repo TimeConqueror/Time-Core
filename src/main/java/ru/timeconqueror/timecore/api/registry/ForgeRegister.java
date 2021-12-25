@@ -2,7 +2,7 @@ package ru.timeconqueror.timecore.api.registry;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -42,7 +42,7 @@ public abstract class ForgeRegister<T extends IForgeRegistryEntry<T>> extends Ti
         ResourceLocation registryName = new ResourceLocation(getModId(), name);
         RegistryObject<I> holder = RegistryObject.of(registryName, registry);
 
-        if (entries.put((RegistryObject<T>) holder, () -> entrySup.get().setRegistryName(registryName)) != null) {
+        if (entries.put(holder, () -> entrySup.get().setRegistryName(registryName)) != null) {
             throw new IllegalArgumentException("Attempted to register " + name + " twice for registry " + registry.getRegistryName());
         }
 

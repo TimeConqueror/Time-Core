@@ -1,11 +1,11 @@
 package ru.timeconqueror.timecore.mod.common.packet;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.chat.Component;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraftforge.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
 import ru.timeconqueror.timecore.api.common.packet.SimplePacketHandler;
 
@@ -13,20 +13,20 @@ import java.io.IOException;
 import java.util.Objects;
 
 public class S2CKickPlayerFromSPPacket {
-    private final ITextComponent kickReason;
+    private final Component kickReason;
 
-    public S2CKickPlayerFromSPPacket(ITextComponent kickReason) {
+    public S2CKickPlayerFromSPPacket(Component kickReason) {
         this.kickReason = kickReason;
     }
 
     public static class Handler extends SimplePacketHandler<S2CKickPlayerFromSPPacket> {
         @Override
-        public void encode(S2CKickPlayerFromSPPacket packet, PacketBuffer buffer) throws IOException {
+        public void encode(S2CKickPlayerFromSPPacket packet, FriendlyByteBuf buffer) throws IOException {
             buffer.writeComponent(packet.kickReason);
         }
 
         @Override
-        public @NotNull S2CKickPlayerFromSPPacket decode(PacketBuffer buffer) throws IOException {
+        public @NotNull S2CKickPlayerFromSPPacket decode(FriendlyByteBuf buffer) throws IOException {
             return new S2CKickPlayerFromSPPacket(buffer.readComponent());
         }
 

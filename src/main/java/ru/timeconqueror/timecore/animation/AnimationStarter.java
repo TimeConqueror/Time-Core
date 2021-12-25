@@ -1,6 +1,6 @@
 package ru.timeconqueror.timecore.animation;
 
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.network.FriendlyByteBuf;
 import org.jetbrains.annotations.Nullable;
 import ru.timeconqueror.timecore.api.animation.Animation;
 import ru.timeconqueror.timecore.api.animation.AnimationConstants;
@@ -65,7 +65,7 @@ public class AnimationStarter {
             this.animation = animation;
         }
 
-        public static void encode(AnimationData animationData, PacketBuffer buffer) {
+        public static void encode(AnimationData animationData, FriendlyByteBuf buffer) {
             buffer.writeResourceLocation(animationData.getAnimation().getId());
             buffer.writeFloat(animationData.getSpeedFactor());
             buffer.writeInt(animationData.getTransitionTime());
@@ -78,7 +78,7 @@ public class AnimationStarter {
             }
         }
 
-        public static AnimationData decode(PacketBuffer buffer) {
+        public static AnimationData decode(FriendlyByteBuf buffer) {
             Animation animation = AnimationRegistry.getAnimation(buffer.readResourceLocation());
 
             AnimationData animationData = new AnimationData(animation);

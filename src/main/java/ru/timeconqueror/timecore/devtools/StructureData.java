@@ -1,30 +1,30 @@
 package ru.timeconqueror.timecore.devtools;
 
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.world.World;
-import net.minecraft.world.gen.feature.structure.Structure;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.levelgen.feature.StructureFeature;
+import net.minecraft.world.phys.AABB;
 
 import java.util.Objects;
 
 public class StructureData {
-    private final AxisAlignedBB bb;
+    private final AABB bb;
     private final ResourceLocation structureName;
     private final ResourceLocation worldId;
 
-    public StructureData(AxisAlignedBB bb, ResourceLocation structureName, ResourceLocation worldId) {
+    public StructureData(AABB bb, ResourceLocation structureName, ResourceLocation worldId) {
         this.bb = bb;
         this.structureName = structureName;
         this.worldId = worldId;
     }
 
-    public StructureData(AxisAlignedBB bb, Structure<?> structure, World world) {
+    public StructureData(AABB bb, StructureFeature<?> structure, Level world) {
         this.bb = bb;
         this.structureName = structure.getRegistryName();
         this.worldId = world.dimension().location();
     }
 
-    public AxisAlignedBB getBoundingBox() {
+    public AABB getBoundingBox() {
         return bb;
     }
 

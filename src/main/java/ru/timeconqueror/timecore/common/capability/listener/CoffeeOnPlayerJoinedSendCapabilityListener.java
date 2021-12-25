@@ -1,6 +1,6 @@
 package ru.timeconqueror.timecore.common.capability.listener;
 
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
@@ -8,9 +8,9 @@ import java.util.function.Consumer;
 
 public class CoffeeOnPlayerJoinedSendCapabilityListener {
 
-    private final Consumer<PlayerEntity> onUpdate;
+    private final Consumer<Player> onUpdate;
 
-    public CoffeeOnPlayerJoinedSendCapabilityListener(Consumer<PlayerEntity> onUpdate) {
+    public CoffeeOnPlayerJoinedSendCapabilityListener(Consumer<Player> onUpdate) {
         this.onUpdate = onUpdate;
     }
 

@@ -1,26 +1,26 @@
 package ru.timeconqueror.timecore.client.resource;
 
-import net.minecraft.resources.IPackFinder;
-import net.minecraft.resources.IPackNameDecorator;
-import net.minecraft.resources.PackCompatibility;
-import net.minecraft.resources.ResourcePackInfo;
-import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.server.packs.repository.Pack;
+import net.minecraft.server.packs.repository.PackCompatibility;
+import net.minecraft.server.packs.repository.PackSource;
+import net.minecraft.server.packs.repository.RepositorySource;
 
 import java.util.function.Consumer;
 
-public class TimePackFinder implements IPackFinder {
+public class TimePackFinder implements RepositorySource {
     @Override
-    public void loadPacks(Consumer<ResourcePackInfo> mapInserter, ResourcePackInfo.IFactory iFactory) {
+    public void loadPacks(Consumer<Pack> mapInserter, Pack.PackConstructor iFactory) {
         TimeSpecialResourcePack tSpecialPack = new TimeSpecialResourcePack();
-        ResourcePackInfo tSpecialPackInfo = new ResourcePackInfo("timecore_special_resources",
+        Pack tSpecialPackInfo = new Pack("timecore_special_resources",
                 true,
                 () -> tSpecialPack,
-                new StringTextComponent(tSpecialPack.getName()),
-                new StringTextComponent("Special resources, used in TimeCore-dependent mods for auto-generating, etc."),
+                new TextComponent(tSpecialPack.getName()),
+                new TextComponent("Special resources, used in TimeCore-dependent mods for auto-generating, etc."),
                 PackCompatibility.COMPATIBLE,
-                ResourcePackInfo.Priority.TOP,
+                Pack.Position.TOP,
                 false,
-                IPackNameDecorator.BUILT_IN,
+                PackSource.BUILT_IN,
                 false
         );
 

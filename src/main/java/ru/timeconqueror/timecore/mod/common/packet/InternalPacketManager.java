@@ -1,9 +1,9 @@
 package ru.timeconqueror.timecore.mod.common.packet;
 
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraftforge.fml.network.NetworkDirection;
-import net.minecraftforge.fml.network.PacketDistributor;
-import net.minecraftforge.fml.network.simple.SimpleChannel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraftforge.network.NetworkDirection;
+import net.minecraftforge.network.PacketDistributor;
+import net.minecraftforge.network.simple.SimpleChannel;
 import ru.timeconqueror.timecore.TimeCore;
 import ru.timeconqueror.timecore.api.registry.PacketRegister;
 import ru.timeconqueror.timecore.api.registry.util.AutoRegistrable;
@@ -28,7 +28,7 @@ public class InternalPacketManager {
             .regPacket(S2CKickPlayerFromSPPacket.class, new S2CKickPlayerFromSPPacket.Handler(), NetworkDirection.PLAY_TO_CLIENT)
             .asChannel();
 
-    public static <MSG> void sendToPlayer(ServerPlayerEntity player, MSG message) {
+    public static <MSG> void sendToPlayer(ServerPlayer player, MSG message) {
         InternalPacketManager.INSTANCE.send(PacketDistributor.PLAYER.with(() -> player), message);
     }
 }

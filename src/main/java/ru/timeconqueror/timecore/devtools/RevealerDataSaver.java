@@ -2,12 +2,12 @@ package ru.timeconqueror.timecore.devtools;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.CompressedStreamTools;
-import net.minecraft.nbt.ListNBT;
-import net.minecraft.nbt.StringNBT;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.gen.feature.structure.Structure;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.NbtIo;
+import net.minecraft.nbt.StringTag;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.levelgen.feature.StructureFeature;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.Nullable;
 import ru.timeconqueror.timecore.api.util.EnvironmentUtils;
@@ -25,7 +25,7 @@ public class RevealerDataSaver {
     private static final String SERVER_SAVE_FILE = "TimeCore/debug/structure_revealer.nbt";
     private static final String CLIENT_SAVE_FILE = "TimeCore/debug/structure_revealer.nbt";
 
-    void saveOnServer(Multimap<UUID, Structure<?>> subscribedStructures) {
+    void saveOnServer(Multimap<UUID, StructureFeature<?>> subscribedStructures) {
         File saveFile = getServerPathToFile();
         saveNBTToFile(serializeStructureInfo(subscribedStructures), saveFile);
     }
@@ -38,7 +38,7 @@ public class RevealerDataSaver {
     ClientSettings restoreOnClient() {
         File saveFile = geClientPathToFile();
 
-        CompoundNBT compoundNBT = restoreNBT(saveFile);
+        CompoundTag compoundNBT = restoreNBT(saveFile);
 
         if (compoundNBT == null) {
             return new ClientSettings(new HashMap<>(), false);
@@ -47,10 +47,10 @@ public class RevealerDataSaver {
         }
     }
 
-    Multimap<UUID, Structure<?>> restoreOnServer() {
+    Multimap<UUID, StructureFeature<?>> restoreOnServer() {
         File saveFile = getServerPathToFile();
 
-        CompoundNBT nbt = restoreNBT(saveFile);
+        CompoundTag nbt = restoreNBT(saveFile);
 
         if (nbt == null) {
             return ArrayListMultimap.create();
@@ -67,13 +67,13 @@ public class RevealerDataSaver {
         return EnvironmentUtils.getConfigDir().resolve(CLIENT_SAVE_FILE).toFile();
     }
 
-    private CompoundNBT serializeClientSettings(ClientSettings clientSettings) {
+    private CompoundTag serializeClientSettings(ClientSettings clientSettings) {
         Map<ResourceLocation, Integer> structureColorMap = clientSettings.structureColorMap;
         boolean visibleThroughBlocks = clientSettings.visibleThroughBlocks;
 
-        CompoundNBT out = new CompoundNBT();
+        CompoundTag out = new CompoundTag();
 
-        CompoundNBT structureMapNBT = new CompoundNBT();
+        CompoundTag structureMapNBT = new CompoundTag();
         structureColorMap.forEach((structureName, color) -> {
             structureMapNBT.putInt(structureName.toString(), color);
         });
@@ -84,8 +84,8 @@ public class RevealerDataSaver {
         return out;
     }
 
-    private ClientSettings deserializeClientSettings(CompoundNBT in) {
-        CompoundNBT structureMapNBT = in.getCompound("structure_colors");
+    private ClientSettings deserializeClientSettings(CompoundTag in) {
+        CompoundTag structureMapNBT = in.getCompound("structure_colors");
         Map<ResourceLocation, Integer> structureColorMap = new HashMap<>(structureMapNBT.size());
         structureMapNBT.getAllKeys().forEach(key -> structureColorMap.put(new ResourceLocation(key), structureMapNBT.getInt(key)));
 
@@ -94,18 +94,18 @@ public class RevealerDataSaver {
         return new ClientSettings(structureColorMap, visibleThroughBlocks);
     }
 
-    private CompoundNBT serializeStructureInfo(Multimap<UUID, Structure<?>> subscribedStructures) {
-        CompoundNBT out = new CompoundNBT();
+    private CompoundTag serializeStructureInfo(Multimap<UUID, StructureFeature<?>> subscribedStructures) {
+        CompoundTag out = new CompoundTag();
 
         subscribedStructures.keys().forEach(uuid -> {
-            Collection<Structure<?>> structures = subscribedStructures.get(uuid);
+            Collection<StructureFeature<?>> structures = subscribedStructures.get(uuid);
 
-            ListNBT structuresNBT = new ListNBT();
+            ListTag structuresNBT = new ListTag();
 
             if (structures != null) {
                 structures.forEach(structure -> {
                     ResourceLocation registryName = structure.getRegistryName();
-                    structuresNBT.add(StringNBT.valueOf(registryName.toString()));
+                    structuresNBT.add(StringTag.valueOf(registryName.toString()));
                 });
             }
 
@@ -115,11 +115,11 @@ public class RevealerDataSaver {
         return out;
     }
 
-    private Multimap<UUID, Structure<?>> deserializeStructureInfo(CompoundNBT in) {
-        Multimap<UUID, Structure<?>> out = ArrayListMultimap.create();
+    private Multimap<UUID, StructureFeature<?>> deserializeStructureInfo(CompoundTag in) {
+        Multimap<UUID, StructureFeature<?>> out = ArrayListMultimap.create();
 
         for (String uuidString : in.getAllKeys()) {
-            ListNBT structures = (ListNBT) in.get(uuidString);
+            ListTag structures = (ListTag) in.get(uuidString);
 
             UUID uuid = UUID.fromString(uuidString);
 
@@ -133,16 +133,16 @@ public class RevealerDataSaver {
         return out;
     }
 
-    private void saveNBTToFile(CompoundNBT compoundNBT, File saveFile) {
+    private void saveNBTToFile(CompoundTag compoundNBT, File saveFile) {
         ObjectUtils.runWithCatching(IOException.class, () -> {
             FileUtils.prepareFileForWrite(saveFile);
-            CompressedStreamTools.write(compoundNBT, saveFile);
+            NbtIo.write(compoundNBT, saveFile);
         });
     }
 
     @Nullable
-    private CompoundNBT restoreNBT(File saveFile) {
-        return ObjectUtils.getWithCatching(IOException.class, () -> CompressedStreamTools.read(saveFile));
+    private CompoundTag restoreNBT(File saveFile) {
+        return ObjectUtils.getWithCatching(IOException.class, () -> NbtIo.read(saveFile));
     }
 
     public static class ClientSettings {

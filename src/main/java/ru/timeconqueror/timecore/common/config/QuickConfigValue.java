@@ -1,7 +1,7 @@
 package ru.timeconqueror.timecore.common.config;
 
 import net.minecraftforge.common.ForgeConfigSpec;
-import net.minecraftforge.fml.config.ModConfig;
+import net.minecraftforge.fml.event.config.ModConfigEvent;
 import ru.timeconqueror.timecore.api.common.config.IConfigValDelegate;
 import ru.timeconqueror.timecore.api.common.config.IQuickConfigValue;
 
@@ -42,7 +42,7 @@ public class QuickConfigValue<T> implements IQuickConfigValue<T> {
     }
 
     @Override
-    public void onEveryLoad(ModConfig.ModConfigEvent event) {
+    public void onEveryLoad(ModConfigEvent event) {
         invalidate();
     }
 

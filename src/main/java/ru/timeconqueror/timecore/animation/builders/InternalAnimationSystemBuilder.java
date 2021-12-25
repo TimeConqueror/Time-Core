@@ -1,8 +1,8 @@
 package ru.timeconqueror.timecore.animation.builders;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.world.World;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import ru.timeconqueror.timecore.animation.AnimationSystem;
 import ru.timeconqueror.timecore.animation.BaseAnimationManager;
 import ru.timeconqueror.timecore.animation.EnumAnimatedObjectType;
@@ -22,7 +22,7 @@ import java.util.function.Function;
 public abstract class InternalAnimationSystemBuilder {
     public static <T extends Entity & AnimatedObject<T>> AnimationSystem<T> forEntity(
             T entity,
-            World world,
+            Level world,
             Consumer<IAnimationManagerBuilder> animationManagerTuner,
             Consumer<IEntityPredefinedAnimations> predefinedAnimationsTuner
     ) {
@@ -35,9 +35,9 @@ public abstract class InternalAnimationSystemBuilder {
         });
     }
 
-    public static <T extends TileEntity & AnimatedObject<T>> AnimationSystem<T> forTileEntity(
+    public static <T extends BlockEntity & AnimatedObject<T>> AnimationSystem<T> forTileEntity(
             T tileEntity,
-            World world,
+            Level world,
             Consumer<IAnimationManagerBuilder> animationManagerTuner,
             Consumer<IPredefinedAnimations> predefinedAnimationsTuner
     ) {
@@ -52,7 +52,7 @@ public abstract class InternalAnimationSystemBuilder {
 
     private static <T extends AnimatedObject<T>> AnimationSystem<T> create(
             EnumAnimatedObjectType type,
-            World world,
+            Level world,
             Consumer<? super BaseAnimationManagerBuilder> animationManagerTuner,
             Function<BaseAnimationManager, ? extends ActionManagerImpl<T>> actionManagerBuilderFactory
     ) {

@@ -1,7 +1,7 @@
 package ru.timeconqueror.timecore.api.common.sound;
 
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.SoundEvent;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvent;
 
 public class TimeSound extends SoundEvent {
     public TimeSound(ResourceLocation name) {

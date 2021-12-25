@@ -1,7 +1,7 @@
 package ru.timeconqueror.timecore.mixins.accessor;
 
 import net.minecraft.advancements.Advancement;
-import net.minecraft.data.AdvancementProvider;
+import net.minecraft.data.advancements.AdvancementProvider;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Invoker;
 

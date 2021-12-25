@@ -1,8 +1,8 @@
 package ru.timeconqueror.timecore.api.util;
 
 import com.mojang.serialization.DataResult;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.ResourceLocationException;
+import net.minecraft.ResourceLocationException;
+import net.minecraft.resources.ResourceLocation;
 
 public class ParseUtils {
     public static boolean isInt(String s) {

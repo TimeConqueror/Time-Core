@@ -1,6 +1,6 @@
 package ru.timeconqueror.timecore.animation.util;
 
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.network.FriendlyByteBuf;
 import org.jetbrains.annotations.NotNull;
 import ru.timeconqueror.timecore.animation.Layer;
 import ru.timeconqueror.timecore.animation.ServerAnimationManager;
@@ -15,7 +15,7 @@ public class AnimationSerializer {
 	private static final WatcherSerializer<AnimationWatcher> COMMON_SERIALIZER = new AnimationWatcher.Serializer();
 	private static final WatcherSerializer<TransitionWatcher> TRANSITION_SERIALIZER = new TransitionWatcher.Serializer();
 
-	public static void serializeWatchers(ServerAnimationManager<?> animationManager, PacketBuffer buffer) {
+	public static void serializeWatchers(ServerAnimationManager<?> animationManager, FriendlyByteBuf buffer) {
 		Set<String> layerNames = animationManager.getLayerNames();
 
 		buffer.writeInt(layerNames.size());
@@ -34,7 +34,7 @@ public class AnimationSerializer {
 		}
 	}
 
-	public static Map<String, AnimationWatcher> deserializeWatchers(PacketBuffer buffer) {
+	public static Map<String, AnimationWatcher> deserializeWatchers(FriendlyByteBuf buffer) {
 		int layerCount = buffer.readInt();
 
 		Map<String, AnimationWatcher> layerMap = new HashMap<>();
@@ -51,7 +51,7 @@ public class AnimationSerializer {
 		return layerMap;
 	}
 
-	private static void serializeWatcher(@NotNull AnimationWatcher watcher, PacketBuffer buffer) {
+	private static void serializeWatcher(@NotNull AnimationWatcher watcher, FriendlyByteBuf buffer) {
 		buffer.writeBoolean(watcher instanceof TransitionWatcher);
 
 		if (watcher instanceof TransitionWatcher) {
@@ -61,7 +61,7 @@ public class AnimationSerializer {
 		}
 	}
 
-	private static AnimationWatcher deserializeWatcher(PacketBuffer buffer) {
+	private static AnimationWatcher deserializeWatcher(FriendlyByteBuf buffer) {
 		boolean isTransitionWatcher = buffer.readBoolean();
 		if (isTransitionWatcher) {
 			return TRANSITION_SERIALIZER.deserialize(buffer);

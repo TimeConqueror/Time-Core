@@ -1,7 +1,7 @@
 package ru.timeconqueror.timecore.api.common.block;
 
-import net.minecraft.block.SoundType;
-import net.minecraft.util.SoundEvent;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.world.level.block.SoundType;
 
 import java.util.function.Supplier;
 

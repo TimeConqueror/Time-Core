@@ -1,6 +1,6 @@
 package ru.timeconqueror.timecore.api.client.resource;
 
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 
 public class LocationResolver {
     public static ResourceLocation toItemModelLocation(ResourceLocation registryName) {

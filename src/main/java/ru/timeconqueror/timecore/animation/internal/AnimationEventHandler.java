@@ -1,8 +1,8 @@
 package ru.timeconqueror.timecore.animation.internal;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -45,7 +45,7 @@ public class AnimationEventHandler {
         if (target instanceof AnimatedObject<?>) {
             AnimationManager animationManager = ((AnimatedObject<?>) target).getSystem().getActionManager().getAnimationManager();
             ServerAnimationManager<?> serverAnimationManager = (ServerAnimationManager<?>) animationManager;
-            InternalPacketManager.sendToPlayer(((ServerPlayerEntity) event.getPlayer()), new S2CSyncAnimationsMsg(serverAnimationManager, target));
+            InternalPacketManager.sendToPlayer(((ServerPlayer) event.getPlayer()), new S2CSyncAnimationsMsg(serverAnimationManager, target));
         }
     }
 }

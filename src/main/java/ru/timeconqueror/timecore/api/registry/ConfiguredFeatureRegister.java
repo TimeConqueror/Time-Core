@@ -1,8 +1,8 @@
 package ru.timeconqueror.timecore.api.registry;
 
-import net.minecraft.util.registry.WorldGenRegistries;
-import net.minecraft.world.gen.GenerationStage;
-import net.minecraft.world.gen.feature.ConfiguredFeature;
+import net.minecraft.data.BuiltinRegistries;
+import net.minecraft.world.level.levelgen.GenerationStep;
+import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.world.BiomeLoadingEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -21,10 +21,10 @@ public class ConfiguredFeatureRegister extends VanillaRegister<ConfiguredFeature
     private final List<FeatureInfo> featureInfoList = new ArrayList<>();
 
     public ConfiguredFeatureRegister(String modId) {
-        super(modId, WorldGenRegistries.CONFIGURED_FEATURE);
+        super(modId, BuiltinRegistries.CONFIGURED_FEATURE);
     }
 
-    public <I extends ConfiguredFeature<?, ?>> ConfiguredFeatureRegistryChain<I> register(String name, GenerationStage.Decoration genStage, Supplier<I> configuredFeatureSup) {
+    public <I extends ConfiguredFeature<?, ?>> ConfiguredFeatureRegistryChain<I> register(String name, GenerationStep.Decoration genStage, Supplier<I> configuredFeatureSup) {
         Promised<I> promised = registerEntry(name, configuredFeatureSup);
 
         return new ConfiguredFeatureRegistryChain<>(promised, genStage);
@@ -47,7 +47,7 @@ public class ConfiguredFeatureRegister extends VanillaRegister<ConfiguredFeature
     public class ConfiguredFeatureRegistryChain<I extends ConfiguredFeature<?, ?>> extends RegisterChain<I> {
         private final FeatureInfo featureInfo;
 
-        private ConfiguredFeatureRegistryChain(Promised<I> promised, GenerationStage.Decoration stage) {
+        private ConfiguredFeatureRegistryChain(Promised<I> promised, GenerationStep.Decoration stage) {
             super(promised);
 
             featureInfo = new FeatureInfo(promised, stage);
@@ -66,9 +66,9 @@ public class ConfiguredFeatureRegister extends VanillaRegister<ConfiguredFeature
 
     private static class FeatureInfo {
         private final Promised<? extends ConfiguredFeature<?, ?>> promisedFeature;
-        private final GenerationStage.Decoration stage;
+        private final GenerationStep.Decoration stage;
 
-        public FeatureInfo(Promised<? extends ConfiguredFeature<?, ?>> promisedFeature, GenerationStage.Decoration stage) {
+        public FeatureInfo(Promised<? extends ConfiguredFeature<?, ?>> promisedFeature, GenerationStep.Decoration stage) {
             this.promisedFeature = promisedFeature;
             this.stage = stage;
         }

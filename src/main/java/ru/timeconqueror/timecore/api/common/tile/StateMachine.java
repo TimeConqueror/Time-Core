@@ -1,4 +1,4 @@
-//package ru.timeconqueror.timecore.api.common.tile;
+package ru.timeconqueror.timecore.api.common.tile;//package ru.timeconqueror.timecore.api.common.tile;
 //
 //import net.minecraft.entity.player.PlayerEntity;
 //import net.minecraft.entity.player.ServerPlayerEntity;

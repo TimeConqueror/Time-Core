@@ -53,10 +53,10 @@ public class ModInitializer {
 
     private static void setupAutoRegistries(ModFileScanData scanResults, Consumer<Runnable> initMethodRegistrator, Consumer<TimeRegister> registerSubscriber) {
         scanResults.getAnnotations().stream()
-                .filter(annotationData -> annotationData.getAnnotationType().equals(TIME_AUTO_REG_TYPE) || annotationData.getAnnotationType().equals(TIME_AUTO_REG_INIT_TYPE))
+                .filter(annotationData -> annotationData.annotationType().equals(TIME_AUTO_REG_TYPE) || annotationData.annotationType().equals(TIME_AUTO_REG_INIT_TYPE))
                 .forEach(annotationData -> {
                     try {
-                        String containerClassName = annotationData.getClassType().getClassName();
+                        String containerClassName = annotationData.clazz().getClassName();
                         Class<?> containerClass;
                         try {
                             containerClass = Class.forName(containerClassName);
@@ -64,7 +64,7 @@ public class ModInitializer {
                             throw new RuntimeException(String.format("There was an exception while trying to load %s", containerClassName), e);
                         }
 
-                        if (annotationData.getAnnotationType().equals(TIME_AUTO_REG_TYPE)) {
+                        if (annotationData.annotationType().equals(TIME_AUTO_REG_TYPE)) {
                             processAutoRegistrable(containerClass, annotationData, registerSubscriber);
                         } else {
                             processTimeAutoRegInitMethod(containerClass, annotationData, initMethodRegistrator);
@@ -76,7 +76,7 @@ public class ModInitializer {
     }
 
     private static void processAutoRegistrable(Class<?> containerClass, ModFileScanData.AnnotationData annotationData, Consumer<TimeRegister> registerSubscriber) throws ClassNotFoundException {
-        String fieldName = annotationData.getMemberName();
+        String fieldName = annotationData.memberName();
         UnlockedField<?, Object> field = ReflectionHelper.findField(containerClass, fieldName);
 
         processAutoRegistrableOnField(containerClass, field, registerSubscriber);
@@ -98,7 +98,7 @@ public class ModInitializer {
     }
 
     private static void processTimeAutoRegInitMethod(Class<?> containerClass, ModFileScanData.AnnotationData annotationData, Consumer<Runnable> preConstructMethodRegistrator) throws ClassNotFoundException {
-        String methodSignature = annotationData.getMemberName();
+        String methodSignature = annotationData.memberName();
 
         ClassHandler handler = ClassHandlers.findHandler(containerClass);
         if (handler == null) {

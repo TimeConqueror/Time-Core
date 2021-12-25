@@ -1,18 +1,18 @@
 package ru.timeconqueror.timecore.api.registry;
 
 import com.google.common.collect.Lists;
-import net.minecraft.block.Block;
-import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
-import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.tileentity.TileEntityType;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.fml.RegistryObject;
-import net.minecraftforge.fml.client.registry.ClientRegistry;
+import net.minecraftforge.client.ClientRegistry;
 import net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.ObjectHolder;
+import net.minecraftforge.registries.RegistryObject;
 import ru.timeconqueror.timecore.api.TimeMod;
 import ru.timeconqueror.timecore.api.client.render.tile.ProfiledTileEntityRenderer;
 import ru.timeconqueror.timecore.api.registry.util.AutoRegistrable;
@@ -104,9 +104,9 @@ import java.util.function.Supplier;
  * <p>
  * Examples can be seen at test module.
  */
-public class TileEntityRegister extends ForgeRegister<TileEntityType<?>> {
+public class TileEntityRegister extends ForgeRegister<BlockEntityType<?>> {
     public TileEntityRegister(String modid) {
-        super(ForgeRegistries.TILE_ENTITIES, modid);
+        super(ForgeRegistries.BLOCK_ENTITIES, modid);
     }
 
     /**
@@ -121,7 +121,7 @@ public class TileEntityRegister extends ForgeRegister<TileEntityType<?>> {
      * @return A {@link TileEntityRegisterChain} for adding some extra stuff.
      * @see TileEntityRegisterChain
      */
-    public <T extends TileEntity> TileEntityRegisterChain<T> registerSingleBound(String name, Supplier<T> tileEntityFactory, Supplier<Block> validBlock) {
+    public <T extends BlockEntity> TileEntityRegisterChain<T> registerSingleBound(String name, Supplier<T> tileEntityFactory, Supplier<Block> validBlock) {
         return register(name, tileEntityFactory, () -> Lists.newArrayList(validBlock.get()));
     }
 
@@ -137,28 +137,28 @@ public class TileEntityRegister extends ForgeRegister<TileEntityType<?>> {
      * @return A {@link TileEntityRegisterChain} for adding some extra stuff.
      * @see TileEntityRegisterChain
      */
-    public <T extends TileEntity> TileEntityRegisterChain<T> register(String name, Supplier<T> tileEntityFactory, Supplier<List<Block>> validBlocks) {
-        Supplier<TileEntityType<T>> typeSupplier = () ->
-                TileEntityType.Builder.of(tileEntityFactory, validBlocks.get().toArray(new Block[0]))
+    public <T extends BlockEntity> TileEntityRegisterChain<T> register(String name, Supplier<T> tileEntityFactory, Supplier<List<Block>> validBlocks) {
+        Supplier<BlockEntityType<T>> typeSupplier = () ->
+                BlockEntityType.Builder.of(tileEntityFactory, validBlocks.get().toArray(new Block[0]))
                         .build(null /*forge doesn't have support for it*/);
 
-        RegistryObject<TileEntityType<T>> holder = registerEntry(name, typeSupplier);
+        RegistryObject<BlockEntityType<T>> holder = registerEntry(name, typeSupplier);
         return new TileEntityRegisterChain<>(holder);
     }
 
-    public class TileEntityRegisterChain<T extends TileEntity> extends ForgeRegister.RegisterChain<TileEntityType<T>> {
-        private TileEntityRegisterChain(RegistryObject<TileEntityType<T>> holder) {
+    public class TileEntityRegisterChain<T extends BlockEntity> extends RegisterChain<BlockEntityType<T>> {
+        private TileEntityRegisterChain(RegistryObject<BlockEntityType<T>> holder) {
             super(holder);
         }
 
-        public TileEntityRegisterChain<T> regCustomRenderer(Supplier<Function<? super TileEntityRendererDispatcher, TileEntityRenderer<? super T>>> rendererFactory) {
+        public TileEntityRegisterChain<T> regCustomRenderer(Supplier<Function<? super BlockEntityRenderDispatcher, BlockEntityRenderer<? super T>>> rendererFactory) {
             clientSideOnly(() -> TileEntityRegister.regCustomRenderer(TileEntityRegister.this, asRegistryObject(), rendererFactory));
             return this;
         }
     }
 
     @OnlyIn(Dist.CLIENT)
-    private static <T extends TileEntity> void regCustomRenderer(TileEntityRegister register, RegistryObject<TileEntityType<T>> registryObject, Supplier<Function<? super TileEntityRendererDispatcher, TileEntityRenderer<? super T>>> rendererFactory) {
+    private static <T extends BlockEntity> void regCustomRenderer(TileEntityRegister register, RegistryObject<BlockEntityType<T>> registryObject, Supplier<Function<? super BlockEntityRenderDispatcher, BlockEntityRenderer<? super T>>> rendererFactory) {
         register.runOnClientSetup(() -> ClientRegistry.bindTileEntityRenderer(registryObject.get(), dispatcher -> new ProfiledTileEntityRenderer<>(dispatcher, rendererFactory.get())));
     }
 }

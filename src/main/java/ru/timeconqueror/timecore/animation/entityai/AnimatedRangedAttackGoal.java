@@ -1,10 +1,10 @@
 package ru.timeconqueror.timecore.animation.entityai;
 
-import net.minecraft.entity.IRangedAttackMob;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.MobEntity;
-import net.minecraft.entity.ai.goal.Goal;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.Mth;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.ai.goal.Goal;
+import net.minecraft.world.entity.monster.RangedAttackMob;
 import ru.timeconqueror.timecore.animation.AnimationStarter.AnimationData;
 import ru.timeconqueror.timecore.animation.component.DelayedAction;
 import ru.timeconqueror.timecore.animation.util.AnimationUtils;
@@ -13,8 +13,8 @@ import ru.timeconqueror.timecore.api.animation.AnimatedObject;
 import java.util.EnumSet;
 import java.util.function.BiConsumer;
 
-public class AnimatedRangedAttackGoal<T extends MobEntity & AnimatedObject<T>> extends Goal {
-    public static final BiConsumer<IRangedAttackMob, ActionData> STANDARD_RUNNER =
+public class AnimatedRangedAttackGoal<T extends Mob & AnimatedObject<T>> extends Goal {
+    public static final BiConsumer<RangedAttackMob, ActionData> STANDARD_RUNNER =
             (entity, actionData) -> entity.performRangedAttack(actionData.getAttackTarget(), actionData.getDistanceFactor());
 
     private final T entity;
@@ -33,7 +33,7 @@ public class AnimatedRangedAttackGoal<T extends MobEntity & AnimatedObject<T>> e
         this.attackRadius = maxAttackDistance;
         this.maxAttackDistance = maxAttackDistance * maxAttackDistance;
         this.attackAction = attackAction;
-        this.setFlags(EnumSet.of(Goal.Flag.MOVE, Goal.Flag.LOOK));
+        this.setFlags(EnumSet.of(Flag.MOVE, Flag.LOOK));
 
         AnimationData data = attackAction.getAnimationStarter().getData();
         this.attackInterval = AnimationUtils.milliSecondsToTicks(data.getAnimation().getLength()) * data.getSpeedFactor();
@@ -77,8 +77,8 @@ public class AnimatedRangedAttackGoal<T extends MobEntity & AnimatedObject<T>> e
      */
     @Override
     public void tick() {
-        double d0 = this.entity.distanceToSqr(this.attackTarget.getX(), this.attackTarget.getY(), this.attackTarget.getZ());
-        boolean flag = this.entity.getSensing().canSee(this.attackTarget);
+        float d0 = (float) this.entity.distanceToSqr(this.attackTarget.getX(), this.attackTarget.getY(), this.attackTarget.getZ());
+        boolean flag = this.entity.getSensing().hasLineOfSight(this.attackTarget);
         if (flag) {
             ++this.seeTime;
         } else {
@@ -97,14 +97,14 @@ public class AnimatedRangedAttackGoal<T extends MobEntity & AnimatedObject<T>> e
                 return;
             }
 
-            float f = MathHelper.sqrt(d0) / this.attackRadius;
-            float distanceFactor = MathHelper.clamp(f, 0.1F, 1.0F);
+            float f = Mth.sqrt(d0) / this.attackRadius;
+            float distanceFactor = Mth.clamp(f, 0.1F, 1.0F);
 
             entity.getSystem().getActionManager().enableAction(attackAction, new ActionData(distanceFactor, attackTarget));
 
-            this.rangedAttackTime = MathHelper.ceil(this.attackInterval);
+            this.rangedAttackTime = Mth.ceil(this.attackInterval);
         } else if (this.rangedAttackTime < 0) {
-            this.rangedAttackTime = MathHelper.ceil(this.attackInterval);
+            this.rangedAttackTime = Mth.ceil(this.attackInterval);
         }
     }
 

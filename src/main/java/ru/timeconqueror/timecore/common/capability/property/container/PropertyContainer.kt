@@ -1,6 +1,6 @@
 package ru.timeconqueror.timecore.common.capability.property.container
 
-import net.minecraft.nbt.CompoundNBT
+import net.minecraft.nbt.CompoundTag
 import ru.timeconqueror.timecore.api.common.tile.SerializationType
 import ru.timeconqueror.timecore.common.capability.property.CoffeeProperty
 import ru.timeconqueror.timecore.common.capability.property.serializer.*
@@ -73,7 +73,7 @@ open class PropertyContainer {
 
     fun serialize(
         serializePredicate: Predicate<CoffeeProperty<*>>,
-        nbt: CompoundNBT,
+        nbt: CompoundTag,
         clientSide: Boolean,
         type: SerializationType
     ): Boolean {
@@ -85,7 +85,7 @@ open class PropertyContainer {
             }
         }
         for ((name, container) in containers) {
-            val containerNBT = CompoundNBT()
+            val containerNBT = CompoundTag()
             if (container.serialize(serializePredicate, containerNBT, clientSide, type)) {
                 nbt.put(name, containerNBT)
                 hasChanges = true
@@ -94,7 +94,7 @@ open class PropertyContainer {
         return hasChanges
     }
 
-    fun deserialize(nbt: CompoundNBT) {
+    fun deserialize(nbt: CompoundTag) {
         for (property in properties) {
             property.deserialize(nbt)
         }
@@ -105,7 +105,7 @@ open class PropertyContainer {
         }
     }
 
-    fun deserialize(nbt: CompoundNBT, sentFromClient: Boolean) {
+    fun deserialize(nbt: CompoundTag, sentFromClient: Boolean) {
         for (property in properties) {
             property.deserialize(nbt, sentFromClient)
         }

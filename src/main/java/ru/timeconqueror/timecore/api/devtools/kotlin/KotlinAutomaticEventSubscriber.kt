@@ -40,8 +40,12 @@ object KotlinAutomaticEventSubscriber {
                 .collect(Collectors.toList())
 
         val modids = scanData.annotations.stream()
-                .filter { MOD_TYPE == it.annotationType }
-                .collect(Collectors.toMap<AnnotationData, String, String>({ it.classType.className }, { it.annotationData["value"] as String? }))
+            .filter { MOD_TYPE == it.annotationType }
+            .collect(
+                Collectors.toMap<AnnotationData, String, String>(
+                    { it.clazz.className },
+                    { it.annotationData["value"] as String? })
+            )
 
         ebsTargets.forEach { data ->
             @Suppress("UNCHECKED_CAST")
@@ -51,8 +55,10 @@ object KotlinAutomaticEventSubscriber {
                     .map { Dist.valueOf(it.value) }
                     .collect(Collectors.toCollection { EnumSet.noneOf(Dist::class.java) })
 
-            val modId = data.annotationData.getOrDefault("modid", modids[data.classType.className]
-                    ?: mod.modId) as String
+            val modId = data.annotationData.getOrDefault(
+                "modid", modids[data.clazz.className]
+                    ?: mod.modId
+            ) as String
 
             val busTargetHolder = data.annotationData.getOrDefault("bus", EnumHolder(null, "FORGE")) as EnumHolder
 
@@ -62,23 +68,38 @@ object KotlinAutomaticEventSubscriber {
                 try {
 
 
-                    val clazz = Class.forName(data.classType.className, true, loader)
+                    val clazz = Class.forName(data.clazz.className, true, loader)
                     val kclass = clazz.kotlin
 
                     val objectInstance = kclass.objectInstance
                     if (objectInstance != null) {
                         if (!hasStaticEventHandlers(clazz)) {
-                            LOGGER.debug(Logging.LOADING, "Unsubscribing {} as Common Java Class from {}", data.classType.className, busTarget)
-                            busTarget.bus().get().unregister(data.classType.className)
+                            LOGGER.debug(
+                                Logging.LOADING,
+                                "Unsubscribing {} as Common Java Class from {}",
+                                data.clazz.className,
+                                busTarget
+                            )
+                            busTarget.bus().get().unregister(data.clazz.className)
                         }
 
                         if (hasObjectEventHandlers(clazz)) {
-                            LOGGER.debug(Logging.LOADING, "Auto-subscribing Kotlin object {} to {}", data.classType.className, busTarget)
+                            LOGGER.debug(
+                                Logging.LOADING,
+                                "Auto-subscribing Kotlin object {} to {}",
+                                data.clazz.className,
+                                busTarget
+                            )
                             busTarget.bus().get().register(objectInstance)
                         }
                     }
                 } catch (e: ClassNotFoundException) {
-                    LOGGER.fatal(Logging.LOADING, "Failed to load mod Kotlin class {} for @EventBusSubscriber annotation", data.classType, e)
+                    LOGGER.fatal(
+                        Logging.LOADING,
+                        "Failed to load mod Kotlin class {} for @EventBusSubscriber annotation",
+                        data.clazz,
+                        e
+                    )
                     throw RuntimeException(e)
                 }
             }

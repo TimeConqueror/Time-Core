@@ -1,7 +1,7 @@
 package ru.timeconqueror.timecore.api.registry.util
 
-import net.minecraft.block.AbstractBlock
+import net.minecraft.world.level.block.state.BlockBehaviour
 
-fun AbstractBlock.Properties.unbreakable() = BlockPropsFactory.unbreakable(this)
+fun BlockBehaviour.Properties.unbreakable() = BlockPropsFactory.unbreakable(this)
 
-operator fun BlockPropsFactory.invoke(): AbstractBlock.Properties = this.create()
+operator fun BlockPropsFactory.invoke(): BlockBehaviour.Properties = this.create()

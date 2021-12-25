@@ -1,12 +1,12 @@
 package ru.timeconqueror.timecore.mod.common.packet
 
-import net.minecraft.nbt.CompoundNBT
-import net.minecraft.network.PacketBuffer
-import net.minecraft.world.World
+import net.minecraft.nbt.CompoundTag
+import net.minecraft.network.FriendlyByteBuf
+import net.minecraft.world.level.Level
 import net.minecraftforge.common.capabilities.ICapabilityProvider
 import net.minecraftforge.common.util.LazyOptional
 import net.minecraftforge.fml.LogicalSide
-import net.minecraftforge.fml.network.NetworkEvent
+import net.minecraftforge.network.NetworkEvent
 import ru.timeconqueror.timecore.TimeCore
 import ru.timeconqueror.timecore.api.common.packet.ITimePacketHandler
 import ru.timeconqueror.timecore.api.common.tile.SerializationType
@@ -16,19 +16,19 @@ import java.util.function.Predicate
 
 sealed class CoffeeCapabilityDataPacket(
     val capabilityName: String,
-    val ownerData: CompoundNBT,
-    val capabilityData: CompoundNBT
+    val ownerData: CompoundTag,
+    val capabilityData: CompoundTag
 ) {
 
     companion object {
         fun <T : ICapabilityProvider> create(
-            world: World,
+            world: Level,
             owner: T,
             cap: CoffeeCapability<T>,
-            capabilityData: CompoundNBT,
+            capabilityData: CompoundTag,
             clientSide: Boolean
         ): CoffeeCapabilityDataPacket {
-            return create(clientSide, cap.getCapability().name, CompoundNBT().apply {
+            return create(clientSide, cap.getCapability().name, CompoundTag().apply {
                 cap.getOwnerSerializer().serializeOwner(world, owner, this)
             }, capabilityData)
         }
@@ -36,8 +36,8 @@ sealed class CoffeeCapabilityDataPacket(
         private fun create(
             clientSide: Boolean,
             capabilityName: String,
-            ownerData: CompoundNBT,
-            capabilityData: CompoundNBT
+            ownerData: CompoundTag,
+            capabilityData: CompoundTag
         ): CoffeeCapabilityDataPacket {
             return if (clientSide) {
                 C2SCoffeeCapabilityDataPacket(capabilityName, ownerData, capabilityData)
@@ -47,19 +47,19 @@ sealed class CoffeeCapabilityDataPacket(
         }
 
         fun <T : ICapabilityProvider> create(
-            world: World,
+            world: Level,
             owner: T,
             cap: CoffeeCapability<T>,
             clientSide: Boolean,
             syncPredicate: Predicate<CoffeeProperty<*>>
         ): CoffeeCapabilityDataPacket? {
-            val nbt = CompoundNBT()
+            val nbt = CompoundTag()
             return if (cap.serialize(syncPredicate, nbt, clientSide, SerializationType.SYNC)) {
                 create(world, owner, cap, nbt, clientSide)
             } else null
         }
 
-        private fun handlePacket(packet: CoffeeCapabilityDataPacket, world: World, sentFromClient: Boolean) {
+        private fun handlePacket(packet: CoffeeCapabilityDataPacket, world: Level, sentFromClient: Boolean) {
             val capability = TimeCore.INSTANCE.capabilityManager.getAttachableCoffeeCapability(packet.capabilityName)
             if (capability != null) {
                 val ownerSerializer = capability.owner.serializer
@@ -78,14 +78,14 @@ sealed class CoffeeCapabilityDataPacket(
 
     sealed class Handler<T : CoffeeCapabilityDataPacket> :
         ITimePacketHandler<T> {
-        final override fun encode(dataMsg: T, buf: PacketBuffer) {
+        final override fun encode(dataMsg: T, buf: FriendlyByteBuf) {
             buf.writeBoolean(dataMsg is C2SCoffeeCapabilityDataPacket)
             buf.writeUtf(dataMsg.capabilityName)
             buf.writeNbt(dataMsg.ownerData)
             buf.writeNbt(dataMsg.capabilityData)
         }
 
-        final override fun decode(buf: PacketBuffer): T {
+        final override fun decode(buf: FriendlyByteBuf): T {
             val sentFromClient = buf.readBoolean()
             return create(sentFromClient, buf.readUtf(), buf.readNbt()!!, buf.readNbt()!!) as T
         }
@@ -105,8 +105,8 @@ sealed class CoffeeCapabilityDataPacket(
     }
 }
 
-class C2SCoffeeCapabilityDataPacket(capabilityName: String, ownerData: CompoundNBT, capabilityData: CompoundNBT) :
+class C2SCoffeeCapabilityDataPacket(capabilityName: String, ownerData: CompoundTag, capabilityData: CompoundTag) :
     CoffeeCapabilityDataPacket(capabilityName, ownerData, capabilityData)
 
-class S2CCoffeeCapabilityDataPacket(capabilityName: String, ownerData: CompoundNBT, capabilityData: CompoundNBT) :
+class S2CCoffeeCapabilityDataPacket(capabilityName: String, ownerData: CompoundTag, capabilityData: CompoundTag) :
     CoffeeCapabilityDataPacket(capabilityName, ownerData, capabilityData)

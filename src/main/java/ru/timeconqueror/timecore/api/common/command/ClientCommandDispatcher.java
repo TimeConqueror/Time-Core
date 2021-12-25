@@ -1,11 +1,11 @@
 package ru.timeconqueror.timecore.api.common.command;
 
 import com.mojang.brigadier.CommandDispatcher;
-import net.minecraft.command.CommandSource;
+import net.minecraft.commands.CommandSourceStack;
 import ru.timeconqueror.timecore.client.command.ClientCommandManager;
 
 public class ClientCommandDispatcher {
-    public static CommandDispatcher<CommandSource> get() {
+    public static CommandDispatcher<CommandSourceStack> get() {
         return ClientCommandManager.getClientDispatcher();
     }
 }

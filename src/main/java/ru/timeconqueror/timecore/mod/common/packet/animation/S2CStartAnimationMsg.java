@@ -1,7 +1,7 @@
 package ru.timeconqueror.timecore.mod.common.packet.animation;
 
-import net.minecraft.network.PacketBuffer;
-import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraftforge.network.NetworkEvent;
 import ru.timeconqueror.timecore.TimeCore;
 import ru.timeconqueror.timecore.animation.AnimationStarter;
 import ru.timeconqueror.timecore.api.animation.AnimatedObject;
@@ -17,12 +17,12 @@ public class S2CStartAnimationMsg extends S2CAnimationMsg {
 
     public static class Handler extends S2CAnimationMsg.Handler<S2CStartAnimationMsg> {
         @Override
-        public void encodeExtra(S2CStartAnimationMsg packet, PacketBuffer buffer) {
+        public void encodeExtra(S2CStartAnimationMsg packet, FriendlyByteBuf buffer) {
             AnimationStarter.AnimationData.encode(packet.animationData, buffer);
         }
 
         @Override
-        public S2CStartAnimationMsg decodeWithExtraData(CodecSupplier codecSupplier, String layerName, PacketBuffer buffer) {
+        public S2CStartAnimationMsg decodeWithExtraData(CodecSupplier codecSupplier, String layerName, FriendlyByteBuf buffer) {
             AnimationStarter.AnimationData animationData = AnimationStarter.AnimationData.decode(buffer);
 
             return new S2CStartAnimationMsg(codecSupplier, layerName, animationData);

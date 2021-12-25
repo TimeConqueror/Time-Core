@@ -1,9 +1,9 @@
 package ru.timeconqueror.timecore.api.common.packet;
 
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.world.World;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.fml.LogicalSide;
-import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraftforge.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
 import ru.timeconqueror.timecore.api.util.client.ClientProxy;
 
@@ -16,7 +16,7 @@ public interface ITimePacketHandler<T> {
      * @param packet packet to encode
      * @param buffer buffer, where you should encode packet.
      */
-    void encode(T packet, PacketBuffer buffer) throws IOException;
+    void encode(T packet, FriendlyByteBuf buffer) throws IOException;
 
     /**
      * Decodes packet from provided buffer.
@@ -26,7 +26,7 @@ public interface ITimePacketHandler<T> {
      * @param buffer buffer, from which data will be read
      */
     @NotNull
-    T decode(PacketBuffer buffer) throws IOException;
+    T decode(FriendlyByteBuf buffer) throws IOException;
 
     /**
      * Handles received packet.
@@ -38,7 +38,7 @@ public interface ITimePacketHandler<T> {
 
     @NotNull
     @SuppressWarnings("ConstantConditions")
-    default World getWorld(NetworkEvent.Context ctx) {
+    default Level getWorld(NetworkEvent.Context ctx) {
         return ctx.getDirection().getReceptionSide() == LogicalSide.CLIENT ? ClientProxy.world() : ctx.getSender().level;
     }
 }

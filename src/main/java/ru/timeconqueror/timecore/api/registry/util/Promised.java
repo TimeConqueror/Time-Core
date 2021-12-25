@@ -1,6 +1,6 @@
 package ru.timeconqueror.timecore.api.registry.util;
 
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;

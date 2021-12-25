@@ -1,6 +1,6 @@
 package ru.timeconqueror.timecore.api.common.packet;
 
-import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraftforge.network.NetworkEvent;
 
 /**
  * Packet Handler with the method {@link #handleOnMainThread(Object, NetworkEvent.Context)}, which is already redirected to be run in the main thread.

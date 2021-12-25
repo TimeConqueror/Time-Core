@@ -1,9 +1,9 @@
 package ru.timeconqueror.timecore.animation;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.world.World;
-import net.minecraftforge.fml.network.PacketDistributor;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraftforge.network.PacketDistributor;
 import ru.timeconqueror.timecore.animation.action.ActionManagerImpl;
 import ru.timeconqueror.timecore.api.animation.AnimatedObject;
 import ru.timeconqueror.timecore.mod.common.packet.InternalPacketManager;
@@ -26,12 +26,12 @@ public abstract class NetworkDispatcher<T extends AnimatedObject<T>> {
         };
     }
 
-    public static <T extends TileEntity & AnimatedObject<T>> NetworkDispatcher<T> forTileEntity() {
-        return new NetworkDispatcher<T>() {
+    public static <T extends BlockEntity & AnimatedObject<T>> NetworkDispatcher<T> forTileEntity() {
+        return new NetworkDispatcher<>() {
             @Override
             protected PacketDistributor.PacketTarget getPacketTarget(T boundObject) {
                 return PacketDistributor.TRACKING_CHUNK.with(() -> {
-                    World world = boundObject.getLevel();
+                    Level world = boundObject.getLevel();
                     return world.getChunkAt(boundObject.getBlockPos());
                 });
             }

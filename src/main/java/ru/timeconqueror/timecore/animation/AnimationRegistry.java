@@ -1,6 +1,6 @@
 package ru.timeconqueror.timecore.animation;
 
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
 import ru.timeconqueror.timecore.api.animation.Animation;
 

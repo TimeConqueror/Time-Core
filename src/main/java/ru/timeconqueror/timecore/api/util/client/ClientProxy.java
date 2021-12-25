@@ -1,8 +1,8 @@
 package ru.timeconqueror.timecore.api.util.client;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.world.World;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
 import ru.timeconqueror.timecore.api.util.Hacks;
 
 /**
@@ -10,11 +10,11 @@ import ru.timeconqueror.timecore.api.util.Hacks;
  * It won't crash upon class loading.
  */
 public class ClientProxy {
-    public static PlayerEntity player() {
+    public static Player player() {
         return Hacks.safeCast(Minecraft.getInstance().player);
     }
 
-    public static World world() {
+    public static Level world() {
         return Hacks.safeCast(Minecraft.getInstance().level);
     }
 }

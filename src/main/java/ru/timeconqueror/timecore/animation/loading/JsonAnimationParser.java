@@ -3,9 +3,9 @@ package ru.timeconqueror.timecore.animation.loading;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
-import net.minecraft.util.JSONUtils;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.vector.Vector3f;
+import com.mojang.math.Vector3f;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.GsonHelper;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 import org.jetbrains.annotations.NotNull;
@@ -37,7 +37,7 @@ public class JsonAnimationParser {
         try (final InputStream inputStream = ResourceUtils.getStream(ResourceUtils.asDataSubpath(fileLocation.getNamespace() + "/" + fileLocation.getPath()))) {
             BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
 
-            JsonObject json = JSONUtils.parse(reader, true);
+            JsonObject json = GsonHelper.parse(reader, true);
             return parseAnimation(fileLocation, json);
 
         } catch (Throwable e) {
@@ -53,23 +53,23 @@ public class JsonAnimationParser {
         }
 
 
-        JsonObject animations = JSONUtils.getAsJsonObject(object, "animations");
+        JsonObject animations = GsonHelper.getAsJsonObject(object, "animations");
         Map<String, Animation> animationMap = new HashMap<>();
 
         for (Map.Entry<String, JsonElement> animationEntry : animations.entrySet()) {
             String name = animationEntry.getKey();
-            JsonObject animationJson = JSONUtils.convertToJsonObject(animationEntry.getValue(), name);
+            JsonObject animationJson = GsonHelper.convertToJsonObject(animationEntry.getValue(), name);
 
-            boolean loop = JSONUtils.getAsBoolean(animationJson, "loop", false);
-            int animationLength = (int) (JSONUtils.getAsFloat(animationJson, "animation_length") * 1000);
+            boolean loop = GsonHelper.getAsBoolean(animationJson, "loop", false);
+            int animationLength = (int) (GsonHelper.getAsFloat(animationJson, "animation_length") * 1000);
 
             List<BoneOption> boneOptions = new ArrayList<>();
 
             if (FMLEnvironment.dist == Dist.CLIENT) {
                 if (animationJson.has("bones")) {
-                    for (Map.Entry<String, JsonElement> boneEntryJson : JSONUtils.getAsJsonObject(animationJson, "bones").entrySet()) {
+                    for (Map.Entry<String, JsonElement> boneEntryJson : GsonHelper.getAsJsonObject(animationJson, "bones").entrySet()) {
                         String boneName = boneEntryJson.getKey();
-                        JsonObject boneJson = JSONUtils.convertToJsonObject(boneEntryJson.getValue(), boneName);
+                        JsonObject boneJson = GsonHelper.convertToJsonObject(boneEntryJson.getValue(), boneName);
                         BoneOption option = parseAnimationBone(boneName, boneJson);
                         boneOptions.add(option);
                     }
@@ -121,7 +121,7 @@ public class JsonAnimationParser {
 
                     if (value.isJsonObject()) {
                         JsonObject frame = value.getAsJsonObject();
-                        String lerpMode = JSONUtils.getAsString(frame, "lerp_mode");
+                        String lerpMode = GsonHelper.getAsString(frame, "lerp_mode");
                         Vector3f vec = JsonUtils.getAsVec3f(frame, "post");
                         postProcessor.accept(vec);
                         if (lerpMode.equals("catmullrom")) {
@@ -132,12 +132,12 @@ public class JsonAnimationParser {
                             throw new JsonSyntaxException("Can't parse keyframe with location " + key + " (" + value + "), because it has unknown lerp_mode type: " + lerpMode);
                         }
                     } else if (value.isJsonArray()) {
-                        Vector3f vec = JsonUtils.toVec3f(JSONUtils.convertToJsonArray(value, key), key);
+                        Vector3f vec = JsonUtils.toVec3f(GsonHelper.convertToJsonArray(value, key), key);
                         postProcessor.accept(vec);
 
                         keyFrames.add(frame(time, vec));
                     } else {
-                        throw new JsonSyntaxException("Can't parse keyframe with location " + key + " (" + value + "), because it has unknown type: " + JSONUtils.getType(value));
+                        throw new JsonSyntaxException("Can't parse keyframe with location " + key + " (" + value + "), because it has unknown type: " + GsonHelper.getType(value));
                     }
                 }
             }

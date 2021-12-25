@@ -2,31 +2,30 @@ package ru.timeconqueror.timecore.devtools;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.ChunkPos;
-import net.minecraft.util.math.SectionPos;
-import net.minecraft.world.gen.feature.structure.Structure;
-import net.minecraft.world.gen.feature.structure.StructurePiece;
-import net.minecraft.world.gen.feature.structure.StructureStart;
-import net.minecraft.world.server.ChunkManager;
+import net.minecraft.core.SectionPos;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ChunkMap;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.levelgen.feature.StructureFeature;
+import net.minecraft.world.level.levelgen.structure.StructurePiece;
+import net.minecraft.world.level.levelgen.structure.StructureStart;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.server.ChunkManagerHooks;
-import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.event.server.ServerStartingEvent;
 import net.minecraftforge.event.world.ChunkWatchEvent;
-import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import net.minecraftforge.fml.loading.FMLEnvironment;
-import net.minecraftforge.fml.server.ServerLifecycleHooks;
+import net.minecraftforge.server.ServerLifecycleHooks;
 import ru.timeconqueror.timecore.mod.common.config.MainConfig;
 import ru.timeconqueror.timecore.mod.common.packet.InternalPacketManager;
 import ru.timeconqueror.timecore.mod.common.packet.S2CSRClearPiecesPacket;
 import ru.timeconqueror.timecore.mod.common.packet.S2CSRSendSinglePiecePacket;
 
 import java.util.*;
-import java.util.stream.Stream;
 
 //ToDo unsubscribe show only sunscribed
 public class StructureRevealer {
@@ -36,13 +35,13 @@ public class StructureRevealer {
      * Structure renderer. Can be accessible only on client side. Will be null on dedicated server.
      */
     public final StructureRenderer structureRenderer;
-    private Multimap<UUID, Structure<?>> subscribedStructures = ArrayListMultimap.create();
+    private Multimap<UUID, StructureFeature<?>> subscribedStructures = ArrayListMultimap.create();
     private final Multimap<UUID, ChunkPos> recentlyWatchedChunks = ArrayListMultimap.create();
 
     public StructureRevealer() {
         if (FMLEnvironment.dist == Dist.CLIENT) {
             structureRenderer = new StructureRenderer();
-            MinecraftForge.EVENT_BUS.addListener(structureRenderer::onWorldRender);
+//            MinecraftForge.EVENT_BUS.addListener(structureRenderer::onWorldRender);//FIXME PORT
             MinecraftForge.EVENT_BUS.addListener(structureRenderer::onClientLogin);
         } else {
             structureRenderer = null;
@@ -57,20 +56,20 @@ public class StructureRevealer {
         return Optional.ofNullable(INSTANCE);
     }
 
-    public void subscribePlayerToStructure(ServerPlayerEntity player, Structure<?> structure) {
+    public void subscribePlayerToStructure(ServerPlayer player, StructureFeature<?> structure) {
         if (!subscribedStructures.containsEntry(player.getUUID(), structure)) {
             subscribedStructures.put(player.getUUID(), structure);
             refreshAndSave(player);
         }
     }
 
-    public void unsubscribePlayerFromStructure(ServerPlayerEntity player, Structure<?> structure) {
+    public void unsubscribePlayerFromStructure(ServerPlayer player, StructureFeature<?> structure) {
         subscribedStructures.remove(player.getUUID(), structure);
         refreshAndSave(player);
     }
 
-    public void unsubscribePlayerFromAllStructures(ServerPlayerEntity player) {
-        Collection<Structure<?>> structures = subscribedStructures.get(player.getUUID());
+    public void unsubscribePlayerFromAllStructures(ServerPlayer player) {
+        Collection<StructureFeature<?>> structures = subscribedStructures.get(player.getUUID());
         if (structures != null) {
             structures.clear();
 
@@ -78,7 +77,7 @@ public class StructureRevealer {
         }
     }
 
-    public List<ResourceLocation> getSubscriptions(ServerPlayerEntity player) {
+    public List<ResourceLocation> getSubscriptions(ServerPlayer player) {
         List<ResourceLocation> locations = new ArrayList<>();
 
         subscribedStructures.get(player.getUUID()).forEach(structure -> locations.add(structure.getRegistryName()));
@@ -86,23 +85,22 @@ public class StructureRevealer {
         return locations;
     }
 
-    private void onServerStart(FMLServerStartingEvent event) {
+    private void onServerStart(ServerStartingEvent event) {
         subscribedStructures = new RevealerDataSaver().restoreOnServer();
     }
 
-    private void refreshAndSave(ServerPlayerEntity player) {
+    private void refreshAndSave(ServerPlayer player) {
         refreshAllStructureData(player);
         new RevealerDataSaver().saveOnServer(subscribedStructures);
     }
 
-    private void refreshAllStructureData(ServerPlayerEntity playerIn) {
-        ChunkManager chunkManager = playerIn.getLevel().getChunkSource().chunkMap;
+    private void refreshAllStructureData(ServerPlayer playerIn) {
+        ChunkMap chunkManager = playerIn.getLevel().getChunkSource().chunkMap;
 
         InternalPacketManager.sendToPlayer(playerIn, new S2CSRClearPiecesPacket());
 
         ChunkManagerHooks.getLoadedChunksIterable(chunkManager).forEach(chunkHolder -> {
-
-            if (chunkManager.getPlayers(chunkHolder.getPos(), false)
+            if (chunkManager.getPlayers(chunkHolder.getPos(), false).stream()
                     .anyMatch(player -> player.getUUID().equals(playerIn.getUUID()))) {
 
                 getSubscribedStructuresInChunk(playerIn.getLevel(), playerIn, chunkHolder.getPos()).forEach(data -> {
@@ -113,10 +111,10 @@ public class StructureRevealer {
     }
 
     private void onChunkWatch(ChunkWatchEvent.Watch event) {
-        ServerWorld world = event.getWorld();
+        ServerLevel world = event.getWorld();
         if (world != null && !world.isClientSide() && MainConfig.INSTANCE.devFeaturesEnabled.get()) {
 
-            ServerPlayerEntity player = event.getPlayer();
+            ServerPlayer player = event.getPlayer();
             ChunkPos pos = event.getPos();
 
             recentlyWatchedChunks.put(player.getUUID(), pos);
@@ -126,7 +124,7 @@ public class StructureRevealer {
     private void onTickStart(TickEvent.ServerTickEvent event) {
         if (event.phase == TickEvent.Phase.START) {
             recentlyWatchedChunks.keySet().forEach(uuid -> {
-                ServerPlayerEntity player = ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayer(uuid);
+                ServerPlayer player = ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayer(uuid);
 
                 if (player != null) {
                     recentlyWatchedChunks.get(uuid)
@@ -138,18 +136,18 @@ public class StructureRevealer {
         }
     }
 
-    private List<StructureData> getSubscribedStructuresInChunk(ServerWorld world, ServerPlayerEntity player, ChunkPos pos) {
+    private List<StructureData> getSubscribedStructuresInChunk(ServerLevel world, ServerPlayer player, ChunkPos pos) {
         List<StructureData> subscribedStructuresInChunk = new ArrayList<>();
 
-        Collection<Structure<?>> structures = subscribedStructures.get(player.getUUID());
+        Collection<StructureFeature<?>> structures = subscribedStructures.get(player.getUUID());
 
-        for (Structure<?> structure : structures) {
-            Stream<? extends StructureStart<?>> starts = world.startsForFeature(SectionPos.of(pos, 0), structure);
+        for (StructureFeature<?> structure : structures) {
+            List<? extends StructureStart<?>> starts = world.startsForFeature(SectionPos.of(pos, 0), structure);
 
             starts.forEach(start -> {
                 synchronized (start.getPieces()) {
                     for (StructurePiece component : start.getPieces()) {
-                        AxisAlignedBB boundingBox = AxisAlignedBB.of(component.getBoundingBox());
+                        AABB boundingBox = AABB.of(component.getBoundingBox());
                         subscribedStructuresInChunk.add(new StructureData(boundingBox, structure, world));
                     }
                 }

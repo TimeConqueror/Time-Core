@@ -8,10 +8,10 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
-import net.minecraft.command.ISuggestionProvider;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.gen.feature.structure.Structure;
+import net.minecraft.commands.SharedSuggestionProvider;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.levelgen.feature.StructureFeature;
 import net.minecraftforge.registries.ForgeRegistries;
 import ru.timeconqueror.timecore.TimeCore;
 
@@ -19,19 +19,19 @@ import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
-public class StructureArgument implements ArgumentType<Structure<?>> {
-    public static final List<String> EXAMPLES = Lists.newArrayList(Structure.WOODLAND_MANSION.getRegistryName().toString(), Structure.IGLOO.getRegistryName().toString());
-    public static final SimpleCommandExceptionType UNKNOWN = new SimpleCommandExceptionType(new TranslationTextComponent("argument." + TimeCore.MODID + ".structure.unknown"));
+public class StructureArgument implements ArgumentType<StructureFeature<?>> {
+    public static final List<String> EXAMPLES = Lists.newArrayList(StructureFeature.WOODLAND_MANSION.getRegistryName().toString(), StructureFeature.IGLOO.getRegistryName().toString());
+    public static final SimpleCommandExceptionType UNKNOWN = new SimpleCommandExceptionType(new TranslatableComponent("argument." + TimeCore.MODID + ".structure.unknown"));
 
     public static StructureArgument create() {
         return new StructureArgument();
     }
 
     @Override
-    public Structure<?> parse(StringReader reader) throws CommandSyntaxException {
+    public StructureFeature<?> parse(StringReader reader) throws CommandSyntaxException {
         ResourceLocation structureName = ResourceLocation.read(reader);
 
-        Structure<?> structure = ForgeRegistries.STRUCTURE_FEATURES.getValue(structureName);
+        StructureFeature<?> structure = ForgeRegistries.STRUCTURE_FEATURES.getValue(structureName);
 
         if (structure != null) {
             return structure;
@@ -40,7 +40,7 @@ public class StructureArgument implements ArgumentType<Structure<?>> {
 
     @Override
     public <S> CompletableFuture<Suggestions> listSuggestions(CommandContext<S> context, SuggestionsBuilder builder) {
-        return ISuggestionProvider.suggest(ForgeRegistries.STRUCTURE_FEATURES.getValues().stream()
+        return SharedSuggestionProvider.suggest(ForgeRegistries.STRUCTURE_FEATURES.getValues().stream()
                 .map(structure -> structure.getRegistryName().toString()), builder);
     }
 

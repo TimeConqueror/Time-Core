@@ -4,16 +4,16 @@ import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DynamicOps;
 import com.mojang.serialization.JsonOps;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.INBT;
-import net.minecraft.nbt.NBTDynamicOps;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtOps;
+import net.minecraft.nbt.Tag;
 
 import java.lang.reflect.Array;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 public class CodecUtils {
-    public static final NBTDynamicOps NBT_OPS = NBTDynamicOps.INSTANCE;
+    public static final NbtOps NBT_OPS = NbtOps.INSTANCE;
     public static final JsonOps JSON_OPS = JsonOps.INSTANCE;
 
     public static <T, SERIALIZED> T decodeSoftly(Codec<T> codec, DynamicOps<SERIALIZED> ops, SERIALIZED input, T defaultVal) {
@@ -33,20 +33,20 @@ public class CodecUtils {
     }
 
     @SuppressWarnings("unchecked")
-    public static <T> T[][] read2DimArr(CompoundNBT tableTag, Class<T> elementClass, Codec<T> elementCodec) {
+    public static <T> T[][] read2DimArr(CompoundTag tableTag, Class<T> elementClass, Codec<T> elementCodec) {
         int size = tableTag.getInt("size");
 
         T[][] table = null;
 
         for (int i = 0; i < size; i++) {
-            CompoundNBT columnTag = tableTag.getCompound(Integer.toString(i));
+            CompoundTag columnTag = tableTag.getCompound(Integer.toString(i));
             int columnSize = columnTag.getInt("size");
 
             T[] column = (T[]) Array.newInstance(elementClass, columnSize);
 
             for (int j = 0; j < columnSize; j++) {
                 if (columnTag.contains(Integer.toString(j))) {
-                    INBT elementTag = columnTag.get(Integer.toString(j));
+                    Tag elementTag = columnTag.get(Integer.toString(j));
 
                     T element = decodeStrictly(elementCodec, NBT_OPS, elementTag);
                     column[j] = element;
@@ -64,19 +64,19 @@ public class CodecUtils {
         return table;
     }
 
-    public static <T> CompoundNBT write2DimArr(T[][] objArr, Codec<T> elementCodec) {
+    public static <T> CompoundTag write2DimArr(T[][] objArr, Codec<T> elementCodec) {
         return write2DimArr(objArr, elementCodec, e -> true);
     }
 
-    public static <T> CompoundNBT write2DimArr(T[][] objArr, Codec<T> elementCodec, Predicate<T> writeElementIf) {
-        CompoundNBT tableTag = new CompoundNBT();
+    public static <T> CompoundTag write2DimArr(T[][] objArr, Codec<T> elementCodec, Predicate<T> writeElementIf) {
+        CompoundTag tableTag = new CompoundTag();
 
         for (int i = 0; i < objArr.length; i++) {
-            CompoundNBT column = new CompoundNBT();
+            CompoundTag column = new CompoundTag();
 
             for (int j = 0; j < objArr[i].length; j++) {
                 if (writeElementIf.test(objArr[i][j])) {
-                    INBT elementTag = encodeStrictly(elementCodec, NBT_OPS, objArr[i][j]);
+                    Tag elementTag = encodeStrictly(elementCodec, NBT_OPS, objArr[i][j]);
                     column.put(Integer.toString(j), elementTag);
                 }
             }

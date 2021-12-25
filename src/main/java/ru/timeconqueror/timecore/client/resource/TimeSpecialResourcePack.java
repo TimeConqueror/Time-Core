@@ -1,9 +1,9 @@
 package ru.timeconqueror.timecore.client.resource;
 
-import net.minecraft.resources.IResourcePack;
-import net.minecraft.resources.ResourcePackType;
-import net.minecraft.resources.data.IMetadataSectionSerializer;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.PackResources;
+import net.minecraft.server.packs.PackType;
+import net.minecraft.server.packs.metadata.MetadataSectionSerializer;
 import org.jetbrains.annotations.NotNull;
 import ru.timeconqueror.timecore.api.client.resource.GlobalResourceStorage;
 
@@ -15,7 +15,7 @@ import java.util.Collections;
 import java.util.Set;
 import java.util.function.Predicate;
 
-public class TimeSpecialResourcePack implements IResourcePack {
+public class TimeSpecialResourcePack implements PackResources {
     @NotNull
     @Override
     public InputStream getRootResource(@NotNull String fileName) {
@@ -24,8 +24,8 @@ public class TimeSpecialResourcePack implements IResourcePack {
 
     @NotNull
     @Override
-    public InputStream getResource(@NotNull ResourcePackType type, @NotNull ResourceLocation location) throws IOException {
-        if (type == ResourcePackType.CLIENT_RESOURCES) {
+    public InputStream getResource(@NotNull PackType type, @NotNull ResourceLocation location) throws IOException {
+        if (type == PackType.CLIENT_RESOURCES) {
             return GlobalResourceStorage.INSTANCE.getResource(location);
         } else {
             throw new UnsupportedOperationException("TimeCore ResourcePacks supports only client resources.");
@@ -33,8 +33,8 @@ public class TimeSpecialResourcePack implements IResourcePack {
     }
 
     @Override
-    public Collection<ResourceLocation> getResources(ResourcePackType type, String namespaceIn, String pathIn, int maxDepthIn, Predicate<String> filter) {
-        if (type == ResourcePackType.CLIENT_RESOURCES) {
+    public Collection<ResourceLocation> getResources(PackType type, String namespaceIn, String pathIn, int maxDepthIn, Predicate<String> filter) {
+        if (type == PackType.CLIENT_RESOURCES) {
             return GlobalResourceStorage.INSTANCE.getResources(namespaceIn, pathIn, filter);
         }
 
@@ -42,19 +42,19 @@ public class TimeSpecialResourcePack implements IResourcePack {
     }
 
     @Override
-    public boolean hasResource(@NotNull ResourcePackType type, @NotNull ResourceLocation location) {
-        return type == ResourcePackType.CLIENT_RESOURCES && GlobalResourceStorage.INSTANCE.hasResource(location);
+    public boolean hasResource(@NotNull PackType type, @NotNull ResourceLocation location) {
+        return type == PackType.CLIENT_RESOURCES && GlobalResourceStorage.INSTANCE.hasResource(location);
     }
 
     @NotNull
     @Override
-    public Set<String> getNamespaces(@NotNull ResourcePackType type) {
-        return type == ResourcePackType.CLIENT_RESOURCES ? GlobalResourceStorage.INSTANCE.getDomains() : Collections.emptySet();
+    public Set<String> getNamespaces(@NotNull PackType type) {
+        return type == PackType.CLIENT_RESOURCES ? GlobalResourceStorage.INSTANCE.getDomains() : Collections.emptySet();
     }
 
     @Nullable
     @Override
-    public <T> T getMetadataSection(@NotNull IMetadataSectionSerializer<T> deserializer) {
+    public <T> T getMetadataSection(@NotNull MetadataSectionSerializer<T> deserializer) {
         return null;
     }
 

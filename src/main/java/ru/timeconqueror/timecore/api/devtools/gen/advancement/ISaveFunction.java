@@ -1,7 +1,7 @@
 package ru.timeconqueror.timecore.api.devtools.gen.advancement;
 
 import net.minecraft.advancements.Advancement;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 
 @FunctionalInterface
 public interface ISaveFunction {

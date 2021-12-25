@@ -1,10 +1,10 @@
 package ru.timeconqueror.timecore.animation.util;
 
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.network.FriendlyByteBuf;
 import ru.timeconqueror.timecore.animation.watcher.AnimationWatcher;
 
 public interface WatcherSerializer<T extends AnimationWatcher> {
-	void serialize(T watcher, PacketBuffer buffer);
+    void serialize(T watcher, FriendlyByteBuf buffer);
 
-	T deserialize(PacketBuffer buffer);
+    T deserialize(FriendlyByteBuf buffer);
 }

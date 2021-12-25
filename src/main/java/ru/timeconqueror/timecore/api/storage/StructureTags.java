@@ -2,22 +2,22 @@ package ru.timeconqueror.timecore.api.storage;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
-import net.minecraft.world.gen.feature.structure.Structure;
+import net.minecraft.world.level.levelgen.feature.StructureFeature;
 
 import java.util.Collection;
 import java.util.EnumSet;
 
 public class StructureTags {
-    private static final Multimap<Tag, Structure<?>> TAGS = HashMultimap.create();
+    private static final Multimap<Tag, StructureFeature<?>> TAGS = HashMultimap.create();
 
     /**
      * Only for calling during loading stages.
      */
-    public static synchronized void put(Tag tag, Structure<?> structure) {
+    public static synchronized void put(Tag tag, StructureFeature<?> structure) {
         TAGS.put(tag, structure);
     }
 
-    public static synchronized void put(EnumSet<Tag> tags, Structure<?> structure) {
+    public static synchronized void put(EnumSet<Tag> tags, StructureFeature<?> structure) {
         for (Tag tag : tags) {
             TAGS.put(tag, structure);
         }
@@ -26,7 +26,7 @@ public class StructureTags {
     /**
      * Only for calling after loading is complete.
      */
-    public static Collection<Structure<?>> get(Tag tag) {
+    public static Collection<StructureFeature<?>> get(Tag tag) {
         return TAGS.get(tag);
     }
 

@@ -1,21 +1,22 @@
 package ru.timeconqueror.timecore.api.util.client;
 
-import com.mojang.blaze3d.vertex.IVertexBuilder;
+import com.mojang.blaze3d.vertex.DefaultVertexFormat;
+import com.mojang.blaze3d.vertex.Tesselator;
+import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.blaze3d.vertex.VertexFormat;
+import net.minecraft.client.GraphicsStatus;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.IRenderTypeBuffer;
-import net.minecraft.client.renderer.RenderState;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderStateShard;
+import net.minecraft.client.renderer.RenderStateShard.AlphaStateShard;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.client.renderer.vertex.VertexFormat;
-import net.minecraft.client.settings.GraphicsFanciness;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 import ru.timeconqueror.timecore.TimeCore;
 
 import java.util.function.Consumer;
 
 public class RenderHelper extends RenderType {
-    private static final Consumer<State.Builder> EMPTY_TUNER = builder -> {
+    private static final Consumer<CompositeState.CompositeStateBuilder> EMPTY_TUNER = builder -> {
     };
 
     /**
@@ -25,7 +26,7 @@ public class RenderHelper extends RenderType {
         return new RenderPipeline();
     }
 
-    public static Consumer<State.Builder> emptyTuner() {
+    public static Consumer<CompositeState.CompositeStateBuilder> emptyTuner() {
         return EMPTY_TUNER;
     }
 
@@ -36,7 +37,7 @@ public class RenderHelper extends RenderType {
      * @param texture texture location
      */
     public static RenderType rtTexturedRectangles(ResourceLocation texture) {
-        return RenderHelper.rtTexturedAlphaSupport(TimeCore.rl("textured_rectangles"), GLDrawMode.QUADS, DefaultVertexFormats.POSITION_TEX, texture, RenderHelper.emptyTuner());
+        return RenderHelper.rtTexturedAlphaSupport(TimeCore.rl("textured_rectangles"), GLDrawMode.QUADS, DefaultVertexFormat.POSITION_TEX, texture, RenderHelper.emptyTuner());
     }
 
     /**
@@ -48,8 +49,8 @@ public class RenderHelper extends RenderType {
      * @param texture      texture location
      * @param builderTuner tuner for applying extra settings
      */
-    public static RenderType rtTexturedAlphaSupport(ResourceLocation name, GLDrawMode mode, VertexFormat format, ResourceLocation texture, Consumer<State.Builder> builderTuner) {
-        Consumer<RenderType.State.Builder> alphaApplier = builder -> builder.setAlphaState(AlphaState.DEFAULT_ALPHA).setTransparencyState(RenderState.TRANSLUCENT_TRANSPARENCY);
+    public static RenderType rtTexturedAlphaSupport(ResourceLocation name, GLDrawMode mode, VertexFormat format, ResourceLocation texture, Consumer<CompositeState.CompositeStateBuilder> builderTuner) {
+        Consumer<CompositeState.CompositeStateBuilder> alphaApplier = builder -> builder.setAlphaState(AlphaStateShard.DEFAULT_ALPHA).setTransparencyState(RenderStateShard.TRANSLUCENT_TRANSPARENCY);
         return rtTextured(name, mode, format, texture, builderTuner.andThen(alphaApplier));
     }
 
@@ -62,8 +63,8 @@ public class RenderHelper extends RenderType {
      * @param texture      texture location
      * @param builderTuner tuner for applying extra settings
      */
-    public static RenderType rtTextured(ResourceLocation name, GLDrawMode mode, VertexFormat format, ResourceLocation texture, Consumer<State.Builder> builderTuner) {
-        Consumer<RenderType.State.Builder> textureApplier = builder -> builder.setTextureState(new TextureState(texture, false, false));
+    public static RenderType rtTextured(ResourceLocation name, GLDrawMode mode, VertexFormat format, ResourceLocation texture, Consumer<CompositeState.CompositeStateBuilder> builderTuner) {
+        Consumer<CompositeState.CompositeStateBuilder> textureApplier = builder -> builder.setTextureState(new TextureStateShard(texture, false, false));
         return rt(name, mode, format, builderTuner.andThen(textureApplier));
     }
 
@@ -75,8 +76,8 @@ public class RenderHelper extends RenderType {
      * @param format       draw format
      * @param builderTuner tuner for applying extra settings
      */
-    public static RenderType rt(ResourceLocation name, GLDrawMode mode, VertexFormat format, Consumer<RenderType.State.Builder> builderTuner) {
-        State.Builder builder = State.builder();
+    public static RenderType rt(ResourceLocation name, GLDrawMode mode, VertexFormat format, Consumer<CompositeState.CompositeStateBuilder> builderTuner) {
+        CompositeState.CompositeStateBuilder builder = CompositeState.builder();
         builderTuner.accept(builder);
 
         return RenderType.create(
@@ -91,22 +92,22 @@ public class RenderHelper extends RenderType {
     }
 
     public static boolean isFabulousModeEnabled() {
-        return Minecraft.getInstance().options.graphicsMode == GraphicsFanciness.FABULOUS;
+        return Minecraft.getInstance().options.graphicsMode == GraphicsStatus.FABULOUS;
     }
 
     public static class RenderPipeline {
-        private final IRenderTypeBuffer.Impl buffer;
+        private final MultiBufferSource.BufferSource buffer;
 
         private RenderPipeline() {
-            buffer = IRenderTypeBuffer.immediate(Tessellator.getInstance().getBuilder());
+            buffer = MultiBufferSource.immediate(Tesselator.getInstance().getBuilder());
         }
 
-        public void render(RenderType renderType, Consumer<IVertexBuilder> renderer) {
-            IVertexBuilder vertexBuilder = this.buffer.getBuffer(renderType);
+        public void render(RenderType renderType, Consumer<VertexConsumer> renderer) {
+            VertexConsumer vertexBuilder = this.buffer.getBuffer(renderType);
             renderer.accept(vertexBuilder);
         }
 
-        public void renderAndEnd(RenderType renderType, Consumer<IVertexBuilder> renderer) {
+        public void renderAndEnd(RenderType renderType, Consumer<VertexConsumer> renderer) {
             render(renderType, renderer);
             buffer.endBatch(renderType);
         }

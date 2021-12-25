@@ -1,12 +1,12 @@
 package ru.timeconqueror.timecore.api.util.client;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.vertex.IVertexBuilder;
-import net.minecraft.client.gui.FontRenderer;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.math.Matrix4f;
+import com.mojang.math.Vector3f;
+import net.minecraft.client.gui.Font;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.vector.Matrix4f;
-import net.minecraft.util.math.vector.Vector3f;
+import net.minecraft.world.phys.AABB;
 import org.lwjgl.opengl.GL11;
 import ru.timeconqueror.timecore.api.util.Requirements;
 
@@ -34,7 +34,7 @@ public class DrawHelper {
      * @param textureY         index of start subtexture part on axis Y (y of left-top texture corner).
      * @param texturePartCount in how many parts texture must be divided in both axis. Part description is mentioned above.
      */
-    public static void drawTexturedRectByParts(IVertexBuilder vertexBuilder, MatrixStack matrixStack, float x0, float y0, float width, float height, float zLevel, float textureX, float textureY, float texturePartCount) {
+    public static void drawTexturedRectByParts(VertexConsumer vertexBuilder, PoseStack matrixStack, float x0, float y0, float width, float height, float zLevel, float textureX, float textureY, float texturePartCount) {
         drawTexturedRectByParts(vertexBuilder, matrixStack, x0, y0, width, height, zLevel, textureX, textureY, width, height, texturePartCount);
     }
 
@@ -63,7 +63,7 @@ public class DrawHelper {
      * @param textureHeight    subtexture height in parts.
      * @param texturePartCount in how many parts texture must be divided in both axis. Part description is mentioned above.
      */
-    public static void drawTexturedRectByParts(IVertexBuilder vertexBuilder, MatrixStack matrixStack, float x0, float y0, float width, float height, float zLevel, float textureX, float textureY, float textureWidth, float textureHeight, float texturePartCount) {
+    public static void drawTexturedRectByParts(VertexConsumer vertexBuilder, PoseStack matrixStack, float x0, float y0, float width, float height, float zLevel, float textureX, float textureY, float textureWidth, float textureHeight, float texturePartCount) {
         float portionFactor = 1 / texturePartCount;
         drawTexturedRect(vertexBuilder, matrixStack, x0, y0, width, height, zLevel, textureX, textureY, textureWidth, textureHeight, portionFactor);
     }
@@ -93,7 +93,7 @@ public class DrawHelper {
      * @param textureHeight       subtexture height in parts.
      * @param textureDivideFactor represents the value equal to 1 / parts. Part count determines in how many parts texture must be divided in both axis. Part description is mentioned above.
      */
-    private static void drawTexturedRect(IVertexBuilder vertexBuilder, MatrixStack matrixStack, float x0, float y0, float width, float height, float zLevel, float textureX, float textureY, float textureWidth, float textureHeight, float textureDivideFactor) {
+    private static void drawTexturedRect(VertexConsumer vertexBuilder, PoseStack matrixStack, float x0, float y0, float width, float height, float zLevel, float textureX, float textureY, float textureWidth, float textureHeight, float textureDivideFactor) {
         Matrix4f pose = matrixStack.last().pose();
         vertexBuilder.vertex(pose, x0, y0, zLevel).uv(textureX * textureDivideFactor, textureY * textureDivideFactor).endVertex();
         vertexBuilder.vertex(pose, x0, y0 + height, zLevel).uv(textureX * textureDivideFactor, (textureY + textureHeight) * textureDivideFactor).endVertex();
@@ -125,7 +125,7 @@ public class DrawHelper {
      * @param texturePartCount in how many parts texture must be divided in both axis. Part description is mentioned above.
      * @param argbColor        color which will be applied to the texture
      */
-    public static void drawTexturedRectByParts(IVertexBuilder vertexBuilder, MatrixStack matrixStack, float x0, float y0, float width, float height, float zLevel, float textureX, float textureY, float texturePartCount, int argbColor) {
+    public static void drawTexturedRectByParts(VertexConsumer vertexBuilder, PoseStack matrixStack, float x0, float y0, float width, float height, float zLevel, float textureX, float textureY, float texturePartCount, int argbColor) {
         drawTexturedRectByParts(vertexBuilder, matrixStack, x0, y0, width, height, zLevel, textureX, textureY, width, height, texturePartCount, argbColor);
     }
 
@@ -155,7 +155,7 @@ public class DrawHelper {
      * @param texturePartCount in how many parts texture must be divided in both axis. Part description is mentioned above.
      * @param argbColor        color which will be applied to the texture
      */
-    public static void drawTexturedRectByParts(IVertexBuilder vertexBuilder, MatrixStack matrixStack, float x0, float y0, float width, float height, float zLevel, float textureX, float textureY, float textureWidth, float textureHeight, float texturePartCount, int argbColor) {
+    public static void drawTexturedRectByParts(VertexConsumer vertexBuilder, PoseStack matrixStack, float x0, float y0, float width, float height, float zLevel, float textureX, float textureY, float textureWidth, float textureHeight, float texturePartCount, int argbColor) {
         float portionFactor = 1 / texturePartCount;
         drawTexturedRect(vertexBuilder, matrixStack, x0, y0, width, height, zLevel, textureX, textureY, textureWidth, textureHeight, portionFactor, argbColor);
     }
@@ -186,7 +186,7 @@ public class DrawHelper {
      * @param textureDivideFactor represents the value equal to 1 / parts. Part count determines in how many parts texture must be divided in both axis. Part description is mentioned above.
      * @param argbColor           color which will be applied to the texture
      */
-    private static void drawTexturedRect(IVertexBuilder vertexBuilder, MatrixStack matrixStack, float x0, float y0, float width, float height, float zLevel, float textureX, float textureY, float textureWidth, float textureHeight, float textureDivideFactor, int argbColor) {
+    private static void drawTexturedRect(VertexConsumer vertexBuilder, PoseStack matrixStack, float x0, float y0, float width, float height, float zLevel, float textureX, float textureY, float textureWidth, float textureHeight, float textureDivideFactor, int argbColor) {
         Matrix4f pose = matrixStack.last().pose();
 
         int r = getRed(argbColor);
@@ -212,7 +212,7 @@ public class DrawHelper {
      * @param height Represents coordinate length along the axis Y.
      * @param zLevel z-coordinate.
      */
-    public static void drawTexturedRect(IVertexBuilder builder, MatrixStack matrixStack, float x0, float y0, float width, float height, float zLevel) {
+    public static void drawTexturedRect(VertexConsumer builder, PoseStack matrixStack, float x0, float y0, float width, float height, float zLevel) {
         Matrix4f pose = matrixStack.last().pose();
 
         builder.vertex(pose, x0, y0, zLevel).uv(0, 0).endVertex();
@@ -244,7 +244,7 @@ public class DrawHelper {
      * @param endElement       element, that represents right rectangle part.
      * @param texturePartCount in how many parts texture must be divided in both axis. Part description is mentioned above.
      */
-    public static void drawWidthExpandableTexturedRect(IVertexBuilder builder, MatrixStack matrixStack, float x0, float y0, float requiredWidth, float zLevel, TexturedRect startElement, TexturedRect repeatElement, TexturedRect endElement, float texturePartCount) {
+    public static void drawWidthExpandableTexturedRect(VertexConsumer builder, PoseStack matrixStack, float x0, float y0, float requiredWidth, float zLevel, TexturedRect startElement, TexturedRect repeatElement, TexturedRect endElement, float texturePartCount) {
         float startWidth = startElement.width;
         float endWidth = endElement.width;
         float minWidth = startWidth + endWidth;
@@ -363,7 +363,7 @@ public class DrawHelper {
      * @param y     start y-coordinate (top)
      * @param color HTML color. Example: 0xFF0000 -> red.
      */
-    public static void drawString(MatrixStack stack, FontRenderer fontRendererIn, String text, float x, float y, int color) {
+    public static void drawString(PoseStack stack, Font fontRendererIn, String text, float x, float y, int color) {
         fontRendererIn.draw(stack, text, x, y, color);
     }
 
@@ -375,7 +375,7 @@ public class DrawHelper {
      * @param y     start y-coordinate (top)
      * @param color HTML color. Example: 0xFF0000 -> red.
      */
-    public static void drawStringWithShadow(MatrixStack stack, FontRenderer fontRendererIn, String text, float x, float y, int color) {
+    public static void drawStringWithShadow(PoseStack stack, Font fontRendererIn, String text, float x, float y, int color) {
         fontRendererIn.drawShadow(stack, text, x, y, color);
     }
 
@@ -387,7 +387,7 @@ public class DrawHelper {
      * @param y     start y-coordinate (top)
      * @param color HTML color. Example: 0xFF0000 -> red.
      */
-    public static void drawXCenteredString(MatrixStack stack, FontRenderer fontRendererIn, String text, float x, float y, int color) {
+    public static void drawXCenteredString(PoseStack stack, Font fontRendererIn, String text, float x, float y, int color) {
         drawString(stack, fontRendererIn, text, x - fontRendererIn.width(text) / 2F, y, color);
     }
 
@@ -399,7 +399,7 @@ public class DrawHelper {
      * @param y     start y-coordinate (top)
      * @param color HTML color. Example: 0xFF0000 -> red.
      */
-    public static void drawXCenteredStringWithShadow(MatrixStack stack, FontRenderer fontRendererIn, String text, float x, float y, int color) {
+    public static void drawXCenteredStringWithShadow(PoseStack stack, Font fontRendererIn, String text, float x, float y, int color) {
         drawStringWithShadow(stack, fontRendererIn, text, x - fontRendererIn.width(text) / 2F, y, color);
     }
 
@@ -411,7 +411,7 @@ public class DrawHelper {
      * @param y     center y-coordinate
      * @param color HTML color. Example: 0xFF0000 -> red.
      */
-    public static void drawYCenteredString(MatrixStack stack, FontRenderer fontRendererIn, String text, float x, float y, int color) {
+    public static void drawYCenteredString(PoseStack stack, Font fontRendererIn, String text, float x, float y, int color) {
         drawString(stack, fontRendererIn, text, x, y - fontRendererIn.lineHeight / 2F, color);
     }
 
@@ -423,7 +423,7 @@ public class DrawHelper {
      * @param y     center y-coordinate
      * @param color HTML color. Example: 0xFF0000 -> red.
      */
-    public static void drawYCenteredStringWithShadow(MatrixStack stack, FontRenderer fontRendererIn, String text, float x, float y, int color) {
+    public static void drawYCenteredStringWithShadow(PoseStack stack, Font fontRendererIn, String text, float x, float y, int color) {
         drawStringWithShadow(stack, fontRendererIn, text, x, y - fontRendererIn.lineHeight / 2F, color);
     }
 
@@ -435,7 +435,7 @@ public class DrawHelper {
      * @param y     center y-coordinate
      * @param color HTML color. Example: 0xFF0000 -> red.
      */
-    public static void drawXYCenteredString(MatrixStack stack, FontRenderer fontRendererIn, String text, float x, float y, int color) {
+    public static void drawXYCenteredString(PoseStack stack, Font fontRendererIn, String text, float x, float y, int color) {
         drawString(stack, fontRendererIn, text, x - fontRendererIn.width(text) / 2F, y - fontRendererIn.lineHeight / 2F, color);
     }
 
@@ -447,7 +447,7 @@ public class DrawHelper {
      * @param y     center y-coordinate
      * @param color HTML color. Example: 0xFF0000 -> red.
      */
-    public static void drawXYCenteredStringWithShadow(MatrixStack stack, FontRenderer fontRendererIn, String text, float x, float y, int color) {
+    public static void drawXYCenteredStringWithShadow(PoseStack stack, Font fontRendererIn, String text, float x, float y, int color) {
         drawStringWithShadow(stack, fontRendererIn, text, x - fontRendererIn.width(text) / 2F, y - fontRendererIn.lineHeight / 2F, color);
     }
 
@@ -456,7 +456,7 @@ public class DrawHelper {
      * <p>
      * Provided builder should have {@link DefaultVertexFormats#POSITION_COLOR} mode and {@link GL11#GL_QUADS} render type.
      */
-    public static void drawFilledBoundingBox(MatrixStack matrixStack, IVertexBuilder builder, AxisAlignedBB bb, int argbColor) {
+    public static void drawFilledBoundingBox(PoseStack matrixStack, VertexConsumer builder, AABB bb, int argbColor) {
         float red = getRed(argbColor) / 255F;
         float green = getGreen(argbColor) / 255F;
         float blue = getBlue(argbColor) / 255F;
@@ -513,7 +513,7 @@ public class DrawHelper {
      * @param vec2    end vector
      * @param argb    color
      */
-    public static void drawLine(IVertexBuilder builder, MatrixStack stack, Vector3f vec1, Vector3f vec2, int argb) {
+    public static void drawLine(VertexConsumer builder, PoseStack stack, Vector3f vec1, Vector3f vec2, int argb) {
         drawLine(builder, stack, vec1.x(), vec1.y(), vec1.z(), vec2.x(), vec2.y(), vec2.z(), argb);
     }
 
@@ -532,7 +532,7 @@ public class DrawHelper {
      * @param z1      start z coord
      * @param argb    color
      */
-    public static void drawLine(IVertexBuilder builder, MatrixStack stack, float x0, float y0, float z0, float x1, float y1, float z1, int argb) {
+    public static void drawLine(VertexConsumer builder, PoseStack stack, float x0, float y0, float z0, float x1, float y1, float z1, int argb) {
         drawLine(builder, stack, x0, y0, z0, x1, y1, z1, getRed(argb), getGreen(argb), getBlue(argb), getAlpha(argb));
     }
 
@@ -554,7 +554,7 @@ public class DrawHelper {
      * @param b       blue channel color. Range: [0, 255]
      * @param a       alpha channel color. Range: [0, 255]
      */
-    public static void drawLine(IVertexBuilder builder, MatrixStack stack, float x0, float y0, float z0, float x1, float y1, float z1, int r, int g, int b, int a) {
+    public static void drawLine(VertexConsumer builder, PoseStack stack, float x0, float y0, float z0, float x1, float y1, float z1, int r, int g, int b, int a) {
         Matrix4f pose = stack.last().pose();
         builder.vertex(pose, x0, y0, z0).color(r, g, b, a).endVertex();
         builder.vertex(pose, x1, y1, z1).color(r, g, b, a).endVertex();

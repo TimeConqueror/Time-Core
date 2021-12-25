@@ -1,7 +1,7 @@
 package ru.timeconqueror.timecore.api.registry;
 
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.SoundEvent;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -59,7 +59,7 @@ import ru.timeconqueror.timecore.api.util.Hacks;
  * The inner class will be used for us as a registrator. It should be static, but can have any access modifier.
  * We still add {@link TimeRegister} there as stated above. (with AutoRegistrable annotation, etc.)]
  * <p>
- * One more thing: we should add is a <b>static</b> register method and annotate with {@link AutoRegistrable.InitMethod}. Method can have any access modifier.
+ * One more thing: we should add is a <b>static</b> register method and annotate with {@link InitMethod}. Method can have any access modifier.
  * There we will register all needed stuff, using {@link TimeRegister} field.
  * Method annotated with {@link InitMethod} can have zero parameters or one {@link FMLConstructModEvent} parameter.
  * It will be called before Registry events to prepare all the stuff.

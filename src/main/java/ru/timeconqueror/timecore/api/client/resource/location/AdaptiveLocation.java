@@ -1,6 +1,6 @@
 package ru.timeconqueror.timecore.api.client.resource.location;
 
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
 public abstract class AdaptiveLocation {

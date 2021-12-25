@@ -4,12 +4,13 @@ import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.tree.CommandNode;
 import com.mojang.brigadier.tree.RootCommandNode;
+import net.minecraft.client.ClientTelemetryManager;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.network.play.ClientPlayNetHandler;
-import net.minecraft.command.CommandSource;
-import net.minecraft.network.NetworkManager;
-import net.minecraft.network.play.server.SCommandListPacket;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.multiplayer.ClientPacketListener;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.network.Connection;
+import net.minecraft.network.protocol.game.ClientboundCommandsPacket;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -17,30 +18,30 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import ru.timeconqueror.timecore.client.command.ClientCommandManager;
 
-@Mixin(ClientPlayNetHandler.class)
+@Mixin(ClientPacketListener.class)
 public class ClientPlayNetHandlerMixin {
     @Shadow
-    private CommandDispatcher<CommandSource> commands;
+    private CommandDispatcher<CommandSourceStack> commands;
 
     @Inject(method = "<init>",
             at = @At(value = "RETURN"))
-    public void onInit(Minecraft mcIn, Screen p_i46300_2_, NetworkManager networkManagerIn, GameProfile profileIn, CallbackInfo ci) {
-        CommandDispatcher<CommandSource> clientDispatcher = ClientCommandManager.getClientDispatcher();
+    public void onInit(Minecraft mcIn, Screen screen, Connection networkManagerIn, GameProfile profileIn, ClientTelemetryManager telemetrySender_, CallbackInfo ci) {
+        CommandDispatcher<CommandSourceStack> clientDispatcher = ClientCommandManager.getClientDispatcher();
         fillWithClientCommands(clientDispatcher);
     }
 
     @Inject(method = "handleCommands",
             at = @At(value = "TAIL")
     )
-    public void handleCommands(SCommandListPacket packetIn, CallbackInfo ci) {
-        CommandDispatcher<CommandSource> clientDispatcher = ClientCommandManager.getClientDispatcher();
+    public void handleCommands(ClientboundCommandsPacket packetIn, CallbackInfo ci) {
+        CommandDispatcher<CommandSourceStack> clientDispatcher = ClientCommandManager.getClientDispatcher();
         fillWithClientCommands(clientDispatcher);
     }
 
-    private void fillWithClientCommands(CommandDispatcher<CommandSource> clientDispatcher) {
-        RootCommandNode<CommandSource> root = commands.getRoot();
+    private void fillWithClientCommands(CommandDispatcher<CommandSourceStack> clientDispatcher) {
+        RootCommandNode<CommandSourceStack> root = commands.getRoot();
 
-        for (CommandNode<CommandSource> child : clientDispatcher.getRoot().getChildren()) {
+        for (CommandNode<CommandSourceStack> child : clientDispatcher.getRoot().getChildren()) {
             root.addChild(child);
         }
     }

@@ -1,7 +1,7 @@
 package ru.timeconqueror.timecore.api.registry.util;
 
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemGroup;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.Item;
 
 import java.util.function.Consumer;
 
@@ -14,7 +14,7 @@ public class ItemPropsFactory {
     /**
      * @param group Item Group that will be applied for every properties object, created via {{@link #create()}}.
      */
-    public ItemPropsFactory(ItemGroup group) {
+    public ItemPropsFactory(CreativeModeTab group) {
         this(props -> props.tab(group));
     }
 
@@ -45,7 +45,7 @@ public class ItemPropsFactory {
     /**
      * @param group Item Group that will be applied for every properties object, created via {{@link #create()}}.
      */
-    public static ItemPropsFactory of(ItemGroup group) {
+    public static ItemPropsFactory of(CreativeModeTab group) {
         return new ItemPropsFactory(group);
     }
 }

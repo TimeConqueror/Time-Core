@@ -3,19 +3,19 @@ package ru.timeconqueror.timecore.api.registry;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.mojang.serialization.Codec;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.util.registry.WorldGenRegistries;
-import net.minecraft.world.World;
-import net.minecraft.world.gen.ChunkGenerator;
-import net.minecraft.world.gen.FlatChunkGenerator;
-import net.minecraft.world.gen.FlatGenerationSettings;
-import net.minecraft.world.gen.feature.IFeatureConfig;
-import net.minecraft.world.gen.feature.StructureFeature;
-import net.minecraft.world.gen.feature.structure.Structure;
-import net.minecraft.world.gen.settings.DimensionStructuresSettings;
-import net.minecraft.world.gen.settings.StructureSeparationSettings;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.core.Registry;
+import net.minecraft.data.BuiltinRegistries;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.chunk.ChunkGenerator;
+import net.minecraft.world.level.levelgen.FlatLevelSource;
+import net.minecraft.world.level.levelgen.StructureSettings;
+import net.minecraft.world.level.levelgen.feature.ConfiguredStructureFeature;
+import net.minecraft.world.level.levelgen.feature.StructureFeature;
+import net.minecraft.world.level.levelgen.feature.configurations.FeatureConfiguration;
+import net.minecraft.world.level.levelgen.feature.configurations.StructureFeatureConfiguration;
+import net.minecraft.world.level.levelgen.flat.FlatLevelGeneratorSettings;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.Lazy;
 import net.minecraftforge.event.world.BiomeLoadingEvent;
@@ -33,7 +33,7 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-public class StructureRegister extends ForgeRegister<Structure<?>> {
+public class StructureRegister extends ForgeRegister<StructureFeature<?>> {
     private final List<StructureInfo<?, ?>> structureInfoList = new ArrayList<>();
 
     public StructureRegister(String modid) {
@@ -54,7 +54,7 @@ public class StructureRegister extends ForgeRegister<Structure<?>> {
      * @return A {@link StructureRegisterChain} for adding some extra stuff.
      * @see StructureRegisterChain
      */
-    public <T extends IFeatureConfig, S extends Structure<T>> StructureRegisterChain<T, S> register(String name, Function<Codec<T>, S> structureSup, TimeStructureSeparationSettings separationSettings, Codec<T> configCodec, T featureConfig) {
+    public <T extends FeatureConfiguration, S extends StructureFeature<T>> StructureRegisterChain<T, S> register(String name, Function<Codec<T>, S> structureSup, TimeStructureSeparationSettings separationSettings, Codec<T> configCodec, T featureConfig) {
         RegistryObject<S> holder = this.registerEntry(name, () -> structureSup.apply(configCodec));
         return new StructureRegisterChain<>(holder, separationSettings.toVanilla(holder.getId()), featureConfig);
     }
@@ -73,7 +73,7 @@ public class StructureRegister extends ForgeRegister<Structure<?>> {
      * @return A {@link StructureRegisterChain} for adding some extra stuff.
      * @see StructureRegisterChain
      */
-    public <T extends IFeatureConfig, S extends Structure<T>> StructureRegisterChain<T, S> register(String name, Function<Codec<T>, S> structureSup, StructureSeparationSettings separationSettings, Codec<T> configCodec, T featureConfig) {
+    public <T extends FeatureConfiguration, S extends StructureFeature<T>> StructureRegisterChain<T, S> register(String name, Function<Codec<T>, S> structureSup, StructureFeatureConfiguration separationSettings, Codec<T> configCodec, T featureConfig) {
         RegistryObject<S> holder = this.registerEntry(name, () -> structureSup.apply(configCodec));
         return new StructureRegisterChain<>(holder, separationSettings, featureConfig);
     }
@@ -93,24 +93,24 @@ public class StructureRegister extends ForgeRegister<Structure<?>> {
 
         event.enqueueWork(() -> {
             catchErrors("common setup event", () -> {
-                ImmutableList.Builder<Structure<?>> noiseAffectedFeatures = ImmutableList.builder();
+                ImmutableList.Builder<StructureFeature<?>> noiseAffectedFeatures = ImmutableList.builder();
 
 
                 structureInfoList.forEach(info -> {
-                    Structure<?> structure = info.structure();
+                    StructureFeature<?> structure = info.structure();
 
                     /*
                      * We need to add our structures into the map in Structure alongside vanilla
                      * structures or else it will cause errors. Called by registerStructure.
                      */
-                    Structure.STRUCTURES_REGISTRY.put(structure.getRegistryName().toString(), structure);
+                    StructureFeature.STRUCTURES_REGISTRY.put(structure.getRegistryName().toString(), structure);
 
                     if (info.props().transformSurroundingLand) {
                         noiseAffectedFeatures.add(structure);
                     }
                 });
 
-                Structure.NOISE_AFFECTING_FEATURES = noiseAffectedFeatures.addAll(Structure.NOISE_AFFECTING_FEATURES).build();
+                StructureFeature.NOISE_AFFECTING_FEATURES = noiseAffectedFeatures.addAll(StructureFeature.NOISE_AFFECTING_FEATURES).build();
 
                 /*
                  * Adds the structure's spacing into several places so that the structure's spacing remains
@@ -120,16 +120,16 @@ public class StructureRegister extends ForgeRegister<Structure<?>> {
                  * this list beforehand. Use the WorldEvent.Load event in StructureTutorialMain to add
                  * the structure spacing from this list into that dimension.
                  */
-                DimensionStructuresSettings.DEFAULTS =
-                        ImmutableMap.<Structure<?>, StructureSeparationSettings>builder()
-                                .putAll(DimensionStructuresSettings.DEFAULTS)
+                StructureSettings.DEFAULTS =
+                        ImmutableMap.<StructureFeature<?>, StructureFeatureConfiguration>builder()
+                                .putAll(StructureSettings.DEFAULTS)
                                 .putAll(structureInfoList.stream()
-                                        .collect(Collectors.<StructureInfo<?, ?>, Structure<?>, StructureSeparationSettings>
+                                        .collect(Collectors.<StructureInfo<?, ?>, StructureFeature<?>, StructureFeatureConfiguration>
                                                 toMap(StructureInfo::structure, structureInfo -> structureInfo.separationSettings
                                         )))
                                 .build();
 
-                Registry<StructureFeature<?, ?>> registry = WorldGenRegistries.CONFIGURED_STRUCTURE_FEATURE;
+                Registry<ConfiguredStructureFeature<?, ?>> registry = BuiltinRegistries.CONFIGURED_STRUCTURE_FEATURE;
 
                 structureInfoList.forEach(structureInfo -> {
                     structureInfo.setFeatureReadyToLoad();
@@ -147,7 +147,7 @@ public class StructureRegister extends ForgeRegister<Structure<?>> {
                     // in StructureTutorialMain.addDimensionalSpacing and then create a superflat world, exit it,
                     // and re-enter it and your structures will be spawning. I could not figure out why it needs
                     // the restart but honestly, superflat is really buggy and shouldn't be your main focus in my opinion.
-                    FlatGenerationSettings.STRUCTURE_FEATURES.put(structureInfo.structure(), structureInfo.getFeature());
+                    FlatLevelGeneratorSettings.STRUCTURE_FEATURES.put(structureInfo.structure(), structureInfo.getFeature());
 
                     structureInfo.tags.transferAndRemove(tags -> StructureTags.put(tags, structureInfo.structure()));
                 });
@@ -182,25 +182,25 @@ public class StructureRegister extends ForgeRegister<Structure<?>> {
      */
     private void onWorldLoad(WorldEvent.Load event) {
         if (!event.getWorld().isClientSide()) {
-            ServerWorld serverWorld = (ServerWorld) event.getWorld();
+            ServerLevel serverWorld = (ServerLevel) event.getWorld();
 
             ChunkGenerator generator = serverWorld.getChunkSource().getGenerator();
 
             // Prevent spawning our structure in Vanilla's superflat world as
             // people seem to want their superflat worlds free of modded structures.
             // Also that vanilla superflat is really tricky and buggy to work with in my experience.
-            if (generator instanceof FlatChunkGenerator &&
-                    serverWorld.dimension().equals(World.OVERWORLD)) {
+            if (generator instanceof FlatLevelSource &&
+                    serverWorld.dimension().equals(Level.OVERWORLD)) {
                 return;
             }
 
-            DimensionStructuresSettings settings = generator.getSettings();
+            StructureSettings settings = generator.getSettings();
 
-            Map<Structure<?>, StructureSeparationSettings> tempMap = new HashMap<>(settings.structureConfig());
+            Map<StructureFeature<?>, StructureFeatureConfiguration> tempMap = new HashMap<>(settings.structureConfig());
 
             structureInfoList.forEach(structureInfo -> {
                 if (structureInfo.props().dimensionPredicate.test(serverWorld)) {
-                    tempMap.put(structureInfo.structure(), DimensionStructuresSettings.DEFAULTS.get(structureInfo.structure()));
+                    tempMap.put(structureInfo.structure(), StructureSettings.DEFAULTS.get(structureInfo.structure()));
                 }
             });
 
@@ -208,14 +208,14 @@ public class StructureRegister extends ForgeRegister<Structure<?>> {
         }
     }
 
-    public class StructureRegisterChain<T extends IFeatureConfig, S extends Structure<T>> extends RegisterChain<S> {
+    public class StructureRegisterChain<T extends FeatureConfiguration, S extends StructureFeature<T>> extends RegisterChain<S> {
         private final StructureHolder<T, S> holder;
         private final StructureInfo<T, S> info;
 
-        protected StructureRegisterChain(RegistryObject<S> regObj, StructureSeparationSettings separationSettings, T featureConfig) {
+        protected StructureRegisterChain(RegistryObject<S> regObj, StructureFeatureConfiguration separationSettings, T featureConfig) {
             super(regObj);
 
-            this.info = new StructureInfo<>(regObj, separationSettings, s -> new StructureFeature<>(s, featureConfig));
+            this.info = new StructureInfo<>(regObj, separationSettings, s -> new ConfiguredStructureFeature<>(s, featureConfig));
             this.holder = new StructureHolder<>(regObj, info::getFeature);
 
             structureInfoList.add(info);
@@ -234,7 +234,7 @@ public class StructureRegister extends ForgeRegister<Structure<?>> {
          * Controls, if feature can be generated in provided world.
          * By default it will be registered for all dimensions.
          */
-        public StructureRegisterChain<T, S> setDimensionPredicate(Predicate<ServerWorld> worldPredicate) {
+        public StructureRegisterChain<T, S> setDimensionPredicate(Predicate<ServerLevel> worldPredicate) {
             this.info.props().dimensionPredicate = worldPredicate;
             return this;
         }
@@ -290,16 +290,16 @@ public class StructureRegister extends ForgeRegister<Structure<?>> {
             return new TimeStructureSeparationSettings(spacing, separation);
         }
 
-        private StructureSeparationSettings toVanilla(ResourceLocation structureName) {
-            return new StructureSeparationSettings(spacing, separation, structureName.hashCode());
+        private StructureFeatureConfiguration toVanilla(ResourceLocation structureName) {
+            return new StructureFeatureConfiguration(spacing, separation, structureName.hashCode());
         }
     }
 
-    public static class StructureHolder<T extends IFeatureConfig, S extends Structure<T>> {
+    public static class StructureHolder<T extends FeatureConfiguration, S extends StructureFeature<T>> {
         private final RegistryObject<S> registryObject;
-        private final Supplier<StructureFeature<T, S>> structureFeature;
+        private final Supplier<ConfiguredStructureFeature<T, S>> structureFeature;
 
-        public StructureHolder(RegistryObject<S> registryObject, Supplier<StructureFeature<T, S>> structureFeature) {
+        public StructureHolder(RegistryObject<S> registryObject, Supplier<ConfiguredStructureFeature<T, S>> structureFeature) {
             this.registryObject = registryObject;
             this.structureFeature = structureFeature;
         }
@@ -312,20 +312,20 @@ public class StructureRegister extends ForgeRegister<Structure<?>> {
             return registryObject.get();
         }
 
-        public StructureFeature<T, S> getFeature() {
+        public ConfiguredStructureFeature<T, S> getFeature() {
             return structureFeature.get();
         }
     }
 
-    public static class StructureInfo<T extends IFeatureConfig, S extends Structure<T>> {
+    public static class StructureInfo<T extends FeatureConfiguration, S extends StructureFeature<T>> {
         private final RegistryObject<S> registryObject;
         private final Properties properties = new Properties();
-        private final Lazy<StructureFeature<T, S>> feature;
+        private final Lazy<ConfiguredStructureFeature<T, S>> feature;
         private boolean featureReadyToLoad;
-        private final StructureSeparationSettings separationSettings;
+        private final StructureFeatureConfiguration separationSettings;
         private final Temporal<EnumSet<StructureTags.Tag>> tags = Temporal.of(EnumSet.noneOf(StructureTags.Tag.class));
 
-        public StructureInfo(RegistryObject<S> registryObject, StructureSeparationSettings separationSettings, Function<S, StructureFeature<T, S>> structureFeatureFactory) {
+        public StructureInfo(RegistryObject<S> registryObject, StructureFeatureConfiguration separationSettings, Function<S, ConfiguredStructureFeature<T, S>> structureFeatureFactory) {
             this.registryObject = registryObject;
             this.separationSettings = separationSettings;
             this.feature = () -> structureFeatureFactory.apply(registryObject.get());
@@ -347,7 +347,7 @@ public class StructureRegister extends ForgeRegister<Structure<?>> {
             this.featureReadyToLoad = true;
         }
 
-        public StructureFeature<T, S> getFeature() {
+        public ConfiguredStructureFeature<T, S> getFeature() {
             if (!featureReadyToLoad) throw new IllegalStateException("Structure Feature hasn't been loaded yet");
             return feature.get();
         }
@@ -361,6 +361,6 @@ public class StructureRegister extends ForgeRegister<Structure<?>> {
         private boolean transformSurroundingLand;
 
         private Predicate<BiomeLoadingEvent> biomePredicate = event -> true;
-        private Predicate<ServerWorld> dimensionPredicate = event -> true;
+        private Predicate<ServerLevel> dimensionPredicate = event -> true;
     }
 }

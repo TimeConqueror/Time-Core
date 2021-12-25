@@ -4,9 +4,9 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.data.DataGenerator;
-import net.minecraft.data.DirectoryCache;
-import net.minecraft.data.IDataProvider;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.data.DataProvider;
+import net.minecraft.data.HashCache;
+import net.minecraft.resources.ResourceLocation;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import ru.timeconqueror.timecore.mixins.accessor.UnlockedAdvancementProvider;
@@ -18,7 +18,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class TimeAdvancementGenerator implements IDataProvider {
+public class TimeAdvancementGenerator implements DataProvider {
     private static final Logger LOGGER = LogManager.getLogger();
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     private final DataGenerator generator;
@@ -28,7 +28,7 @@ public class TimeAdvancementGenerator implements IDataProvider {
         this.generator = generatorIn;
     }
 
-    public void run(DirectoryCache cache) {
+    public void run(HashCache cache) {
         Path outputFolder = this.generator.getOutputFolder();
 
         Set<ResourceLocation> set = new HashSet<>();
@@ -41,7 +41,7 @@ public class TimeAdvancementGenerator implements IDataProvider {
                 Path savePath = UnlockedAdvancementProvider.createPath(outputFolder, advancement);
 
                 try {
-                    IDataProvider.save(GSON, cache, advancement.deconstruct().serializeToJson(), savePath);
+                    DataProvider.save(GSON, cache, advancement.deconstruct().serializeToJson(), savePath);
                 } catch (IOException ioexception) {
                     LOGGER.error("Couldn't save advancement {}", savePath, ioexception);
                 }

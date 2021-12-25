@@ -1,6 +1,6 @@
 package ru.timeconqueror.timecore.animation.action;
 
-import net.minecraft.entity.Entity;
+import net.minecraft.world.entity.Entity;
 import ru.timeconqueror.timecore.animation.BaseAnimationManager;
 import ru.timeconqueror.timecore.animation.PredefinedAnimation;
 import ru.timeconqueror.timecore.animation.builders.PredefinedAnimations;

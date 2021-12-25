@@ -1,6 +1,6 @@
 package ru.timeconqueror.timecore.api.util;
 
-import net.minecraft.util.Direction;
+import net.minecraft.core.Direction;
 
 public enum HorizontalDirection {
     NORTH(Direction.NORTH),

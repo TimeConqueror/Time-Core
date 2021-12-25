@@ -1,8 +1,8 @@
 package ru.timeconqueror.timecore.mod.common.packet.animation;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.network.PacketBuffer;
-import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.entity.Entity;
+import net.minecraftforge.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
 import ru.timeconqueror.timecore.TimeCore;
 import ru.timeconqueror.timecore.animation.BaseAnimationManager;
@@ -34,14 +34,14 @@ public class S2CSyncAnimationsMsg {
 	public static class Handler implements ITimePacketHandler<S2CSyncAnimationsMsg> {
 
 		@Override
-		public void encode(S2CSyncAnimationsMsg packet, PacketBuffer buffer) {
+		public void encode(S2CSyncAnimationsMsg packet, FriendlyByteBuf buffer) {
 			buffer.writeInt(packet.entityId);
 			AnimationSerializer.serializeWatchers(packet.serverAnimationManager, buffer);
 		}
 
 		@NotNull
 		@Override
-		public S2CSyncAnimationsMsg decode(PacketBuffer buffer) {
+		public S2CSyncAnimationsMsg decode(FriendlyByteBuf buffer) {
 			int entityId = buffer.readInt();
 			Map<String, AnimationWatcher> layerMap = AnimationSerializer.deserializeWatchers(buffer);
 

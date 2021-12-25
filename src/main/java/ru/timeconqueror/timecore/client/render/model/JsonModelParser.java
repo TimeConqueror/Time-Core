@@ -5,16 +5,17 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
+import com.mojang.math.Vector3f;
 import net.minecraft.client.Minecraft;
-import net.minecraft.resources.IResource;
-import net.minecraft.util.JSONUtils;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.vector.Vector2f;
-import net.minecraft.util.math.vector.Vector3f;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.resources.Resource;
+import net.minecraft.util.GsonHelper;
+import net.minecraft.world.phys.Vec2;
 import org.jetbrains.annotations.NotNull;
 import ru.timeconqueror.timecore.api.util.CollectionUtils;
 import ru.timeconqueror.timecore.api.util.JsonUtils;
 import ru.timeconqueror.timecore.client.render.JsonParsingException;
+import ru.timeconqueror.timecore.mixins.accessor.client.ModelPartAccessor;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -25,10 +26,10 @@ public class JsonModelParser {
     private static final String[] ACCEPTABLE_FORMAT_VERSIONS = new String[]{"1.12.0"};
 
     public List<TimeModelFactory> parseJsonModel(@NotNull ResourceLocation fileLocation) throws JsonParsingException {
-        try (final IResource resource = Minecraft.getInstance().getResourceManager().getResource(fileLocation)) {
+        try (final Resource resource = Minecraft.getInstance().getResourceManager().getResource(fileLocation)) {
             BufferedReader reader = new BufferedReader(new InputStreamReader(resource.getInputStream()));
 
-            JsonObject json = JSONUtils.parse(reader, true);
+            JsonObject json = GsonHelper.parse(reader, true);
             return parseJsonModel(json);
 
         } catch (Throwable e) {
@@ -40,10 +41,10 @@ public class JsonModelParser {
         List<TimeModelFactory> modelFactories = new ArrayList<>();
         for (Map.Entry<String, JsonElement> entry : object.entrySet()) {
             if (entry.getKey().equals("format_version")) {
-                String formatVersion = JSONUtils.convertToString(entry.getValue(), entry.getKey());
+                String formatVersion = GsonHelper.convertToString(entry.getValue(), entry.getKey());
                 checkFormatVersion(formatVersion);
             } else {
-                TimeModelFactory modelFactory = parseSubModel(entry.getKey(), JSONUtils.convertToJsonArray(entry.getValue(), entry.getKey()));
+                TimeModelFactory modelFactory = parseSubModel(entry.getKey(), GsonHelper.convertToJsonArray(entry.getValue(), entry.getKey()));
                 modelFactories.add(modelFactory);
             }
         }
@@ -52,16 +53,16 @@ public class JsonModelParser {
     }
 
     private TimeModelFactory parseSubModel(String name, JsonArray subModelArr) {
-        JsonObject subModel = JSONUtils.convertToJsonObject(subModelArr.get(0), "member of " + name + "");
-        JsonArray bones = JSONUtils.getAsJsonArray(subModel, "bones");
+        JsonObject subModel = GsonHelper.convertToJsonObject(subModelArr.get(0), "member of " + name + "");
+        JsonArray bones = GsonHelper.getAsJsonArray(subModel, "bones");
 
-        JsonObject description = JSONUtils.getAsJsonObject(subModel, "description");
-        int textureWidth = JSONUtils.getAsInt(description, "texture_width");
-        int textureHeight = JSONUtils.getAsInt(description, "texture_height");
+        JsonObject description = GsonHelper.getAsJsonObject(subModel, "description");
+        int textureWidth = GsonHelper.getAsInt(description, "texture_width");
+        int textureHeight = GsonHelper.getAsInt(description, "texture_height");
 
         HashMap<String, RawModelBone> pieces = new HashMap<>();
         for (JsonElement bone : bones) {
-            RawModelBone piece = parseBone(JSONUtils.convertToJsonObject(bone, "member of 'bones'"));
+            RawModelBone piece = parseBone(GsonHelper.convertToJsonObject(bone, "member of 'bones'"));
             pieces.put(piece.name, piece);
         }
 
@@ -96,28 +97,28 @@ public class JsonModelParser {
     private RawModelBone parseBone(JsonObject bone) {
         Vector3f pivot = JsonUtils.getAsVec3f(bone, "pivot");
         Vector3f rotationAngles = JsonUtils.getAsVec3f(bone, "rotation", new Vector3f(0, 0, 0));
-        boolean mirror = JSONUtils.getAsBoolean(bone, "mirror", false);
-        boolean neverRender = JSONUtils.getAsBoolean(bone, "neverrender", false);
-        float inflate = JSONUtils.getAsFloat(bone, "inflate", 0F);
-        String name = JSONUtils.getAsString(bone, "name");
-        String parentName = JSONUtils.getAsString(bone, "parent", null);
+        boolean mirror = GsonHelper.getAsBoolean(bone, "mirror", false);
+        boolean neverRender = GsonHelper.getAsBoolean(bone, "neverrender", false);
+        float inflate = GsonHelper.getAsFloat(bone, "inflate", 0F);
+        String name = GsonHelper.getAsString(bone, "name");
+        String parentName = GsonHelper.getAsString(bone, "parent", null);
 
         List<RawModelBone> extraBones = new ArrayList<>();
 
         List<RawModelCube> cubes = new ArrayList<>();
         if (bone.has("cubes")) {
-            for (JsonElement cube : JSONUtils.getAsJsonArray(bone, "cubes")) {
-                JsonObject cubeObject = JSONUtils.convertToJsonObject(cube, "member of 'cubes'");
+            for (JsonElement cube : GsonHelper.getAsJsonArray(bone, "cubes")) {
+                JsonObject cubeObject = GsonHelper.convertToJsonObject(cube, "member of 'cubes'");
                 Vector3f origin = JsonUtils.getAsVec3f(cubeObject, "origin");
                 Vector3f size = JsonUtils.getAsVec3f(cubeObject, "size");
-                Vector2f uv = JsonUtils.getAsVec2f(cubeObject, "uv");
+                Vec2 uv = JsonUtils.getAsVec2f(cubeObject, "uv");
 
                 if (cubeObject.has("rotation") || cubeObject.has("inflate") || cubeObject.has("mirror")) {
                     Vector3f rotation = JsonUtils.getAsVec3f(cubeObject, "rotation", new Vector3f(0, 0, 0));
                     Vector3f innerPivot = JsonUtils.getAsVec3f(cubeObject, "pivot", new Vector3f(0, 0, 0));
-                    boolean innerMirror = JSONUtils.getAsBoolean(cubeObject, "mirror", false);
+                    boolean innerMirror = GsonHelper.getAsBoolean(cubeObject, "mirror", false);
 
-                    float cubeInflate = JSONUtils.getAsFloat(cubeObject, "inflate", 0F);
+                    float cubeInflate = GsonHelper.getAsFloat(cubeObject, "inflate", 0F);
                     extraBones.add(new RawModelBone(Lists.newArrayList(new RawModelCube(origin, size, uv)), innerPivot, rotation, innerMirror, false, cubeInflate, "cube_wrapper_" + extraBones.size(), name));
                 } else {
                     cubes.add(new RawModelCube(origin, size, uv));
@@ -176,7 +177,7 @@ public class JsonModelParser {
 
             if (children != null) {
                 for (RawModelBone child : children) {
-                    renderer.children.add(child.bake(model, this));
+                    ((ModelPartAccessor) renderer).getChildren().add(child.bake(model, this));//FIXME PORT (add require or some check param for class strictly mixined)
                 }
             }
 
@@ -187,9 +188,9 @@ public class JsonModelParser {
     public static class RawModelCube {
         private final Vector3f origin;
         private final Vector3f size;
-        private final Vector2f uv;
+        private final Vec2 uv;
 
-        private RawModelCube(Vector3f origin, Vector3f size, Vector2f uv) {
+        private RawModelCube(Vector3f origin, Vector3f size, Vec2 uv) {
             this.origin = origin;
             this.size = size;
             this.uv = uv;

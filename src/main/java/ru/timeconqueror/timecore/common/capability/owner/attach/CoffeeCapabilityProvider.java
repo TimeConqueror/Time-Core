@@ -1,8 +1,8 @@
 package ru.timeconqueror.timecore.common.capability.owner.attach;
 
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.INBT;
-import net.minecraft.util.Direction;
+import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.INBTSerializable;
@@ -14,7 +14,7 @@ import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 
-public class CoffeeCapabilityProvider<T> implements ICapabilityProvider, INBTSerializable<CompoundNBT> {
+public class CoffeeCapabilityProvider<T> implements ICapabilityProvider, INBTSerializable<CompoundTag> {
 
     private final T target;
     private final HashMap<String, CoffeeCapabilityGetter<T, ?>> getters = new HashMap<>();
@@ -45,14 +45,14 @@ public class CoffeeCapabilityProvider<T> implements ICapabilityProvider, INBTSer
     }
 
     @Override
-    public CompoundNBT serializeNBT() {
-        CompoundNBT root = new CompoundNBT();
+    public CompoundTag serializeNBT() {
+        CompoundTag root = new CompoundTag();
 
         for (Map.Entry<String, CoffeeCapabilityGetter<T, ?>> entry : getters.entrySet()) {
             Object cap = entry.getValue().getCapability(target, null);
 
             if (cap instanceof INBTSerializable) {
-                root.put(entry.getKey(), ((INBTSerializable<INBT>) cap).serializeNBT());
+                root.put(entry.getKey(), ((INBTSerializable<Tag>) cap).serializeNBT());
             }
         }
 
@@ -60,13 +60,13 @@ public class CoffeeCapabilityProvider<T> implements ICapabilityProvider, INBTSer
     }
 
     @Override
-    public void deserializeNBT(CompoundNBT nbt) {
+    public void deserializeNBT(CompoundTag nbt) {
         for (Map.Entry<String, CoffeeCapabilityGetter<T, ?>> entry : getters.entrySet()) {
             Object cap = entry.getValue().getCapability(target, null);
 
             if (cap instanceof INBTSerializable && nbt.contains(entry.getKey())) {
-                CompoundNBT comp = nbt.getCompound(entry.getKey());
-                ((INBTSerializable<INBT>) cap).deserializeNBT(comp);
+                CompoundTag comp = nbt.getCompound(entry.getKey());
+                ((INBTSerializable<Tag>) cap).deserializeNBT(comp);
             }
         }
     }
