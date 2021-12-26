@@ -1,8 +1,5 @@
 # TimeCore
 
-<br>
-&#x1F534; <span>Requires MixinBootstrap as a dependency</span>
-
 ## Provided features (1.15.2+):
 * JSON-Based Entity Animations - Easy-to-use system that allows you to play complex entity animations, which are parsed from JSON. More info here: (click)
 * JSON Models for Entities - Allows you to use Bedrock JSON Entity Models in Minecraft Java Edition! You can use Blockbench for creating them.
