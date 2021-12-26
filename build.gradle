@@ -235,8 +235,6 @@ processResources {
 
 def inProjectMaven = "${project.projectDir.absolutePath.replace("\\", "/")}/maven"
 
-def mavenLinkRepsy = "https://repo.repsy.io/mvn/${secretProps.repsy.user}/${secretProps.repsy.repo_name}"
-
 publishing {
     publications {
         mavenJava(MavenPublication) { p ->
@@ -264,7 +262,7 @@ publishing {
         }
         if (secretProps != null) {
             maven {
-                url mavenLinkRepsy
+                url "https://repo.repsy.io/mvn/${secretProps.repsy.user}/${secretProps.repsy.repo_name}"
                 credentials {
                     username secretProps.repsy.user
                     password secretProps.repsy.password

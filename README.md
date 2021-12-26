@@ -83,3 +83,18 @@ dependencies {
     implementation 'org.jetbrains.kotlin:kotlin-reflect'
 }
 ```
+
+## Contribution
+
+As per the Github Terms of Service, you grant us the right to use your contribution under the same license as this
+project.
+
+In addition, we request that you give us the right to change the license in the future.
+
+TimeCore uses a specialized mapping set which adds the readable parameter names to the functions.
+See [Mappificator Project](https://github.com/alcatrazEscapee/Mappificator) in order to install that. You need to
+generate the mappings, using the command below, while you are in the root folder of that project.
+
+```
+py src/mappificator.py -p -v 1 --mc-version 1.18.1 --providers yarn parchment --yarn-version 12 --parchment-version 2021.12.19-1.18.1
+```
