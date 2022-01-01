@@ -22,7 +22,7 @@ public class BlockRegistryExample {
     public static final Block TEST_SAND = promise();
     public static final Block TEST_DIRT = promise();
     public static final Block TEST_EMERALD_ORE = promise();
-    public static final ClipContext.Block TEST_BLOCK_WITH_TILE = promise();
+    public static final Block TEST_BLOCK_WITH_TILE = promise();
 
     private static class Init {
         @AutoRegistrable
