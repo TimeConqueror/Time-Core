@@ -1,9 +1,9 @@
 package ru.timeconqueror.timecore.block.tile;
 
-import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import ru.timeconqueror.timecore.registry_example.deferred.TileEntityDeferredRegistryExample;
 
-public class DummyTileEntity extends TileEntity {
+public class DummyTileEntity extends BlockEntity {
     public DummyTileEntity() {
         super(TileEntityDeferredRegistryExample.TEST_TE_TYPE.get());
 

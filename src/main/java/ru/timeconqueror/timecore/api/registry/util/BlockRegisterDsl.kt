@@ -1,7 +1,7 @@
 package ru.timeconqueror.timecore.api.registry.util
 
-import net.minecraft.block.Block
-import net.minecraftforge.fml.RegistryObject
+import net.minecraft.world.level.block.Block
+import net.minecraftforge.registries.RegistryObject
 import ru.timeconqueror.timecore.api.client.resource.BlockStateResource
 import ru.timeconqueror.timecore.api.client.resource.location.BlockModelLocation
 import ru.timeconqueror.timecore.api.client.resource.location.TextureLocation

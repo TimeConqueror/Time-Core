@@ -1,9 +1,9 @@
 package ru.timeconqueror.timecore.registry_example;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.item.ItemGroup;
+import net.minecraft.world.level.ClipContext;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.material.Material;
 import net.minecraftforge.registries.ObjectHolder;
 import ru.timeconqueror.timecore.TimeCore;
 import ru.timeconqueror.timecore.api.client.resource.BlockModels;
@@ -22,7 +22,7 @@ public class BlockRegistryExample {
     public static final Block TEST_SAND = promise();
     public static final Block TEST_DIRT = promise();
     public static final Block TEST_EMERALD_ORE = promise();
-    public static final Block TEST_BLOCK_WITH_TILE = promise();
+    public static final ClipContext.Block TEST_BLOCK_WITH_TILE = promise();
 
     private static class Init {
         @AutoRegistrable
