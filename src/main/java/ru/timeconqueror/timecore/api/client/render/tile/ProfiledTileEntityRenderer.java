@@ -3,8 +3,8 @@ package ru.timeconqueror.timecore.api.client.render.tile;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
+import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.api.distmarker.Dist;
@@ -16,10 +16,10 @@ import java.util.function.Function;
 public class ProfiledTileEntityRenderer<T extends BlockEntity> implements BlockEntityRenderer<T> {
     private final BlockEntityRenderer<? super T> delegate;
 
-    public ProfiledTileEntityRenderer(BlockEntityRenderDispatcher rendererDispatcherIn, Function<? super BlockEntityRenderDispatcher, BlockEntityRenderer<? super T>> delegateProvider) {
+    public ProfiledTileEntityRenderer(BlockEntityRendererProvider.Context ctx, Function<? super BlockEntityRendererProvider.Context, BlockEntityRenderer<? super T>> delegateProvider) {
         super();
 
-        delegate = delegateProvider.apply(rendererDispatcherIn);
+        delegate = delegateProvider.apply(ctx);
     }
 
     @Override

@@ -9,7 +9,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.lifecycle.GatherDataEvent;
+import net.minecraftforge.forge.event.lifecycle.GatherDataEvent;
 import ru.timeconqueror.timecore.api.util.EnvironmentUtils;
 import ru.timeconqueror.timecore.mixins.accessor.GatherDataEventAccessor;
 import ru.timeconqueror.timecore.storage.Storage;

@@ -1,6 +1,6 @@
 package ru.timeconqueror.timecore.api.common.tile;
 
-import net.minecraft.client.Minecraft;
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
@@ -19,12 +19,12 @@ import java.util.Objects;
  * and what should be only used for saving.
  */
 public abstract class SyncableTile extends SimpleTile {
-    public SyncableTile(BlockEntityType<?> tileEntityTypeIn) {
-        super(tileEntityTypeIn);
+    public SyncableTile(BlockEntityType<?> tileEntityTypeIn, BlockPos pos, BlockState state) {
+        super(tileEntityTypeIn, pos, state);
     }
 
     /**
-     * For saving/sending data use {@link #writeNBT(CompoundNBT, SerializationType)}
+     * For saving/sending data use {@link #writeNBT(CompoundTag, SerializationType)}
      */
     @NotNull
     @Override
@@ -35,15 +35,15 @@ public abstract class SyncableTile extends SimpleTile {
     }
 
     /**
-     * For saving/sending data use {@link #readNBT(BlockState, CompoundNBT, SerializationType)}
+     * For saving/sending data use {@link #readNBT(CompoundTag, SerializationType)}
      */
     @Override
-    public final void load(BlockState state, CompoundTag compound) {
+    public final void load(CompoundTag compound) {
         //If read from client side
         if (compound.contains("client_flag")) {
-            readNBT(state, compound, SerializationType.SYNC);
+            readNBT(compound, SerializationType.SYNC);
         } else {
-            readNBT(state, compound, SerializationType.SAVE);
+            readNBT(compound, SerializationType.SAVE);
         }
     }
 
@@ -53,8 +53,8 @@ public abstract class SyncableTile extends SimpleTile {
     }
 
     @OverridingMethodsMustInvokeSuper
-    protected void readNBT(BlockState state, CompoundTag nbt, SerializationType type) {
-        super.load(state, nbt);
+    protected void readNBT(CompoundTag nbt, SerializationType type) {
+        super.load(nbt);
     }
 
     @Nonnull
@@ -72,13 +72,12 @@ public abstract class SyncableTile extends SimpleTile {
     public final void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt) {
         CompoundTag compound = pkt.getTag();
 
-        BlockState state = Minecraft.getInstance().level.getBlockState(worldPosition);
-        readNBT(state, compound, SerializationType.SYNC);
+        readNBT(compound, SerializationType.SYNC);
     }
 
     @Override
     public final ClientboundBlockEntityDataPacket getUpdatePacket() {
-        return new ClientboundBlockEntityDataPacket(worldPosition, -1 /*useless*/, this.getUpdateTag());
+        return ClientboundBlockEntityDataPacket.create(this);
     }
 
     /**

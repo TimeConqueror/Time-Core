@@ -1,6 +1,6 @@
 package ru.timeconqueror.timecore.common.capability.property
 
-import net.minecraft.nbt.CompoundNBT
+import net.minecraft.nbt.CompoundTag
 import ru.timeconqueror.timecore.api.common.tile.SerializationType
 import ru.timeconqueror.timecore.common.capability.property.serializer.IPropertySerializer
 import kotlin.properties.ReadWriteProperty
@@ -35,20 +35,20 @@ class CoffeeProperty<T>(val name: String, private var value: T, val serializer: 
         this.value = value
     }
 
-    fun serialize(nbt: CompoundNBT, type: SerializationType) {
+    fun serialize(nbt: CompoundTag, type: SerializationType) {
         if (type == SerializationType.SAVE || shouldBeSynced) {
             serializer.serialize(name, value, nbt)
         }
     }
 
-    fun deserialize(nbt: CompoundNBT) {
+    fun deserialize(nbt: CompoundTag) {
         if (nbt.contains(name)) {
             this.value = serializer.deserialize(name, nbt)
             this.changed = false
         }
     }
 
-    fun deserialize(nbt: CompoundNBT, fromClient: Boolean) {
+    fun deserialize(nbt: CompoundTag, fromClient: Boolean) {
         if (fromClient == clientDependent) {
             deserialize(nbt)
         }

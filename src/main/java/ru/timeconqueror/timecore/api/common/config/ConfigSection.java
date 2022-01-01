@@ -1,6 +1,6 @@
 package ru.timeconqueror.timecore.api.common.config;
 
-import net.minecraftforge.fml.config.ModConfig;
+import net.minecraftforge.fml.event.config.ModConfigEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -61,7 +61,7 @@ public abstract class ConfigSection implements ILoadListener {
      * Called on every loading and reloading of bound config file.
      */
     @OverridingMethodsMustInvokeSuper
-    public void onEveryLoad(final ModConfig.ModConfigEvent configEvent) {
+    public void onEveryLoad(final ModConfigEvent configEvent) {
         loadListeners.forEach(iLoadListener -> iLoadListener.onEveryLoad(configEvent));
     }
 

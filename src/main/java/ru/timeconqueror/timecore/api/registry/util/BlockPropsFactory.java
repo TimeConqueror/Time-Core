@@ -1,6 +1,5 @@
 package ru.timeconqueror.timecore.api.registry.util;
 
-import net.minecraft.item.Item;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 
 import java.util.function.Supplier;
@@ -16,7 +15,7 @@ public class BlockPropsFactory {
     }
 
     /**
-     * Creates new {@link Item.Properties} object, that must be provided by {@link #factory}.
+     * Creates new {@link BlockBehaviour.Properties} object, that must be provided by {@link #factory}.
      */
     public BlockBehaviour.Properties create() {
         return factory.get();

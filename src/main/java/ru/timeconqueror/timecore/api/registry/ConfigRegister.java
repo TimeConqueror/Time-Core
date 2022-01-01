@@ -3,7 +3,7 @@ package ru.timeconqueror.timecore.api.registry;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.ModLoadingContext;
-import net.minecraftforge.fml.config.ModConfig;
+import net.minecraftforge.fml.event.config.ModConfigEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent;
 import net.minecraftforge.fml.loading.FMLPaths;
 import ru.timeconqueror.timecore.api.TimeMod;
@@ -84,7 +84,7 @@ public class ConfigRegister extends TimeRegister {
     }
 
 
-    private void onLoad(final ModConfig.Loading configEvent) {
+    private void onLoad(final ModConfigEvent.Loading configEvent) {
         CONFIG_LIST.forEach(config -> {
             String path = format(config.getRelativePath());
             if (path.equals(configEvent.getConfig().getFileName())) {
@@ -93,7 +93,7 @@ public class ConfigRegister extends TimeRegister {
         });
     }
 
-    private void onReload(ModConfig.Reloading configEvent) {
+    private void onReload(ModConfigEvent.Reloading configEvent) {
         CONFIG_LIST.forEach(config -> {
             String path = format(config.getRelativePath());
 

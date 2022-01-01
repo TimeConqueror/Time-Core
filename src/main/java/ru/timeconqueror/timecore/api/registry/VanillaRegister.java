@@ -40,7 +40,7 @@ public abstract class VanillaRegister<T> extends TimeRegister {
 
     private void onSetup(FMLCommonSetupEvent event) {
         event.enqueueWork(() -> {
-            entries.transferAndRemove(entries -> {
+            entries.doAndRemove(entries -> {
                 for (Entry<? extends T> entry : entries) {
                     Registry.register(registry, entry.getId(), entry.pull());
                 }

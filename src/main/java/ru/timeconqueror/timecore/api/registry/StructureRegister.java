@@ -21,9 +21,9 @@ import net.minecraftforge.common.util.Lazy;
 import net.minecraftforge.event.world.BiomeLoadingEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.RegistryObject;
 import ru.timeconqueror.timecore.api.storage.StructureTags;
 import ru.timeconqueror.timecore.api.util.Temporal;
 
@@ -149,7 +149,7 @@ public class StructureRegister extends ForgeRegister<StructureFeature<?>> {
                     // the restart but honestly, superflat is really buggy and shouldn't be your main focus in my opinion.
                     FlatLevelGeneratorSettings.STRUCTURE_FEATURES.put(structureInfo.structure(), structureInfo.getFeature());
 
-                    structureInfo.tags.transferAndRemove(tags -> StructureTags.put(tags, structureInfo.structure()));
+                    structureInfo.tags.doAndRemove(tags -> StructureTags.put(tags, structureInfo.structure()));
                 });
             });
         });

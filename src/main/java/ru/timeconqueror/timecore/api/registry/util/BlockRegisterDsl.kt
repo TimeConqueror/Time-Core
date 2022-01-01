@@ -2,7 +2,6 @@ package ru.timeconqueror.timecore.api.registry.util
 
 import net.minecraft.world.level.block.Block
 import net.minecraftforge.registries.RegistryObject
-import ru.timeconqueror.timecore.api.client.resource.BlockStateResource
 import ru.timeconqueror.timecore.api.client.resource.location.BlockModelLocation
 import ru.timeconqueror.timecore.api.client.resource.location.TextureLocation
 import ru.timeconqueror.timecore.api.registry.BlockRegister
@@ -25,19 +24,9 @@ class BlockRegisterContext<B : Block>(val register: BlockRegister, private val c
     infix fun <E : B> BlockChainContext<E>.with(settings: ChainConfigurator<E>): RegistryObject<E> {
         chainConfigurator?.invoke(chain)
         chain.also { settings(it) }
+        chain.name
         return chain.asRegistryObject()
     }
-
-    var BlockRegisterChain<*>.state: BlockStateResource
-        get() = throw UnsupportedOperationException()
-        set(value) {
-            state(value)
-        }
-    var BlockRegisterChain<*>.name: String
-        get() = throw UnsupportedOperationException()
-        set(value) {
-            name(value)
-        }
 
     /**
      * Returns block texture location with bound modid from entry.

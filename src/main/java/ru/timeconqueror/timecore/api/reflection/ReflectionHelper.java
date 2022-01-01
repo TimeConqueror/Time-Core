@@ -1,7 +1,7 @@
 package ru.timeconqueror.timecore.api.reflection;
 
 import com.google.common.base.Joiner;
-import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
+import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
 import org.jetbrains.annotations.Nullable;
 import ru.timeconqueror.timecore.TimeCore;
 

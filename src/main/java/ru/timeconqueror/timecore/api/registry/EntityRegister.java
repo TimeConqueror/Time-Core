@@ -1,23 +1,15 @@
 package ru.timeconqueror.timecore.api.registry;
 
 import net.minecraft.world.entity.*;
-import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
-import net.minecraft.world.entity.ai.attributes.DefaultAttributes;
-import net.minecraft.world.item.CreativeModeTab;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.SpawnEggItem;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.forge.event.lifecycle.GatherDataEvent;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 import ru.timeconqueror.timecore.api.TimeMod;
-import ru.timeconqueror.timecore.api.client.resource.location.ItemModelLocation;
 import ru.timeconqueror.timecore.api.devtools.gen.lang.LangGeneratorFacade;
 import ru.timeconqueror.timecore.api.registry.util.AutoRegistrable;
 import ru.timeconqueror.timecore.api.util.EnvironmentUtils;
-
-import java.util.function.Consumer;
-import java.util.function.Supplier;
 
 /**
  * All {@link TimeRegister}s are used to simplify stuff registering.
@@ -85,7 +77,7 @@ public class EntityRegister extends ForgeRegister<EntityType<?>> {
     }
 
     /**
-     * Note: For {@link MobEntity} use {@link #registerMob(String, EntityType.Builder)}
+     * Note: For {@link Mob} use {@link #registerMob(String, EntityType.Builder)}
      * <p>
      * Adds living type to the queue, all entries from which will be registered later.
      * <p>
@@ -103,7 +95,7 @@ public class EntityRegister extends ForgeRegister<EntityType<?>> {
     }
 
     /**
-     * Note: For {@link MobEntity} use {@link #registerMob(String, EntityType.Builder)}
+     * Note: For {@link Mob} use {@link #registerMob(String, EntityType.Builder)}
      * Note: For {@link LivingEntity} use {@link #registerLiving(String, EntityType.Builder)}
      * <p>
      * Adds type to the queue, all entries from which will be registered later.
@@ -157,57 +149,6 @@ public class EntityRegister extends ForgeRegister<EntityType<?>> {
 //TODO add enName for spawn eggs
 
         /**
-         * Registers simple spawn egg ({@link SpawnEggItem}) with name {@code spawn_$entityName} with default properties.
-         * Automatically adds default json model for it.
-         *
-         * @param primaryArgb   primary color
-         * @param secondaryArgb secondary color
-         * @param tab           creative tab where item will be placed
-         */
-        public EntityRegisterChain<T> spawnEgg(int primaryArgb, int secondaryArgb, CreativeModeTab tab) {
-            return spawnEgg(primaryArgb, secondaryArgb, new Item.Properties().tab(tab));
-        }
-
-        /**
-         * Registers simple spawn egg ({@link SpawnEggItem}) with name {@code spawn_$entityName}.
-         * Automatically adds default json model for it.
-         *
-         * @param primaryArgb   primary color
-         * @param secondaryArgb secondary color
-         * @param properties    item properties
-         */
-        public EntityRegisterChain<T> spawnEgg(int primaryArgb, int secondaryArgb, Item.Properties properties) {
-            return spawnEgg(getName() + "_spawn_egg", primaryArgb, secondaryArgb, properties);
-        }
-
-        /**
-         * Registers simple spawn egg ({@link SpawnEggItem}) with provided name.
-         * Automatically adds default json model for it.
-         *
-         * @param primaryArgb   primary color
-         * @param secondaryArgb secondary color
-         * @param properties    item properties
-         */
-        public EntityRegisterChain<T> spawnEgg(String name, int primaryArgb, int secondaryArgb, Item.Properties properties) {
-            itemRegister.register(name, () -> new SpawnEggItem(retrieve(), primaryArgb, secondaryArgb, properties))
-                    .model(new ItemModelLocation("minecraft", "template_spawn_egg"));
-
-            return this;
-        }
-
-        /**
-         * Registers the spawn egg for this entity.
-         *
-         * @param itemSupplier item factory, should return new item instance every time it's called.
-         * @param itemSettings extra stuff, that you can do for that item, like generating item model.
-         */
-        public <I extends Item> EntityRegisterChain<T> spawnEgg(String name, Supplier<I> itemSupplier, Consumer<ItemRegister.ItemRegisterChain<I>> itemSettings) {
-            ItemRegister.ItemRegisterChain<I> itemRegisterChain = itemRegister.register(name, itemSupplier);
-            itemSettings.accept(itemRegisterChain);
-            return this;
-        }
-
-        /**
          * Adds entity entry to {@link LangGeneratorFacade}, which will place all entries in en_us.json file upon {@link GatherDataEvent}.
          * Generator will generate entries only in {@code runData} launch mode.
          *
@@ -233,18 +174,19 @@ public class EntityRegister extends ForgeRegister<EntityType<?>> {
             super(ancestor.holder, ancestor.type);
         }
 
-        /**
-         * Binds attribute map to the living type.
-         * Required for every living entity, which {@link EntityClassification} is not equal to {@link EntityClassification#MISC}
-         */
-        public LivingRegisterChain<T> attributes(Supplier<AttributeSupplier> attributesSup) {
-            if (retrieve().getCategory() == MobCategory.MISC) {
-                throw new UnsupportedOperationException(String.format("Entities with being %s equal to %s can't have attributes.", MobCategory.class.getName(), MobCategory.MISC));
-            }
-
-            runOnCommonSetup(() -> DefaultAttributes.put(retrieve(), attributesSup.get()));
-            return this;
-        }
+        //FIXME
+//        /**
+//         * Binds attribute map to the living type.
+//         * Required for every living entity, which {@link MobCategory} is not equal to {@link MobCategory#MISC}
+//         */
+//        public LivingRegisterChain<T> attributes(Supplier<AttributeSupplier> attributesSup) {
+//            if (retrieve().getCategory() == MobCategory.MISC) {
+//                throw new UnsupportedOperationException(String.format("Entities with being %s equal to %s can't have attributes.", MobCategory.class.getName(), MobCategory.MISC));
+//            }
+//
+//            runOnCommonSetup(() -> DefaultAttributes.put(retrieve(), attributesSup.get()));
+//            return this;
+//        }
     }
 
     public class MobRegisterChain<T extends Mob> extends LivingRegisterChain<T> {
@@ -260,5 +202,56 @@ public class EntityRegister extends ForgeRegister<EntityType<?>> {
 
             return this;
         }
+//FIXME Forge, wtf, it's not threadsafe!
+//        /**
+//         * Registers simple spawn egg ({@link SpawnEggItem}) with name {@code spawn_$entityName} with default properties.
+//         * Automatically adds default json model for it.
+//         *
+//         * @param primaryArgb   primary color
+//         * @param secondaryArgb secondary color
+//         * @param tab           creative tab where item will be placed
+//         */
+//        public EntityRegisterChain<T> spawnEgg(int primaryArgb, int secondaryArgb, CreativeModeTab tab) {
+//            return spawnEgg(primaryArgb, secondaryArgb, new Item.Properties().tab(tab));
+//        }
+//
+//        /**
+//         * Registers simple spawn egg ({@link SpawnEggItem}) with name {@code spawn_$entityName}.
+//         * Automatically adds default json model for it.
+//         *
+//         * @param primaryArgb   primary color
+//         * @param secondaryArgb secondary color
+//         * @param properties    item properties
+//         */
+//        public EntityRegisterChain<T> spawnEgg(int primaryArgb, int secondaryArgb, Item.Properties properties) {
+//            return spawnEgg(getName() + "_spawn_egg", primaryArgb, secondaryArgb, properties);
+//        }
+
+//        /**
+//         * Registers simple spawn egg ({@link SpawnEggItem}) with provided name.
+//         * Automatically adds default json model for it.
+//         *
+//         * @param primaryArgb   primary color
+//         * @param secondaryArgb secondary color
+//         * @param properties    item properties
+//         */
+//        public EntityRegisterChain<T> spawnEgg(String name, int primaryArgb, int secondaryArgb, Item.Properties properties) {
+//            itemRegister.register(name, () -> new ForgeSpawnEggItem(this::retrieve, primaryArgb, secondaryArgb, properties))//FIXME Forge, wtf, it's not threadsafe!
+//                    .model(new ItemModelLocation("minecraft", "template_spawn_egg"));
+//
+//            return this;
+//        }
+//
+//        /**
+//         * Registers the spawn egg for this entity.
+//         *
+//         * @param itemSupplier item factory, should return new item instance every time it's called.
+//         * @param itemSettings extra stuff, that you can do for that item, like generating item model.
+//         */
+//        public <I extends Item> EntityRegisterChain<T> spawnEgg(String name, Supplier<I> itemSupplier, Consumer<ItemRegister.ItemRegisterChain<I>> itemSettings) {
+//            ItemRegister.ItemRegisterChain<I> itemRegisterChain = itemRegister.register(name, itemSupplier);
+//            itemSettings.accept(itemRegisterChain);
+//            return this;
+//        }
     }
 }

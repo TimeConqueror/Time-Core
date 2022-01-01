@@ -4,8 +4,6 @@ import net.minecraft.advancements.critereon.EnchantmentPredicate;
 import net.minecraft.advancements.critereon.ItemPredicate;
 import net.minecraft.advancements.critereon.MinMaxBounds;
 import net.minecraft.advancements.critereon.StatePropertiesPredicate;
-import net.minecraft.loot.*;
-import net.minecraft.loot.conditions.*;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
@@ -17,13 +15,16 @@ import net.minecraft.world.level.block.FlowerPotBlock;
 import net.minecraft.world.level.block.SlabBlock;
 import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.level.block.state.properties.SlabType;
-import net.minecraft.world.level.storage.loot.*;
+import net.minecraft.world.level.storage.loot.LootPool;
+import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
 import net.minecraft.world.level.storage.loot.entries.LootPoolEntryContainer;
 import net.minecraft.world.level.storage.loot.functions.*;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.minecraft.world.level.storage.loot.predicates.*;
+import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
+import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
 
 import java.util.function.Function;
 
@@ -57,7 +58,7 @@ public abstract class BlockLootTableSet extends LootTableSet {
      */
     protected static LootTable.Builder createSingleItemTable(ItemLike drop) {
         return LootTable.lootTable()
-                .withPool(applyPartiallySurvivingOnExplosion(LootPool.lootPool().setRolls(ConstantIntValue.exactly(1)).add(LootItem.lootTableItem(drop))));
+                .withPool(applyPartiallySurvivingOnExplosion(LootPool.lootPool().setRolls(ConstantValue.exactly(1)).add(LootItem.lootTableItem(drop))));
     }
 
     /**
@@ -70,7 +71,7 @@ public abstract class BlockLootTableSet extends LootTableSet {
      */
     protected static LootTable.Builder createSelfDropDispatchTable(Block defaultDrop, LootItemCondition.Builder condition, LootPoolEntryContainer.Builder<?> alternative) {
         return LootTable.lootTable()
-                .withPool(LootPool.lootPool().setRolls(ConstantIntValue.exactly(1)).add(LootItem.lootTableItem(defaultDrop).when(condition).otherwise(alternative)));
+                .withPool(LootPool.lootPool().setRolls(ConstantValue.exactly(1)).add(LootItem.lootTableItem(defaultDrop).when(condition).otherwise(alternative)));
     }
 
     /**
@@ -123,9 +124,9 @@ public abstract class BlockLootTableSet extends LootTableSet {
      * @param drop  something to drop
      * @param range range, from which random amount of {@code drop} will be chosen
      */
-    protected static LootTable.Builder createSingleItemTable(ItemLike drop, RandomIntGenerator range) {
+    protected static LootTable.Builder createSingleItemTable(ItemLike drop, UniformGenerator range) {
         return LootTable.lootTable()
-                .withPool(LootPool.lootPool().setRolls(ConstantIntValue.exactly(1)).add(applyExplosionDecay(LootItem.lootTableItem(drop).apply(SetItemCountFunction.setCount(range)))));
+                .withPool(LootPool.lootPool().setRolls(ConstantValue.exactly(1)).add(applyExplosionDecay(LootItem.lootTableItem(drop).apply(SetItemCountFunction.setCount(range)))));
     }
 
     /**
@@ -136,7 +137,7 @@ public abstract class BlockLootTableSet extends LootTableSet {
      * @param alternativeDrop  drop on collecting without silk touch
      * @param alternativeRange range, from which random amount of {@code alternativeDrop} will be chosen
      */
-    protected static LootTable.Builder createSilkTouchDispatchTable(Block silkTouchDrop, ItemLike alternativeDrop, RandomIntGenerator alternativeRange) {
+    protected static LootTable.Builder createSilkTouchDispatchTable(Block silkTouchDrop, ItemLike alternativeDrop, UniformGenerator alternativeRange) {
         return createSilkTouchDispatchTable(silkTouchDrop, applyExplosionDecay(LootItem.lootTableItem(alternativeDrop).apply(SetItemCountFunction.setCount(alternativeRange))));
     }
 
@@ -148,7 +149,7 @@ public abstract class BlockLootTableSet extends LootTableSet {
      */
     protected static LootTable.Builder createSilkTouchOnlyTable(ItemLike dropOnSilkTouch) {
         return LootTable.lootTable()
-                .withPool(LootPool.lootPool().when(SILK_TOUCH).setRolls(ConstantIntValue.exactly(1)).add(LootItem.lootTableItem(dropOnSilkTouch)));
+                .withPool(LootPool.lootPool().when(SILK_TOUCH).setRolls(ConstantValue.exactly(1)).add(LootItem.lootTableItem(dropOnSilkTouch)));
     }
 
     /**
@@ -158,8 +159,8 @@ public abstract class BlockLootTableSet extends LootTableSet {
      */
     protected static LootTable.Builder createPotAndFlowerTable(ItemLike flower) {
         return LootTable.lootTable()
-                .withPool(applyPartiallySurvivingOnExplosion(LootPool.lootPool().setRolls(ConstantIntValue.exactly(1)).add(LootItem.lootTableItem(Blocks.FLOWER_POT))))
-                .withPool(applyPartiallySurvivingOnExplosion(LootPool.lootPool().setRolls(ConstantIntValue.exactly(1)).add(LootItem.lootTableItem(flower))));
+                .withPool(applyPartiallySurvivingOnExplosion(LootPool.lootPool().setRolls(ConstantValue.exactly(1)).add(LootItem.lootTableItem(Blocks.FLOWER_POT))))
+                .withPool(applyPartiallySurvivingOnExplosion(LootPool.lootPool().setRolls(ConstantValue.exactly(1)).add(LootItem.lootTableItem(flower))));
     }
 
     /**
@@ -169,9 +170,9 @@ public abstract class BlockLootTableSet extends LootTableSet {
      */
     protected static LootTable.Builder createSlabItemTable(Block slab) {
         return LootTable.lootTable()
-                .withPool(LootPool.lootPool().setRolls(ConstantIntValue.exactly(1))
+                .withPool(LootPool.lootPool().setRolls(ConstantValue.exactly(1))
                         .add(applyExplosionDecay(LootItem.lootTableItem(slab).apply(
-                                SetItemCountFunction.setCount(ConstantIntValue.exactly(2)).when(LootItemBlockStatePropertyCondition.hasBlockStateProperties(slab).setProperties(StatePropertiesPredicate.Builder.properties().hasProperty(SlabBlock.TYPE, SlabType.DOUBLE)))))));
+                                SetItemCountFunction.setCount(ConstantValue.exactly(2)).when(LootItemBlockStatePropertyCondition.hasBlockStateProperties(slab).setProperties(StatePropertiesPredicate.Builder.properties().hasProperty(SlabBlock.TYPE, SlabType.DOUBLE)))))));
     }
 
     /**
@@ -184,7 +185,7 @@ public abstract class BlockLootTableSet extends LootTableSet {
      */
     protected static <T extends Comparable<T> & StringRepresentable> LootTable.Builder createSinglePropConditionTable(Block drop, Property<T> propertyIn, T value) {
         return LootTable.lootTable()
-                .withPool(applyPartiallySurvivingOnExplosion(LootPool.lootPool().setRolls(ConstantIntValue.exactly(1))
+                .withPool(applyPartiallySurvivingOnExplosion(LootPool.lootPool().setRolls(ConstantValue.exactly(1))
                         .add(LootItem.lootTableItem(drop).when(LootItemBlockStatePropertyCondition.hasBlockStateProperties(drop).setProperties(StatePropertiesPredicate.Builder.properties().hasProperty(propertyIn, value))))));
     }
 
@@ -198,7 +199,7 @@ public abstract class BlockLootTableSet extends LootTableSet {
      */
     protected static LootTable.Builder createNameableTileEntityTable(Block drop) {
         return LootTable.lootTable()
-                .withPool(applyPartiallySurvivingOnExplosion(LootPool.lootPool().setRolls(ConstantIntValue.exactly(1))
+                .withPool(applyPartiallySurvivingOnExplosion(LootPool.lootPool().setRolls(ConstantValue.exactly(1))
                         .add(LootItem.lootTableItem(drop).apply(CopyNameFunction.copyName(CopyNameFunction.NameSource.BLOCK_ENTITY)))));
     }
 
@@ -210,7 +211,7 @@ public abstract class BlockLootTableSet extends LootTableSet {
      */
     protected static LootTable.Builder createShearsOnlyTable(ItemLike dropWithShears) {
         return LootTable.lootTable()
-                .withPool(LootPool.lootPool().setRolls(ConstantIntValue.exactly(1))
+                .withPool(LootPool.lootPool().setRolls(ConstantValue.exactly(1))
                         .when(SHEARS).add(LootItem.lootTableItem(dropWithShears)));
     }
 
@@ -221,9 +222,9 @@ public abstract class BlockLootTableSet extends LootTableSet {
      */
     protected static LootTable.Builder createDropTableForLeaves(Block silkTouchDrop, Block alternativeDrop, float... secondDropChances) {
         return createSilkTouchOrShearsCutDispatchTable(silkTouchDrop, applyPartiallySurvivingOnExplosion(LootItem.lootTableItem(alternativeDrop)).when(BonusLevelTableCondition.bonusLevelFlatChance(Enchantments.BLOCK_FORTUNE, secondDropChances)))
-                .withPool(LootPool.lootPool().setRolls(ConstantIntValue.exactly(1))
+                .withPool(LootPool.lootPool().setRolls(ConstantValue.exactly(1))
                         .when(NOT_SILK_TOUCH_OR_SHEARS).add(applyExplosionDecay(LootItem.lootTableItem(Items.STICK)
-                                .apply(SetItemCountFunction.setCount(RandomValueBounds.between(1.0F, 2.0F))))
+                                .apply(SetItemCountFunction.setCount(UniformGenerator.between(1.0F, 2.0F))))
                                 .when(BonusLevelTableCondition.bonusLevelFlatChance(Enchantments.BLOCK_FORTUNE, 0.02F, 0.022222223F, 0.025F, 0.033333335F, 0.1F))));
     }
 

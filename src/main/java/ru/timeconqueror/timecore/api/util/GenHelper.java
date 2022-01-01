@@ -4,6 +4,7 @@ import it.unimi.dsi.fastutil.ints.Int2IntMap;
 import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.world.level.LevelHeightAccessor;
 import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.Heightmap;
 
@@ -261,36 +262,36 @@ public class GenHelper {
         });
     }
 
-    public static int getAverageFirstFreeHeight(ChunkGenerator chunkGenerator, int x, int z, int x1, int z1) {
-        return getAverageFirstFreeHeight(chunkGenerator, x, z, x1, z1, Heightmap.Types.WORLD_SURFACE_WG);
+    public static int getAverageFirstFreeHeight(ChunkGenerator chunkGenerator, int x, int z, int x1, int z1, LevelHeightAccessor levelHeightAccessor) {
+        return getAverageFirstFreeHeight(chunkGenerator, x, z, x1, z1, Heightmap.Types.WORLD_SURFACE_WG, levelHeightAccessor);
     }
 
-    public static int getAverageFirstFreeHeight(ChunkGenerator chunkGenerator, int x, int z, int x1, int z1, Heightmap.Types type) {
-        return MathUtils.average(getBoxCornerFirstFreeHeights(chunkGenerator, x, z, x1, z1, type));
+    public static int getAverageFirstFreeHeight(ChunkGenerator chunkGenerator, int x, int z, int x1, int z1, Heightmap.Types type, LevelHeightAccessor levelHeightAccessor) {
+        return MathUtils.average(getBoxCornerFirstFreeHeights(chunkGenerator, x, z, x1, z1, type, levelHeightAccessor));
     }
 
-    public static int getMinFirstFreeHeight(ChunkGenerator chunkGenerator, int x, int z, int x1, int z1) {
-        return getMinFirstFreeHeight(chunkGenerator, x, z, x1, z1, Heightmap.Types.WORLD_SURFACE_WG);
+    public static int getMinFirstFreeHeight(ChunkGenerator chunkGenerator, int x, int z, int x1, int z1, LevelHeightAccessor levelHeightAccessor) {
+        return getMinFirstFreeHeight(chunkGenerator, x, z, x1, z1, Heightmap.Types.WORLD_SURFACE_WG, levelHeightAccessor);
     }
 
-    public static int getMinFirstFreeHeight(ChunkGenerator chunkGenerator, int x, int z, int x1, int z1, Heightmap.Types type) {
-        return MathUtils.min(getBoxCornerFirstFreeHeights(chunkGenerator, x, z, x1, z1, type));
+    public static int getMinFirstFreeHeight(ChunkGenerator chunkGenerator, int x, int z, int x1, int z1, Heightmap.Types type, LevelHeightAccessor levelHeightAccessor) {
+        return MathUtils.min(getBoxCornerFirstFreeHeights(chunkGenerator, x, z, x1, z1, type, levelHeightAccessor));
     }
 
-    public static int getMaxFirstFreeHeight(ChunkGenerator chunkGenerator, int x, int z, int x1, int z1) {
-        return getMaxFirstFreeHeight(chunkGenerator, x, z, x1, z1, Heightmap.Types.WORLD_SURFACE_WG);
+    public static int getMaxFirstFreeHeight(ChunkGenerator chunkGenerator, int x, int z, int x1, int z1, LevelHeightAccessor levelHeightAccessor) {
+        return getMaxFirstFreeHeight(chunkGenerator, x, z, x1, z1, Heightmap.Types.WORLD_SURFACE_WG, levelHeightAccessor);
     }
 
-    public static int getMaxFirstFreeHeight(ChunkGenerator chunkGenerator, int x, int z, int x1, int z1, Heightmap.Types type) {
-        return MathUtils.max(getBoxCornerFirstFreeHeights(chunkGenerator, x, z, x1, z1, type));
+    public static int getMaxFirstFreeHeight(ChunkGenerator chunkGenerator, int x, int z, int x1, int z1, Heightmap.Types type, LevelHeightAccessor levelHeightAccessor) {
+        return MathUtils.max(getBoxCornerFirstFreeHeights(chunkGenerator, x, z, x1, z1, type, levelHeightAccessor));
     }
 
-    private static int[] getBoxCornerFirstFreeHeights(ChunkGenerator chunkGenerator, int x, int z, int x1, int z1, Heightmap.Types type) {
+    private static int[] getBoxCornerFirstFreeHeights(ChunkGenerator chunkGenerator, int x, int z, int x1, int z1, Heightmap.Types type, LevelHeightAccessor levelHeightAccessor) {
         return new int[]{
-                chunkGenerator.getFirstFreeHeight(x, z, type),
-                chunkGenerator.getFirstFreeHeight(x1, z, type),
-                chunkGenerator.getFirstFreeHeight(x, z1, type),
-                chunkGenerator.getFirstFreeHeight(x1, z1, type)
+                chunkGenerator.getFirstFreeHeight(x, z, type, levelHeightAccessor),
+                chunkGenerator.getFirstFreeHeight(x1, z, type, levelHeightAccessor),
+                chunkGenerator.getFirstFreeHeight(x, z1, type, levelHeightAccessor),
+                chunkGenerator.getFirstFreeHeight(x1, z1, type, levelHeightAccessor)
         };
     }
 

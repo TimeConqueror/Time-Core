@@ -1,6 +1,6 @@
 package ru.timeconqueror.timecore.api.util
 
-import net.minecraft.world.World
+import net.minecraft.world.level.Level
 import ru.timeconqueror.timecore.api.exception.IllegalSideException
 
 object Requirements {
@@ -434,8 +434,8 @@ object Requirements {
      * @throws IllegalSideException if is called on client side.
      */
     @JvmStatic
-    fun onServer(world: World) {
-        if (world.isClientSide()) {
+    fun onServer(level: Level) {
+        if (level.isClientSide()) {
             IllegalSideException.notOnServer()
         }
     }
@@ -446,8 +446,8 @@ object Requirements {
      * @throws IllegalSideException if is called on server side.
      */
     @JvmStatic
-    fun onClient(world: World) {
-        if (!world.isClientSide()) {
+    fun onClient(level: Level) {
+        if (!level.isClientSide()) {
             IllegalSideException.notOnClient()
         }
     }

@@ -7,7 +7,7 @@ import java.util.function.Consumer;
  * Will throw error, if somebody try to get its value, when it is removed.
  */
 public class Temporal<T> {
-    private static final String DEFAULT_ERROR = "Called too late. Value have already removed from Temporal.";
+    private static final String DEFAULT_ERROR = "Called too late. Value have already been removed.";
 
     private T value;
     private final String error;
@@ -53,7 +53,7 @@ public class Temporal<T> {
         return !removed;
     }
 
-    public void transferAndRemove(Consumer<T> action) {
+    public void doAndRemove(Consumer<T> action) {
         if (isPresent()) {
             action.accept(remove());
         }

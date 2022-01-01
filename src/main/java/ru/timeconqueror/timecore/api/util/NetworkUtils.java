@@ -7,7 +7,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.ChunkPos;
-import net.minecraftforge.fml.server.ServerLifecycleHooks;
+import net.minecraftforge.server.ServerLifecycleHooks;
 import ru.timeconqueror.timecore.mod.common.packet.InternalPacketManager;
 import ru.timeconqueror.timecore.mod.common.packet.S2CKickPlayerFromSPPacket;
 

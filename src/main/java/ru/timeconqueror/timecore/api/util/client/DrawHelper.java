@@ -1,11 +1,11 @@
 package ru.timeconqueror.timecore.api.util.client;
 
+import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Matrix4f;
 import com.mojang.math.Vector3f;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.world.phys.AABB;
 import org.lwjgl.opengl.GL11;
 import ru.timeconqueror.timecore.api.util.Requirements;
@@ -15,7 +15,7 @@ public class DrawHelper {
      * Draws textured rectangle.
      * <p>
      * Required GL Mode: {@link GL11#GL_QUADS}
-     * Required VertexFormat: {@link DefaultVertexFormats#POSITION_TEX}
+     * Required VertexFormat: {@link DefaultVertexFormat#POSITION_TEX}
      * <p>
      * Term, used in parameters:
      * Parts are used to determine the actual size of {@code textureX, textureY, textureWidth, textureHeight} and coordinates relative to the entire texture.
@@ -42,7 +42,7 @@ public class DrawHelper {
      * Draws textured rectangle.
      * <p>
      * Required GL Mode: {@link GL11#GL_QUADS}
-     * Required VertexFormat: {@link DefaultVertexFormats#POSITION_TEX}
+     * Required VertexFormat: {@link DefaultVertexFormat#POSITION_TEX}
      * <p>
      * Term, used in parameters:
      * Parts are used to determine the actual size of {@code textureX, textureY, textureWidth, textureHeight} and coordinates relative to the entire texture.
@@ -72,7 +72,7 @@ public class DrawHelper {
      * Draws textured rectangle.
      * <p>
      * Required GL Mode: {@link GL11#GL_QUADS}
-     * Required VertexFormat: {@link DefaultVertexFormats#POSITION_TEX}
+     * Required VertexFormat: {@link DefaultVertexFormat#POSITION_TEX}
      * <p>
      * Term, used in parameters:
      * Parts are used to determine the actual size of {@code textureX, textureY, textureWidth, textureHeight} and coordinates relative to the entire texture.
@@ -105,7 +105,7 @@ public class DrawHelper {
      * Draws textured rectangle.
      * <p>
      * Required GL Mode: {@link GL11#GL_QUADS}
-     * Required VertexFormat: {@link DefaultVertexFormats#POSITION_COLOR_TEX}
+     * Required VertexFormat: {@link DefaultVertexFormat#POSITION_COLOR_TEX}
      * <p>
      * Term, used in parameters:
      * Parts are used to determine the actual size of {@code textureX, textureY, textureWidth, textureHeight} and coordinates relative to the entire texture.
@@ -133,7 +133,7 @@ public class DrawHelper {
      * Draws textured rectangle.
      * <p>
      * Required GL Mode: {@link GL11#GL_QUADS}
-     * Required VertexFormat: {@link DefaultVertexFormats#POSITION_COLOR_TEX}
+     * Required VertexFormat: {@link DefaultVertexFormat#POSITION_COLOR_TEX}
      * <p>
      * Term, used in parameters:
      * Parts are used to determine the actual size of {@code textureX, textureY, textureWidth, textureHeight} and coordinates relative to the entire texture.
@@ -164,7 +164,7 @@ public class DrawHelper {
      * Draws textured rectangle.
      * <p>
      * Required GL Mode: {@link GL11#GL_QUADS}
-     * Required VertexFormat: {@link DefaultVertexFormats#POSITION_COLOR_TEX}
+     * Required VertexFormat: {@link DefaultVertexFormat#POSITION_COLOR_TEX}
      * <p>
      * Term, used in parameters:
      * Parts are used to determine the actual size of {@code textureX, textureY, textureWidth, textureHeight} and coordinates relative to the entire texture.
@@ -204,7 +204,7 @@ public class DrawHelper {
      * Draws textured rectangle with fully bound texture.
      * <p>
      * Required GL Mode: {@link GL11#GL_QUADS}
-     * Required VertexFormat: {@link DefaultVertexFormats#POSITION_TEX}
+     * Required VertexFormat: {@link DefaultVertexFormat#POSITION_TEX}
      *
      * @param x0     start x-coordinate. (x of left-top corner)
      * @param y0     start y-coordinate. (y of left-top corner)
@@ -454,7 +454,7 @@ public class DrawHelper {
     /**
      * Adds filled bounding box to provider vertex builder.
      * <p>
-     * Provided builder should have {@link DefaultVertexFormats#POSITION_COLOR} mode and {@link GL11#GL_QUADS} render type.
+     * Provided builder should have {@link DefaultVertexFormat#POSITION_COLOR} mode and {@link GL11#GL_QUADS} render type.
      */
     public static void drawFilledBoundingBox(PoseStack matrixStack, VertexConsumer builder, AABB bb, int argbColor) {
         float red = getRed(argbColor) / 255F;
@@ -505,7 +505,7 @@ public class DrawHelper {
     /**
      * Adds line to renderToBuffer buffer.
      * <p>
-     * Provided builder should have {@link DefaultVertexFormats#POSITION_COLOR} mode and {@link GL11#GL_LINES} render type.
+     * Provided builder should have {@link DefaultVertexFormat#POSITION_COLOR} mode and {@link GL11#GL_LINES} render type.
      *
      * @param builder builder to which add vertices
      * @param stack   matrix stack
@@ -520,7 +520,7 @@ public class DrawHelper {
     /**
      * Adds line to renderToBuffer buffer.
      * <p>
-     * Provided builder should have {@link DefaultVertexFormats#POSITION_COLOR} mode and {@link GL11#GL_LINES} render type.
+     * Provided builder should have {@link DefaultVertexFormat#POSITION_COLOR} mode and {@link GL11#GL_LINES} render type.
      *
      * @param builder builder to which add vertices
      * @param stack   matrix stack
@@ -539,7 +539,7 @@ public class DrawHelper {
     /**
      * Adds line to renderToBuffer buffer.
      * <p>
-     * Provided builder should have {@link DefaultVertexFormats#POSITION_COLOR} mode and {@link GL11#GL_LINES} render type.
+     * Provided builder should have {@link DefaultVertexFormat#POSITION_COLOR} mode and {@link GL11#GL_LINES} render type.
      *
      * @param builder builder to which add vertices
      * @param stack   matrix stack

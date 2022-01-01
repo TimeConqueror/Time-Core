@@ -1,11 +1,11 @@
 package ru.timeconqueror.timecore.common.capability
 
-import net.minecraft.nbt.CompoundNBT
-import net.minecraft.world.World
+import net.minecraft.nbt.CompoundTag
+import net.minecraft.world.level.Level
 import net.minecraftforge.common.capabilities.Capability
 import net.minecraftforge.common.capabilities.ICapabilityProvider
 import net.minecraftforge.common.util.INBTSerializable
-import net.minecraftforge.fml.network.simple.SimpleChannel
+import net.minecraftforge.network.simple.SimpleChannel
 import ru.timeconqueror.timecore.api.common.tile.SerializationType
 import ru.timeconqueror.timecore.common.capability.owner.serializer.CapabilityOwnerSerializer
 import ru.timeconqueror.timecore.common.capability.property.CoffeeProperty
@@ -22,7 +22,7 @@ import javax.annotation.ParametersAreNonnullByDefault
 //ToDO check client dependent caps being saved on server?
 //TODO store owner inside the cap so people don't bother creating their own sendAllData & sendChangesToClients without args
 @ParametersAreNonnullByDefault
-abstract class CoffeeCapability<T : ICapabilityProvider> : PropertyContainer(), INBTSerializable<CompoundNBT> {
+abstract class CoffeeCapability<T : ICapabilityProvider> : PropertyContainer(), INBTSerializable<CompoundTag> {
 
     abstract fun getOwnerSerializer(): CapabilityOwnerSerializer<T>
     abstract fun getCapability(): Capability<out CoffeeCapability<T>>
@@ -31,8 +31,8 @@ abstract class CoffeeCapability<T : ICapabilityProvider> : PropertyContainer(), 
      * Checks if properties of capability has changed and if yes, sends them.
      * Works in both directions.
      */
-    fun detectAndSendChanges(world: World, owner: T) {
-        sendData(world, owner) { prop ->
+    fun detectAndSendChanges(level: Level, owner: T) {
+        sendData(level, owner) { prop ->
             if (prop.changed) {
                 prop.changed = false
                 true
@@ -44,16 +44,16 @@ abstract class CoffeeCapability<T : ICapabilityProvider> : PropertyContainer(), 
      * Synchronizes all capability data.
      * Works in both directions.
      */
-    fun sendAllData(world: World, owner: T) {
-        sendData(world, owner) { true }
+    fun sendAllData(level: Level, owner: T) {
+        sendData(level, owner) { true }
     }
 
     abstract fun sendChangesToClients(channel: SimpleChannel, data: Any)
 
-    private fun sendData(world: World, owner: T, predicate: Predicate<CoffeeProperty<*>>) {
-        val clientSide = world.isClientSide()
+    private fun sendData(level: Level, owner: T, predicate: Predicate<CoffeeProperty<*>>) {
+        val clientSide = level.isClientSide()
 
-        val message = createDataPacket(world, owner, clientSide, predicate)
+        val message = createDataPacket(level, owner, clientSide, predicate)
 
         if (message != null) {
             if (clientSide) {
@@ -65,19 +65,19 @@ abstract class CoffeeCapability<T : ICapabilityProvider> : PropertyContainer(), 
     }
 
     private fun createDataPacket(
-        world: World,
+        level: Level,
         owner: T,
         clientSide: Boolean,
         syncPredicate: Predicate<CoffeeProperty<*>>
-    ) = CoffeeCapabilityDataPacket.create(world, owner, this, clientSide, syncPredicate)
+    ) = CoffeeCapabilityDataPacket.create(level, owner, this, clientSide, syncPredicate)
 
-    override fun serializeNBT(): CompoundNBT {
-        val compound = CompoundNBT()
+    override fun serializeNBT(): CompoundTag {
+        val compound = CompoundTag()
         serialize({ true }, compound, false, SerializationType.SAVE)
         return compound
     }
 
-    override fun deserializeNBT(nbt: CompoundNBT) {
+    override fun deserializeNBT(nbt: CompoundTag) {
         deserialize(nbt)
     }
 }

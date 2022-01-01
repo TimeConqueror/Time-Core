@@ -2,12 +2,11 @@ package ru.timeconqueror.timecore.api.registry;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.ObjectHolder;
+import net.minecraftforge.registries.RegistryObject;
 import ru.timeconqueror.timecore.api.TimeMod;
-import ru.timeconqueror.timecore.api.common.sound.TimeSound;
 import ru.timeconqueror.timecore.api.registry.util.AutoRegistrable;
 import ru.timeconqueror.timecore.api.registry.util.AutoRegistrable.InitMethod;
 import ru.timeconqueror.timecore.api.util.Hacks;
@@ -105,9 +104,9 @@ public class SoundRegister extends ForgeRegister<SoundEvent> {
      * @param location sound location.
      *                 It will be used as a part of registry key. Should NOT contain mod ID, because it will be bound automatically.
      */
-    public RegistryObject<TimeSound> register(String location) {
+    public RegistryObject<SoundEvent> register(String location) {
         ResourceLocation registryName = new ResourceLocation(getModId(), location);
 
-        return registerEntry(location, () -> new TimeSound(registryName));
+        return registerEntry(location, () -> new SoundEvent(registryName));
     }
 }

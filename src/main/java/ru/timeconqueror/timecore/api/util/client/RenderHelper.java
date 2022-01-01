@@ -31,7 +31,7 @@ public class RenderHelper extends RenderType {
     }
 
     /**
-     * Creates render type for drawing in {@link GLDrawMode#QUADS} mode and {@link DefaultVertexFormats#POSITION_TEX} format.
+     * Creates render type for drawing in {@link GLDrawMode#QUADS} mode and {@link DefaultVertexFormat#POSITION_TEX} format.
      * Also binds provided texture before rendering and enables blend and alpha.
      *
      * @param texture texture location

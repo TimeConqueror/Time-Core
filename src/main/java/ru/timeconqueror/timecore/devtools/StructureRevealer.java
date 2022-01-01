@@ -5,6 +5,7 @@ import com.google.common.collect.Multimap;
 import net.minecraft.core.SectionPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ChunkMap;
+import net.minecraft.server.level.ChunkMapHooks;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.ChunkPos;
@@ -12,7 +13,6 @@ import net.minecraft.world.level.levelgen.feature.StructureFeature;
 import net.minecraft.world.level.levelgen.structure.StructurePiece;
 import net.minecraft.world.level.levelgen.structure.StructureStart;
 import net.minecraft.world.phys.AABB;
-import net.minecraft.world.server.ChunkManagerHooks;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
@@ -99,7 +99,7 @@ public class StructureRevealer {
 
         InternalPacketManager.sendToPlayer(playerIn, new S2CSRClearPiecesPacket());
 
-        ChunkManagerHooks.getLoadedChunksIterable(chunkManager).forEach(chunkHolder -> {
+        ChunkMapHooks.getLoadedChunksIterable(chunkManager).forEach(chunkHolder -> {
             if (chunkManager.getPlayers(chunkHolder.getPos(), false).stream()
                     .anyMatch(player -> player.getUUID().equals(playerIn.getUUID()))) {
 

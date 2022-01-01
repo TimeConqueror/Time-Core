@@ -18,7 +18,7 @@ public abstract class RunnableStoringRegister extends TimeRegister {
     }
 
     protected void runAll() {
-        runnables.transferAndRemove(runnables -> {
+        runnables.doAndRemove(runnables -> {
             for (Runnable task : runnables) {
                 task.run();
             }

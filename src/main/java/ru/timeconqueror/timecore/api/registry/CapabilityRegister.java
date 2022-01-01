@@ -1,14 +1,15 @@
 package ru.timeconqueror.timecore.api.registry;
 
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.CapabilityManager;
+import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
-import ru.timeconqueror.timecore.api.registry.base.RunnableStoringRegister;
+import ru.timeconqueror.timecore.api.util.Temporal;
 
-import java.util.concurrent.Callable;
+import java.util.ArrayList;
+import java.util.List;
 
-public class CapabilityRegister extends RunnableStoringRegister {
+public class CapabilityRegister extends TimeRegister {
+    private final Temporal<List<Class<?>>> capClasses = Temporal.of(new ArrayList<>());
+
     public CapabilityRegister(String modId) {
         super(modId);
     }
@@ -16,18 +17,22 @@ public class CapabilityRegister extends RunnableStoringRegister {
     @Override
     public void regToBus(IEventBus modEventBus) {
         super.regToBus(modEventBus);
-        modEventBus.addListener(this::onCommonSetup);
+        modEventBus.addListener(this::onEvent);
     }
 
-    private void onCommonSetup(FMLCommonSetupEvent event) {
-        catchErrors(FMLCommonSetupEvent.class, this::runAll);
+    private void onEvent(RegisterCapabilitiesEvent event) {
+        catchErrors(RegisterCapabilitiesEvent.class, () -> registerCaps(event));
     }
 
-    public <T> void regCapability(Class<T> type, Capability.IStorage<T> storage, Callable<? extends T> factory) {
-        add(() -> CapabilityManager.INSTANCE.register(type, storage, factory));
+    private void registerCaps(RegisterCapabilitiesEvent event) {
+        capClasses.doAndRemove(classes -> {
+            for (Class<?> clazz : classes) {
+                event.register(clazz);
+            }
+        });
     }
 
-    public <T> void regCapability(Class<T> type, Capability.IStorage<T> storage) {
-        regCapability(type, storage, () -> null);
+    public <T> void register(Class<T> type) {
+        capClasses.get().add(type);
     }
 }
