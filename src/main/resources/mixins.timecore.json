@@ -12,6 +12,7 @@
     "MixinLivingEntity",
     "NoiseChunkGeneratorMixin",
     "accessor.GatherDataEventAccessor",
+    "accessor.StructureSettingsAccessor",
     "accessor.UnlockedAdvancementProvider",
     "config.ConfigTrackerMixin"
   ],

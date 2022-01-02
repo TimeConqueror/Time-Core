@@ -1,5 +1,7 @@
 package ru.timeconqueror.timecore.api.util;
 
+import com.google.common.collect.ImmutableMap;
+
 import java.util.Map;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
@@ -44,5 +46,9 @@ public class Pair<L, R> {
 
     public static <A, B> Collector<Pair<A, B>, ?, Map<A, B>> toMap() {
         return Collectors.toMap(Pair::left, Pair::right);
+    }
+
+    public static <A, B> Collector<Pair<A, B>, ?, ImmutableMap<A, B>> toImmutableMap() {
+        return ImmutableMap.toImmutableMap(Pair::left, Pair::right);
     }
 }

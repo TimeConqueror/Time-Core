@@ -85,7 +85,10 @@ public abstract class ForgeRegister<T extends IForgeRegistryEntry<T>> extends Ti
             for (Map.Entry<RegistryObject<T>, Supplier<T>> entry : entries.entrySet()) {
                 RegistryObject<T> holder = entry.getKey();
                 currentHolder.set(holder);
-                registry.register(entry.getValue().get());
+
+                T value = entry.getValue().get();
+                validateEntry(value);
+                registry.register(value);
 
                 holder.updateReference(registry);
             }
@@ -96,6 +99,12 @@ public abstract class ForgeRegister<T extends IForgeRegistryEntry<T>> extends Ti
         entries = null;
 
         catchErrors("finishing register event of type " + registry.getRegistrySuperType(), () -> regEventTasks.remove().forEach(Runnable::run));
+    }
+
+    /**
+     * Throws error if the entry is invalid upon the register event
+     */
+    protected void validateEntry(T entry) {
     }
 
     protected void onClientSetup(FMLClientSetupEvent event) {
