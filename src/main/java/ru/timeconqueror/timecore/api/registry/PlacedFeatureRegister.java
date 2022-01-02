@@ -21,7 +21,7 @@ import java.util.function.Supplier;
  * ConfiguredFeature where and how often it should generate in chunks.
  * <p>
  * If you need to register {@link Feature}, use {@link SimpleForgeRegister}
- * If you need to register {@link ConfiguredFeature, use {@link SimpleForgeRegister} (//TODO [minecraft/WorldSettingsImport]: Error adding element: Spread too big: 6 > 4)
+ * If you need to register {@link ConfiguredFeature, use {@link SimpleVanillaRegister} (//TODO [minecraft/WorldSettingsImport]: Error adding element: Spread too big: 6 > 4)
  */
 public class PlacedFeatureRegister extends VanillaRegister<PlacedFeature> {
     private final List<Info> featureInfoList = new ArrayList<>();
