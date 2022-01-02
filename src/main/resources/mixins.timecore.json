@@ -12,7 +12,9 @@
     "MixinLivingEntity",
     "NoiseChunkGeneratorMixin",
     "accessor.ChunkGeneratorAccessor",
+    "accessor.ChunkMapAccessor",
     "accessor.GatherDataEventAccessor",
+    "accessor.MinecraftServerAccessor",
     "accessor.StructureSettingsAccessor",
     "accessor.UnlockedAdvancementProvider",
     "config.ConfigTrackerMixin"

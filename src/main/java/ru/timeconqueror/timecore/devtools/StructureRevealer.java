@@ -5,7 +5,6 @@ import com.google.common.collect.Multimap;
 import net.minecraft.core.SectionPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ChunkMap;
-import net.minecraft.server.level.ChunkMapHooks;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.ChunkPos;
@@ -20,6 +19,7 @@ import net.minecraftforge.event.server.ServerStartingEvent;
 import net.minecraftforge.event.world.ChunkWatchEvent;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.server.ServerLifecycleHooks;
+import ru.timeconqueror.timecore.mixins.accessor.ChunkMapAccessor;
 import ru.timeconqueror.timecore.mod.common.config.MainConfig;
 import ru.timeconqueror.timecore.mod.common.packet.InternalPacketManager;
 import ru.timeconqueror.timecore.mod.common.packet.S2CSRClearPiecesPacket;
@@ -99,7 +99,7 @@ public class StructureRevealer {
 
         InternalPacketManager.sendToPlayer(playerIn, new S2CSRClearPiecesPacket());
 
-        ChunkMapHooks.getLoadedChunksIterable(chunkManager).forEach(chunkHolder -> {
+        ((ChunkMapAccessor) chunkManager).getChunks().forEach(chunkHolder -> {
             if (chunkManager.getPlayers(chunkHolder.getPos(), false).stream()
                     .anyMatch(player -> player.getUUID().equals(playerIn.getUUID()))) {
 

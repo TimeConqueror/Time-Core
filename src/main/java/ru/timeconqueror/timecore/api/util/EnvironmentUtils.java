@@ -1,7 +1,6 @@
 package ru.timeconqueror.timecore.api.util;
 
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.MinecraftServerHooks;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.fml.loading.FMLPaths;
@@ -12,6 +11,7 @@ import org.apache.logging.log4j.core.Filter;
 import org.apache.logging.log4j.core.LoggerContext;
 import org.apache.logging.log4j.core.filter.MarkerFilter;
 import ru.timeconqueror.timecore.TimeCore;
+import ru.timeconqueror.timecore.mixins.accessor.MinecraftServerAccessor;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -47,7 +47,8 @@ public class EnvironmentUtils {
             throw new IllegalStateException("Server can't be got due to it hasn't started yet.");
         }
 
-        return MinecraftServerHooks.getStorageSource(server).getWorldDir();
+
+        return ((MinecraftServerAccessor) server).getStorageSource().getWorldDir();
     }
 
     public static Path getConfigDir() {
