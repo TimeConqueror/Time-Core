@@ -111,8 +111,7 @@ public class StructureFeatureRegister extends ForgeRegister<StructureFeature<?>>
             catchErrors(FMLCommonSetupEvent.class, () -> {
                 ImmutableList.Builder<StructureFeature<?>> noiseAffectedFeatures = ImmutableList.builder();
 
-
-                structureInfoList.forEach(info -> {
+                for (StructureInfo<?, ?> info : structureInfoList) {
                     StructureFeature<?> structure = info.structureFeature();
 
                     /*
@@ -128,7 +127,7 @@ public class StructureFeatureRegister extends ForgeRegister<StructureFeature<?>>
                     if (info.transformSurroundingLand) {
                         noiseAffectedFeatures.add(structure);
                     }
-                });
+                }
 
                 StructureFeature.NOISE_AFFECTING_FEATURES = noiseAffectedFeatures.addAll(StructureFeature.NOISE_AFFECTING_FEATURES).build();
 
@@ -175,17 +174,17 @@ public class StructureFeatureRegister extends ForgeRegister<StructureFeature<?>>
                     }
                 });
 
-                structureInfoList.forEach(structureInfo -> {
-                    structureInfo.setFeatureReadyToLoad();
-                    Registry.register(BuiltinRegistries.CONFIGURED_STRUCTURE_FEATURE, new ResourceLocation(getModId(), "configured_" + structureInfo.regObject().getId().getPath()), structureInfo.configuredStructureFeature());
+                for (StructureInfo<?, ?> info : structureInfoList) {
+                    info.setFeatureReadyToLoad();
+                    Registry.register(BuiltinRegistries.CONFIGURED_STRUCTURE_FEATURE, new ResourceLocation(getModId(), "configured_" + info.regObject().getId().getPath()), info.configuredStructureFeature());
 
-                    structureInfo.tags.doAndRemove(tags -> StructureTags.put(tags, structureInfo.structureFeature()));
-                });
+                    info.tags.doAndRemove(tags -> StructureTags.put(tags, info.structureFeature()));
+                }
             });
         });
     }
 
-    public void onWorldLoad(final WorldEvent.Load event) {
+    private void onWorldLoad(final WorldEvent.Load event) {
         if (event.getWorld() instanceof ServerLevel level) {
             ChunkGenerator chunkGenerator = level.getChunkSource().getGenerator();
 
