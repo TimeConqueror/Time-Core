@@ -11,6 +11,7 @@
     "MixinDataMain",
     "MixinLivingEntity",
     "NoiseChunkGeneratorMixin",
+    "accessor.ChunkGeneratorAccessor",
     "accessor.GatherDataEventAccessor",
     "accessor.StructureSettingsAccessor",
     "accessor.UnlockedAdvancementProvider",
