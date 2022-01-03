@@ -16,6 +16,7 @@ buildscript {
         classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.27-patched'
         classpath 'org.parchmentmc:librarian:1.+'
         classpath 'org.spongepowered:mixingradle:0.7.+'
+        classpath "gradle.plugin.com.github.jengelman.gradle.plugins:shadow:7.0.0"
     }
 }
 
@@ -24,29 +25,30 @@ plugins {
 }
 
 apply plugin: 'net.minecraftforge.gradle'
-// Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
 apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
 apply plugin: 'org.spongepowered.mixin'
 apply plugin: 'org.parchmentmc.librarian.forgegradle'
+apply plugin: 'com.github.johnrengelman.shadow'
 
 apply from: 'gradle/scripts/configs.gradle'
 apply from: 'gradle/scripts/version_handler.gradle'
 apply from: 'gradle/scripts/updater.gradle'
 
 version = versionGetter.get()
-group = 'ru.timeconqueror' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
+group = 'ru.timeconqueror'
 archivesBaseName = 'TimeCore'
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
-def mixinConfig = "mixins.timecore.json"
-
 mixin {
     add sourceSets.main, "mixins.timecore.refmap.json"
-    config mixinConfig
+    config "mixins.timecore.json"
 
 //    addManualRefmap("src/main/resources/manual_refmap.json")
+
+    debug.verbose = true
+    debug.countInjections = true
 }
 
 repositories {
@@ -65,14 +67,19 @@ repositories {
     }
 }
 
+// Allows to 3rd libraries be added to dev workspace
+minecraft.runs.all {
+    lazyToken('minecraft_classpath') {
+        configurations.library.copyRecursive().resolve().collect { it.absolutePath }.join(File.pathSeparator)
+    }
+}
+
 minecraft {
     mappings channel: 'parchment', version: '1-1.18.1'
     accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
 
-    // Default run configurations.
-    // These can be tweaked, removed, or duplicated as needed.
-    def extraArgs = new ArrayList<>(Arrays.asList())
-    def extraVmArgs = Arrays.asList('-Dmixin.debug.countInjections=true', '-Dmixin.debug.verbose=true')
+    def extraArgs = []
+    def extraVmArgs = []
     runs {
         client {
             workingDirectory project.file('run')
@@ -145,14 +152,18 @@ sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 configurations {
     // configuration that holds jars to include in the jar
-    implementation.extendsFrom(shade)
+
+    //library - 3rd-party library (not a mod)
+    //shade - dep that should be shaded
+    implementation.extendsFrom(library)
+    library.extendsFrom(shade)
 }
 
 compileJava.options.encoding = "UTF-8"
 compileTestJava.options.encoding = "UTF-8"
 
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.18.1-39.0.9'
+    minecraft 'net.minecraftforge:forge:1.18.1-39.0.10'
 
     if (file("runtimeMods").exists()) {
         file("runtimeMods").eachFile { file ->
@@ -171,13 +182,37 @@ dependencies {
 
     shade 'org.jetbrains:annotations:23.0.0'
 
-    shade "org.jetbrains.kotlin:kotlin-stdlib"
-    shade "org.jetbrains.kotlin:kotlin-reflect"
+    shade "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.6.10"
+    shade "org.jetbrains.kotlin:kotlin-reflect:1.6.10"
 
     if (System.getProperty("idea.sync.active") != "true") {
         annotationProcessor("org.spongepowered:mixin:0.8.5:processor")
     }
 }
+
+shadowJar {
+    configurations = [project.configurations.shade]
+
+    def shadowPackages = [
+            'kotlin',
+            'org.intellij',
+            'org.jetbrains'
+    ]
+
+    shadowPackages.forEach {
+        relocate(it, "tcrepack.$it")
+    }
+
+    mergeServiceFiles()
+    exclude '**/module-info.class'
+}
+
+reobf {
+    shadowJar {}
+}
+
+tasks.build.dependsOn reobfShadowJar
+jar.finalizedBy('reobfShadowJar')
 
 jar {
     from sourceSets.main.output
