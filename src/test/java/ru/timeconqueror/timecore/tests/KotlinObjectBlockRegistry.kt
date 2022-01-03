@@ -1,9 +1,9 @@
 package ru.timeconqueror.timecore.tests
 
-import net.minecraft.block.AbstractBlock
-import net.minecraft.block.Block
-import net.minecraft.block.material.Material
-import net.minecraft.item.ItemGroup
+import net.minecraft.world.item.CreativeModeTab
+import net.minecraft.world.level.block.Block
+import net.minecraft.world.level.block.state.BlockBehaviour
+import net.minecraft.world.level.material.Material
 import ru.timeconqueror.timecore.TimeCore
 import ru.timeconqueror.timecore.api.client.resource.BlockStateResource
 import ru.timeconqueror.timecore.api.registry.BlockRegister
@@ -19,7 +19,7 @@ object KotlinObjectBlockRegistry {
     @InitMethod
     private fun register() {
         val propsCreator = BlockPropsFactory {
-            AbstractBlock.Properties.of(Material.STONE)
+            BlockBehaviour.Properties.of(Material.STONE)
         }
 
         REGISTER {
@@ -27,7 +27,7 @@ object KotlinObjectBlockRegistry {
                 Block(propsCreator.create())
             } with {
                 name("Kotlin Object Test")
-                defaultBlockItem(ItemGroup.TAB_MISC)
+                defaultBlockItem(CreativeModeTab.TAB_MISC)
                 state(BlockStateResource.fromBuilder(BlockStateResource.Builder.create()))
             }
         }

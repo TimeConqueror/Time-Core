@@ -7,14 +7,14 @@ import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import ru.timeconqueror.timecore.TimeCore;
 import ru.timeconqueror.timecore.mod.common.config.MainConfig;
 
-@Mixin(Minecraft.class)
+@Mixin(Minecraft.class)//TODO if it works in default runtime
 public class MinecraftMixin {
-    @ModifyVariable(method = "loadWorld",
+    @ModifyVariable(method = "doLoadLevel",
             at = @At(
                     value = "STORE",
                     ordinal = 0
             ),
-            index = 13, // flag1
+            index = 13, // setting the flag1
             remap = false)
     private boolean suppressExperimentalWarning(boolean containsExperimentalFeatures) {
         if (containsExperimentalFeatures) {

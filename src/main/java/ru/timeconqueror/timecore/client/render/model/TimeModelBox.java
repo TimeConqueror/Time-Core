@@ -1,6 +1,10 @@
 package ru.timeconqueror.timecore.client.render.model;
 
+import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.math.Matrix3f;
+import com.mojang.math.Matrix4f;
 import com.mojang.math.Vector3f;
+import com.mojang.math.Vector4f;
 import net.minecraft.client.model.geom.ModelPart.Polygon;
 import net.minecraft.client.model.geom.ModelPart.Vertex;
 import net.minecraft.core.Direction;
@@ -82,7 +86,23 @@ public class TimeModelBox {
         this.quads = quads.toArray(new Polygon[0]);
     }
 
-    public Polygon[] getQuads() {
-        return quads;
+    public void compile(VertexConsumer bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha, Matrix4f matrix4f, Matrix3f matrix3f) {
+        for (Polygon quads : quads) {
+            Vector3f vector3f = quads.normal.copy();
+            vector3f.transform(matrix3f);
+            float f = vector3f.x();
+            float f1 = vector3f.y();
+            float f2 = vector3f.z();
+
+            for (int i = 0; i < 4; ++i) {
+                Vertex vertex = quads.vertices[i];
+                float f3 = vertex.pos.x() / 16.0F;
+                float f4 = vertex.pos.y() / 16.0F;
+                float f5 = vertex.pos.z() / 16.0F;
+                Vector4f vector4f = new Vector4f(f3, f4, f5, 1.0F);
+                vector4f.transform(matrix4f);
+                bufferIn.vertex(vector4f.x(), vector4f.y(), vector4f.z(), red, green, blue, alpha, vertex.u, vertex.v, packedOverlayIn, packedLightIn, f, f1, f2);
+            }
+        }
     }
 }

@@ -3,7 +3,6 @@ package ru.timeconqueror.timecore.client.render.model;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.model.Model;
-import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
@@ -17,16 +16,16 @@ import java.util.function.Function;
 
 public class TimeModel extends Model implements ITimeModel {
     private final String name;
-    private List<TimeModelRenderer> pieces;
-    private Map<String, TimeModelRenderer> pieceMap;
+    private List<TimeModelPiece> pieces;
+    private Map<String, TimeModelPiece> pieceMap;
 
     private float scaleMultiplier = 1F;
 
     public TimeModel(Function<ResourceLocation, RenderType> renderTypeIn, String name, int textureWidth, int textureHeight) {
         super(renderTypeIn);
         this.name = name;
-        this.texWidth = textureWidth;
-        this.texHeight = textureHeight;
+//        this.texWidth = textureWidth;//FIXME PORT
+//        this.texHeight = textureHeight;
     }
 
     @Override
@@ -48,35 +47,35 @@ public class TimeModel extends Model implements ITimeModel {
     }
 
     @Override
-    public List<TimeModelRenderer> getPieces() {
+    public List<TimeModelPiece> getPieces() {
         return pieces;
     }
 
-    public void setPieces(List<TimeModelRenderer> pieces) {
+    public void setPieces(List<TimeModelPiece> pieces) {
         this.pieces = pieces;
         this.pieceMap = new HashMap<>();
 
-        for (TimeModelRenderer piece : pieces) {
+        for (TimeModelPiece piece : pieces) {
             addRendererToMap(piece);
         }
     }
 
-    private void addRendererToMap(TimeModelRenderer renderer) {
+    private void addRendererToMap(TimeModelPiece renderer) {
         pieceMap.put(renderer.getName(), renderer);
 
-        List<ModelPart> children = renderer.children;
-        if (children != null) {
-            for (ModelPart child : children) {
-                if (child instanceof TimeModelRenderer) {
-                    addRendererToMap(((TimeModelRenderer) child));
-                }
-            }
-        }
+//        List<ModelPart> children = renderer.children;//FIXME PORT
+//        if (children != null) {
+//            for (ModelPart child : children) {
+//                if (child instanceof TimeModelPiece) {
+//                    addRendererToMap(((TimeModelPiece) child));
+//                }
+//            }
+//        }
     }
 
     @Override
     @Nullable
-    public TimeModelRenderer getPiece(String pieceName) {
+    public TimeModelPiece getPiece(String pieceName) {
         return pieceMap.get(pieceName);
     }
 
@@ -84,7 +83,7 @@ public class TimeModel extends Model implements ITimeModel {
      * Should be called before animation applying & render.
      */
     public void reset() {
-        for (TimeModelRenderer piece : pieceMap.values()) {
+        for (TimeModelPiece piece : pieceMap.values()) {
             piece.reset();
         }
     }
@@ -97,7 +96,7 @@ public class TimeModel extends Model implements ITimeModel {
 
         matrixStackIn.scale(scaleMultiplier, scaleMultiplier, scaleMultiplier);
 
-        for (TimeModelRenderer piece : pieces) {
+        for (TimeModelPiece piece : pieces) {
             piece.render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
         }
 

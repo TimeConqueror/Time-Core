@@ -6,6 +6,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
 import com.mojang.math.Vector3f;
+import kotlin.NotImplementedError;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
@@ -15,7 +16,6 @@ import org.jetbrains.annotations.NotNull;
 import ru.timeconqueror.timecore.api.util.CollectionUtils;
 import ru.timeconqueror.timecore.api.util.JsonUtils;
 import ru.timeconqueror.timecore.client.render.JsonParsingException;
-import ru.timeconqueror.timecore.mixins.accessor.client.ModelPartAccessor;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -160,7 +160,7 @@ public class JsonModelParser {
             this.parentName = parentName;
         }
 
-        private TimeModelRenderer bake(TimeModel model, RawModelBone parent) {
+        private TimeModelPiece bake(TimeModel model, RawModelBone parent) {
             List<TimeModelBox> boxesOut = new ArrayList<>(cubes.size());
             for (RawModelCube cube : cubes) {
                 boxesOut.add(cube.bake(model, this));
@@ -170,18 +170,18 @@ public class JsonModelParser {
                     rotationAngles.y() * (float) Math.PI / 180,
                     rotationAngles.z() * (float) Math.PI / 180);
 
-            TimeModelRenderer renderer = new TimeModelRenderer(model, rotationAnglesRadians, name, boxesOut, neverRender);
+            TimeModelPiece piece = new TimeModelPiece(model, rotationAnglesRadians, name, boxesOut, neverRender);
             if (parent != null) {
-                renderer.setPos(pivot.x() - parent.pivot.x(), -(pivot.y() - parent.pivot.y()), pivot.z() - parent.pivot.z());
-            } else renderer.setPos(pivot.x(), -pivot.y(), pivot.z());
+                piece.setPos(pivot.x() - parent.pivot.x(), -(pivot.y() - parent.pivot.y()), pivot.z() - parent.pivot.z());
+            } else piece.setPos(pivot.x(), -pivot.y(), pivot.z());
 
             if (children != null) {
                 for (RawModelBone child : children) {
-                    ((ModelPartAccessor) renderer).getChildren().add(child.bake(model, this));//FIXME PORT (add require or some check param for class strictly mixined)
+//                    ((ModelPartAccessor) piece).getChildren().add(child.bake(model, this));//FIXME PORT (add require or some check param for class strictly mixined)
                 }
             }
 
-            return renderer;
+            return piece;
         }
     }
 
@@ -198,7 +198,8 @@ public class JsonModelParser {
 
         private TimeModelBox bake(TimeModel model, RawModelBone bone) {
             origin.set(origin.x() - bone.pivot.x(), -(origin.y() + size.y() - bone.pivot.y()), origin.z() - bone.pivot.z());
-            return new TimeModelBox(origin, size, uv, bone.inflate, bone.mirror, model.texWidth, model.texHeight);
+//            return new TimeModelBox(origin, size, uv, bone.inflate, bone.mirror, model.texWidth, model.texHeight);//TODO port
+            throw new NotImplementedError();
         }
     }
 }

@@ -49,12 +49,12 @@ public class TimeEntityModel<T extends Entity> extends EntityModel<T> implements
     }
 
     @Override
-    public List<TimeModelRenderer> getPieces() {
+    public List<TimeModelPiece> getPieces() {
         return model.getPieces();
     }
 
     @Override
-    public @Nullable TimeModelRenderer getPiece(String pieceName) {
+    public @Nullable TimeModelPiece getPiece(String pieceName) {
         return model.getPiece(pieceName);
     }
 }

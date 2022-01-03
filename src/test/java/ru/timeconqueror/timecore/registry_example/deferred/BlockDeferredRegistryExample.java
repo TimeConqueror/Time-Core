@@ -1,9 +1,9 @@
 package ru.timeconqueror.timecore.registry_example.deferred;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.material.Material;
-import net.minecraft.item.ItemGroup;
-import net.minecraftforge.fml.RegistryObject;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.material.Material;
+import net.minecraftforge.registries.RegistryObject;
 import ru.timeconqueror.timecore.TimeCore;
 import ru.timeconqueror.timecore.api.client.resource.location.TextureLocation;
 import ru.timeconqueror.timecore.api.registry.BlockRegister;
@@ -18,11 +18,11 @@ public class BlockDeferredRegistryExample {
 
     public static RegistryObject<TestCobbleBlock> TEST_COBBLE = REGISTER.register("test_cobble", () -> new TestCobbleBlock(BLOCK_PROPS_CREATOR.create()))
             .oneVarStateAndCubeAllModel(new TextureLocation("minecraft", "block/cobblestone"))
-            .defaultBlockItem(ItemGroup.TAB_MISC)
+            .defaultBlockItem(CreativeModeTab.TAB_MISC)
 //          .genLangEntry("Test Cobble")
             .asRegistryObject();
 
     public static RegistryObject<Block> TEST_GRAVEL = REGISTER.register("test_gravel", () -> new Block(BLOCK_PROPS_CREATOR.create()))
-            .defaultBlockItem(ItemGroup.TAB_MISC)
+            .defaultBlockItem(CreativeModeTab.TAB_MISC)
             .asRegistryObject();
 }

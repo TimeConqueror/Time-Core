@@ -1,9 +1,9 @@
 package ru.timeconqueror.timecore.tests;
 
-import net.minecraft.block.AbstractBlock;
-import net.minecraft.block.Block;
-import net.minecraft.block.material.Material;
-import net.minecraft.item.ItemGroup;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.material.Material;
 import net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent;
 import ru.timeconqueror.timecore.TimeCore;
 import ru.timeconqueror.timecore.api.registry.BlockRegister;
@@ -15,6 +15,6 @@ public class OneParameterBlockRegistry {
 
     @AutoRegistrable.InitMethod
     private static void register(FMLConstructModEvent event) {
-        REGISTER.register("one_parameter_test", () -> new Block(AbstractBlock.Properties.of(Material.AIR))).defaultBlockItem(ItemGroup.TAB_MISC);
+        REGISTER.register("one_parameter_test", () -> new Block(BlockBehaviour.Properties.of(Material.AIR))).defaultBlockItem(CreativeModeTab.TAB_MISC);
     }
 }

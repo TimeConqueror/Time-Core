@@ -1,6 +1,5 @@
 package ru.timeconqueror.timecore.registry_example;
 
-import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraftforge.registries.ObjectHolder;
 import ru.timeconqueror.timecore.TimeCore;

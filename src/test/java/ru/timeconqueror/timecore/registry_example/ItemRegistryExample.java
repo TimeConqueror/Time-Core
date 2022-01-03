@@ -1,7 +1,7 @@
 package ru.timeconqueror.timecore.registry_example;
 
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemGroup;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.Item;
 import net.minecraftforge.registries.ObjectHolder;
 import ru.timeconqueror.timecore.TimeCore;
 import ru.timeconqueror.timecore.api.client.resource.location.TextureLocation;
@@ -20,7 +20,7 @@ public class ItemRegistryExample {
 
         @AutoRegistrable.InitMethod
         private static void register() {
-            ItemPropsFactory miscGrouped = new ItemPropsFactory(ItemGroup.TAB_MISC);
+            ItemPropsFactory miscGrouped = new ItemPropsFactory(CreativeModeTab.TAB_MISC);
 
             REGISTER.register("test_diamond", () -> new Item(miscGrouped.create()))
                     .defaultModel(new TextureLocation("minecraft", "item/diamond"));
