@@ -3,6 +3,7 @@ package ru.timeconqueror.timecore.api.util;
 import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.loading.FMLEnvironment;
+import net.minecraftforge.fml.loading.FMLLoader;
 import net.minecraftforge.fml.loading.FMLPaths;
 import net.minecraftforge.server.ServerLifecycleHooks;
 import org.apache.logging.log4j.LogManager;
@@ -19,12 +20,6 @@ import java.util.Arrays;
 import java.util.List;
 
 public class EnvironmentUtils {
-    /**
-     * Will be changed to true via reflection, if Minecraft is run in Data Mode.
-     */
-    @SuppressWarnings({"FieldMayBeFinal", "FieldCanBeLocal"})
-    private static boolean isInDataMode = false;
-
     public static boolean isOnPhysicalClient() {
         return FMLEnvironment.dist == Dist.CLIENT;
     }
@@ -38,7 +33,7 @@ public class EnvironmentUtils {
     }
 
     public static boolean isInDataMode() {
-        return isInDataMode;
+        return FMLLoader.getLaunchHandler().isData();
     }
 
     public static Path getWorldSaveDir() {

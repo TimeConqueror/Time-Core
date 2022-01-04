@@ -8,7 +8,6 @@
   "mixins": [
     "FMLModContainerMixin",
     "LakesFeatureMixin",
-    "MixinDataMain",
     "MixinLivingEntity",
     "NoiseChunkGeneratorMixin",
     "accessor.ChunkGeneratorAccessor",
