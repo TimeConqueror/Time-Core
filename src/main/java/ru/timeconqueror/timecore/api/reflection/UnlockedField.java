@@ -5,30 +5,52 @@ import org.jetbrains.annotations.Nullable;
 import java.lang.reflect.Field;
 
 /**
- * Wrapper for field, unlocks the access to it.
+ * Wrapper for field, tries to unlock the access to it.
  *
  * @param <O> owner type.
  * @param <T> field type.
  */
 public class UnlockedField<O, T> {
     private final Field field;
-    private boolean finalized;
+    private final boolean isStatic;
+    private final Boolean finalSettable;
+    private final boolean accessible;
+    private final boolean isFinal;
 
     public UnlockedField(Field field) {
         this.field = field;
 
-        ReflectionHelper.setAccessible(field);
-        finalized = ReflectionHelper.isFinal(field);
+        isFinal = ReflectionHelper.isFinal(field);
+        isStatic = ReflectionHelper.isStatic(field);
+        finalSettable = predictFinalSettable();
+
+        accessible = field.trySetAccessible();
+    }
+
+    /**
+     * From https://github.com/openjdk/jdk/pull/5027#issuecomment-969672078
+     */
+    private Boolean predictFinalSettable() {
+        if (isFinal) {
+            return !isStatic && !field.getDeclaringClass().isHidden() && !field.getDeclaringClass().isRecord();
+        }
+
+        return null;
     }
 
     /**
      * Gets the value of field in provided {@code fieldOwner}
-     * Safe for use with non-accessible fields.
      *
      * @param fieldOwner owner of field. If the underlying field is static, the obj argument is ignored; it may be null.
      */
     @SuppressWarnings("unchecked")
     public T get(@Nullable O fieldOwner) {
+        validateAccessible(AccessType.GET, true);
+
+        if (!isStatic && fieldOwner == null) {
+            throw new IllegalArgumentException(String.format("Tried to pass null as a fieldOwner to the non static field %s", field.toString()));
+        }
+
         try {
             return (T) field.get(fieldOwner);
         } catch (IllegalAccessException e) {
@@ -38,31 +60,15 @@ public class UnlockedField<O, T> {
 
     /**
      * Sets new value into field of provided {@code fieldOwner}
-     * Safe for use with non-accessible or finalized fields.
-     * <br><br>
-     * <font color="yellow">Warning</font>:
-     * Values in <i>static final</i> fields are inlined in places of calling,
-     * so setting new value won't change anything in most situations.
-     * To make it change, the initial value of field shouldn't be known at runtime.
-     * <br>
-     * Example:<br>
-     * Value setting will do nothing with this:
-     * <pre>private static final boolean CONSTANT_FOREVER = false;</pre>
-     * But it will work with this:
-     * <pre>private static final boolean CHANGEABLE_CONSTANT = Boolean.parseBoolean("false");</pre>
-     * because the second one can't be known at runtime and will be calculated.
      *
      * @param fieldOwner owner of field. If the underlying field is static, the methodOwner argument is ignored; it may be null.
      * @param newVal     new value to put in the field of provided {@code fieldOwner}
      */
     public void set(@Nullable O fieldOwner, T newVal) {
-        if (finalized) {
-            try {
-                ReflectionHelper.unfinalize(field);
-                finalized = false;
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            }
+        validateAccessible(AccessType.SET, true);
+
+        if (!isStatic && fieldOwner == null) {
+            throw new IllegalArgumentException(String.format("Tried to pass null as a fieldOwner to the non static field %s", field.toString()));
         }
 
         try {
@@ -72,7 +78,7 @@ public class UnlockedField<O, T> {
         }
     }
 
-    public Field getField() {
+    public Field unboxed() {
         return field;
     }
 
@@ -80,11 +86,42 @@ public class UnlockedField<O, T> {
      * Returns true, if provided field is static, otherwise returns false.
      */
     public boolean isStatic() {
-        return ReflectionHelper.isStatic(field);
+        return isStatic;
     }
 
     @Override
     public String toString() {
         return field.toString();
+    }
+
+    public boolean guessIsAccessible(AccessType accessType) {
+        return validateAccessible(accessType, false);
+    }
+
+    private boolean validateAccessible(AccessType accessType, boolean strict) {
+        if (accessType == AccessType.SET) {
+            if (isFinal && !finalSettable) {
+                if (!strict) return false;
+
+                throw new UnsupportedOperationException(String.format("""
+                        Final field object may have (but not necessarily) write access if at least:
+                        the field is non-static (%b);
+                        the field's declaring class is not a hidden class (%b);
+                        the field's declaring class is not a record class (%b).
+                        """, !isStatic, !field.getDeclaringClass().isHidden(), !field.getDeclaringClass().isRecord()));
+            }
+        }
+
+        if (!accessible) {
+            if (!strict) return false;
+
+            throw new UnsupportedOperationException("The field isn't accessible");
+        }
+
+        return true;
+    }
+
+    public enum AccessType {
+        GET, SET
     }
 }

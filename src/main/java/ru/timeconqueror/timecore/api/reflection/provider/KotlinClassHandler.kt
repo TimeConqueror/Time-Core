@@ -11,7 +11,7 @@ object KotlinClassHandler : ClassHandler {
     override fun canHandle(clazz: Class<*>) = KReflectionHelper.isKotlinClass(clazz)
 
     override fun <O, R> isStatic(method: UnlockedMethod<O, R>): Boolean {
-        val klass = method.method.declaringClass.kotlin
+        val klass = method.unboxed().declaringClass.kotlin
         return klass.objectInstance != null
     }
 
@@ -33,8 +33,8 @@ object KotlinClassHandler : ClassHandler {
     }
 
     override fun <O, R> invokeStaticMethod(method: UnlockedMethod<O, R>, vararg args: Any): Any? {
-        val staticInstance = getStaticInstance(method.method.declaringClass.kotlin) as O?
-            ?: throw IllegalArgumentException("Method $method from ${method.method.declaringClass.name} is not in a companion or object.")
+        val staticInstance = getStaticInstance(method.unboxed().declaringClass.kotlin) as O?
+            ?: throw IllegalArgumentException("Method $method from ${method.unboxed().declaringClass.name} is not in a companion or object.")
 
         return method.invoke(staticInstance, *args)
     }

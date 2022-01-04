@@ -84,7 +84,7 @@ public class ModInitializer {
 
     private static void processAutoRegistrableOnField(Class<?> containerClass, UnlockedField<?, Object> field, Consumer<TimeRegister> registerSubscriber) {
         if (field.isStatic()) {
-            if (TimeRegister.class.isAssignableFrom(field.getField().getType())) {
+            if (TimeRegister.class.isAssignableFrom(field.unboxed().getType())) {
                 TimeRegister register = (TimeRegister) field.get(null);
                 register.setOwner(containerClass);
 
@@ -110,7 +110,7 @@ public class ModInitializer {
             throw new NoSuchMethodError("Not found method " + methodSignature + " from class " + containerClass.getName());
         handler.requireStatic(initMethod);
 
-        Method nativeMethod = initMethod.getMethod();
+        Method nativeMethod = initMethod.unboxed();
         if (nativeMethod.getParameterCount() == 0) {
             preConstructMethodRegistrator.accept(() -> handler.invokeStaticMethod(initMethod));
         } else if (nativeMethod.getParameterCount() == 1 && FMLConstructModEvent.class.isAssignableFrom(nativeMethod.getParameterTypes()[0])) {

@@ -13,12 +13,6 @@ import java.util.Arrays;
 import java.util.Optional;
 
 public class ReflectionHelper {
-    private static final UnlockedField<Field, Integer> F_MODIFIERS = findField(Field.class, "modifiers");
-
-    static {
-        F_MODIFIERS.getField().setAccessible(true);
-    }
-
     public static boolean isFinal(Field f) {
         return Modifier.isFinal(f.getModifiers());
     }
@@ -29,34 +23,6 @@ public class ReflectionHelper {
 
     public static boolean isStatic(Method m) {
         return Modifier.isStatic(m.getModifiers());
-    }
-
-    /**
-     * Removes {@code final} modifier from field.
-     */
-    public static void unfinalize(Field f) throws IllegalAccessException {
-        if (isFinal(f)) {
-            Field modifiersField = F_MODIFIERS.getField();
-            modifiersField.setInt(f, f.getModifiers() & ~Modifier.FINAL);
-        }
-    }
-
-    public static void setAccessible(Field f) {
-        if (!f.isAccessible()) {
-            f.setAccessible(true);
-        }
-    }
-
-    public static void setAccessible(Method m) {
-        if (!m.isAccessible()) {
-            m.setAccessible(true);
-        }
-    }
-
-    public static void setAccessible(Constructor<?> c) {
-        if (!c.isAccessible()) {
-            c.setAccessible(true);
-        }
     }
 
     /**
@@ -77,7 +43,7 @@ public class ReflectionHelper {
     }
 
     /**
-     * Finds a field with the specified location in the given class and makes it accessible.
+     * Finds a field with the specified location in the given class and tries to make it accessible.
      * Note: for performance, store the returned value and avoid calling this repeatedly.
      * <p>
      * Returns null if the field is not found and prints error stacktrace.
@@ -99,7 +65,7 @@ public class ReflectionHelper {
     }
 
     /**
-     * Finds a field with the specified location in the given class and makes it accessible.
+     * Finds a field with the specified location in the given class and tries to make it accessible.
      * Note: for performance, store the returned value and avoid calling this repeatedly.
      * <p>
      * Throws {@link RuntimeException} if the field is not found.
@@ -111,6 +77,7 @@ public class ReflectionHelper {
      */
     public static <O, T> UnlockedField<O, T> findField(Class<O> clazz, String fieldName) {
         try {
+            Arrays.stream(clazz.getDeclaredFields()).map(Field::toString).forEach(System.out::println);
             Field f = clazz.getDeclaredField(fieldName);
             return new UnlockedField<>(f);
         } catch (Throwable e) {
@@ -121,7 +88,7 @@ public class ReflectionHelper {
     /**
      * Only for fields, which come from vanilla minecraft!
      * <p>
-     * Finds a field with the specified location in the given class and makes it accessible.
+     * Finds a field with the specified location in the given class and tries to make it accessible.
      * Note: for performance, store the returned value and avoid calling this repeatedly.
      * <p>
      * Returns null if the field is not found and prints error stacktrace.
@@ -142,7 +109,7 @@ public class ReflectionHelper {
     }
 
     /**
-     * Finds a method with the specified location and params in the given class and makes it accessible.
+     * Finds a method with the specified location and params in the given class and tries to make it accessible.
      * Note: for performance, store the returned value and avoid calling this repeatedly.
      * <p>
      * Returns empty optional if the method is not found.
@@ -164,7 +131,7 @@ public class ReflectionHelper {
     }
 
     /**
-     * Finds a method with the specified location and params in the given class and makes it accessible.
+     * Finds a method with the specified location and params in the given class and tries to make it accessible.
      * Note: for performance, store the returned value and avoid calling this repeatedly.
      * <p>
      * Throws {@link RuntimeException} if the field is not found.
@@ -187,7 +154,7 @@ public class ReflectionHelper {
     /**
      * Only for methods, which come from vanilla minecraft!
      * <p>
-     * Finds a method with the specified location and params in the given class and makes it accessible.
+     * Finds a method with the specified location and params in the given class and tries to make it accessible.
      * Note: for performance, store the returned value and avoid calling this repeatedly.
      * <p>
      * Returns empty optional if the method is not found and prints error stacktrace.
@@ -233,17 +200,17 @@ public class ReflectionHelper {
      * @param clazz class to be loaded.
      * @throws RuntimeException if class isn't found
      */
-    public static void initClass(Class<?> clazz) {
-        initClass(clazz.getName());
+    public static void loadClass(Class<?> clazz) {
+        loadClass(clazz.getName());
     }
 
     /**
-     * Loads class with provided location. (so it calls static initializer)
+     * Loads class with provided location. (calls its static initializer)
      *
      * @param className full location of class to be loaded
      * @throws RuntimeException if class isn't found
      */
-    public static void initClass(String className) {
+    public static void loadClass(String className) {
         try {
             Class.forName(className);
         } catch (ClassNotFoundException e) {

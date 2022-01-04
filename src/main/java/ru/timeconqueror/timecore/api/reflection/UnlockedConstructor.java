@@ -4,16 +4,17 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
 /**
- * Wrapper for constructor, unlocks the access to it.
+ * Wrapper for constructor, tries to unlock the access to it.
  *
  * @param <T> type of instances that are created by this constructor.
  */
 public class UnlockedConstructor<T> {
     private final Constructor<T> c;
+    private final boolean accessible;
 
     public UnlockedConstructor(Constructor<T> c) {
         this.c = c;
-        ReflectionHelper.setAccessible(c);
+        accessible = c.trySetAccessible();
     }
 
     /**
@@ -24,6 +25,10 @@ public class UnlockedConstructor<T> {
      * @return new instance.
      */
     public T newInstance(Object... initParams) {
+        if (!accessible) {
+            throw new UnsupportedOperationException("The constructor isn't accessible");
+        }
+
         try {
             return c.newInstance(initParams);
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
@@ -31,7 +36,7 @@ public class UnlockedConstructor<T> {
         }
     }
 
-    public Constructor<T> getConstructor() {
+    public Constructor<T> unboxed() {
         return c;
     }
 

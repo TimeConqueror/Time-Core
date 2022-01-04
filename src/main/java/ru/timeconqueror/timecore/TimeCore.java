@@ -54,7 +54,7 @@ public final class TimeCore implements TimeMod {
     }
 
     private void setup(final FMLCommonSetupEvent event) {
-        ReflectionHelper.initClass(StructureRevealer.class);
+        ReflectionHelper.loadClass(StructureRevealer.class);
         event.enqueueWork(capabilityManager::addDefaultAttachers);
 
         AnimationRegistry.registerAnimation(Animation.NULL);
