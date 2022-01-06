@@ -12,73 +12,39 @@
 * Client-side Commands - provides the way of creating commands, that exist only on client side.
 
 ## How to add TimeCore as a gradle dependency:
-Note: if you want to use TimeCore, you have to use mojang mappings (at future I'll try to add special repository, which
-will remap mod's jar file to use with other mappings). Here you can see how to use
-them: https://github.com/alcatrazEscapee/mappificator
-1. Add this maven repo in the `repositories` closure:
-
-1.15.2:
-```groovy
-    maven {
-        name = "TimeConqueror's Maven"
-        url = "https://raw.githubusercontent.com/TimeConqueror/maven/master"
-        artifactUrls 'https://github.com/TimeConqueror/maven/blob/master/' //fallback url
-    }
-    maven {
-        name = 'sponge'
-        url = 'https://repo.spongepowered.org/maven'
-    }
-```
-
-1.16.4:
-```groovy
-    maven {
-        name = "TimeConqueror's Maven"
-        url = "https://repo.repsy.io/mvn/timeconqueror/mc/"
-    }
-```
-
-2. Add this dependency in the `dependencies` closure:
-1.15.2:
-```groovy
-implementation group: 'ru.timeconqueror', name: 'TimeCore', version: '1.15.2-<version-placeholder>', classifier: 'dev', changing: true
-```
-
-1.16.4:
+1. Modify your buildscript section by adding extra classpath to the buildscript.dependencies closure:
 
 ```groovy
-implementation fg.deobf("ru.timeconqueror:TimeCore:1.16.4-<version-placeholder>:dev")
+buildscript {
+   ...
+   dependencies {
+      ...
+      classpath "gradle.plugin.com.github.jengelman.gradle.plugins:shadow:7.0.0"
+   }
+}
 ```
 
-3. Add this string as a `JVM Argument`:
-   `-Dmixin.env.disableRefMap=true`
-
-4. Optional: since TimeCore has kotlin libraries, it guarantees to work in runtime. For using it in dev workspace:
-
-4.1. Add `plugins` closure:
+2. Add a couple of plugins right after buildscript closure:
 
 ```groovy
 plugins {
-    id "org.jetbrains.kotlin.jvm" version "1.3.72"
+    id "org.jetbrains.kotlin.jvm" version "1.6.10"
 }
+apply plugin: 'com.github.johnrengelman.shadow'
+apply from: '/timecore.gradle'
 ```
 
-4.2 Add Maven Central's repository, if you don't have it.
+3. Create file "timecore.properties" and place there a property, which defines the TimeCore version to be used in
+   project.
 
-```groovy
-repositories {
-    mavenCentral()
-}
+```properties
+timecore.version=<VERSION_PLACEHOLDER>
 ```
 
-4.3 Add these dependencies:
+Example:
 
-```groovy
-dependencies {
-    implementation 'org.jetbrains:annotations:18.0.0'
-    implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
-    implementation 'org.jetbrains.kotlin:kotlin-reflect'
-}
+```properties
+timecore.version=1.18.1-3.5.0.0
 ```
 
 ## Contribution
