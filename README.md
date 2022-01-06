@@ -31,7 +31,7 @@ plugins {
     id "org.jetbrains.kotlin.jvm" version "1.6.10"
 }
 apply plugin: 'com.github.johnrengelman.shadow'
-apply from: '/timecore.gradle'
+apply from: 'https://raw.githubusercontent.com/TimeConqueror/Time-Core/1.18/gradle/scripts/timecore.gradle'
 ```
 
 3. Create file "timecore.properties" and place there a property, which defines the TimeCore version to be used in
