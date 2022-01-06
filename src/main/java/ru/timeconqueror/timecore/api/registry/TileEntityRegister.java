@@ -13,7 +13,7 @@ import net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.ObjectHolder;
 import net.minecraftforge.registries.RegistryObject;
-import ru.timeconqueror.timecore.api.TimeMod;
+import ru.timeconqueror.timecore.api.TimeCoreAPI;
 import ru.timeconqueror.timecore.api.client.render.tile.ProfiledTileEntityRenderer;
 import ru.timeconqueror.timecore.api.registry.util.AutoRegistrable;
 import ru.timeconqueror.timecore.api.util.Hacks;
@@ -30,7 +30,7 @@ import java.util.function.Supplier;
  * <ol>
  *     <li>Create its instance and declare it static. Access modifier can be any.</li>
  *     <li>Attach {@link AutoRegistrable} annotation to it to register it as an event listener.</li>
- *     <li>Extend you main mod class from {@link TimeMod} to enable TimeCore's annotations.</li>
+ *     <li>Call {@link TimeCoreAPI#setup()} from your mod constructor to enable TimeCore's annotations.</li>
  * </ol>
  *
  * <b>Features:</b>

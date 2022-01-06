@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.MixinEnvironment;
 import ru.timeconqueror.timecore.animation.AnimationRegistry;
 import ru.timeconqueror.timecore.animation.watcher.TransitionWatcher;
 import ru.timeconqueror.timecore.api.Markers;
-import ru.timeconqueror.timecore.api.TimeMod;
+import ru.timeconqueror.timecore.api.TimeCoreAPI;
 import ru.timeconqueror.timecore.api.animation.Animation;
 import ru.timeconqueror.timecore.api.reflection.ReflectionHelper;
 import ru.timeconqueror.timecore.api.util.EnvironmentUtils;
@@ -22,7 +22,7 @@ import ru.timeconqueror.timecore.devtools.StructureRevealer;
 //TODO setDealyPredicate -> setDelay
 //TODO full time delayed actions
 //TODO add readable exception when there's no animation file, for now it's just nullpointer
-public final class TimeCore implements TimeMod {
+public final class TimeCore {
     public static final String MODID = "timecore";
     public static final Logger LOGGER = LogManager.getLogger(MODID);
     public static TimeCore INSTANCE = null;
@@ -40,6 +40,8 @@ public final class TimeCore implements TimeMod {
 
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::onConstruct);
+
+        TimeCoreAPI.setup(this);
     }
 
     /**

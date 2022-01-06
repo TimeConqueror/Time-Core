@@ -6,7 +6,6 @@
   "setSourceFile": true,
   "compatibilityLevel": "JAVA_17",
   "mixins": [
-    "FMLModContainerMixin",
     "LakesFeatureMixin",
     "MixinLivingEntity",
     "NoiseChunkGeneratorMixin",

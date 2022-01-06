@@ -8,7 +8,7 @@ import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.NetworkEvent;
 import net.minecraftforge.network.NetworkRegistry;
 import net.minecraftforge.network.simple.SimpleChannel;
-import ru.timeconqueror.timecore.api.TimeMod;
+import ru.timeconqueror.timecore.api.TimeCoreAPI;
 import ru.timeconqueror.timecore.api.common.packet.ITimePacketHandler;
 import ru.timeconqueror.timecore.api.registry.base.RunnableStoringRegister;
 import ru.timeconqueror.timecore.api.registry.util.AutoRegistrable;
@@ -26,7 +26,7 @@ import java.util.function.Supplier;
  * <ol>
  *     <li>Create its instance and declare it static. Access modifier can be any.</li>
  *     <li>Attach {@link AutoRegistrable} annotation to it to register it as an event listener.</li>
- *     <li>Extend you main mod class from {@link TimeMod} to enable TimeCore's annotations.</li>
+ *     <li>Call {@link TimeCoreAPI#setup()} from your mod constructor to enable TimeCore's annotations.</li>
  * </ol>
  *
  * <b>Features:</b>

@@ -8,7 +8,7 @@ import net.minecraftforge.forge.event.lifecycle.GatherDataEvent;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.ObjectHolder;
 import net.minecraftforge.registries.RegistryObject;
-import ru.timeconqueror.timecore.api.TimeMod;
+import ru.timeconqueror.timecore.api.TimeCoreAPI;
 import ru.timeconqueror.timecore.api.client.resource.ItemModel;
 import ru.timeconqueror.timecore.api.client.resource.StandardItemModelParents;
 import ru.timeconqueror.timecore.api.client.resource.TimeResourceHolder;
@@ -33,7 +33,7 @@ import java.util.function.Supplier;
  * <ol>
  *     <li>Create its instance and declare it static. Access modifier can be any.</li>
  *     <li>Attach {@link AutoRegistrable} annotation to it to register it as an event listener.</li>
- *     <li>Extend you main mod class from {@link TimeMod} to enable TimeCore's annotations.</li>
+ *     <li>Call {@link TimeCoreAPI#setup()} from your mod constructor to enable TimeCore's annotations.</li>
  * </ol>
  *
  * <b>Features:</b>

@@ -6,7 +6,7 @@ import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.event.config.ModConfigEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent;
 import net.minecraftforge.fml.loading.FMLPaths;
-import ru.timeconqueror.timecore.api.TimeMod;
+import ru.timeconqueror.timecore.api.TimeCoreAPI;
 import ru.timeconqueror.timecore.api.common.config.Config;
 import ru.timeconqueror.timecore.api.common.config.ImprovedConfigBuilder;
 import ru.timeconqueror.timecore.api.registry.util.AutoRegistrable;
@@ -24,7 +24,7 @@ import java.util.List;
  * <ol>
  *     <li>Create its instance and declare it static. Access modifier can be any.</li>
  *     <li>Attach {@link AutoRegistrable} annotation to it to register it as an event listener.</li>
- *     <li>Extend you main mod class from {@link TimeMod} to enable TimeCore's annotations.</li>
+ *     <li>Call {@link TimeCoreAPI#setup()} from your mod constructor to enable TimeCore's annotations.</li>
  * </ol>
  *
  * <b>Features:</b>

@@ -14,7 +14,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.ObjectHolder;
 import net.minecraftforge.registries.RegistryObject;
 import org.jetbrains.annotations.Nullable;
-import ru.timeconqueror.timecore.api.TimeMod;
+import ru.timeconqueror.timecore.api.TimeCoreAPI;
 import ru.timeconqueror.timecore.api.client.resource.BlockModel;
 import ru.timeconqueror.timecore.api.client.resource.BlockModels;
 import ru.timeconqueror.timecore.api.client.resource.BlockStateResource;
@@ -41,7 +41,7 @@ import java.util.function.Supplier;
  * <ol>
  *     <li>Create its instance and declare it static. Access modifier can be any.</li>
  *     <li>Attach {@link AutoRegistrable} annotation to it to register it as an event listener.</li>
- *     <li>Extend you main mod class from {@link TimeMod} to enable TimeCore's annotations.</li>
+ *     <li>Call {@link TimeCoreAPI#setup()} from your mod constructor to enable TimeCore's annotations.</li>
  * </ol>
  *
  * <b>Features:</b>

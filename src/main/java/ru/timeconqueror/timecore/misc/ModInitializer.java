@@ -1,6 +1,7 @@
 package ru.timeconqueror.timecore.misc;
 
 import net.minecraftforge.eventbus.api.EventPriority;
+import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.ModContainer;
 import net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -30,15 +31,26 @@ public class ModInitializer {
     private static final Type TIME_AUTO_REG_TYPE = Type.getType(AutoRegistrable.class);
     private static final Type TIME_AUTO_REG_INIT_TYPE = Type.getType(InitMethod.class);
 
-    public static synchronized void run(String modId, ModContainer modContainer, ModFileScanData scanResults, Class<?> modClass) {
-        runKotlinAutomaticEventSubscriber(modId, modContainer, scanResults, modClass);
+    public static synchronized void run(ModContainer modContainer, ModFileScanData scanResults, Object mod) {
+        TimeCore.LOGGER.debug("Setting up TimeCore components for {}", modContainer.getModId());
+
+        IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
+        modEventBus.addListener(EventPriority.HIGHEST, (FMLConstructModEvent event) -> {
+            if (!modContainer.matches(mod)) {
+                throw new IllegalArgumentException(String.format("Object being provided as mod (%s) doesn't match the one (%s) in the container.", mod.getClass(), modContainer.getMod().getClass()));
+            }
+        });
+
+        String modId = modContainer.getModId();
+
+        runKotlinAutomaticEventSubscriber(modId, modContainer, scanResults, mod.getClass());
 
         List<Runnable> initMethods = new ArrayList<>();
         List<TimeRegister> registers = new ArrayList<>();
 
         setupAutoRegistries(scanResults, initMethods::add, registers::add);
 
-        RegisterSubscriber.regToBus(registers, FMLJavaModLoadingContext.get().getModEventBus());
+        RegisterSubscriber.regToBus(registers, modEventBus);
 
         processInitMethods(initMethods);
 
