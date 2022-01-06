@@ -8,7 +8,7 @@ public class TimeCoreConfigManager {
     @AutoRegistrable
     private static final ConfigRegister REGISTER = new ConfigRegister(TimeCore.MODID);
 
-    @AutoRegistrable.InitMethod
+    @AutoRegistrable.Init
     private static void register() {
         REGISTER.register(MainConfig.INSTANCE);
     }

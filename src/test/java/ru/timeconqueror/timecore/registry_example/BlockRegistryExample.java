@@ -28,7 +28,7 @@ public class BlockRegistryExample {
         @AutoRegistrable
         private static final BlockRegister REGISTER = new BlockRegister(TimeCore.MODID);
 
-        @AutoRegistrable.InitMethod
+        @AutoRegistrable.Init
         private static void register() {
             BlockPropsFactory propsCreator = new BlockPropsFactory(() -> Block.Properties.of(Material.STONE));
 

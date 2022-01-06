@@ -80,9 +80,9 @@ import java.util.function.Supplier;
  * The inner class will be used for us as a registrator. It should be static, but can have any access modifier.
  * We still add {@link TimeRegister} there as stated above. (with AutoRegistrable annotation, etc.)]
  * <p>
- * One more thing: we should add is a <b>static</b> register method and annotate with {@link AutoRegistrable.InitMethod}. Method can have any access modifier.
+ * One more thing: we should add is a <b>static</b> register method and annotate with {@link AutoRegistrable.Init}. Method can have any access modifier.
  * There we will register all needed stuff, using {@link TimeRegister} field.
- * Method annotated with {@link AutoRegistrable.InitMethod} can have zero parameters or one {@link FMLConstructModEvent} parameter.
+ * Method annotated with {@link AutoRegistrable.Init} can have zero parameters or one {@link FMLConstructModEvent} parameter.
  * It will be called before Registry events to prepare all the stuff.
  * <p>
  * As you can see, I used {@link Hacks#promise()} method for public static final fields that will be initialized later.

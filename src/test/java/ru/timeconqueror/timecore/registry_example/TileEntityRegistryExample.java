@@ -16,7 +16,7 @@ public class TileEntityRegistryExample {
         @AutoRegistrable
         private static final TileEntityRegister REGISTER = new TileEntityRegister(TimeCore.MODID);
 
-        @AutoRegistrable.InitMethod
+        @AutoRegistrable.Init
         private static void register() {
             REGISTER.registerSingleBound("test_tile_1", DummyTileEntity::new, () -> BlockRegistryExample.TEST_BLOCK_WITH_TILE);
         }

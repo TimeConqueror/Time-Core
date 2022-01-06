@@ -13,7 +13,7 @@ public class OneParameterBlockRegistry {
     @AutoRegistrable
     private static final BlockRegister REGISTER = new BlockRegister(TimeCore.MODID);
 
-    @AutoRegistrable.InitMethod
+    @AutoRegistrable.Init
     private static void register(FMLConstructModEvent event) {
         REGISTER.register("one_parameter_test", () -> new Block(BlockBehaviour.Properties.of(Material.AIR))).defaultBlockItem(CreativeModeTab.TAB_MISC);
     }

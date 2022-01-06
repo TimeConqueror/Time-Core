@@ -8,7 +8,7 @@ import ru.timeconqueror.timecore.TimeCore
 import ru.timeconqueror.timecore.api.client.resource.BlockStateResource
 import ru.timeconqueror.timecore.api.registry.BlockRegister
 import ru.timeconqueror.timecore.api.registry.util.AutoRegistrable
-import ru.timeconqueror.timecore.api.registry.util.AutoRegistrable.InitMethod
+import ru.timeconqueror.timecore.api.registry.util.AutoRegistrable.Init
 import ru.timeconqueror.timecore.api.registry.util.BlockPropsFactory
 import ru.timeconqueror.timecore.api.registry.util.invoke
 
@@ -16,7 +16,7 @@ object KotlinObjectBlockRegistry {
     @AutoRegistrable
     private val REGISTER = BlockRegister(TimeCore.MODID)
 
-    @InitMethod
+    @Init
     private fun register() {
         val propsCreator = BlockPropsFactory {
             BlockBehaviour.Properties.of(Material.STONE)

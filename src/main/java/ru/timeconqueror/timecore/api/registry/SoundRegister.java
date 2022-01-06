@@ -8,7 +8,7 @@ import net.minecraftforge.registries.ObjectHolder;
 import net.minecraftforge.registries.RegistryObject;
 import ru.timeconqueror.timecore.api.TimeCoreAPI;
 import ru.timeconqueror.timecore.api.registry.util.AutoRegistrable;
-import ru.timeconqueror.timecore.api.registry.util.AutoRegistrable.InitMethod;
+import ru.timeconqueror.timecore.api.registry.util.AutoRegistrable.Init;
 import ru.timeconqueror.timecore.api.util.Hacks;
 
 /**
@@ -58,9 +58,9 @@ import ru.timeconqueror.timecore.api.util.Hacks;
  * The inner class will be used for us as a registrator. It should be static, but can have any access modifier.
  * We still add {@link TimeRegister} there as stated above. (with AutoRegistrable annotation, etc.)]
  * <p>
- * One more thing: we should add is a <b>static</b> register method and annotate with {@link InitMethod}. Method can have any access modifier.
+ * One more thing: we should add is a <b>static</b> register method and annotate with {@link Init}. Method can have any access modifier.
  * There we will register all needed stuff, using {@link TimeRegister} field.
- * Method annotated with {@link InitMethod} can have zero parameters or one {@link FMLConstructModEvent} parameter.
+ * Method annotated with {@link Init} can have zero parameters or one {@link FMLConstructModEvent} parameter.
  * It will be called before Registry events to prepare all the stuff.
  * <p>
  * As you can see, I used {@link Hacks#promise()} method for public static final fields that will be initialized later.

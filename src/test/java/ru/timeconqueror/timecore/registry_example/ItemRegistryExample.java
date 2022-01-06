@@ -18,7 +18,7 @@ public class ItemRegistryExample {
         @AutoRegistrable
         private static final ItemRegister REGISTER = new ItemRegister(TimeCore.MODID);
 
-        @AutoRegistrable.InitMethod
+        @AutoRegistrable.Init
         private static void register() {
             ItemPropsFactory miscGrouped = new ItemPropsFactory(CreativeModeTab.TAB_MISC);
 

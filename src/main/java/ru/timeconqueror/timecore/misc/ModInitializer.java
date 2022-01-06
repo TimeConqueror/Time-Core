@@ -18,7 +18,7 @@ import ru.timeconqueror.timecore.api.reflection.provider.ClassHandlers;
 import ru.timeconqueror.timecore.api.registry.ForgeRegister;
 import ru.timeconqueror.timecore.api.registry.TimeRegister;
 import ru.timeconqueror.timecore.api.registry.util.AutoRegistrable;
-import ru.timeconqueror.timecore.api.registry.util.AutoRegistrable.InitMethod;
+import ru.timeconqueror.timecore.api.registry.util.AutoRegistrable.Init;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -29,7 +29,7 @@ import static net.minecraftforge.fml.Logging.LOADING;
 
 public class ModInitializer {
     private static final Type TIME_AUTO_REG_TYPE = Type.getType(AutoRegistrable.class);
-    private static final Type TIME_AUTO_REG_INIT_TYPE = Type.getType(InitMethod.class);
+    private static final Type TIME_AUTO_REG_INIT_TYPE = Type.getType(Init.class);
 
     public static synchronized void run(ModContainer modContainer, ModFileScanData scanResults, Object mod) {
         TimeCore.LOGGER.debug("Setting up TimeCore components for {}", modContainer.getModId());
@@ -128,7 +128,7 @@ public class ModInitializer {
         } else if (nativeMethod.getParameterCount() == 1 && FMLConstructModEvent.class.isAssignableFrom(nativeMethod.getParameterTypes()[0])) {
             FMLJavaModLoadingContext.get().getModEventBus().addListener(EventPriority.HIGHEST, (FMLConstructModEvent event) -> handler.invokeStaticMethod(initMethod, event));
         } else {
-            throw new UnsupportedOperationException(InitMethod.class.getSimpleName() + " can be used only on methods with " + FMLConstructModEvent.class.getName() + " parameter or without any parameters. Error is in: " + initMethod);
+            throw new UnsupportedOperationException(Init.class.getSimpleName() + " can be used only on methods with " + FMLConstructModEvent.class.getName() + " parameter or without any parameters. Error is in: " + initMethod);
         }
     }
 

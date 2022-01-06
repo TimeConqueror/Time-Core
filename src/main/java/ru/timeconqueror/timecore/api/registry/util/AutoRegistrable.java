@@ -25,6 +25,6 @@ public @interface AutoRegistrable {
      */
     @Target({ElementType.METHOD})
     @Retention(RetentionPolicy.RUNTIME)
-    @interface InitMethod {
+    @interface Init {
     }
 }
