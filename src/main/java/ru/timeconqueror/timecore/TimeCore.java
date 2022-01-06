@@ -16,12 +16,13 @@ import ru.timeconqueror.timecore.api.animation.Animation;
 import ru.timeconqueror.timecore.api.reflection.ReflectionHelper;
 import ru.timeconqueror.timecore.api.util.EnvironmentUtils;
 import ru.timeconqueror.timecore.common.capability.CoffeeCapabilityManager;
-import ru.timeconqueror.timecore.devtools.StructureRevealer;
+import ru.timeconqueror.timecore.internal.devtools.StructureRevealer;
 
 @Mod(TimeCore.MODID)//todo add null check in ObjectHolder
 //TODO setDealyPredicate -> setDelay
 //TODO full time delayed actions
 //TODO add readable exception when there's no animation file, for now it's just nullpointer
+//FIXME repackage stuff before first release!
 public final class TimeCore {
     public static final String MODID = "timecore";
     public static final Logger LOGGER = LogManager.getLogger(MODID);

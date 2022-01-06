@@ -10,7 +10,7 @@ import ru.timeconqueror.timecore.api.TimeCoreAPI;
 import ru.timeconqueror.timecore.api.common.config.Config;
 import ru.timeconqueror.timecore.api.common.config.ImprovedConfigBuilder;
 import ru.timeconqueror.timecore.api.registry.util.AutoRegistrable;
-import ru.timeconqueror.timecore.mod.common.config.TimeCoreConfigManager;
+import ru.timeconqueror.timecore.internal.common.config.TimeCoreConfigManager;
 
 import java.io.File;
 import java.nio.file.Path;

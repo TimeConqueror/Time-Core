@@ -5,7 +5,7 @@ import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.ModLoadingStage;
 import net.minecraftforge.forgespi.language.IModInfo;
 import net.minecraftforge.forgespi.language.ModFileScanData;
-import ru.timeconqueror.timecore.misc.ModInitializer;
+import ru.timeconqueror.timecore.internal.loading.ModInitializer;
 
 public class TimeCoreAPI {
     /**

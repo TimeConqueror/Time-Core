@@ -8,8 +8,8 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraftforge.server.ServerLifecycleHooks;
-import ru.timeconqueror.timecore.mod.common.packet.InternalPacketManager;
-import ru.timeconqueror.timecore.mod.common.packet.S2CKickPlayerFromSPPacket;
+import ru.timeconqueror.timecore.internal.common.packet.InternalPacketManager;
+import ru.timeconqueror.timecore.internal.common.packet.S2CKickPlayerFromSPPacket;
 
 import java.util.List;
 import java.util.Optional;

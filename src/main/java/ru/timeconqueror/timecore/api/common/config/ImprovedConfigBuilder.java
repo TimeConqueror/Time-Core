@@ -5,8 +5,8 @@ import net.minecraftforge.fml.ModLoadingContext;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import ru.timeconqueror.timecore.common.config.QuickConfigValue;
-import ru.timeconqueror.timecore.common.config.ValueSpecAccessor;
+import ru.timeconqueror.timecore.internal.common.config.QuickConfigValue;
+import ru.timeconqueror.timecore.internal.common.config.ValueSpecAccessor;
 
 import java.util.ArrayList;
 import java.util.List;

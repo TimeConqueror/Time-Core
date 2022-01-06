@@ -10,8 +10,8 @@ import ru.timeconqueror.timecore.api.common.tile.SerializationType
 import ru.timeconqueror.timecore.common.capability.owner.serializer.CapabilityOwnerSerializer
 import ru.timeconqueror.timecore.common.capability.property.CoffeeProperty
 import ru.timeconqueror.timecore.common.capability.property.container.PropertyContainer
-import ru.timeconqueror.timecore.mod.common.packet.CoffeeCapabilityDataPacket
-import ru.timeconqueror.timecore.mod.common.packet.InternalPacketManager
+import ru.timeconqueror.timecore.internal.common.packet.CoffeeCapabilityDataPacket
+import ru.timeconqueror.timecore.internal.common.packet.InternalPacketManager
 import java.util.function.Predicate
 import javax.annotation.ParametersAreNonnullByDefault
 

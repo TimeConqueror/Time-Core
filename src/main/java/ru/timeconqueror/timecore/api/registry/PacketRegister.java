@@ -12,7 +12,7 @@ import ru.timeconqueror.timecore.api.TimeCoreAPI;
 import ru.timeconqueror.timecore.api.common.packet.ITimePacketHandler;
 import ru.timeconqueror.timecore.api.registry.base.RunnableStoringRegister;
 import ru.timeconqueror.timecore.api.registry.util.AutoRegistrable;
-import ru.timeconqueror.timecore.mod.common.packet.InternalPacketManager;
+import ru.timeconqueror.timecore.internal.common.packet.InternalPacketManager;
 
 import java.io.IOException;
 import java.util.HashMap;

@@ -6,7 +6,7 @@ import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import ru.timeconqueror.timecore.api.registry.util.Promised;
 import ru.timeconqueror.timecore.api.util.Temporal;
-import ru.timeconqueror.timecore.registry.InsertablePromised;
+import ru.timeconqueror.timecore.internal.registry.InsertablePromised;
 
 import java.util.ArrayList;
 import java.util.List;
