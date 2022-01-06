@@ -8,5 +8,5 @@ import org.spongepowered.asm.mixin.gen.Invoker;
 @Mixin(ChunkMap.class)
 public interface ChunkMapAccessor {
     @Invoker("getChunks")
-    Iterable<ChunkHolder> getChunks();
+    Iterable<ChunkHolder> callGetChunks();
 }

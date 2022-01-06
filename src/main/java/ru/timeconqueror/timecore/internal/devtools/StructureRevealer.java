@@ -99,7 +99,7 @@ public class StructureRevealer {
 
         InternalPacketManager.sendToPlayer(playerIn, new S2CSRClearPiecesPacket());
 
-        ((ChunkMapAccessor) chunkManager).getChunks().forEach(chunkHolder -> {
+        ((ChunkMapAccessor) chunkManager).callGetChunks().forEach(chunkHolder -> {
             if (chunkManager.getPlayers(chunkHolder.getPos(), false).stream()
                     .anyMatch(player -> player.getUUID().equals(playerIn.getUUID()))) {
 

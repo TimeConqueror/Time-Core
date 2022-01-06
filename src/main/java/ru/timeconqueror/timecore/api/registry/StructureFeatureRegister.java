@@ -240,7 +240,7 @@ public class StructureFeatureRegister extends ForgeRegister<StructureFeature<?>>
              * Skip Terraforged's chunk generator as they are a special case of a mod locking down their chunkgenerator.
              * They will handle your structure spacing for your if you add to BuiltinRegistries.NOISE_GENERATOR_SETTINGS in your structure's registration.
              */
-            Codec<? extends ChunkGenerator> codec = ((ChunkGeneratorAccessor) chunkGenerator).codec();
+            Codec<? extends ChunkGenerator> codec = ((ChunkGeneratorAccessor) chunkGenerator).callCodec();
             ResourceLocation cgRL = Registry.CHUNK_GENERATOR.getKey(codec);
             if (cgRL != null && cgRL.getNamespace().equals("terraforged")) return;
 

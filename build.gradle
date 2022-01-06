@@ -47,8 +47,11 @@ mixin {
 
 //    addManualRefmap("src/main/resources/manual_refmap.json")
 
+    debug = true
     debug.verbose = true
     debug.countInjections = true
+    debug.export = true
+    checks.interfaces = true
 }
 
 repositories {

@@ -15,6 +15,6 @@ public class OneParameterBlockRegistry {
 
     @AutoRegistrable.Init
     private static void register(FMLConstructModEvent event) {
-        REGISTER.register("one_parameter_test", () -> new Block(BlockBehaviour.Properties.of(Material.AIR))).defaultBlockItem(CreativeModeTab.TAB_MISC);
+        REGISTER.register("one_parameter_test", () -> new Block(BlockBehaviour.Properties.of(Material.AIR))).defaultBlockItem(CreativeModeTab.TAB_MISC).name("One Parameter Test");
     }
 }
