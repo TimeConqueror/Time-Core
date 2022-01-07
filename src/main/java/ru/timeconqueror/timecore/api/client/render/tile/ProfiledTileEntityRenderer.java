@@ -7,6 +7,7 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -35,5 +36,15 @@ public class ProfiledTileEntityRenderer<T extends BlockEntity> implements BlockE
     @Override
     public boolean shouldRenderOffScreen(T te) {
         return delegate.shouldRenderOffScreen(te);
+    }
+
+    @Override
+    public int getViewDistance() {
+        return delegate.getViewDistance();
+    }
+
+    @Override
+    public boolean shouldRender(T blockEntity_, Vec3 cameraPos_) {
+        return delegate.shouldRender(blockEntity_, cameraPos_);
     }
 }
