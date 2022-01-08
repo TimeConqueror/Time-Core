@@ -13,13 +13,11 @@ buildscript {
     dependencies {
         classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.27-patched'
         classpath "gradle.plugin.com.github.jengelman.gradle.plugins:shadow:7.0.0"
-        classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin:1.6.10'
     }
 }
 
 apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'com.github.johnrengelman.shadow'
-apply plugin: 'kotlin'
 
 if(file("timecore.properties").exists()) {
     ext.tcProps = parseConfig(file("timecore.properties"))
@@ -72,11 +70,11 @@ reobf {
 tasks.build.dependsOn reobfShadowJar
 jar.finalizedBy('reobfShadowJar')
 
-tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
+compileKotlin {
     kotlinOptions {
+        jvmTarget = '17'
+        languageVersion = '1.6'
         freeCompilerArgs = Arrays.asList("-Xjvm-default=all", "-Xopt-in=kotlin.RequiresOptIn")
-        jvmTarget = "17"
-        languageVersion = "1.6"
     }
 }
 

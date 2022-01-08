@@ -19,7 +19,8 @@ buildscript {
    ...
    dependencies {
       ...
-      classpath "gradle.plugin.com.github.jengelman.gradle.plugins:shadow:7.0.0"
+      classpath 'gradle.plugin.com.github.jengelman.gradle.plugins:shadow:7.0.0'
+      classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin:1.6.10'
    }
 }
 ```
@@ -27,9 +28,7 @@ buildscript {
 2. Add a couple of plugins right after buildscript closure:
 
 ```groovy
-plugins {
-    id "org.jetbrains.kotlin.jvm" version "1.6.10"
-}
+apply plugin: 'kotlin'
 apply plugin: 'com.github.johnrengelman.shadow'
 apply from: 'https://raw.githubusercontent.com/TimeConqueror/Time-Core/1.18/gradle/scripts/timecore.gradle'
 ```
