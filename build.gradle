@@ -183,10 +183,9 @@ dependencies {
         }
     }
 
-    shade 'org.jetbrains:annotations:23.0.0'
-
-    shade "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.6.10"
-    shade "org.jetbrains.kotlin:kotlin-reflect:1.6.10"
+    groovy.lang.Closure withoutAnnotations = { exclude group: 'org.jetbrains', module: 'annotations' }
+    library "org.jetbrains.kotlin:kotlin-stdlib-jdk8", withoutAnnotations
+    library "org.jetbrains.kotlin:kotlin-reflect", withoutAnnotations
 
     if (System.getProperty("idea.sync.active") != "true") {
         annotationProcessor("org.spongepowered:mixin:0.8.5:processor")
@@ -310,11 +309,11 @@ publishing {
     }
 }
 
-tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
+compileKotlin {
     kotlinOptions {
+        jvmTarget = '17'
+        languageVersion = '1.6'
         freeCompilerArgs = Arrays.asList("-Xjvm-default=all", "-Xopt-in=kotlin.RequiresOptIn")
-        jvmTarget = "17"
-        languageVersion = "1.6"
     }
 }
 
