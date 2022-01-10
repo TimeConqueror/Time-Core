@@ -11,7 +11,7 @@ import ru.timeconqueror.timecore.api.animation.Animation;
 import ru.timeconqueror.timecore.api.animation.AnimationLayer;
 import ru.timeconqueror.timecore.api.client.render.model.ITimeModel;
 import ru.timeconqueror.timecore.api.util.Pair;
-import ru.timeconqueror.timecore.client.render.model.TimeModelPiece;
+import ru.timeconqueror.timecore.client.render.model.TimeModelPart;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,7 +38,7 @@ public class Transition extends Animation {
         Animation.TransitionFactory transitionFactory = dest.getTransitionFactory();
 
         dest.forEachBone(name -> {
-            TimeModelPiece piece = model.getPiece(name);
+            TimeModelPart piece = model.getPiece(name);
             if (piece != null) {
                 // Rotations
                 KeyFrame startKeyFrame = KeyFrame.createIdleKeyFrame(0, new Vector3f(0, 0, 0));
@@ -110,7 +110,7 @@ public class Transition extends Animation {
         if (options != null) {
             if (existingTime <= transitionLength) {
                 options.forEach(boneOption -> {
-                    TimeModelPiece piece = model.getPiece(boneOption.name);
+                    TimeModelPart piece = model.getPiece(boneOption.name);
 
                     if (piece != null) {
                         boneOption.apply(piece, layer, existingTime);
@@ -198,7 +198,7 @@ public class Transition extends Animation {
 
             List<BoneOption> transitionBones = new ArrayList<>();
             source.options.forEach(sourceBone -> {
-                TimeModelPiece piece = model.getPiece(sourceBone.name);
+                TimeModelPart piece = model.getPiece(sourceBone.name);
                 if (piece != null) {
                     // Rotations
                     KeyFrame startKeyFrame = calcStartKeyFrame(source, sourceBone.rotations, new Vector3f(0, 0, 0), existingTime);
@@ -223,7 +223,7 @@ public class Transition extends Animation {
         }
 
         @Override
-        public @NotNull KeyFrame getDestKeyFrame(TimeModelPiece piece, String boneName, OptionType optionType, int transitionTime) {
+        public @NotNull KeyFrame getDestKeyFrame(TimeModelPart piece, String boneName, OptionType optionType, int transitionTime) {
             throw new UnsupportedOperationException("This should never be reached. Transition shouldn't be set manually as an destination animation");
         }
     }
@@ -246,7 +246,7 @@ public class Transition extends Animation {
             return KeyFrameInterpolator.lerp(start.getVec(), end.getVec(), start.getTime(), end.getTime(), existingTime);
         }
 
-        public void apply(TimeModelPiece piece, AnimationLayer layer, int existingTime) {
+        public void apply(TimeModelPart piece, AnimationLayer layer, int existingTime) {
             Vector3f interpolated = lerp(rotations.left(), rotations.right(), existingTime);
             AnimationUtils.applyRotation(piece, layer, interpolated);
 

@@ -3,14 +3,14 @@ package ru.timeconqueror.timecore.animation.util;
 import com.mojang.math.Vector3f;
 import ru.timeconqueror.timecore.api.animation.AnimationLayer;
 import ru.timeconqueror.timecore.api.animation.BlendType;
-import ru.timeconqueror.timecore.client.render.model.TimeModelPiece;
+import ru.timeconqueror.timecore.client.render.model.TimeModelPart;
 
 public class AnimationUtils {
     public static float milliSecondsToTicks(int milliSeconds) {
         return milliSeconds / 1000F * 20;
     }
 
-    public static void applyRotation(TimeModelPiece piece, AnimationLayer layer, Vector3f rotationIn) {
+    public static void applyRotation(TimeModelPart piece, AnimationLayer layer, Vector3f rotationIn) {
         BlendType blendType = layer.getBlendType();
         rotationIn.mul(layer.getWeight());
 
@@ -25,7 +25,7 @@ public class AnimationUtils {
         } else throw new UnsupportedOperationException();
     }
 
-    public static void applyOffset(TimeModelPiece piece, AnimationLayer layer, Vector3f offsetIn) {
+    public static void applyOffset(TimeModelPart piece, AnimationLayer layer, Vector3f offsetIn) {
         BlendType blendType = layer.getBlendType();
         offsetIn.mul(layer.getWeight());
 
@@ -36,7 +36,7 @@ public class AnimationUtils {
         } else throw new UnsupportedOperationException();
     }
 
-    public static void applyScale(TimeModelPiece piece, AnimationLayer layer, Vector3f scaleIn) {
+    public static void applyScale(TimeModelPart piece, AnimationLayer layer, Vector3f scaleIn) {
         BlendType blendType = layer.getBlendType();
         float weight = layer.getWeight();
 

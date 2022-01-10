@@ -19,7 +19,7 @@ import ru.timeconqueror.timecore.api.util.CollectionUtils;
 import ru.timeconqueror.timecore.api.util.JsonUtils;
 import ru.timeconqueror.timecore.api.util.MathUtils;
 import ru.timeconqueror.timecore.api.util.ResourceUtils;
-import ru.timeconqueror.timecore.client.render.JsonParsingException;
+import ru.timeconqueror.timecore.client.render.model.loading.JsonParsingException;
 
 import java.io.BufferedReader;
 import java.io.InputStream;

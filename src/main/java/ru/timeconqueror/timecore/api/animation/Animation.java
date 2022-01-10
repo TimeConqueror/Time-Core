@@ -8,7 +8,7 @@ import ru.timeconqueror.timecore.animation.component.BasicAnimation;
 import ru.timeconqueror.timecore.animation.component.KeyFrame;
 import ru.timeconqueror.timecore.animation.component.Transition;
 import ru.timeconqueror.timecore.api.client.render.model.ITimeModel;
-import ru.timeconqueror.timecore.client.render.model.TimeModelPiece;
+import ru.timeconqueror.timecore.client.render.model.TimeModelPart;
 
 import java.util.List;
 import java.util.function.Consumer;
@@ -117,6 +117,6 @@ public abstract class Animation {
 		 * @param transitionTime time of transition between source and destination animations.
 		 */
 		@NotNull
-		public abstract KeyFrame getDestKeyFrame(TimeModelPiece piece, String boneName, OptionType optionType, int transitionTime);
+		public abstract KeyFrame getDestKeyFrame(TimeModelPart piece, String boneName, OptionType optionType, int transitionTime);
     }
 }

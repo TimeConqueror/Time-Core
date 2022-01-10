@@ -1,7 +1,7 @@
 package ru.timeconqueror.timecore.api.client.render.model;
 
 import org.jetbrains.annotations.Nullable;
-import ru.timeconqueror.timecore.client.render.model.TimeModelPiece;
+import ru.timeconqueror.timecore.client.render.model.TimeModelPart;
 
 import java.util.List;
 
@@ -10,9 +10,9 @@ public interface ITimeModel {
 
     ITimeModel setScaleMultiplier(float scaleMultiplier);
 
-    List<TimeModelPiece> getPieces();
+    List<TimeModelPart> getPieces();
 
-    @Nullable TimeModelPiece getPiece(String pieceName);
+    @Nullable TimeModelPart getPiece(String pieceName);
 
     /**
      * Should be called before animation applying & render.

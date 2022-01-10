@@ -6,7 +6,7 @@ import ru.timeconqueror.timecore.animation.calculation.KeyFrameInterpolator;
 import ru.timeconqueror.timecore.animation.util.AnimationUtils;
 import ru.timeconqueror.timecore.api.animation.Animation;
 import ru.timeconqueror.timecore.api.animation.AnimationLayer;
-import ru.timeconqueror.timecore.client.render.model.TimeModelPiece;
+import ru.timeconqueror.timecore.client.render.model.TimeModelPart;
 
 import java.util.List;
 
@@ -35,7 +35,7 @@ public class BoneOption {
         this.scales = scales;
     }
 
-    public void apply(Animation animation, AnimationLayer layer, TimeModelPiece piece, int existingTime) {
+    public void apply(Animation animation, AnimationLayer layer, TimeModelPart piece, int existingTime) {
         Vector3f rotateVec = KeyFrameInterpolator.findInterpolationVec(animation, rotations, new Vector3f(0, 0, 0), existingTime);
         if (rotateVec != null) {
             AnimationUtils.applyRotation(piece, layer, rotateVec);

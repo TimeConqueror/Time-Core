@@ -16,16 +16,14 @@ import java.util.function.Function;
 
 public class TimeModel extends Model implements ITimeModel {
     private final String name;
-    private List<TimeModelPiece> pieces;
-    private Map<String, TimeModelPiece> pieceMap;
+    private List<TimeModelPart> pieces;
+    private Map<String, TimeModelPart> pieceMap;
 
     private float scaleMultiplier = 1F;
 
-    public TimeModel(Function<ResourceLocation, RenderType> renderTypeIn, String name, int textureWidth, int textureHeight) {
+    public TimeModel(Function<ResourceLocation, RenderType> renderTypeIn, String name) {
         super(renderTypeIn);
         this.name = name;
-//        this.texWidth = textureWidth;//FIXME PORT
-//        this.texHeight = textureHeight;
     }
 
     @Override
@@ -47,20 +45,20 @@ public class TimeModel extends Model implements ITimeModel {
     }
 
     @Override
-    public List<TimeModelPiece> getPieces() {
+    public List<TimeModelPart> getPieces() {
         return pieces;
     }
 
-    public void setPieces(List<TimeModelPiece> pieces) {
+    public void setPieces(List<TimeModelPart> pieces) {
         this.pieces = pieces;
         this.pieceMap = new HashMap<>();
 
-        for (TimeModelPiece piece : pieces) {
+        for (TimeModelPart piece : pieces) {
             addRendererToMap(piece);
         }
     }
 
-    private void addRendererToMap(TimeModelPiece renderer) {
+    private void addRendererToMap(TimeModelPart renderer) {
         pieceMap.put(renderer.getName(), renderer);
 
 //        List<ModelPart> children = renderer.children;//FIXME PORT
@@ -75,7 +73,7 @@ public class TimeModel extends Model implements ITimeModel {
 
     @Override
     @Nullable
-    public TimeModelPiece getPiece(String pieceName) {
+    public TimeModelPart getPiece(String pieceName) {
         return pieceMap.get(pieceName);
     }
 
@@ -83,7 +81,7 @@ public class TimeModel extends Model implements ITimeModel {
      * Should be called before animation applying & render.
      */
     public void reset() {
-        for (TimeModelPiece piece : pieceMap.values()) {
+        for (TimeModelPart piece : pieceMap.values()) {
             piece.reset();
         }
     }
@@ -96,7 +94,7 @@ public class TimeModel extends Model implements ITimeModel {
 
         matrixStackIn.scale(scaleMultiplier, scaleMultiplier, scaleMultiplier);
 
-        for (TimeModelPiece piece : pieces) {
+        for (TimeModelPart piece : pieces) {
             piece.render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
         }
 

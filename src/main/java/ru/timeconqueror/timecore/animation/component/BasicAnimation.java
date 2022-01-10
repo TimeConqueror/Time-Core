@@ -10,7 +10,7 @@ import ru.timeconqueror.timecore.api.animation.Animation;
 import ru.timeconqueror.timecore.api.animation.AnimationLayer;
 import ru.timeconqueror.timecore.api.client.render.model.ITimeModel;
 import ru.timeconqueror.timecore.api.util.Pair;
-import ru.timeconqueror.timecore.client.render.model.TimeModelPiece;
+import ru.timeconqueror.timecore.client.render.model.TimeModelPart;
 
 import java.util.*;
 import java.util.function.Consumer;
@@ -44,7 +44,7 @@ public class BasicAnimation extends Animation {
         if (options != null) {
             if (existingTime <= length) {
                 options.forEach((s, boneOption) -> {
-                    TimeModelPiece piece = model.getPiece(boneOption.getName());
+                    TimeModelPart piece = model.getPiece(boneOption.getName());
 
                     if (piece != null) {
                         boneOption.apply(this, layer, piece, existingTime);
@@ -164,7 +164,7 @@ public class BasicAnimation extends Animation {
 
             List<Transition.BoneOption> transitionBones = new ArrayList<>();
             source.getOptions().forEach((name, sourceBone) -> {
-                TimeModelPiece piece = model.getPiece(name);
+                TimeModelPart piece = model.getPiece(name);
                 if (piece != null) {
                     // Rotations
                     KeyFrame startKeyFrame = calcStartKeyFrame(source, sourceBone.getRotations(), new Vector3f(0, 0, 0), existingTime);
@@ -189,7 +189,7 @@ public class BasicAnimation extends Animation {
         }
 
         @Override
-        public @NotNull KeyFrame getDestKeyFrame(TimeModelPiece piece, String boneName, OptionType optionType, int transitionTime) {
+        public @NotNull KeyFrame getDestKeyFrame(TimeModelPart piece, String boneName, OptionType optionType, int transitionTime) {
             BasicAnimation dest = getSourceTyped();
             boolean destContainsSameBone = dest.getOptions() != null && dest.getOptions().containsKey(boneName);
             BoneOption destBone = destContainsSameBone ? dest.getOptions().get(boneName) : null;
