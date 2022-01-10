@@ -6,7 +6,7 @@ import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import org.jetbrains.annotations.NotNull;
 import ru.timeconqueror.timecore.api.util.Temporal;
 import ru.timeconqueror.timecore.client.render.model.TimeModelLocation;
-import ru.timeconqueror.timecore.client.render.model.TimeModelSet;
+import ru.timeconqueror.timecore.internal.client.handlers.ClientLoadingHandler;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,6 +38,6 @@ public class TimeModelRegister extends TimeRegister {
     }
 
     private void onClientSetup(FMLClientSetupEvent e) {
-        locations.doAndRemove(TimeModelSet.MODELS::addAll);
+        locations.doAndRemove(ClientLoadingHandler.MODEL_SET::regModelLocations);
     }
 }

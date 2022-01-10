@@ -38,7 +38,7 @@ public class Transition extends Animation {
         Animation.TransitionFactory transitionFactory = dest.getTransitionFactory();
 
         dest.forEachBone(name -> {
-            TimeModelPart piece = model.getPiece(name);
+            TimeModelPart piece = model.tryGetPart(name);
             if (piece != null) {
                 // Rotations
                 KeyFrame startKeyFrame = KeyFrame.createIdleKeyFrame(0, new Vector3f(0, 0, 0));
@@ -110,12 +110,10 @@ public class Transition extends Animation {
         if (options != null) {
             if (existingTime <= transitionLength) {
                 options.forEach(boneOption -> {
-                    TimeModelPart piece = model.getPiece(boneOption.name);
+                    TimeModelPart piece = model.tryGetPart(boneOption.name);
 
                     if (piece != null) {
                         boneOption.apply(piece, layer, existingTime);
-                    } else {
-                        TimeCore.LOGGER.error("Can't find bone with location " + boneOption.name + " for transition " + getName() + " applied for model " + model.getName());
                     }
                 });
             }
@@ -198,7 +196,7 @@ public class Transition extends Animation {
 
             List<BoneOption> transitionBones = new ArrayList<>();
             source.options.forEach(sourceBone -> {
-                TimeModelPart piece = model.getPiece(sourceBone.name);
+                TimeModelPart piece = model.tryGetPart(sourceBone.name);
                 if (piece != null) {
                     // Rotations
                     KeyFrame startKeyFrame = calcStartKeyFrame(source, sourceBone.rotations, new Vector3f(0, 0, 0), existingTime);

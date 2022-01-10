@@ -7,8 +7,6 @@ import net.minecraft.world.entity.Entity;
 import org.jetbrains.annotations.Nullable;
 import ru.timeconqueror.timecore.api.client.render.model.ITimeModel;
 
-import java.util.List;
-
 public class TimeEntityModel<T extends Entity> extends EntityModel<T> implements ITimeModel {
     private final TimeModel model;
 
@@ -44,17 +42,17 @@ public class TimeEntityModel<T extends Entity> extends EntityModel<T> implements
     }
 
     @Override
-    public String getName() {
-        return model.getName();
+    public TimeModelLocation getLocation() {
+        return model.getLocation();
     }
 
     @Override
-    public List<TimeModelPart> getPieces() {
-        return model.getPieces();
+    public @Nullable TimeModelPart tryGetPart(String partName) {
+        return model.tryGetPart(partName);
     }
 
     @Override
-    public @Nullable TimeModelPart getPiece(String pieceName) {
-        return model.getPiece(pieceName);
+    public TimeModelPart getPart(String partName) {
+        return model.getPart(partName);
     }
 }

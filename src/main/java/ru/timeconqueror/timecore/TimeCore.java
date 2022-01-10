@@ -1,6 +1,7 @@
 package ru.timeconqueror.timecore;
 
 import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent;
@@ -39,8 +40,9 @@ public final class TimeCore {
 
         capabilityManager = new CoffeeCapabilityManager();
 
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::onConstruct);
+        IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
+        modEventBus.addListener(this::setup);
+        modEventBus.addListener(this::onConstruct);
 
         TimeCoreAPI.setup(this);
     }

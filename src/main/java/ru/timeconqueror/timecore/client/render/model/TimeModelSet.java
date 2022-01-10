@@ -1,33 +1,37 @@
 package ru.timeconqueror.timecore.client.render.model;
 
 import com.google.common.collect.ImmutableMap;
-import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.ResourceManagerReloadListener;
 import ru.timeconqueror.timecore.api.util.Pair;
 import ru.timeconqueror.timecore.client.render.model.loading.JsonModelParser;
 import ru.timeconqueror.timecore.client.render.model.loading.TimeModelDefinition;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 public class TimeModelSet implements ResourceManagerReloadListener {
     //TODO make TimeModelRegister#register be called upon reload!
-    public static final Set<TimeModelLocation> MODELS = ConcurrentHashMap.newKeySet();
+    private final Set<TimeModelLocation> MODELS = ConcurrentHashMap.newKeySet();
 
     private Map<TimeModelLocation, TimeModelDefinition> roots = ImmutableMap.of();
 
-    public ModelPart bakeDefinition(TimeModelLocation location) {
+    public TimeModelPart bakeRoot(TimeModelLocation location) {
         TimeModelDefinition definition = this.roots.get(location);
         if (definition == null) {
             throw new IllegalArgumentException("No model was found with location " + location);
         } else {
             return definition.bakeRoot();
         }
+    }
+
+    public void regModelLocation(TimeModelLocation location) {
+        MODELS.add(location);
+    }
+
+    public void regModelLocations(Collection<TimeModelLocation> locations) {
+        MODELS.addAll(locations);
     }
 
     /**

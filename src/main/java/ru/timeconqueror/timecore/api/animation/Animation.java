@@ -12,7 +12,7 @@ import ru.timeconqueror.timecore.client.render.model.TimeModelPart;
 
 import java.util.List;
 import java.util.function.Consumer;
-
+//TODo freeze layers (add the config system which disables some layers/frezzes them, etc)
 public abstract class Animation {
 	@SuppressWarnings("StaticInitializerReferencesSubClass")
 	public static final Animation NULL = new BasicAnimation(false, TimeCore.rl("internal/null"), "null", 0, null);

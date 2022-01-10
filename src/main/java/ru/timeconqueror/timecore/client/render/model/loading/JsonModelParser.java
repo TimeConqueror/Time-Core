@@ -153,14 +153,4 @@ public class JsonModelParser {
             throw new JsonSyntaxException("The format version " + version + " is not supported. Supported versions: " + Arrays.toString(ACCEPTABLE_FORMAT_VERSIONS));
         }
     }
-
-    @FunctionalInterface
-    private interface ModelParsingCompleter {
-        List<Pair<TimeModelLocation, TimeModelDefinition>> complete(ResourceLocation fileLocation);
-    }
-
-    @FunctionalInterface
-    private interface DefinitionCompleter {
-        Pair<TimeModelLocation, TimeModelDefinition> complete(ResourceLocation fileLocation);
-    }
 }

@@ -18,12 +18,10 @@ public class TimeModelPart extends ModelPart {
     private final Vector3f scaleFactor = new Vector3f(1, 1, 1);
     public Vector3f offset = new Vector3f();
     public Vector3f startRotationRadians;
-    private final String name;
     private final Map<String, TimeModelPart> children;
 
-    public TimeModelPart(String name, Vector3f startRotRadians, @NotNull List<ModelPart.Cube> cubes, Map<String, TimeModelPart> children, boolean neverRender) {
+    public TimeModelPart(Vector3f startRotRadians, @NotNull List<ModelPart.Cube> cubes, Map<String, TimeModelPart> children, boolean neverRender) {
         super(cubes, Collections.emptyMap());
-        this.name = name;
         startRotationRadians = startRotRadians;
         this.xRot = startRotRadians.x();
         this.yRot = startRotRadians.y();
@@ -83,15 +81,11 @@ public class TimeModelPart extends ModelPart {
         return scaleFactor;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    private List<Cube> getCubes() {
-        return ((ModelPartAccessor) this).getCubes();
-    }
-
     private ModelPartAccessor accessed() {
         return ((ModelPartAccessor) this);
+    }
+
+    public Map<String, TimeModelPart> getChildren() {
+        return Collections.unmodifiableMap(children);
     }
 }

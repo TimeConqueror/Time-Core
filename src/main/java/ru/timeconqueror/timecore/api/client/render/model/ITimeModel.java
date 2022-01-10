@@ -1,18 +1,19 @@
 package ru.timeconqueror.timecore.api.client.render.model;
 
 import org.jetbrains.annotations.Nullable;
+import ru.timeconqueror.timecore.client.render.model.TimeModelLocation;
 import ru.timeconqueror.timecore.client.render.model.TimeModelPart;
 
-import java.util.List;
-
 public interface ITimeModel {
-    String getName();
+    TimeModelLocation getLocation();
 
     ITimeModel setScaleMultiplier(float scaleMultiplier);
 
-    List<TimeModelPart> getPieces();
+    //FIXME javadoc
+    @Nullable TimeModelPart tryGetPart(String partName);
 
-    @Nullable TimeModelPart getPiece(String pieceName);
+    //FIXME javadoc
+    TimeModelPart getPart(String partName);
 
     /**
      * Should be called before animation applying & render.

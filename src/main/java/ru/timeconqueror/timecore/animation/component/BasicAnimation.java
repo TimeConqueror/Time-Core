@@ -4,7 +4,6 @@ import com.mojang.math.Vector3f;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import ru.timeconqueror.timecore.TimeCore;
 import ru.timeconqueror.timecore.animation.calculation.KeyFrameInterpolator;
 import ru.timeconqueror.timecore.api.animation.Animation;
 import ru.timeconqueror.timecore.api.animation.AnimationLayer;
@@ -44,12 +43,10 @@ public class BasicAnimation extends Animation {
         if (options != null) {
             if (existingTime <= length) {
                 options.forEach((s, boneOption) -> {
-                    TimeModelPart piece = model.getPiece(boneOption.getName());
+                    TimeModelPart piece = model.tryGetPart(boneOption.getName());
 
                     if (piece != null) {
                         boneOption.apply(this, layer, piece, existingTime);
-                    } else {
-                        TimeCore.LOGGER.error("Can't find bone with location " + boneOption.getName() + " in animation " + getName() + " applied for model " + model.getName());
                     }
                 });
             }
@@ -164,7 +161,7 @@ public class BasicAnimation extends Animation {
 
             List<Transition.BoneOption> transitionBones = new ArrayList<>();
             source.getOptions().forEach((name, sourceBone) -> {
-                TimeModelPart piece = model.getPiece(name);
+                TimeModelPart piece = model.tryGetPart(name);
                 if (piece != null) {
                     // Rotations
                     KeyFrame startKeyFrame = calcStartKeyFrame(source, sourceBone.getRotations(), new Vector3f(0, 0, 0), existingTime);

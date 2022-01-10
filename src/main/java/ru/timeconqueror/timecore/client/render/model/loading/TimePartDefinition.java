@@ -55,7 +55,7 @@ public class TimePartDefinition {
             bakedChildren.put(child.name, child.bake(this, textureWidth, textureHeight));
         }
 
-        TimeModelPart part = new TimeModelPart(name, rotationRads, bakedCubes.build(), bakedChildren, neverRender);
+        TimeModelPart part = new TimeModelPart(rotationRads, bakedCubes.build(), bakedChildren, neverRender);
         if (parent != null) {
             part.setPos(pivot.x() - parent.pivot.x(), -(pivot.y() - parent.pivot.y()), pivot.z() - parent.pivot.z());
         } else {

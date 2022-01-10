@@ -22,7 +22,7 @@ public class ObjectUtils {
      * Converts object to string. Can handle nulls.
      */
     public static <T> String toString(@Nullable T obj, Function<T, String> converter) {
-        return obj != null ? converter.apply(obj) : null;
+        return obj != null ? converter.apply(obj) : "null";
     }
 
     public static <E extends Throwable> void runWithCatching(Class<E> exceptionToHandle, ThrowingRunnable<E> runnable) {
