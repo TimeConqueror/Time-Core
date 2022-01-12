@@ -7,8 +7,9 @@ import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import ru.timeconqueror.timecore.TimeCore;
 import ru.timeconqueror.timecore.internal.common.config.MainConfig;
 
-@Mixin(Minecraft.class)//TODO if it works in default runtime
-public class MinecraftMixin {
+@Mixin(Minecraft.class)//TODO check if it works in default runtime
+public abstract class MinecraftMixin {
+
     @ModifyVariable(method = "doLoadLevel",
             at = @At(
                     value = "STORE",

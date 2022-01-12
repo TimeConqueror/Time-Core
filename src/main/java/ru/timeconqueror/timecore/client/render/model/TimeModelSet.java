@@ -1,8 +1,10 @@
 package ru.timeconqueror.timecore.client.render.model;
 
+import com.google.common.base.Stopwatch;
 import com.google.common.collect.ImmutableMap;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.ResourceManagerReloadListener;
+import ru.timeconqueror.timecore.TimeCore;
 import ru.timeconqueror.timecore.api.util.Pair;
 import ru.timeconqueror.timecore.client.render.model.loading.JsonModelParser;
 import ru.timeconqueror.timecore.client.render.model.loading.TimeModelDefinition;
@@ -39,7 +41,11 @@ public class TimeModelSet implements ResourceManagerReloadListener {
      *
      * @param resourceManager the resource manager
      */
+    @Override
     public void onResourceManagerReload(ResourceManager resourceManager) {
+        TimeCore.LOGGER.debug("Loading models from TimeModelSet...");
+        Stopwatch watch = Stopwatch.createStarted();
+
         JsonModelParser parser = new JsonModelParser();
 
         Map<TimeModelLocation, TimeModelDefinition> roots = new HashMap<>();
@@ -50,37 +56,34 @@ public class TimeModelSet implements ResourceManagerReloadListener {
             }
 
             List<Pair<TimeModelLocation, TimeModelDefinition>> pairs = parser.parseGeometryFile(model.location());
-            if (model.modelName().equals(TimeModelLocation.SINGLE_MODEL_MASK)) {
-                if (pairs.size() != 1) {
-                    throw new IllegalStateException(String.format("File was defined by model location as a holder of single model definition, but found %s (%s)",
-                            pairs.size(),
-                            mapToModelNames(pairs)
-                    ));
-                }
+            if (model.isWildcard() && pairs.size() != 1) {
+                throw new IllegalStateException(String.format("Expected to find single model in file %s but found %d ('%s)'", model, pairs.size(), mapToModelNames(pairs)));
+            }
 
+            if (pairs.size() == 1) {
                 Pair<TimeModelLocation, TimeModelDefinition> pair = pairs.get(0);
+                roots.put(pair.left(), pair.right());
+                roots.put(TimeModelLocation.wildcarded(pair.left().location()), pair.right());
+                continue;
+            }
 
-                if (!model.equals(pair.left())) {
-                    throw new IllegalStateException("Tried to find " + model.modelName() + " in file " + model + " but found " + pair.left().modelName());
-                }
+
+            boolean found = false;
+
+            for (Pair<TimeModelLocation, TimeModelDefinition> pair : pairs) {
+                if (pair.left().equals(model)) found = true;
 
                 roots.put(pair.left(), pair.right());
-            } else {
-                boolean found = false;
+            }
 
-                for (Pair<TimeModelLocation, TimeModelDefinition> pair : pairs) {
-                    if (pair.left().equals(model)) found = true;
-
-                    roots.put(pair.left(), pair.right());
-                }
-
-                if (!found) {
-                    throw new IllegalStateException("Tried to find " + model.modelName() + " in file " + model + " but found " + mapToModelNames(pairs));
-                }
+            if (!found) {
+                throw new IllegalStateException("Tried to find model '" + model.modelName() + "' in file " + model + " but found '" + mapToModelNames(pairs) + "'");
             }
         }
 
         this.roots = roots;
+
+        TimeCore.LOGGER.debug("Loading TimeModelSet took {}", watch);
     }
 
     private String mapToModelNames(List<Pair<TimeModelLocation, TimeModelDefinition>> definitions) {

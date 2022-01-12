@@ -3,7 +3,6 @@ package ru.timeconqueror.timecore.api.registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
-import org.jetbrains.annotations.NotNull;
 import ru.timeconqueror.timecore.api.util.Temporal;
 import ru.timeconqueror.timecore.client.render.model.TimeModelLocation;
 import ru.timeconqueror.timecore.internal.client.handlers.ClientLoadingHandler;
@@ -12,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 //TODO check on server side
+//TODO javadoc
 public class TimeModelRegister extends TimeRegister {
     private final Temporal<List<TimeModelLocation>> locations = Temporal.of(new ArrayList<>(), "Called too late. Time models have already been registered.");
 
@@ -20,10 +20,10 @@ public class TimeModelRegister extends TimeRegister {
     }
 
     public TimeModelLocation register(String path) {
-        return register(path, TimeModelLocation.SINGLE_MODEL_MASK);
+        return register(path, TimeModelLocation.WILDCARD);
     }
 
-    public TimeModelLocation register(String path, @NotNull String modelName) {
+    public TimeModelLocation register(String path, String modelName) {
         TimeModelLocation tml = new TimeModelLocation(new ResourceLocation(getModId(), path), modelName);
         locations.get().add(tml);
 

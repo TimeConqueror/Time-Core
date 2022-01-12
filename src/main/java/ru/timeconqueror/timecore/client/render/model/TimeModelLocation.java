@@ -3,16 +3,20 @@ package ru.timeconqueror.timecore.client.render.model;
 import net.minecraft.resources.ResourceLocation;
 
 public record TimeModelLocation(ResourceLocation location, String modelName) {
-    public static final String SINGLE_MODEL_MASK = "i:single";
+    public static final String WILDCARD = "*";
 
-    public static TimeModelLocation singleModelFile(ResourceLocation location) {
-        return new TimeModelLocation(location, SINGLE_MODEL_MASK);
+    public static TimeModelLocation wildcarded(ResourceLocation location) {
+        return new TimeModelLocation(location, WILDCARD);
+    }
+
+    public boolean isWildcard() {
+        return modelName.equals(WILDCARD);
     }
 
     @Override
     public String toString() {
-        if (modelName.equals(SINGLE_MODEL_MASK)) {
-            return location.toString() + " (single)";
+        if (isWildcard()) {
+            return location.toString() + "| (any)";
         }
 
         return location.toString() + "|" + modelName;

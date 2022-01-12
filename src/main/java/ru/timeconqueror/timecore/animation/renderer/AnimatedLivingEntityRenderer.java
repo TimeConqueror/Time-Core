@@ -9,8 +9,8 @@ import ru.timeconqueror.timecore.api.animation.AnimatedObject;
 import ru.timeconqueror.timecore.client.render.model.TimeEntityModel;
 
 public abstract class AnimatedLivingEntityRenderer<T extends LivingEntity & AnimatedObject<T>, M extends TimeEntityModel<T>> extends LivingEntityRenderer<T, M> {
-    public AnimatedLivingEntityRenderer(EntityRendererProvider.Context ctx, M entityModelIn, float shadowSizeIn) {
-        super(ctx, entityModelIn, shadowSizeIn);
+    public AnimatedLivingEntityRenderer(EntityRendererProvider.Context ctx, M model, float shadowSizeIn) {
+        super(ctx, model, shadowSizeIn);
     }
 
     @Override

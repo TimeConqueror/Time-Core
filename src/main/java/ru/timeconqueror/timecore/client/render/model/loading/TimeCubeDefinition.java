@@ -1,8 +1,8 @@
 package ru.timeconqueror.timecore.client.render.model.loading;
 
 import com.mojang.math.Vector3f;
-import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.world.phys.Vec2;
+import ru.timeconqueror.timecore.client.render.model.TimeModelCube;
 
 public class TimeCubeDefinition {
     private final Vector3f origin;
@@ -28,10 +28,15 @@ public class TimeCubeDefinition {
         this.mirrored = mirrored;
     }
 
-    public ModelPart.Cube bake(TimePartDefinition ownerPart, int textureWidth, int textureHeight) {
+    public TimeModelCube bake(TimePartDefinition ownerPart, int textureWidth, int textureHeight) {
         //The position of the cube, relative to the entity origin - located at the bottom front left point of the cube.
         Vector3f origin = new Vector3f(this.origin.x() - ownerPart.getPivot().x(), -(this.origin.y() + size.y() - ownerPart.getPivot().y()), this.origin.z() - ownerPart.getPivot().z());
 
-        return new ModelPart.Cube((int) uv.x, (int) uv.y, origin.x(), origin.y(), origin.z(), size.x(), size.y(), size.z(), inflate, inflate, inflate, mirrored, textureWidth * 1.0F, textureHeight * 1.0F);
+        float inflate = this.inflate;
+        if (size.x() == 0 || size.y() == 0 || size.z() == 0) {
+            inflate = Math.max(0.008F, inflate);
+        }
+
+        return new TimeModelCube(origin, size, uv, inflate, mirrored, textureWidth, textureHeight);
     }
 }

@@ -7,8 +7,6 @@ import ru.timeconqueror.timecore.client.render.model.TimeModelPart;
 public interface ITimeModel {
     TimeModelLocation getLocation();
 
-    ITimeModel setScaleMultiplier(float scaleMultiplier);
-
     //FIXME javadoc
     @Nullable TimeModelPart tryGetPart(String partName);
 

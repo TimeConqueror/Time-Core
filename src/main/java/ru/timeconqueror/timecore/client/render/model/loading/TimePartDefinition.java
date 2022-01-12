@@ -3,7 +3,8 @@ package ru.timeconqueror.timecore.client.render.model.loading;
 import com.google.common.collect.ImmutableList;
 import com.mojang.math.Vector3f;
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
-import net.minecraft.client.model.geom.ModelPart;
+import org.jetbrains.annotations.Nullable;
+import ru.timeconqueror.timecore.client.render.model.TimeModelCube;
 import ru.timeconqueror.timecore.client.render.model.TimeModelPart;
 
 import java.util.ArrayList;
@@ -39,8 +40,8 @@ public class TimePartDefinition {
         this.children.addAll(children);
     }
 
-    public TimeModelPart bake(TimePartDefinition parent, int textureWidth, int textureHeight) {
-        ImmutableList.Builder<ModelPart.Cube> bakedCubes = ImmutableList.builder();
+    public TimeModelPart bake(@Nullable TimePartDefinition parent, int textureWidth, int textureHeight) {
+        ImmutableList.Builder<TimeModelCube> bakedCubes = ImmutableList.builder();
 
         for (TimeCubeDefinition cube : cubes) {
             bakedCubes.add(cube.bake(this, textureWidth, textureHeight));

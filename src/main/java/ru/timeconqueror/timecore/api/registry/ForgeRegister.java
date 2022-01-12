@@ -22,7 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
-
+//TODO add listener system to not manually support all runnables (is mod bus or not, should be cleared after or not) being called in runOnSomeEvent
 public abstract class ForgeRegister<T extends IForgeRegistryEntry<T>> extends TimeRegister {
     private final IForgeRegistry<T> registry;
     private Map<RegistryObject<T>, Supplier<T>> entries = new HashMap<>();

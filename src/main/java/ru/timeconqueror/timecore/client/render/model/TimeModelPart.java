@@ -7,7 +7,6 @@ import net.minecraft.client.model.geom.ModelPart;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
-import ru.timeconqueror.timecore.mixins.accessor.client.ModelPartAccessor;
 
 import java.util.Collections;
 import java.util.List;
@@ -19,21 +18,23 @@ public class TimeModelPart extends ModelPart {
     public Vector3f offset = new Vector3f();
     public Vector3f startRotationRadians;
     private final Map<String, TimeModelPart> children;
+    private final List<TimeModelCube> cubes;
 
-    public TimeModelPart(Vector3f startRotRadians, @NotNull List<ModelPart.Cube> cubes, Map<String, TimeModelPart> children, boolean neverRender) {
-        super(cubes, Collections.emptyMap());
+    public TimeModelPart(Vector3f startRotRadians, @NotNull List<TimeModelCube> cubes, Map<String, TimeModelPart> children, boolean neverRender) {
+        super(Collections.emptyList(), Collections.emptyMap());
         startRotationRadians = startRotRadians;
         this.xRot = startRotRadians.x();
         this.yRot = startRotRadians.y();
         this.zRot = startRotRadians.z();
         this.visible = !neverRender;
         this.children = children;
+        this.cubes = cubes;
     }
 
     @Override
     public void render(PoseStack poseStack, VertexConsumer bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha) {
         if (this.visible) {
-            if (!accessed().getCubes().isEmpty() || !this.children.isEmpty()) {
+            if (!cubes.isEmpty() || !this.children.isEmpty()) {
                 poseStack.pushPose();
 
                 this.translateAndRotate(poseStack);
@@ -59,7 +60,7 @@ public class TimeModelPart extends ModelPart {
     }
 
     private void compile(PoseStack.Pose pose, VertexConsumer bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha) {
-        for (Cube cube : this.accessed().getCubes()) {
+        for (TimeModelCube cube : cubes) {
             cube.compile(pose, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
         }
     }
@@ -79,10 +80,6 @@ public class TimeModelPart extends ModelPart {
 
     public Vector3f getScaleFactor() {
         return scaleFactor;
-    }
-
-    private ModelPartAccessor accessed() {
-        return ((ModelPartAccessor) this);
     }
 
     public Map<String, TimeModelPart> getChildren() {

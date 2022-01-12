@@ -66,6 +66,9 @@ public class JsonModelParser {
 
         JsonObject description = GsonHelper.getAsJsonObject(subModel, "description");
         String identifier = GsonHelper.getAsString(description, "identifier");
+        if (identifier.equals(TimeModelLocation.WILDCARD)) {
+            throw new JsonSyntaxException("Found forbidden model identifier: '" + TimeModelLocation.WILDCARD + "'. Change it, the current one is reserved for internal purposes.");
+        }
 
         MaterialDefinition material = new MaterialDefinition(GsonHelper.getAsInt(description, "texture_width"), GsonHelper.getAsInt(description, "texture_height"));
 
@@ -122,6 +125,7 @@ public class JsonModelParser {
 
         List<TimeCubeDefinition> cubes = new ArrayList<>();
         if (bone.has("cubes")) {
+            int i = 0;
             for (JsonElement cubeJson : GsonHelper.getAsJsonArray(bone, "cubes")) {
                 JsonObject cubeObject = GsonHelper.convertToJsonObject(cubeJson, "member of 'cubes'");
                 Vector3f origin = JsonUtils.getAsVec3f(cubeObject, "origin");
@@ -136,7 +140,8 @@ public class JsonModelParser {
                     Vector3f innerRotation = JsonUtils.getAsVec3f(cubeObject, "rotation", new Vector3f(0, 0, 0));
                     Vector3f innerPivot = JsonUtils.getAsVec3f(cubeObject, "pivot", new Vector3f(0, 0, 0));
 
-                    children.add(new TimePartDefinition(Collections.singletonList(cube), innerPivot, innerRotation, false, "synth_bone_" + children.size(), name));
+                    children.add(new TimePartDefinition(Collections.singletonList(cube), innerPivot, innerRotation, false, name + "/synth-" + i, name));
+                    i++;
                 } else {
                     cubes.add(cube);
                 }

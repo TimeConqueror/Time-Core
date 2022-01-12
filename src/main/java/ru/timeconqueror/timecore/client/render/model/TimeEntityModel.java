@@ -5,25 +5,15 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.world.entity.Entity;
 import org.jetbrains.annotations.Nullable;
+import ru.timeconqueror.timecore.animation.renderer.ModelConfiguration;
 import ru.timeconqueror.timecore.api.client.render.model.ITimeModel;
 
 public class TimeEntityModel<T extends Entity> extends EntityModel<T> implements ITimeModel {
     private final TimeModel model;
 
-    public TimeEntityModel(TimeModel model) {
-        this.model = model;
-    }
-
-    /**
-     * Sets custom scale for the model.
-     * <p>
-     * Should only be called once and before first renderToBuffer frame,
-     * otherwise you'll see unexpected renderToBuffer behaviour.
-     */
-    public TimeEntityModel<T> setScaleMultiplier(float scaleMultiplier) {
-        model.setScaleMultiplier(scaleMultiplier);
-
-        return this;
+    public TimeEntityModel(ModelConfiguration config) {
+        super(config.renderTypeProvider());
+        this.model = new TimeModel(config);
     }
 
     @Override

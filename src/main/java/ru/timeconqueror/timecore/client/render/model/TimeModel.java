@@ -4,14 +4,12 @@ import com.google.common.collect.ImmutableMap;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.model.Model;
-import net.minecraft.client.renderer.RenderType;
-import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
+import ru.timeconqueror.timecore.animation.renderer.ModelConfiguration;
 import ru.timeconqueror.timecore.api.client.render.model.ITimeModel;
 import ru.timeconqueror.timecore.internal.client.handlers.ClientLoadingHandler;
 
 import java.util.Map;
-import java.util.function.Function;
 
 
 public class TimeModel extends Model implements ITimeModel {
@@ -20,35 +18,25 @@ public class TimeModel extends Model implements ITimeModel {
     private final TimeModelPart root;
     private Map<String, TimeModelPart> partMap;
 
-    private float scaleMultiplier = 1F;
+    private final float scaleMultiplier;
 
-    /**
-     * @param renderTypeProvider renderToBuffer type, which determines the settings of how model will be rendered depending on the provided texture location
-     */
-    public TimeModel(Function<ResourceLocation, RenderType> renderTypeProvider, TimeModelLocation location) {
-        super(renderTypeProvider);
+    public TimeModel(ModelConfiguration modelConfig) {
+        super(modelConfig.renderTypeProvider());
 
-        this.location = location;
+        this.location = modelConfig.location();
         this.root = ClientLoadingHandler.MODEL_SET.bakeRoot(location);
+        this.scaleMultiplier = modelConfig.scale();
         buildPartMap();
+        init();
+    }
+
+    protected void init() {
+
     }
 
     @Override
     public TimeModelLocation getLocation() {
         return location;
-    }
-
-    /**
-     * Sets custom scale for the model.
-     * <p>
-     * Should only be called once and before first renderToBuffer frame,
-     * otherwise you'll see unexpected renderToBuffer behaviour.
-     */
-    @Override
-    public TimeModel setScaleMultiplier(float scaleMultiplier) {
-        this.scaleMultiplier = scaleMultiplier;
-
-        return this;
     }
 
     @Override

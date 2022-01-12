@@ -1,5 +1,6 @@
 package ru.timeconqueror.timecore.client.render.model;
 
+import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Matrix3f;
 import com.mojang.math.Matrix4f;
@@ -13,10 +14,10 @@ import net.minecraft.world.phys.Vec2;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TimeModelBox {
+public class TimeModelCube {
     public final Vector3f pos1;
     public final Vector3f pos2;
-    private final Polygon[] quads;
+    private final Polygon[] polygons;
 
     /**
      * @param origin  The position of the cube, relative to the entity origin - located at the bottom front left point of the cube.
@@ -24,7 +25,7 @@ public class TimeModelBox {
      * @param uv      The starting point in the texture foo.png (x -> horizontal, y -> vertical) for that cube.
      * @param inflate scale factor /Expands the cube, without expanding the UV mapping - useful for making armor look worn, and not part of the entity.
      */
-    public TimeModelBox(Vector3f origin, Vector3f size, Vec2 uv, float inflate, boolean mirror, int textureWidth, int textureHeight) {
+    public TimeModelCube(Vector3f origin, Vector3f size, Vec2 uv, float inflate, boolean mirror, int textureWidth, int textureHeight) {
         int width = (int) size.x();
         int height = (int) size.y();
         int depth = (int) size.z();
@@ -83,25 +84,24 @@ public class TimeModelBox {
             quads.add(new Polygon(new Vertex[]{vertex3, vertex4, vertex5, vertex6}, texU + depth + width + depth, texV + depth, texU + depth + width + depth + width, texV + depth + height, textureWidth, textureHeight, mirror, Direction.SOUTH));
         }
 
-        this.quads = quads.toArray(new Polygon[0]);
+        this.polygons = quads.toArray(new Polygon[0]);
     }
 
-    public void compile(VertexConsumer bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha, Matrix4f matrix4f, Matrix3f matrix3f) {
-        for (Polygon quads : quads) {
-            Vector3f vector3f = quads.normal.copy();
-            vector3f.transform(matrix3f);
-            float f = vector3f.x();
-            float f1 = vector3f.y();
-            float f2 = vector3f.z();
+    public void compile(PoseStack.Pose pose, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
+        Matrix4f matrix4f = pose.pose();
+        Matrix3f matrix3f = pose.normal();
 
-            for (int i = 0; i < 4; ++i) {
-                Vertex vertex = quads.vertices[i];
-                float f3 = vertex.pos.x() / 16.0F;
-                float f4 = vertex.pos.y() / 16.0F;
-                float f5 = vertex.pos.z() / 16.0F;
-                Vector4f vector4f = new Vector4f(f3, f4, f5, 1.0F);
-                vector4f.transform(matrix4f);
-                bufferIn.vertex(vector4f.x(), vector4f.y(), vector4f.z(), red, green, blue, alpha, vertex.u, vertex.v, packedOverlayIn, packedLightIn, f, f1, f2);
+        for (Polygon polygon : polygons) {
+            Vector3f normal = polygon.normal.copy();
+            normal.transform(matrix3f);
+
+            for (Vertex vertex : polygon.vertices) {
+                float x = vertex.pos.x() / 16.0F;
+                float y = vertex.pos.y() / 16.0F;
+                float z = vertex.pos.z() / 16.0F;
+                Vector4f pos = new Vector4f(x, y, z, 1.0F);
+                pos.transform(matrix4f);
+                vertexConsumer.vertex(pos.x(), pos.y(), pos.z(), red, green, blue, alpha, vertex.u, vertex.v, packedOverlay, packedLight, normal.x(), normal.y(), normal.z());
             }
         }
     }

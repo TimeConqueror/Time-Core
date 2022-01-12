@@ -77,7 +77,6 @@ public class ReflectionHelper {
      */
     public static <O, T> UnlockedField<O, T> findField(Class<O> clazz, String fieldName) {
         try {
-            Arrays.stream(clazz.getDeclaredFields()).map(Field::toString).forEach(System.out::println);
             Field f = clazz.getDeclaredField(fieldName);
             return new UnlockedField<>(f);
         } catch (Throwable e) {
