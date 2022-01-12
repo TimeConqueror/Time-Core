@@ -1,47 +1,45 @@
-//package ru.timeconqueror.timecore.animation_example.block_example.block;
-//
-//import net.minecraft.block.Block;
-//import net.minecraft.block.BlockRenderType;
-//import net.minecraft.block.BlockState;
-//import net.minecraft.tileentity.TileEntity;
-//import net.minecraft.util.math.BlockPos;
-//import net.minecraft.util.math.shapes.ISelectionContext;
-//import net.minecraft.util.math.shapes.VoxelShape;
-//import net.minecraft.world.IBlockReader;
-//import ru.timeconqueror.timecore.animation_example.block_example.registry.ATileRegistry;
-//
-//import javax.annotation.Nullable;
-//
-//public class HeatCubeBlock extends Block {
-//    private static final VoxelShape SHAPE = Block.box(2, 0, 2, 14, 12, 14);
-//
-//    public HeatCubeBlock(Properties properties) {
-//        super(properties);
-//    }
-//
-//    @Override
-//    public VoxelShape getShape(BlockState p_220053_1_, IBlockReader p_220053_2_, BlockPos p_220053_3_, ISelectionContext p_220053_4_) {
-//        return SHAPE;
-//    }
-//
-//    @Override
-//    public BlockRenderType getRenderShape(BlockState state) {
-//        return BlockRenderType.ENTITYBLOCK_ANIMATED;
-//    }
-//
-//    @Override
-//    public boolean hasTileEntity(BlockState state) {
-//        return true;
-//    }
-//
-//    @Nullable
-//    @Override
-//    public TileEntity createTileEntity(BlockState state, IBlockReader world) {
-//        return ATileRegistry.HEAT_CUBE.create();
-//    }
-//
-////    @Override
-////    public boolean isNormalCube(BlockState p_220081_1_, IBlockReader p_220081_2_, BlockPos p_220081_3_) {
-////        return super.isNormalCube(p_220081_1_, p_220081_2_, p_220081_3_);
-////    }
-//}
+package ru.timeconqueror.timecore.animation_example.block_example.block;
+
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.BaseEntityBlock;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.RenderShape;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityTicker;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.VoxelShape;
+import ru.timeconqueror.timecore.animation_example.block_example.registry.ATileRegistry;
+
+import javax.annotation.Nullable;
+
+public class HeatCubeBlock extends BaseEntityBlock {
+    private static final VoxelShape SHAPE = Block.box(2, 0, 2, 14, 12, 14);
+
+    public HeatCubeBlock(Properties properties) {
+        super(properties);
+    }
+
+    @Override
+    public VoxelShape getShape(BlockState state_, BlockGetter level_, BlockPos pos_, CollisionContext context_) {
+        return SHAPE;
+    }
+
+    @Override
+    public RenderShape getRenderShape(BlockState state_) {
+        return RenderShape.ENTITYBLOCK_ANIMATED;
+    }
+
+    @Override
+    public BlockEntity newBlockEntity(BlockPos pos_, BlockState state_) {
+        return ATileRegistry.HEAT_CUBE.create(pos_, state_);
+    }
+
+    @Nullable
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level_, BlockState state_, BlockEntityType<T> blockEntityType_) {
+        return !level_.isClientSide ? null : createTickerHelper(blockEntityType_, ATileRegistry.HEAT_CUBE, (level, pos, state, blockEntity_) -> blockEntity_.clientTick(level_, pos, state));
+    }
+}

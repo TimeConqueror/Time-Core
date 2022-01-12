@@ -8,6 +8,9 @@ import org.jetbrains.annotations.Nullable;
 import ru.timeconqueror.timecore.animation.renderer.ModelConfiguration;
 import ru.timeconqueror.timecore.api.client.render.model.ITimeModel;
 
+/**
+ * For compatibility with generics which use {@link EntityModel}
+ */
 public class TimeEntityModel<T extends Entity> extends EntityModel<T> implements ITimeModel {
     private final TimeModel model;
 
