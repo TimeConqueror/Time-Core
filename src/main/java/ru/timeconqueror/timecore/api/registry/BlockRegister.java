@@ -174,7 +174,7 @@ public class BlockRegister extends ForgeRegister<Block> {
          * Sets render layer for this block.
          */
         public BlockRegisterChain<B> renderLayer(Supplier<RenderTypeWrapper> renderTypeSup) {
-            runOnClientSetup(() -> ItemBlockRenderTypes.setRenderLayer(asRegistryObject().get(), renderTypeSup.get().get()));
+            runOnClientSetup(() -> ItemBlockRenderTypes.setRenderLayer(asRegistryObject().get(), renderTypeSup.get().renderType()));
             return this;
         }
 
@@ -376,15 +376,6 @@ public class BlockRegister extends ForgeRegister<Block> {
     /**
      * Hacky workaround, which allows to reference to render type from both sides without crashing with {@link NoClassDefFoundError}
      */
-    public static class RenderTypeWrapper {
-        private final RenderType rt;
-
-        public RenderTypeWrapper(RenderType rt) {
-            this.rt = rt;
-        }
-
-        private RenderType get() {
-            return rt;
-        }
+    public record RenderTypeWrapper(RenderType renderType) {
     }
 }
