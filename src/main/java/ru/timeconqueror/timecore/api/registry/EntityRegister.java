@@ -14,12 +14,10 @@ import net.minecraftforge.registries.RegistryObject;
 import ru.timeconqueror.timecore.api.TimeCoreAPI;
 import ru.timeconqueror.timecore.api.client.resource.location.ItemModelLocation;
 import ru.timeconqueror.timecore.api.devtools.gen.lang.LangGeneratorFacade;
+import ru.timeconqueror.timecore.api.registry.base.TaskHolder;
 import ru.timeconqueror.timecore.api.registry.util.AutoRegistrable;
 import ru.timeconqueror.timecore.api.util.EnvironmentUtils;
-import ru.timeconqueror.timecore.api.util.Temporal;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -67,7 +65,7 @@ import java.util.function.Supplier;
  */
 public class EntityRegister extends ForgeRegister<EntityType<?>> {
     private final ItemRegister itemRegister;
-    private final Temporal<List<Consumer<EntityAttributeCreationEvent>>> entityAttributesEventRuns = Temporal.of(new ArrayList<>(), "Called too late. Entity Attributes have already been registered.");
+    private final TaskHolder<Consumer<EntityAttributeCreationEvent>> entityAttributesEventRuns = TaskHolder.make(EntityAttributeCreationEvent.class);
 
     public EntityRegister(String modid) {
         super(ForgeRegistries.ENTITIES, modid);
@@ -147,9 +145,7 @@ public class EntityRegister extends ForgeRegister<EntityType<?>> {
     }
 
     private void onEntityAttributeCreationEvent(EntityAttributeCreationEvent event) {
-        entityAttributesEventRuns.doAndRemove(consumers -> {
-            consumers.forEach(consumer -> consumer.accept(event));
-        });
+        entityAttributesEventRuns.doForEachAndRemove(consumer -> consumer.accept(event));
     }
 
     @Override
@@ -203,7 +199,7 @@ public class EntityRegister extends ForgeRegister<EntityType<?>> {
                 throw new UnsupportedOperationException(String.format("Entities with being %s equal to %s can't have attributes.", MobCategory.class.getName(), MobCategory.MISC));
             }
 
-            entityAttributesEventRuns.get().add(e -> e.put(asRegistryObject().get(), attributesSup.get()));
+            entityAttributesEventRuns.add(e -> e.put(asRegistryObject().get(), attributesSup.get()));
             return this;
         }
     }

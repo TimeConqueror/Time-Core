@@ -5,20 +5,17 @@ import net.minecraft.advancements.CriterionTrigger;
 import net.minecraft.advancements.CriterionTriggerInstance;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
-import ru.timeconqueror.timecore.api.util.Temporal;
-
-import java.util.ArrayList;
-import java.util.List;
+import ru.timeconqueror.timecore.api.registry.base.TaskHolder;
 
 public class AdvancementCriterionRegister extends TimeRegister {
-    private final Temporal<List<CriterionTrigger<?>>> criteria = Temporal.of(new ArrayList<>());
+    private final TaskHolder<CriterionTrigger<?>> criteria = TaskHolder.make(FMLCommonSetupEvent.class);
 
     public AdvancementCriterionRegister(String modid) {
         super(modid);
     }
 
     public <I extends CriterionTriggerInstance, T extends CriterionTrigger<I>> T register(T criterion) {
-        criteria.get().add(criterion);
+        criteria.add(criterion);
         return criterion;
     }
 
@@ -29,6 +26,6 @@ public class AdvancementCriterionRegister extends TimeRegister {
     }
 
     private void onSetup(FMLCommonSetupEvent event) {
-        event.enqueueWork(() -> criteria.doAndRemove(triggers -> triggers.forEach(CriteriaTriggers::register)));
+        event.enqueueWork(() -> criteria.doForEachAndRemove(CriteriaTriggers::register));
     }
 }

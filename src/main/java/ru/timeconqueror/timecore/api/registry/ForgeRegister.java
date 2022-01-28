@@ -12,23 +12,23 @@ import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 import net.minecraftforge.registries.RegistryObject;
+import ru.timeconqueror.timecore.api.devtools.gen.lang.LangGeneratorFacade;
+import ru.timeconqueror.timecore.api.registry.base.TaskHolder;
 import ru.timeconqueror.timecore.api.util.EnvironmentUtils;
 import ru.timeconqueror.timecore.api.util.Pair;
-import ru.timeconqueror.timecore.api.util.Temporal;
 import ru.timeconqueror.timecore.api.util.Wrapper;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
-//TODO add listener system to not manually support all runnables (is mod bus or not, should be cleared after or not) being called in runOnSomeEvent
+
 public abstract class ForgeRegister<T extends IForgeRegistryEntry<T>> extends TimeRegister {
     private final IForgeRegistry<T> registry;
     private Map<RegistryObject<T>, Supplier<T>> entries = new HashMap<>();
-    private final Temporal<List<Runnable>> clientSetupTasks = Temporal.of(new ArrayList<>(), "You attempted to access client-setup tasks after " + FMLClientSetupEvent.class.getName() + " has been fired.");
-    private final Temporal<List<Runnable>> regEventTasks = Temporal.of(new ArrayList<>(), "You attempted to access register tasks after " + RegistryEvent.Register.class.getName() + " has been fired.");
-    private final Temporal<List<Runnable>> commonSetupTasks = Temporal.of(new ArrayList<>(), "You attempted to access common-setup tasks after " + FMLCommonSetupEvent.class.getName() + " has been fired.");
+
+    private final TaskHolder<Runnable> clientSetupTasks = TaskHolder.make(FMLClientSetupEvent.class);
+    private final TaskHolder<Runnable> regEventTasks = TaskHolder.make(RegistryEvent.Register.class);
+    private final TaskHolder<Runnable> commonSetupTasks = TaskHolder.make(FMLCommonSetupEvent.class);
 
     public ForgeRegister(IForgeRegistry<T> reg, String modid) {
         super(modid);
@@ -50,16 +50,16 @@ public abstract class ForgeRegister<T extends IForgeRegistryEntry<T>> extends Ti
 
     protected void runOnClientSetup(Runnable task) {
         if (EnvironmentUtils.isOnPhysicalClient()) {
-            clientSetupTasks.get().add(task);
+            clientSetupTasks.add(task);
         }
     }
 
     protected void runOnCommonSetup(Runnable task) {
-        commonSetupTasks.get().add(task);
+        commonSetupTasks.add(task);
     }
 
     protected void runAfterRegistering(Runnable task) {
-        regEventTasks.get().add(task);
+        regEventTasks.add(task);
     }
 
     @Override
@@ -98,7 +98,7 @@ public abstract class ForgeRegister<T extends IForgeRegistryEntry<T>> extends Ti
 
         entries = null;
 
-        catchErrors("finishing register event of type " + registry.getRegistrySuperType(), () -> regEventTasks.remove().forEach(Runnable::run));
+        catchErrors("finishing register event of type " + registry.getRegistrySuperType(), () -> regEventTasks.doForEachAndRemove(Runnable::run));
     }
 
     /**
@@ -109,18 +109,23 @@ public abstract class ForgeRegister<T extends IForgeRegistryEntry<T>> extends Ti
 
     protected void onClientSetup(FMLClientSetupEvent event) {
         event.enqueueWork(() -> {
-            catchErrors("client setup event", () -> clientSetupTasks.remove().forEach(Runnable::run));
+            catchErrors("client setup event", () -> clientSetupTasks.doForEachAndRemove(Runnable::run));
         });
     }
 
     protected void onCommonSetup(FMLCommonSetupEvent event) {
         event.enqueueWork(() -> {
-            catchErrors("common setup event", () -> commonSetupTasks.remove().forEach(Runnable::run));
+            catchErrors("common setup event", () -> commonSetupTasks.doForEachAndRemove(Runnable::run));
         });
     }
 
     protected IForgeRegistry<T> getRegistry() {
         return registry;
+    }
+
+
+    protected LangGeneratorFacade getLangGeneratorFacade() {
+        return modFeatures.getLangGeneratorFacade();
     }
 
     public static class RegisterChain<I extends IForgeRegistryEntry<? super I>> {

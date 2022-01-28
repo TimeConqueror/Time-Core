@@ -5,15 +5,12 @@ import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import org.objectweb.asm.Type;
-import ru.timeconqueror.timecore.api.util.Temporal;
+import ru.timeconqueror.timecore.api.registry.base.TaskHolder;
 import ru.timeconqueror.timecore.mixins.accessor.CapabilityManagerAccessor;
-
-import java.util.ArrayList;
-import java.util.List;
 
 //ToDo javadoc
 public class CapabilityRegister extends TimeRegister {
-    private final Temporal<List<Class<?>>> capClasses = Temporal.of(new ArrayList<>());
+    private final TaskHolder<Class<?>> capClasses = TaskHolder.make(RegisterCapabilitiesEvent.class);
 
     public CapabilityRegister(String modId) {
         super(modId);
@@ -37,10 +34,6 @@ public class CapabilityRegister extends TimeRegister {
     }
 
     private void registerCaps(RegisterCapabilitiesEvent event) {
-        capClasses.doAndRemove(classes -> {
-            for (Class<?> clazz : classes) {
-                event.register(clazz);
-            }
-        });
+        capClasses.doForEachAndRemove(event::register);
     }
 }

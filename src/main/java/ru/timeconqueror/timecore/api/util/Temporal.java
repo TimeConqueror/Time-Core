@@ -25,7 +25,7 @@ public class Temporal<T> {
         return new Temporal<>(value, errorMessage);
     }
 
-    private Temporal(T value, String errorMessage) {
+    protected Temporal(T value, String errorMessage) {
         this.value = value;
         this.error = errorMessage;
     }

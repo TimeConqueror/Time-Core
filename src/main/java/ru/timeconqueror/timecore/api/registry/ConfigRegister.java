@@ -9,13 +9,13 @@ import net.minecraftforge.fml.loading.FMLPaths;
 import ru.timeconqueror.timecore.api.TimeCoreAPI;
 import ru.timeconqueror.timecore.api.common.config.Config;
 import ru.timeconqueror.timecore.api.common.config.ImprovedConfigBuilder;
+import ru.timeconqueror.timecore.api.registry.base.TaskHolder;
 import ru.timeconqueror.timecore.api.registry.util.AutoRegistrable;
 import ru.timeconqueror.timecore.internal.common.config.TimeCoreConfigManager;
 
 import java.io.File;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * All {@link TimeRegister}s are used to simplify stuff registering.
@@ -61,7 +61,7 @@ import java.util.List;
 //TODO add reload command, add warning about some variables, that they will work after restart
 public class ConfigRegister extends TimeRegister {
     private final ArrayList<Config> CONFIG_LIST = new ArrayList<>();
-    private List<Runnable> runnables = new ArrayList<>();
+    private final TaskHolder<Runnable> runnables = TaskHolder.make(FMLConstructModEvent.class);
 
     public ConfigRegister(String modid) {
         super(modid);
@@ -105,8 +105,7 @@ public class ConfigRegister extends TimeRegister {
 
     private void onInit(FMLConstructModEvent event) {
         catchErrors("FMLConstructModEvent", () -> {
-            runnables.forEach(Runnable::run);
-            runnables = null;
+            runnables.doForEachAndRemove(Runnable::run);
         });
     }
 

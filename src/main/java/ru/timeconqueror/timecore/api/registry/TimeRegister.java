@@ -4,7 +4,6 @@ import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
 import org.jetbrains.annotations.Nullable;
-import ru.timeconqueror.timecore.api.devtools.gen.lang.LangGeneratorFacade;
 import ru.timeconqueror.timecore.api.util.Pair;
 import ru.timeconqueror.timecore.storage.Features;
 import ru.timeconqueror.timecore.storage.Storage;
@@ -14,6 +13,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
+
 //TODO auto unreg
 public abstract class TimeRegister {
     private final String modId;
@@ -78,9 +78,5 @@ public abstract class TimeRegister {
 
     protected void storeException(RuntimeException exception) {
         error.compareAndSet(null, exception);
-    }
-
-    protected LangGeneratorFacade getLangGeneratorFacade() {
-        return modFeatures.getLangGeneratorFacade();
     }
 }
