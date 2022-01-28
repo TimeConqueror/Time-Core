@@ -26,11 +26,7 @@ public class CapabilityRegister extends TimeRegister {
     @Override
     public void regToBus(IEventBus modEventBus) {
         super.regToBus(modEventBus);
-        modEventBus.addListener(this::onEvent);
-    }
-
-    private void onEvent(RegisterCapabilitiesEvent event) {
-        catchErrors(RegisterCapabilitiesEvent.class, () -> registerCaps(event));
+        modEventBus.addListener(this::registerCaps);
     }
 
     private void registerCaps(RegisterCapabilitiesEvent event) {

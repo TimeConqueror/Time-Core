@@ -108,15 +108,11 @@ public abstract class ForgeRegister<T extends IForgeRegistryEntry<T>> extends Ti
     }
 
     protected void onClientSetup(FMLClientSetupEvent event) {
-        event.enqueueWork(() -> {
-            catchErrors("client setup event", () -> clientSetupTasks.doForEachAndRemove(Runnable::run));
-        });
+        enqueueWork(event, () -> clientSetupTasks.doForEachAndRemove(Runnable::run));
     }
 
     protected void onCommonSetup(FMLCommonSetupEvent event) {
-        event.enqueueWork(() -> {
-            catchErrors("common setup event", () -> commonSetupTasks.doForEachAndRemove(Runnable::run));
-        });
+        enqueueWork(event, () -> commonSetupTasks.doForEachAndRemove(Runnable::run));
     }
 
     protected IForgeRegistry<T> getRegistry() {

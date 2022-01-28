@@ -4,12 +4,10 @@ import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+import ru.timeconqueror.timecore.api.registry.base.TaskHolder;
 import ru.timeconqueror.timecore.api.registry.util.Promised;
-import ru.timeconqueror.timecore.api.util.Temporal;
 import ru.timeconqueror.timecore.internal.registry.InsertablePromised;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.function.Supplier;
 
 /**
@@ -18,7 +16,7 @@ import java.util.function.Supplier;
  */
 public abstract class VanillaRegister<T> extends TimeRegister {
     private final Registry<? super T> registry;
-    private final Temporal<List<Entry<? extends T>>> entries = Temporal.of(new ArrayList<>());
+    private final TaskHolder<Entry<? extends T>> entries = TaskHolder.make(FMLCommonSetupEvent.class);
 
     public VanillaRegister(String modId, Registry<? super T> registry) {
         super(modId);
@@ -27,7 +25,7 @@ public abstract class VanillaRegister<T> extends TimeRegister {
 
     protected <I extends T> Promised<I> registerEntry(String name, Supplier<I> entrySup) {
         InsertablePromised<I> promised = new InsertablePromised<>(new ResourceLocation(getModId(), name));
-        entries.get().add(new Entry<>(promised, entrySup));
+        entries.add(new Entry<>(promised, entrySup));
 
         return promised;
     }
@@ -39,12 +37,8 @@ public abstract class VanillaRegister<T> extends TimeRegister {
     }
 
     private void onSetup(FMLCommonSetupEvent event) {
-        event.enqueueWork(() -> {
-            entries.doAndRemove(entries -> {
-                for (Entry<? extends T> entry : entries) {
-                    Registry.register(registry, entry.getId(), entry.pull());
-                }
-            });
+        enqueueWork(event, () -> {
+            entries.doForEachAndRemove(entry -> Registry.register(registry, entry.getId(), entry.pull()));
         });
     }
 

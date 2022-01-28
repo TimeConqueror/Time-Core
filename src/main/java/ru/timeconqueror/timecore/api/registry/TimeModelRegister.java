@@ -35,6 +35,6 @@ public class TimeModelRegister extends TimeRegister {
     }
 
     private void onClientSetup(FMLClientSetupEvent e) {
-        locations.doAndRemove(ClientLoadingHandler.MODEL_SET::regModelLocations);
+        catchErrors(e, () -> locations.doAndRemove(ClientLoadingHandler.MODEL_SET::regModelLocations));
     }
 }

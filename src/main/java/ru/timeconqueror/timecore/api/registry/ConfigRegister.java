@@ -104,9 +104,7 @@ public class ConfigRegister extends TimeRegister {
     }
 
     private void onInit(FMLConstructModEvent event) {
-        catchErrors("FMLConstructModEvent", () -> {
-            runnables.doForEachAndRemove(Runnable::run);
-        });
+        catchErrors(event, () -> runnables.doForEachAndRemove(Runnable::run));
     }
 
     @Override

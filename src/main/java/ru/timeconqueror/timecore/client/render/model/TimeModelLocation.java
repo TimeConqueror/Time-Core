@@ -16,7 +16,7 @@ public record TimeModelLocation(ResourceLocation location, String modelName) {
     @Override
     public String toString() {
         if (isWildcard()) {
-            return location.toString() + "| (any)";
+            return location.toString() + "|(any)";
         }
 
         return location.toString() + "|" + modelName;

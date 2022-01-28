@@ -3,12 +3,12 @@ package ru.timeconqueror.timecore.api.registry;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
+import net.minecraftforge.fml.event.lifecycle.ParallelDispatchEvent;
 import org.jetbrains.annotations.Nullable;
 import ru.timeconqueror.timecore.api.util.Pair;
 import ru.timeconqueror.timecore.storage.Features;
 import ru.timeconqueror.timecore.storage.Storage;
 
-import javax.annotation.OverridingMethodsMustInvokeSuper;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
@@ -27,7 +27,6 @@ public abstract class TimeRegister {
         modFeatures = Storage.getFeatures(modId);
     }
 
-    @OverridingMethodsMustInvokeSuper
     public void regToBus(IEventBus modEventBus) {
         modEventBus.addListener(this::handleLoadException);
     }
@@ -52,8 +51,19 @@ public abstract class TimeRegister {
         return owner;
     }
 
-    public void catchErrors(Class<? extends Event> eventClass, Runnable runnable) {
-        catchErrors(eventClass.getName(), runnable);
+    /**
+     * Enqueues and catches the possible exceptions.
+     */
+    protected void enqueueWork(ParallelDispatchEvent event, Runnable action) {
+        event.enqueueWork(catchable(event, action));
+    }
+
+    protected Runnable catchable(Event event, Runnable runnable) {
+        return () -> catchErrors(event, runnable);
+    }
+
+    public void catchErrors(Event event, Runnable runnable) {
+        catchErrors(event.getClass().getName(), runnable);
     }
 
     public void catchErrors(String action, Runnable runnable) {

@@ -158,7 +158,7 @@ public class PacketRegister extends RunnableStoringRegister {
     }
 
     private void onInit(FMLCommonSetupEvent event) {
-        catchErrors(FMLCommonSetupEvent.class, this::runAll);
+        catchErrors(event, this::runAll);
 
         lastIndexes = null;
     }
