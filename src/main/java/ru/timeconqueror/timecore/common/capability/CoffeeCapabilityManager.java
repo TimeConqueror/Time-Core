@@ -13,6 +13,7 @@ import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
+import org.jetbrains.annotations.Nullable;
 import ru.timeconqueror.timecore.common.capability.listener.CoffeeKeepPlayerCapabilityListener;
 import ru.timeconqueror.timecore.common.capability.listener.CoffeeOnPlayerJoinedSendCapabilityListener;
 import ru.timeconqueror.timecore.common.capability.owner.CapabilityOwner;
@@ -86,6 +87,7 @@ public class CoffeeCapabilityManager {
         MinecraftForge.EVENT_BUS.register(new CoffeeOnPlayerJoinedSendCapabilityListener(onSyncRequest));
     }
 
+    @Nullable
     public AttachableCoffeeCapability<? extends ICapabilityProvider, ? extends CoffeeCapability<?>> getAttachableCoffeeCapability(String name) {
         for (AttachableCoffeeCapability<? extends ICapabilityProvider, ? extends CoffeeCapability<?>> capability : attachableCapabilities) {
             if (capability.getCapability().getName().equals(name)) {

@@ -29,7 +29,7 @@ sealed class CoffeeCapabilityDataPacket(
             clientSide: Boolean
         ): CoffeeCapabilityDataPacket {
             return create(clientSide, cap.getCapability().name, CompoundTag().apply {
-                cap.getOwnerSerializer().serializeOwner(world, owner, this)
+                cap.getOwnerSerializer().serialize(world, owner, this)
             }, capabilityData)
         }
 
@@ -62,8 +62,8 @@ sealed class CoffeeCapabilityDataPacket(
         private fun handlePacket(packet: CoffeeCapabilityDataPacket, world: Level, sentFromClient: Boolean) {
             val capability = TimeCore.INSTANCE.capabilityManager.getAttachableCoffeeCapability(packet.capabilityName)
             if (capability != null) {
-                val ownerSerializer = capability.owner.serializer
-                val owner: ICapabilityProvider? = ownerSerializer.deserializeOwner(world, packet.ownerData)
+                val ownerCodec = capability.owner.serializer
+                val owner: ICapabilityProvider? = ownerCodec.deserialize(world, packet.ownerData)
 
                 if (owner != null) {
                     val cap: LazyOptional<out CoffeeCapability<*>> = owner.getCapability(capability.capability, null)

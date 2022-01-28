@@ -4,9 +4,9 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 
-public interface CapabilityOwnerSerializer<T extends ICapabilityProvider> {
+public interface CapabilityOwnerCodec<T extends ICapabilityProvider> {
 
-    void serializeOwner(Level world, T owner, CompoundTag nbt);
+    void serialize(Level world, T owner, CompoundTag nbt);
 
-    T deserializeOwner(Level world, CompoundTag nbt);
+    T deserialize(Level world, CompoundTag nbt);
 }

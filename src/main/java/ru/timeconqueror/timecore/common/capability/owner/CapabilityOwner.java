@@ -9,61 +9,61 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import ru.timeconqueror.timecore.common.capability.owner.attach.CoffeeCapabilityAttacher;
-import ru.timeconqueror.timecore.common.capability.owner.serializer.CapabilityOwnerSerializer;
+import ru.timeconqueror.timecore.common.capability.owner.serializer.CapabilityOwnerCodec;
 
 import java.util.ArrayList;
 
 public class CapabilityOwner<T extends ICapabilityProvider> {
 
-    public static final CapabilityOwner<BlockEntity> TILE_ENTITY = new CapabilityOwner<>(new CapabilityOwnerSerializer<BlockEntity>() {
+    public static final CapabilityOwner<BlockEntity> TILE_ENTITY = new CapabilityOwner<>(new CapabilityOwnerCodec<>() {
         @Override
-        public void serializeOwner(Level world, BlockEntity owner, CompoundTag nbt) {
+        public void serialize(Level world, BlockEntity owner, CompoundTag nbt) {
             nbt.putInt("x", owner.getBlockPos().getX());
             nbt.putInt("y", owner.getBlockPos().getY());
             nbt.putInt("z", owner.getBlockPos().getZ());
         }
 
         @Override
-        public BlockEntity deserializeOwner(Level world, CompoundTag nbt) {
+        public BlockEntity deserialize(Level world, CompoundTag nbt) {
             BlockPos pos = new BlockPos(nbt.getInt("x"), nbt.getInt("y"), nbt.getInt("z"));
             return world.getBlockEntity(pos);
         }
     });
 
-    public static final CapabilityOwner<Entity> ENTITY = new CapabilityOwner<>(new CapabilityOwnerSerializer<Entity>() {
+    public static final CapabilityOwner<Entity> ENTITY = new CapabilityOwner<>(new CapabilityOwnerCodec<>() {
         @Override
-        public void serializeOwner(Level world, Entity owner, CompoundTag nbt) {
+        public void serialize(Level world, Entity owner, CompoundTag nbt) {
             nbt.putInt("id", owner.getId());
         }//FIXME not uuid?
 
         @Override
-        public Entity deserializeOwner(Level world, CompoundTag nbt) {
+        public Entity deserialize(Level world, CompoundTag nbt) {
             return world.getEntity(nbt.getInt("id"));
         }
     });
 
-    public static final CapabilityOwner<Level> WORLD = new CapabilityOwner<>(new CapabilityOwnerSerializer<Level>() {
+    public static final CapabilityOwner<Level> WORLD = new CapabilityOwner<>(new CapabilityOwnerCodec<>() {
 
         @Override
-        public void serializeOwner(Level world, Level owner, CompoundTag nbt) {
+        public void serialize(Level world, Level owner, CompoundTag nbt) {
         }
 
         @Override
-        public Level deserializeOwner(Level world, CompoundTag nbt) {
+        public Level deserialize(Level world, CompoundTag nbt) {
             return world;
         }
 
     });
 
-    public static final CapabilityOwner<LevelChunk> CHUNK = new CapabilityOwner<>(new CapabilityOwnerSerializer<LevelChunk>() {
+    public static final CapabilityOwner<LevelChunk> CHUNK = new CapabilityOwner<>(new CapabilityOwnerCodec<>() {
         @Override
-        public void serializeOwner(Level world, LevelChunk owner, CompoundTag nbt) {
+        public void serialize(Level world, LevelChunk owner, CompoundTag nbt) {
             nbt.putInt("x", owner.getPos().x);
             nbt.putInt("z", owner.getPos().z);
         }
 
         @Override
-        public LevelChunk deserializeOwner(Level world, CompoundTag nbt) {
+        public LevelChunk deserialize(Level world, CompoundTag nbt) {
             return world.getChunk(nbt.getInt("x"), nbt.getInt("z"));
         }
     });
@@ -94,9 +94,9 @@ public class CapabilityOwner<T extends ICapabilityProvider> {
 //    });
 
     private final ArrayList<CoffeeCapabilityAttacher<T, ?>> attachers = new ArrayList<>();
-    private final CapabilityOwnerSerializer<T> serializer;
+    private final CapabilityOwnerCodec<T> serializer;
 
-    public CapabilityOwner(CapabilityOwnerSerializer<T> serializer) {
+    public CapabilityOwner(CapabilityOwnerCodec<T> serializer) {
         this.serializer = serializer;
     }
 
@@ -104,7 +104,7 @@ public class CapabilityOwner<T extends ICapabilityProvider> {
         return attachers;
     }
 
-    public CapabilityOwnerSerializer<T> getSerializer() {
+    public CapabilityOwnerCodec<T> getSerializer() {
         return serializer;
     }
 }

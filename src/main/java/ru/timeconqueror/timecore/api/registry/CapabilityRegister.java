@@ -2,10 +2,11 @@ package ru.timeconqueror.timecore.api.registry;
 
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityManager;
-import net.minecraftforge.common.capabilities.CapabilityToken;
 import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
+import org.objectweb.asm.Type;
 import ru.timeconqueror.timecore.api.util.Temporal;
+import ru.timeconqueror.timecore.mixins.accessor.CapabilityManagerAccessor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,8 +22,8 @@ public class CapabilityRegister extends TimeRegister {
     public <T> Capability<T> register(Class<T> type) {
         capClasses.get().add(type);
 
-        return CapabilityManager.get(new CapabilityToken<>() {
-        });
+        String internalName = Type.getInternalName(type);
+        return ((CapabilityManagerAccessor) (Object) CapabilityManager.INSTANCE).callGet(internalName, false);
     }
 
     @Override
