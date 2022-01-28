@@ -25,6 +25,7 @@ public class CoffeeCapabilityProvider<T> implements ICapabilityProvider, INBTSer
 
     public <C> void addCapability(Capability<C> capability, CoffeeCapabilityGetter<T, C> getter) {
         getters.put(capability.getName(), getter);
+        // for init
         getter.getCapability(target, null);
     }
 

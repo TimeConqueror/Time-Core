@@ -58,8 +58,8 @@ public class DefaultAttachCapabilityHandler {
         boolean attach = false;
         if (attachers != null) {
             for (CoffeeCapabilityAttacher<T, ?> attacher : attachers) {
-                if (attacher.getPredicate().test(event.getObject())) {
-                    provider.addCapability(attacher.getCapability(), (CoffeeCapabilityGetter) attacher.getGetterFactory().get());
+                if (attacher.predicate().test(event.getObject())) {
+                    provider.addCapability(attacher.capability(), (CoffeeCapabilityGetter) attacher.getterFactory().get());
                     attach = true;
                 }
             }

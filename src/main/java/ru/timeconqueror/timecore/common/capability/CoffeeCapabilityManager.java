@@ -40,6 +40,10 @@ public class CoffeeCapabilityManager {
         attachableCapabilities.add(new CoffeeCapability<>(owner, capability));
     }
 
+    /**
+     * Adds the capability, which is based on provided direction.
+     * So the getter can return different capabilities based on direction, like it works for ItemHandler in tile entities for example.
+     */
     public <T extends ICapabilityProvider, C> void attachDynamicCapability(CapabilityOwner<T> owner, Capability<C> capability, Predicate<T> predicate, Supplier<CoffeeCapabilityGetter<T, C>> getters) {
         owner.getAttachers().add(new CoffeeCapabilityAttacher<>(capability, predicate, getters));
     }
@@ -49,18 +53,22 @@ public class CoffeeCapabilityManager {
         attachableCapabilities.add(new CoffeeCapability<>(owner, capability));
     }
 
+    /**
+     * Adds the capability, which is single and permanent for the provided target.
+     * Factory is called once for the owner and then is cached.
+     */
     public <T extends ICapabilityProvider, C> void attachStaticCapability(CapabilityOwner<T> owner, Capability<C> capability, Predicate<T> predicate, Function<T, C> factory) {
         owner.getAttachers().add(new CoffeeCapabilityAttacher<>(capability, predicate, () -> new StaticCoffeeCapabilityGetter<>(factory)));
     }
 
     public void addDefaultAttachers() {
-        attachDynamicCapability(CapabilityOwner.TILE_ENTITY, CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, (tile) -> tile instanceof IItemHandlerProvider,
+        attachDynamicCapability(CapabilityOwner.TILE_ENTITY, CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, tile -> tile instanceof IItemHandlerProvider,
                 ((CoffeeCapabilityGetter<BlockEntity, IItemHandler>) (target, facing) -> ((IItemHandlerProvider) target).getItemHandler(facing)).supply());
 
-        attachDynamicCapability(CapabilityOwner.TILE_ENTITY, CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, (tile) -> tile instanceof IFluidHandlerProvider,
+        attachDynamicCapability(CapabilityOwner.TILE_ENTITY, CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, tile -> tile instanceof IFluidHandlerProvider,
                 ((CoffeeCapabilityGetter<BlockEntity, IFluidHandler>) (target, facing) -> ((IFluidHandlerProvider) target).getFluidHandler(facing)).supply());
 
-        attachDynamicCapability(CapabilityOwner.TILE_ENTITY, CapabilityEnergy.ENERGY, (tile) -> tile instanceof IEnergyStorageProvider,
+        attachDynamicCapability(CapabilityOwner.TILE_ENTITY, CapabilityEnergy.ENERGY, tile -> tile instanceof IEnergyStorageProvider,
                 ((CoffeeCapabilityGetter<BlockEntity, IEnergyStorage>) (target, facing) -> ((IEnergyStorageProvider) target).getEnergyStorage(facing)).supply());
     }
 
