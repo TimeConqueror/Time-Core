@@ -17,7 +17,7 @@ import org.jetbrains.annotations.Nullable;
 import ru.timeconqueror.timecore.common.capability.listener.CoffeeKeepPlayerCapabilityListener;
 import ru.timeconqueror.timecore.common.capability.listener.CoffeeOnPlayerJoinedSendCapabilityListener;
 import ru.timeconqueror.timecore.common.capability.owner.CapabilityOwner;
-import ru.timeconqueror.timecore.common.capability.owner.attach.AttachableCoffeeCapability;
+import ru.timeconqueror.timecore.common.capability.owner.attach.CoffeeCapability;
 import ru.timeconqueror.timecore.common.capability.owner.attach.CoffeeCapabilityAttacher;
 import ru.timeconqueror.timecore.common.capability.owner.attach.getter.CoffeeCapabilityGetter;
 import ru.timeconqueror.timecore.common.capability.owner.attach.getter.StaticCoffeeCapabilityGetter;
@@ -33,20 +33,20 @@ import java.util.function.Supplier;
 
 public class CoffeeCapabilityManager {
 
-    private final ArrayList<AttachableCoffeeCapability<? extends ICapabilityProvider, ? extends CoffeeCapability<?>>> attachableCapabilities = new ArrayList<>();
+    private final ArrayList<CoffeeCapability<? extends ICapabilityProvider, ? extends CoffeeCapabilityInstance<?>>> attachableCapabilities = new ArrayList<>();
 
-    public <T extends ICapabilityProvider, C extends CoffeeCapability<T>> void attachDynamicCoffeeCapability(CapabilityOwner<T> owner, Capability<C> capability, Predicate<T> predicate, Supplier<CoffeeCapabilityGetter<T, C>> getters) {
+    public <T extends ICapabilityProvider, C extends CoffeeCapabilityInstance<T>> void attachDynamicCoffeeCapability(CapabilityOwner<T> owner, Capability<C> capability, Predicate<T> predicate, Supplier<CoffeeCapabilityGetter<T, C>> getters) {
         attachDynamicCapability(owner, capability, predicate, getters);
-        attachableCapabilities.add(new AttachableCoffeeCapability<>(owner, capability));
+        attachableCapabilities.add(new CoffeeCapability<>(owner, capability));
     }
 
     public <T extends ICapabilityProvider, C> void attachDynamicCapability(CapabilityOwner<T> owner, Capability<C> capability, Predicate<T> predicate, Supplier<CoffeeCapabilityGetter<T, C>> getters) {
         owner.getAttachers().add(new CoffeeCapabilityAttacher<>(capability, predicate, getters));
     }
 
-    public <T extends ICapabilityProvider, C extends CoffeeCapability<T>> void attachStaticCoffeeCapability(CapabilityOwner<T> owner, Capability<C> capability, Predicate<T> predicate, Function<T, C> capFactory) {
+    public <T extends ICapabilityProvider, C extends CoffeeCapabilityInstance<T>> void attachStaticCoffeeCapability(CapabilityOwner<T> owner, Capability<C> capability, Predicate<T> predicate, Function<T, C> capFactory) {
         attachStaticCapability(owner, capability, predicate, capFactory);
-        attachableCapabilities.add(new AttachableCoffeeCapability<>(owner, capability));
+        attachableCapabilities.add(new CoffeeCapability<>(owner, capability));
     }
 
     public <T extends ICapabilityProvider, C> void attachStaticCapability(CapabilityOwner<T> owner, Capability<C> capability, Predicate<T> predicate, Function<T, C> factory) {
@@ -88,9 +88,9 @@ public class CoffeeCapabilityManager {
     }
 
     @Nullable
-    public AttachableCoffeeCapability<? extends ICapabilityProvider, ? extends CoffeeCapability<?>> getAttachableCoffeeCapability(String name) {
-        for (AttachableCoffeeCapability<? extends ICapabilityProvider, ? extends CoffeeCapability<?>> capability : attachableCapabilities) {
-            if (capability.getCapability().getName().equals(name)) {
+    public CoffeeCapability<? extends ICapabilityProvider, ? extends CoffeeCapabilityInstance<?>> getAttachableCoffeeCapability(String name) {
+        for (CoffeeCapability<? extends ICapabilityProvider, ? extends CoffeeCapabilityInstance<?>> capability : attachableCapabilities) {
+            if (capability.capability().getName().equals(name)) {
                 return capability;
             }
         }

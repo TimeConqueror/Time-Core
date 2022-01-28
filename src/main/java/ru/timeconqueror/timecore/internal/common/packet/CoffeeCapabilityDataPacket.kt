@@ -10,7 +10,7 @@ import net.minecraftforge.network.NetworkEvent
 import ru.timeconqueror.timecore.TimeCore
 import ru.timeconqueror.timecore.api.common.packet.ITimePacketHandler
 import ru.timeconqueror.timecore.api.common.tile.SerializationType
-import ru.timeconqueror.timecore.common.capability.CoffeeCapability
+import ru.timeconqueror.timecore.common.capability.CoffeeCapabilityInstance
 import ru.timeconqueror.timecore.common.capability.property.CoffeeProperty
 import java.util.function.Predicate
 
@@ -24,7 +24,7 @@ sealed class CoffeeCapabilityDataPacket(
         fun <T : ICapabilityProvider> create(
             world: Level,
             owner: T,
-            cap: CoffeeCapability<T>,
+            cap: CoffeeCapabilityInstance<T>,
             capabilityData: CompoundTag,
             clientSide: Boolean
         ): CoffeeCapabilityDataPacket {
@@ -49,7 +49,7 @@ sealed class CoffeeCapabilityDataPacket(
         fun <T : ICapabilityProvider> create(
             world: Level,
             owner: T,
-            cap: CoffeeCapability<T>,
+            cap: CoffeeCapabilityInstance<T>,
             clientSide: Boolean,
             syncPredicate: Predicate<CoffeeProperty<*>>
         ): CoffeeCapabilityDataPacket? {
@@ -62,11 +62,12 @@ sealed class CoffeeCapabilityDataPacket(
         private fun handlePacket(packet: CoffeeCapabilityDataPacket, world: Level, sentFromClient: Boolean) {
             val capability = TimeCore.INSTANCE.capabilityManager.getAttachableCoffeeCapability(packet.capabilityName)
             if (capability != null) {
-                val ownerCodec = capability.owner.serializer
+                val ownerCodec = capability.owner().serializer
                 val owner: ICapabilityProvider? = ownerCodec.deserialize(world, packet.ownerData)
 
                 if (owner != null) {
-                    val cap: LazyOptional<out CoffeeCapability<*>> = owner.getCapability(capability.capability, null)
+                    val cap: LazyOptional<out CoffeeCapabilityInstance<*>> =
+                        owner.getCapability(capability.capability(), null)
 
                     cap.ifPresent {
                         it.deserialize(packet.capabilityData, sentFromClient)

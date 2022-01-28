@@ -22,10 +22,10 @@ import javax.annotation.ParametersAreNonnullByDefault
 //ToDO check client dependent caps being saved on server?
 //TODO store owner inside the cap so people don't bother creating their own sendAllData & sendChangesToClients without args
 @ParametersAreNonnullByDefault
-abstract class CoffeeCapability<T : ICapabilityProvider> : PropertyContainer(), INBTSerializable<CompoundTag> {
+abstract class CoffeeCapabilityInstance<T : ICapabilityProvider> : PropertyContainer(), INBTSerializable<CompoundTag> {
 
     abstract fun getOwnerSerializer(): CapabilityOwnerCodec<T>
-    abstract fun getCapability(): Capability<out CoffeeCapability<T>>
+    abstract fun getCapability(): Capability<out CoffeeCapabilityInstance<T>>
 
     /**
      * Checks if properties of capability has changed and if yes, sends them.
