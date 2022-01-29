@@ -301,7 +301,7 @@ publishing {
             maven {
                 url "https://repo.repsy.io/mvn/${secretProps.repsy.user}/${secretProps.repsy.repo_name}"
                 credentials {
-                    username secretProps.repsy.user
+                    username secretProps.repsy.login
                     password secretProps.repsy.password
                 }
             }
