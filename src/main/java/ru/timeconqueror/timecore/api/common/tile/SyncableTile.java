@@ -28,10 +28,8 @@ public abstract class SyncableTile extends SimpleTile {
      */
     @NotNull
     @Override
-    public final CompoundTag save(CompoundTag compound) {
+    public final void saveAdditional(@NotNull CompoundTag compound) {
         writeNBT(compound, SerializationType.SAVE);
-
-        return compound;
     }
 
     /**
@@ -49,7 +47,7 @@ public abstract class SyncableTile extends SimpleTile {
 
     @OverridingMethodsMustInvokeSuper
     protected void writeNBT(CompoundTag nbt, SerializationType type) {
-        super.save(nbt);
+        super.saveAdditional(nbt);
     }
 
     @OverridingMethodsMustInvokeSuper

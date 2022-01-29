@@ -166,7 +166,7 @@ compileJava.options.encoding = "UTF-8"
 compileTestJava.options.encoding = "UTF-8"
 
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.18.1-39.0.10'
+    minecraft 'net.minecraftforge:forge:1.18.1-39.0.63'
 
     if (file("runtimeMods").exists()) {
         file("runtimeMods").eachFile { file ->
