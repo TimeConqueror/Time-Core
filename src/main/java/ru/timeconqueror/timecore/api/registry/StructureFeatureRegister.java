@@ -217,7 +217,9 @@ public class StructureFeatureRegister extends ForgeRegister<StructureFeature<?>>
 
             for (Map.Entry<StructureFeature<?>, ImmutableMultimap<ConfiguredStructureFeature<?, ?>, ResourceKey<Biome>>> e : oldConfiguredStructures.entrySet()) {
                 HashMultimap<ConfiguredStructureFeature<?, ?>, ResourceKey<Biome>> configuredStructureBiomes = structureTable.get(e.getKey());
-                configuredStructureBiomes.putAll(e.getValue());
+                if (configuredStructureBiomes != null) {
+                    configuredStructureBiomes.putAll(e.getValue());
+                }
             }
 
             ((StructureSettingsAccessor) worldStructureConfig).setConfiguredStructures(
