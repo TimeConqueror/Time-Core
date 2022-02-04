@@ -246,8 +246,8 @@ public class StructureFeatureRegister extends ForgeRegister<StructureFeature<?>>
             Map<StructureFeature<?>, StructureFeatureConfiguration> newStructureConfig = new HashMap<>(worldStructureConfig.structureConfig());
             for (StructureInfo<?, ?> info : structureInfoList) {
                 if (!info.dimensionPredicate.test(level)) {
-                    newStructureConfig.remove(info.structureFeature());
-                    break;
+                    newStructureConfig.remove(info.structureFeature());//TODO check if I really need to remove it???
+                    continue;
                 }
                 /*
                  * putIfAbsent so people can override the spacing with dimension datapacks themselves if they wish to customize spacing more precisely per dimension.//TODO per dimension spacing
