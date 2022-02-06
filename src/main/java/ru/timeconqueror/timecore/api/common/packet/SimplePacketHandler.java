@@ -7,7 +7,7 @@ import net.minecraftforge.network.NetworkEvent;
  */
 public abstract class SimplePacketHandler<T> implements ITimePacketHandler<T> {
     @Override
-    public boolean handle(T packet, NetworkEvent.Context ctx) {
+    public final boolean handle(T packet, NetworkEvent.Context ctx) {
         ctx.enqueueWork(() -> handleOnMainThread(packet, ctx));
         return true;
     }
