@@ -1,5 +1,6 @@
 package ru.timeconqueror.timecore.animation.loading;
 
+import com.google.common.reflect.TypeToken;
 import com.google.gson.*;
 import net.minecraft.util.JSONUtils;
 import net.minecraft.util.math.vector.Vector3f;
@@ -13,6 +14,9 @@ import java.util.List;
 import java.util.Map;
 
 public class KeyFrameListDeserializer implements JsonDeserializer<List<KeyFrame>> {
+    public static final Type KEYFRAME_LIST_TYPE = new TypeToken<List<KeyFrame>>() {
+    }.getType();
+
     @Override
     public List<KeyFrame> deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext ctx) throws JsonParseException {
         List<KeyFrame> keyFrames = new ArrayList<>();
