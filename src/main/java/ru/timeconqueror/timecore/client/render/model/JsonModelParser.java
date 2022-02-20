@@ -13,7 +13,7 @@ import net.minecraft.util.math.vector.Vector2f;
 import net.minecraft.util.math.vector.Vector3f;
 import org.jetbrains.annotations.NotNull;
 import ru.timeconqueror.timecore.api.util.CollectionUtils;
-import ru.timeconqueror.timecore.api.util.JsonUtils;
+import ru.timeconqueror.timecore.api.util.json.JsonUtils;
 import ru.timeconqueror.timecore.client.render.JsonParsingException;
 
 import java.io.BufferedReader;

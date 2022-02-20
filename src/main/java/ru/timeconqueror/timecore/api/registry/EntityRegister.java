@@ -235,13 +235,8 @@ public class EntityRegister extends ForgeRegister<EntityType<?>> {
 
         /**
          * Binds attribute map to the living type.
-         * Required for every living entity, which {@link EntityClassification} is not equal to {@link EntityClassification#MISC}
          */
         public LivingRegisterChain<T> attributes(Supplier<AttributeModifierMap> attributesSup) {
-            if (retrieve().getCategory() == EntityClassification.MISC) {
-                throw new UnsupportedOperationException(String.format("Entities with being %s equal to %s can't have attributes.", EntityClassification.class.getName(), EntityClassification.MISC));
-            }
-
             runOnCommonSetup(() -> GlobalEntityTypeAttributes.put(retrieve(), attributesSup.get()));
             return this;
         }

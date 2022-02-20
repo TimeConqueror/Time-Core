@@ -1,4 +1,4 @@
-package ru.timeconqueror.timecore.api.util;
+package ru.timeconqueror.timecore.api.util.json;
 
 import com.google.gson.JsonElement;
 import com.google.gson.*;

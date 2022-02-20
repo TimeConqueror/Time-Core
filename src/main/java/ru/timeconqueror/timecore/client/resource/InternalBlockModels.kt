@@ -3,7 +3,7 @@ package ru.timeconqueror.timecore.client.resource
 import ru.timeconqueror.timecore.api.client.resource.BlockModel
 import ru.timeconqueror.timecore.api.client.resource.BlockModels
 import ru.timeconqueror.timecore.api.client.resource.location.TextureLocation
-import ru.timeconqueror.timecore.api.util.json
+import ru.timeconqueror.timecore.api.util.json.json
 
 object InternalBlockModels {
     /**
