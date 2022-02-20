@@ -4,7 +4,6 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.vector.Vector3f;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import ru.timeconqueror.timecore.TimeCore;
 import ru.timeconqueror.timecore.animation.calculation.KeyFrameInterpolator;
 import ru.timeconqueror.timecore.api.animation.Animation;
 import ru.timeconqueror.timecore.api.animation.AnimationLayer;
@@ -48,8 +47,6 @@ public class BasicAnimation extends Animation {
 
                     if (piece != null) {
                         boneOption.apply(this, layer, piece, existingTime);
-                    } else {
-                        TimeCore.LOGGER.error("Can't find bone with location " + boneOption.getName() + " in animation " + getName() + " applied for model " + model.getName());
                     }
                 });
             }
