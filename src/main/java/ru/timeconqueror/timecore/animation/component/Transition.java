@@ -38,7 +38,7 @@ public class Transition extends Animation {
         Animation.TransitionFactory transitionFactory = dest.getTransitionFactory();
 
         dest.forEachBone(name -> {
-            TimeModelRenderer piece = model.getPiece(name);
+            TimeModelRenderer piece = model.tryGetPiece(name);
             if (piece != null) {
                 // Rotations
                 KeyFrame startKeyFrame = KeyFrame.createIdleKeyFrame(0, new Vector3f(0, 0, 0));
@@ -110,7 +110,7 @@ public class Transition extends Animation {
         if (options != null) {
             if (existingTime <= transitionLength) {
                 options.forEach(boneOption -> {
-                    TimeModelRenderer piece = model.getPiece(boneOption.name);
+                    TimeModelRenderer piece = model.tryGetPiece(boneOption.name);
 
                     if (piece != null) {
                         boneOption.apply(piece, layer, existingTime);
@@ -198,7 +198,7 @@ public class Transition extends Animation {
 
             List<BoneOption> transitionBones = new ArrayList<>();
             source.options.forEach(sourceBone -> {
-                TimeModelRenderer piece = model.getPiece(sourceBone.name);
+                TimeModelRenderer piece = model.tryGetPiece(sourceBone.name);
                 if (piece != null) {
                     // Rotations
                     KeyFrame startKeyFrame = calcStartKeyFrame(source, sourceBone.rotations, new Vector3f(0, 0, 0), existingTime);

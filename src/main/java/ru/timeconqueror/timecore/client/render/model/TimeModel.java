@@ -76,7 +76,7 @@ public class TimeModel extends Model implements ITimeModel {
 
     @Override
     @Nullable
-    public TimeModelRenderer getPiece(String pieceName) {
+    public TimeModelRenderer tryGetPiece(String pieceName) {
         return pieceMap.get(pieceName);
     }
 

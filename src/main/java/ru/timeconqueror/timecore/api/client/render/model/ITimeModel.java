@@ -12,7 +12,7 @@ public interface ITimeModel {
 
     List<TimeModelRenderer> getPieces();
 
-    @Nullable TimeModelRenderer getPiece(String pieceName);
+    @Nullable TimeModelRenderer tryGetPiece(String pieceName);
 
     /**
      * Should be called before animation applying & render.

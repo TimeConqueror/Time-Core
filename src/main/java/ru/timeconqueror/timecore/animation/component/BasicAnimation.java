@@ -43,7 +43,7 @@ public class BasicAnimation extends Animation {
         if (options != null) {
             if (existingTime <= length) {
                 options.forEach((s, boneOption) -> {
-                    TimeModelRenderer piece = model.getPiece(boneOption.getName());
+                    TimeModelRenderer piece = model.tryGetPiece(boneOption.getName());
 
                     if (piece != null) {
                         boneOption.apply(this, layer, piece, existingTime);
@@ -161,7 +161,7 @@ public class BasicAnimation extends Animation {
 
             List<Transition.BoneOption> transitionBones = new ArrayList<>();
             source.getOptions().forEach((name, sourceBone) -> {
-                TimeModelRenderer piece = model.getPiece(name);
+                TimeModelRenderer piece = model.tryGetPiece(name);
                 if (piece != null) {
                     // Rotations
                     KeyFrame startKeyFrame = calcStartKeyFrame(source, sourceBone.getRotations(), new Vector3f(0, 0, 0), existingTime);
