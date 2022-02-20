@@ -11,7 +11,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ru.timeconqueror.timecore.animation.component.BasicAnimation;
 import ru.timeconqueror.timecore.animation.component.BoneOption;
-import ru.timeconqueror.timecore.animation.component.CatmullRomKeyFrame;
 import ru.timeconqueror.timecore.animation.component.KeyFrame;
 import ru.timeconqueror.timecore.api.animation.Animation;
 import ru.timeconqueror.timecore.api.util.CollectionUtils;
@@ -65,6 +64,7 @@ public class JsonAnimationParser {
         for (Map.Entry<String, JsonElement> animationEntry : animations.entrySet()) {
             String name = animationEntry.getKey();
             JsonObject animationJson = JSONUtils.convertToJsonObject(animationEntry.getValue(), name);
+            name = name.toLowerCase(Locale.ROOT);
 
             boolean loop = JSONUtils.getAsBoolean(animationJson, "loop", false);
             int animationLength = (int) (JSONUtils.getAsFloat(animationJson, "animation_length") * 1000);
@@ -109,15 +109,6 @@ public class JsonAnimationParser {
 
         return !keyFrames.isEmpty() ? Collections.unmodifiableList(keyFrames) : null;
     }
-
-    private static KeyFrame frame(float time, Vector3f vec) {
-        return new KeyFrame((int) (time * 1000), vec);
-    }
-
-    private static KeyFrame catmullRomFrame(float time, Vector3f vec) {
-        return new CatmullRomKeyFrame((int) (time * 1000), vec);
-    }
-
 
     private void checkFormatVersion(String version) {
         if (!CollectionUtils.contains(ACCEPTABLE_FORMAT_VERSIONS, version)) {
