@@ -75,6 +75,15 @@ public class TimeModel extends Model implements ITimeModel {
     }
 
     @Override
+    public TimeModelRenderer getPiece(String pieceName) {
+        TimeModelRenderer part = tryGetPiece(pieceName);
+        if (part == null)
+            throw new IllegalArgumentException(String.format("Part '%s' was not found in the model '%s'", pieceName, name));
+
+        return part;
+    }
+
+    @Override
     @Nullable
     public TimeModelRenderer tryGetPiece(String pieceName) {
         return pieceMap.get(pieceName);

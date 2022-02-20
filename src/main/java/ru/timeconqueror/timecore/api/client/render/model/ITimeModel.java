@@ -14,6 +14,8 @@ public interface ITimeModel {
 
     @Nullable TimeModelRenderer tryGetPiece(String pieceName);
 
+    TimeModelRenderer getPiece(String pieceName);
+
     /**
      * Should be called before animation applying & render.
      */
