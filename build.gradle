@@ -1,7 +1,6 @@
 buildscript {
     repositories {
         maven { url = 'https://maven.minecraftforge.net/' }
-        jcenter()
         mavenCentral()
         maven {
             name = 'sponge'
@@ -186,7 +185,7 @@ dependencies {
     shade "org.jetbrains.kotlin:kotlin-reflect"
 
     if (System.getProperty("idea.sync.active") != "true") {
-        annotationProcessor("org.spongepowered:mixin:0.8.3-SNAPSHOT-patched:processor")
+        annotationProcessor("org.spongepowered:mixin:0.8.5:processor")
     }
 }
 
