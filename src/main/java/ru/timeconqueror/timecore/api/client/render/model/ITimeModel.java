@@ -3,7 +3,8 @@ package ru.timeconqueror.timecore.api.client.render.model;
 import org.jetbrains.annotations.Nullable;
 import ru.timeconqueror.timecore.client.render.model.TimeModelLocation;
 import ru.timeconqueror.timecore.client.render.model.TimeModelPart;
-
+//TODO add getScaleFactor
+//TODO add TimeModel#copy
 public interface ITimeModel {
     TimeModelLocation getLocation();
 

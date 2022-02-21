@@ -13,8 +13,8 @@ import net.minecraft.util.GsonHelper;
 import net.minecraft.world.phys.Vec2;
 import org.jetbrains.annotations.NotNull;
 import ru.timeconqueror.timecore.api.util.CollectionUtils;
-import ru.timeconqueror.timecore.api.util.JsonUtils;
 import ru.timeconqueror.timecore.api.util.Pair;
+import ru.timeconqueror.timecore.api.util.json.JsonUtils;
 import ru.timeconqueror.timecore.client.render.model.TimeModelLocation;
 
 import java.io.BufferedReader;

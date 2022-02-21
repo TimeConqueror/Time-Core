@@ -1,4 +1,4 @@
-package ru.timeconqueror.timecore.api.util
+package ru.timeconqueror.timecore.api.util.json
 
 import net.minecraft.resources.ResourceLocation
 import ru.timeconqueror.timecore.api.client.resource.location.BlockModelLocation

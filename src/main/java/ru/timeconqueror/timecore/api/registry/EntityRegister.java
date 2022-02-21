@@ -195,10 +195,6 @@ public class EntityRegister extends ForgeRegister<EntityType<?>> {
          * Required for every living entity, which {@link MobCategory} is not equal to {@link MobCategory#MISC}
          */
         public LivingRegisterChain<T> attributes(Supplier<AttributeSupplier> attributesSup) {
-            if (retrieve().getCategory() == MobCategory.MISC) {
-                throw new UnsupportedOperationException(String.format("Entities with being %s equal to %s can't have attributes.", MobCategory.class.getName(), MobCategory.MISC));
-            }
-
             entityAttributesEventRuns.add(e -> e.put(asRegistryObject().get(), attributesSup.get()));
             return this;
         }
