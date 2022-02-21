@@ -7,7 +7,6 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import java.util.function.Consumer;
 
 public class CoffeeOnPlayerJoinedSendCapabilityListener {
-
     private final Consumer<Player> onUpdate;
 
     public CoffeeOnPlayerJoinedSendCapabilityListener(Consumer<Player> onUpdate) {

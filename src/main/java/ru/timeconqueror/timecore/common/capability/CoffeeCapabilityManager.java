@@ -42,7 +42,7 @@ public class CoffeeCapabilityManager {
 
     /**
      * Adds the capability, which is based on provided direction.
-     * So the getter can return different capabilities based on direction, like it works for ItemHandler in tile entities for example.
+     * So the getter can return different capabilities based on direction, as it works for ItemHandler in tile entities for example.
      */
     public <T extends ICapabilityProvider, C> void attachDynamicCapability(CapabilityOwner<T> owner, Capability<C> capability, Predicate<T> predicate, Supplier<CoffeeCapabilityGetter<T, C>> getters) {
         owner.getAttachers().add(new CoffeeCapabilityAttacher<>(capability, predicate, getters));
@@ -55,7 +55,7 @@ public class CoffeeCapabilityManager {
 
     /**
      * Adds the capability, which is single and permanent for the provided target.
-     * Factory is called once for the owner and then is cached.
+     * Factory is called once per owner and then is cached.
      */
     public <T extends ICapabilityProvider, C> void attachStaticCapability(CapabilityOwner<T> owner, Capability<C> capability, Predicate<T> predicate, Function<T, C> factory) {
         owner.getAttachers().add(new CoffeeCapabilityAttacher<>(capability, predicate, () -> new StaticCoffeeCapabilityGetter<>(factory)));
