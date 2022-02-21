@@ -25,7 +25,7 @@ public class Temporal<T> {
         return new Temporal<>(value, errorMessage);
     }
 
-    private Temporal(T value, String errorMessage) {
+    protected Temporal(T value, String errorMessage) {
         this.value = value;
         this.error = errorMessage;
     }
@@ -53,7 +53,7 @@ public class Temporal<T> {
         return !removed;
     }
 
-    public void transferAndRemove(Consumer<T> action) {
+    public void doAndRemove(Consumer<T> action) {
         if (isPresent()) {
             action.accept(remove());
         }

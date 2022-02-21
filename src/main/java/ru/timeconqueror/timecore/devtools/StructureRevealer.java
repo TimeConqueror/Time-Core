@@ -20,10 +20,10 @@ import net.minecraftforge.event.world.ChunkWatchEvent;
 import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
-import ru.timeconqueror.timecore.mod.common.config.MainConfig;
-import ru.timeconqueror.timecore.mod.common.packet.InternalPacketManager;
-import ru.timeconqueror.timecore.mod.common.packet.S2CSRClearPiecesPacket;
-import ru.timeconqueror.timecore.mod.common.packet.S2CSRSendSinglePiecePacket;
+import ru.timeconqueror.timecore.internal.common.config.MainConfig;
+import ru.timeconqueror.timecore.internal.common.packet.InternalPacketManager;
+import ru.timeconqueror.timecore.internal.common.packet.S2CSRClearPiecesPacket;
+import ru.timeconqueror.timecore.internal.common.packet.S2CSRSendSinglePiecePacket;
 
 import java.util.*;
 import java.util.stream.Stream;

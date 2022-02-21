@@ -149,7 +149,7 @@ public class StructureRegister extends ForgeRegister<Structure<?>> {
                     // the restart but honestly, superflat is really buggy and shouldn't be your main focus in my opinion.
                     FlatGenerationSettings.STRUCTURE_FEATURES.put(structureInfo.structure(), structureInfo.getFeature());
 
-                    structureInfo.tags.transferAndRemove(tags -> StructureTags.put(tags, structureInfo.structure()));
+                    structureInfo.tags.doAndRemove(tags -> StructureTags.put(tags, structureInfo.structure()));
                 });
             });
         });

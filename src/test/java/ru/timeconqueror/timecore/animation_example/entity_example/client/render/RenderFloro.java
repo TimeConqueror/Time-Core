@@ -6,11 +6,12 @@ import ru.timeconqueror.timecore.TimeCore;
 import ru.timeconqueror.timecore.animation.renderer.AnimatedLivingEntityRenderer;
 import ru.timeconqueror.timecore.animation_example.entity_example.client.Models;
 import ru.timeconqueror.timecore.animation_example.entity_example.entity.FloroEntity;
+import ru.timeconqueror.timecore.client.render.model.ModelConfiguration;
 import ru.timeconqueror.timecore.client.render.model.TimeEntityModel;
 
 public class RenderFloro extends AnimatedLivingEntityRenderer<FloroEntity, TimeEntityModel<FloroEntity>> {
     public RenderFloro(EntityRendererManager rendererManager) {
-        super(rendererManager, Models.floroModel.setScaleMultiplier(1.6F), 0.5F);
+        super(rendererManager, new TimeEntityModel<>(ModelConfiguration.builder(Models.FLORO).scaled(1.6F).build()), 0.5F);
     }
 
     @Override

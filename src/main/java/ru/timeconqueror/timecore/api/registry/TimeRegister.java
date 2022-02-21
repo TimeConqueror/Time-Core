@@ -52,8 +52,8 @@ public abstract class TimeRegister {
         return owner;
     }
 
-    public void catchErrors(Class<? extends Event> eventClass, Runnable runnable) {
-        catchErrors(eventClass.getName(), runnable);
+    public void catchErrors(Event event, Runnable runnable) {
+        catchErrors(event.getClass().getName(), runnable);
     }
 
     public void catchErrors(String action, Runnable runnable) {

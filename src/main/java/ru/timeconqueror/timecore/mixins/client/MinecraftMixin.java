@@ -5,7 +5,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import ru.timeconqueror.timecore.TimeCore;
-import ru.timeconqueror.timecore.mod.common.config.MainConfig;
+import ru.timeconqueror.timecore.internal.common.config.MainConfig;
 
 @Mixin(Minecraft.class)
 public class MinecraftMixin {

@@ -6,10 +6,10 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.network.PacketDistributor;
 import ru.timeconqueror.timecore.animation.action.ActionManagerImpl;
 import ru.timeconqueror.timecore.api.animation.AnimatedObject;
-import ru.timeconqueror.timecore.mod.common.packet.InternalPacketManager;
-import ru.timeconqueror.timecore.mod.common.packet.animation.CodecSupplier;
-import ru.timeconqueror.timecore.mod.common.packet.animation.S2CEndAnimationMsg;
-import ru.timeconqueror.timecore.mod.common.packet.animation.S2CStartAnimationMsg;
+import ru.timeconqueror.timecore.internal.common.packet.InternalPacketManager;
+import ru.timeconqueror.timecore.internal.common.packet.animation.CodecSupplier;
+import ru.timeconqueror.timecore.internal.common.packet.animation.S2CEndAnimationMsg;
+import ru.timeconqueror.timecore.internal.common.packet.animation.S2CStartAnimationMsg;
 
 public abstract class NetworkDispatcher<T extends AnimatedObject<T>> {
     public static <T extends Entity & AnimatedObject<T>> NetworkDispatcher<T> forEntity() {

@@ -1,0 +1,88 @@
+package ru.timeconqueror.timecore.client.render.model;
+
+import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.IVertexBuilder;
+import net.minecraft.client.renderer.model.ModelRenderer;
+import net.minecraft.util.math.vector.Vector3f;
+import org.jetbrains.annotations.NotNull;
+import ru.timeconqueror.timecore.client.render.model.loading.MaterialDefinition;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
+//TODO add method to control it so nobody hasn't dig into how it works
+//TODO name rotation be radians, because for now it's unclear
+public class TimeModelPart extends ModelRenderer {
+    private final Vector3f scaleFactor = new Vector3f(1, 1, 1);
+    public Vector3f offset = new Vector3f();
+    public Vector3f startRotationRadians;
+    private final Map<String, TimeModelPart> children;
+    public List<TimeModelCube> cubes;
+
+    public TimeModelPart(MaterialDefinition material, Vector3f startRotRadians, @NotNull List<TimeModelCube> cubes, Map<String, TimeModelPart> children, boolean neverRender) {
+        super(material.getTextureWidth(), material.getTextureHeight(), 0, 0);
+        startRotationRadians = startRotRadians;
+        this.xRot = startRotRadians.x();
+        this.yRot = startRotRadians.y();
+        this.zRot = startRotRadians.z();
+        this.visible = !neverRender;
+        this.children = children;
+        this.cubes = cubes;
+    }
+
+    @Override
+    public void render(MatrixStack matrixStackIn, IVertexBuilder bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha) {
+        if (this.visible) {
+            if (!this.cubes.isEmpty() || !this.children.isEmpty()) {
+                matrixStackIn.pushPose();
+
+                this.translateAndRotate(matrixStackIn);
+
+                matrixStackIn.scale(scaleFactor.x(), scaleFactor.y(), scaleFactor.z());
+
+                this.compile(matrixStackIn.last(), bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
+
+                for (TimeModelPart part : this.children.values()) {
+                    part.render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
+                }
+
+                matrixStackIn.popPose();
+            }
+        }
+    }
+
+    @Override
+    public void translateAndRotate(MatrixStack matrixStackIn) {
+        matrixStackIn.translate(offset.x() * (1 / 16F) * scaleFactor.x(), offset.y() * (1 / 16F) * scaleFactor.y(), offset.z() * (1 / 16F) * scaleFactor.z());
+
+        super.translateAndRotate(matrixStackIn);
+    }
+
+    private void compile(MatrixStack.Entry matrixEntryIn, IVertexBuilder bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha) {
+        for (TimeModelCube cube : cubes) {
+            cube.compile(matrixEntryIn, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
+        }
+    }
+
+    protected void reset() {
+        xRot = startRotationRadians.x();
+        yRot = startRotationRadians.y();
+        zRot = startRotationRadians.z();
+
+        offset.set(0, 0, 0);
+        scaleFactor.set(1, 1, 1);
+    }
+
+    public void setScaleFactor(float scaleX, float scaleY, float scaleZ) {
+        this.scaleFactor.set(scaleX, scaleY, scaleZ);
+    }
+
+    public Vector3f getScaleFactor() {
+        return scaleFactor;
+    }
+
+    public Map<String, TimeModelPart> getChildren() {
+        return Collections.unmodifiableMap(children);
+    }
+}

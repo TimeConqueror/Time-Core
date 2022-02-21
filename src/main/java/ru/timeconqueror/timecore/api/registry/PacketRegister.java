@@ -12,7 +12,7 @@ import ru.timeconqueror.timecore.api.TimeMod;
 import ru.timeconqueror.timecore.api.common.packet.ITimePacketHandler;
 import ru.timeconqueror.timecore.api.registry.base.RunnableStoringRegister;
 import ru.timeconqueror.timecore.api.registry.util.AutoRegistrable;
-import ru.timeconqueror.timecore.mod.common.packet.InternalPacketManager;
+import ru.timeconqueror.timecore.internal.common.packet.InternalPacketManager;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -158,7 +158,7 @@ public class PacketRegister extends RunnableStoringRegister {
     }
 
     private void onInit(FMLCommonSetupEvent event) {
-        catchErrors(FMLCommonSetupEvent.class, this::runAll);
+        catchErrors(event, this::runAll);
 
         lastIndexes = null;
     }

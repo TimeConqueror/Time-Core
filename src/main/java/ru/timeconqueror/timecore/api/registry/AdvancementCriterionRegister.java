@@ -29,6 +29,6 @@ public class AdvancementCriterionRegister extends TimeRegister {
     }
 
     private void onSetup(FMLCommonSetupEvent event) {
-        event.enqueueWork(() -> criteria.transferAndRemove(triggers -> triggers.forEach(CriteriaTriggers::register)));
+        event.enqueueWork(() -> criteria.doAndRemove(triggers -> triggers.forEach(CriteriaTriggers::register)));
     }
 }

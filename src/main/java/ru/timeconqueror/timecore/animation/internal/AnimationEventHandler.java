@@ -12,8 +12,8 @@ import ru.timeconqueror.timecore.animation.action.EntityActionManager;
 import ru.timeconqueror.timecore.api.animation.AnimatedObject;
 import ru.timeconqueror.timecore.api.animation.AnimationManager;
 import ru.timeconqueror.timecore.api.common.event.LivingUpdateEndEvent;
-import ru.timeconqueror.timecore.mod.common.packet.InternalPacketManager;
-import ru.timeconqueror.timecore.mod.common.packet.animation.S2CSyncAnimationsMsg;
+import ru.timeconqueror.timecore.internal.common.packet.InternalPacketManager;
+import ru.timeconqueror.timecore.internal.common.packet.animation.S2CSyncAnimationsMsg;
 
 @Mod.EventBusSubscriber
 public class AnimationEventHandler {

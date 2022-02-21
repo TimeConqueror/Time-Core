@@ -15,6 +15,6 @@ public class LoadingOnlyStorage {
     }
 
     public synchronized static void tryLoadResourceHolders() {
-        HOLDERS.transferAndRemove(GlobalResourceStorage.INSTANCE::fill);
+        HOLDERS.doAndRemove(GlobalResourceStorage.INSTANCE::fill);
     }
 }

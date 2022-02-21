@@ -8,8 +8,8 @@ import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
-import ru.timeconqueror.timecore.mod.common.packet.InternalPacketManager;
-import ru.timeconqueror.timecore.mod.common.packet.S2CKickPlayerFromSPPacket;
+import ru.timeconqueror.timecore.internal.common.packet.InternalPacketManager;
+import ru.timeconqueror.timecore.internal.common.packet.S2CKickPlayerFromSPPacket;
 
 import java.util.List;
 import java.util.Optional;

@@ -7,10 +7,12 @@ import ru.timeconqueror.timecore.animation.renderer.AnimatedTileEntityRenderer;
 import ru.timeconqueror.timecore.animation_example.block_example.block.tile.TileHeatCube;
 import ru.timeconqueror.timecore.animation_example.block_example.registry.TileModels;
 import ru.timeconqueror.timecore.api.client.resource.location.TextureLocation;
+import ru.timeconqueror.timecore.client.render.model.ModelConfiguration;
+import ru.timeconqueror.timecore.client.render.model.TimeModel;
 
 public class TERHeatCube extends AnimatedTileEntityRenderer<TileHeatCube> {
     public TERHeatCube(TileEntityRendererDispatcher rendererDispatcherIn) {
-        super(rendererDispatcherIn, TileModels.heatCubeModel);
+        super(rendererDispatcherIn, new TimeModel(ModelConfiguration.builder(TileModels.HEAT_CUBE).build()));
     }
 
     @Override

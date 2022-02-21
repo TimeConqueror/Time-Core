@@ -7,25 +7,12 @@ import net.minecraft.entity.Entity;
 import org.jetbrains.annotations.Nullable;
 import ru.timeconqueror.timecore.api.client.render.model.ITimeModel;
 
-import java.util.List;
-
 public class TimeEntityModel<T extends Entity> extends EntityModel<T> implements ITimeModel {
     private final TimeModel model;
 
-    public TimeEntityModel(TimeModel model) {
-        this.model = model;
-    }
-
-    /**
-     * Sets custom scale for the model.
-     * <p>
-     * Should only be called once and before first renderToBuffer frame,
-     * otherwise you'll see unexpected renderToBuffer behaviour.
-     */
-    public TimeEntityModel<T> setScaleMultiplier(float scaleMultiplier) {
-        model.setScaleMultiplier(scaleMultiplier);
-
-        return this;
+    public TimeEntityModel(ModelConfiguration config) {
+        super(config.renderTypeProvider());
+        this.model = new TimeModel(config);
     }
 
     @Override
@@ -44,22 +31,17 @@ public class TimeEntityModel<T extends Entity> extends EntityModel<T> implements
     }
 
     @Override
-    public String getName() {
-        return model.getName();
+    public TimeModelLocation getLocation() {
+        return model.getLocation();
     }
 
     @Override
-    public List<TimeModelRenderer> getPieces() {
-        return model.getPieces();
+    public TimeModelPart getPart(String pieceName) {
+        return model.getPart(pieceName);
     }
 
     @Override
-    public TimeModelRenderer getPiece(String pieceName) {
-        return model.getPiece(pieceName);
-    }
-
-    @Override
-    public @Nullable TimeModelRenderer tryGetPiece(String pieceName) {
-        return model.tryGetPiece(pieceName);
+    public @Nullable TimeModelPart tryGetPart(String pieceName) {
+        return model.tryGetPart(pieceName);
     }
 }

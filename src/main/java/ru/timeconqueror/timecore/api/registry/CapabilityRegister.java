@@ -20,7 +20,7 @@ public class CapabilityRegister extends RunnableStoringRegister {
     }
 
     private void onCommonSetup(FMLCommonSetupEvent event) {
-        catchErrors(FMLCommonSetupEvent.class, this::runAll);
+        catchErrors(event, this::runAll);
     }
 
     public <T> void regCapability(Class<T> type, Capability.IStorage<T> storage, Callable<? extends T> factory) {
