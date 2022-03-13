@@ -78,7 +78,7 @@ minecraft.runs.all {
 }
 
 minecraft {
-    mappings channel: 'parchment', version: '1-1.18.1'
+    mappings channel: 'parchment', version: '1-1.18.2'
     accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
 
     def extraArgs = []
