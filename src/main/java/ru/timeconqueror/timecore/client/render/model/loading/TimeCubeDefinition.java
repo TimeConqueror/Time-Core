@@ -1,8 +1,8 @@
 package ru.timeconqueror.timecore.client.render.model.loading;
 
 import com.mojang.math.Vector3f;
-import net.minecraft.world.phys.Vec2;
 import ru.timeconqueror.timecore.client.render.model.TimeModelCube;
+import ru.timeconqueror.timecore.client.render.model.UVDefinition;
 
 public class TimeCubeDefinition {
     private final Vector3f origin;
@@ -10,17 +10,15 @@ public class TimeCubeDefinition {
      * The cube dimensions (x, y, z).
      */
     private final Vector3f size;
-    /**
-     * The starting point in the texture foo.png (x -> horizontal, y -> vertical) for that cube.
-     */
-    private final Vec2 uv;
+
+    private final UVDefinition uv;
     /**
      * Scale factor /Expands the cube, without expanding the UV mapping - useful for making armor look worn, and not part of the entity.
      */
     private final float inflate;
     private final boolean mirrored;
 
-    public TimeCubeDefinition(Vector3f origin, Vector3f size, Vec2 uv, float inflate, boolean mirrored) {
+    public TimeCubeDefinition(Vector3f origin, Vector3f size, UVDefinition uv, float inflate, boolean mirrored) {
         this.origin = origin;
         this.size = size;
         this.uv = uv;
@@ -37,6 +35,6 @@ public class TimeCubeDefinition {
             inflate = Math.max(0.008F, inflate);
         }
 
-        return new TimeModelCube(origin, size, uv, inflate, mirrored, textureWidth, textureHeight);
+        return TimeModelCube.make(origin, size, uv.bake(size), inflate, mirrored, textureWidth, textureHeight);
     }
 }

@@ -9,43 +9,32 @@ import com.mojang.math.Vector4f;
 import net.minecraft.client.model.geom.ModelPart.Polygon;
 import net.minecraft.client.model.geom.ModelPart.Vertex;
 import net.minecraft.core.Direction;
-import net.minecraft.world.phys.Vec2;
+import ru.timeconqueror.timecore.client.render.model.uv.UVResolver;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class TimeModelCube {
-    public final Vector3f pos1;
-    public final Vector3f pos2;
     private final Polygon[] polygons;
 
-    /**
-     * @param origin  The position of the cube, relative to the entity origin - located at the bottom front left point of the cube.
-     * @param size    The cube dimensions (x, y, z).
-     * @param uv      The starting point in the texture foo.png (x -> horizontal, y -> vertical) for that cube.
-     * @param inflate scale factor /Expands the cube, without expanding the UV mapping - useful for making armor look worn, and not part of the entity.
-     */
-    public TimeModelCube(Vector3f origin, Vector3f size, Vec2 uv, float inflate, boolean mirror, int textureWidth, int textureHeight) {
-        int width = (int) size.x();
-        int height = (int) size.y();
-        int depth = (int) size.z();
+    private TimeModelCube(Polygon[] polygons) {
+        this.polygons = polygons;
+    }
 
-        size.set(size.x() == 0 ? 0.008F : size.x(), size.y() == 0 ? 0.008F : size.y(), size.z() == 0 ? 0.008F : size.z());
+    public static TimeModelCube make(Vector3f origin, Vector3f size, UVResolver uvResolver, float inflate, boolean mirror, int textureWidth, int textureHeight) {
+        float width = size.x();
+        float height = size.y();
+        float depth = size.z();
+
         float x1 = origin.x();
         float y1 = origin.y();
         float z1 = origin.z();
 
-        int texU = (int) uv.x;
-        int texV = (int) uv.y;
-
         List<Polygon> quads = new ArrayList<>(6);
 
-        float x2 = x1 + size.x();
-        float y2 = y1 + size.y();
-        float z2 = z1 + size.z();
-
-        this.pos1 = new Vector3f(x1, y1, z1);
-        this.pos2 = new Vector3f(x2, y2, z2);
+        float x2 = x1 + Math.max(width, 0.008F);
+        float y2 = y1 + Math.max(height, 0.008F);
+        float z2 = z1 + Math.max(depth, 0.008F);
 
         x2 += inflate;
         y2 += inflate;
@@ -69,22 +58,33 @@ public class TimeModelCube {
         Vertex vertex5 = new Vertex(x2, y2, z2, 8.0F, 8.0F);
         Vertex vertex6 = new Vertex(x1, y2, z2, 8.0F, 0.0F);
 
+        UVResolver.SizedUV sizedUV;
         if (depth != 0 && height != 0) {
-            quads.add(new Polygon(new Vertex[]{vertex4, vertex, vertex1, vertex5}, texU + depth + width, texV + depth, texU + depth + width + depth, texV + depth + height, textureWidth, textureHeight, mirror, Direction.EAST));
-            quads.add(new Polygon(new Vertex[]{vertex7, vertex3, vertex6, vertex2}, texU, texV + depth, texU + depth, texV + depth + height, textureWidth, textureHeight, mirror, Direction.WEST));
+            sizedUV = uvResolver.get(Direction.EAST);
+            quads.add(makeQuad(vertex4, vertex, vertex1, vertex5, sizedUV, textureWidth, textureHeight, mirror, Direction.EAST));
+            sizedUV = uvResolver.get(Direction.WEST);
+            quads.add(makeQuad(vertex7, vertex3, vertex6, vertex2, sizedUV, textureWidth, textureHeight, mirror, Direction.WEST));
         }
 
         if (width != 0 && depth != 0) {
-            quads.add(new Polygon(new Vertex[]{vertex4, vertex3, vertex7, vertex}, texU + depth, texV, texU + depth + width, texV + depth, textureWidth, textureHeight, mirror, Direction.DOWN));
-            quads.add(new Polygon(new Vertex[]{vertex1, vertex2, vertex6, vertex5}, texU + depth + width, texV + depth, texU + depth + width + width, texV, textureWidth, textureHeight, mirror, Direction.UP));
+            sizedUV = uvResolver.get(Direction.DOWN);
+            quads.add(makeQuad(vertex4, vertex3, vertex7, vertex, sizedUV, textureWidth, textureHeight, mirror, Direction.DOWN));
+            sizedUV = uvResolver.get(Direction.UP);
+            quads.add(makeQuad(vertex1, vertex2, vertex6, vertex5, sizedUV, textureWidth, textureHeight, mirror, Direction.UP));
         }
 
         if (width != 0 && height != 0) {
-            quads.add(new Polygon(new Vertex[]{vertex, vertex7, vertex2, vertex1}, texU + depth, texV + depth, texU + depth + width, texV + depth + height, textureWidth, textureHeight, mirror, Direction.NORTH));
-            quads.add(new Polygon(new Vertex[]{vertex3, vertex4, vertex5, vertex6}, texU + depth + width + depth, texV + depth, texU + depth + width + depth + width, texV + depth + height, textureWidth, textureHeight, mirror, Direction.SOUTH));
+            sizedUV = uvResolver.get(Direction.NORTH);
+            quads.add(makeQuad(vertex, vertex7, vertex2, vertex1, sizedUV, textureWidth, textureHeight, mirror, Direction.NORTH));
+            sizedUV = uvResolver.get(Direction.SOUTH);
+            quads.add(makeQuad(vertex3, vertex4, vertex5, vertex6, sizedUV, textureWidth, textureHeight, mirror, Direction.SOUTH));
         }
 
-        this.polygons = quads.toArray(new Polygon[0]);
+        return new TimeModelCube(quads.toArray(new Polygon[0]));
+    }
+
+    private static Polygon makeQuad(Vertex vertex1, Vertex vertex2, Vertex vertex3, Vertex vertex4, UVResolver.SizedUV uv, int textureWidth, int textureHeight, boolean mirror, Direction direction) {
+        return new Polygon(new Vertex[]{vertex1, vertex2, vertex3, vertex4}, uv.u1(), uv.v1(), uv.u2(), uv.v2(), textureWidth, textureHeight, mirror, direction);
     }
 
     public void compile(PoseStack.Pose pose, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
