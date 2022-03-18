@@ -101,7 +101,7 @@ public class EntityRegister extends ForgeRegister<EntityType<?>> {
      * @see EntityRegisterChain
      */
     public <T extends LivingEntity> LivingRegisterChain<T> registerLiving(String name, EntityType.Builder<T> typeBuilder) {
-        EntityRegisterChain<T> chain = registerInternal(name, build(name, typeBuilder));
+        EntityRegisterChain<T> chain = registerInternal(name, typeBuilder);
         return new LivingRegisterChain<>(chain);
     }
 
@@ -120,28 +120,17 @@ public class EntityRegister extends ForgeRegister<EntityType<?>> {
      * @see EntityRegisterChain
      */
     public <T extends Entity> EntityRegisterChain<T> register(String name, EntityType.Builder<T> typeBuilder) {
-        EntityType<T> type = build(name, typeBuilder);
-
-        if (type.getCategory() != MobCategory.MISC) {
-            throw new IllegalArgumentException(String.format("Common entities can only have %s being equal to %s, but it currently has %s. If your entity is %s or %s, use #registerLiving or #registerMob instead.",
-                    MobCategory.class.getName(),
-                    MobCategory.MISC,
-                    type.getCategory(),
-                    LivingEntity.class.getName(),
-                    Mob.class.getName()));
-        }
-
-        return registerInternal(name, type);
+        return registerInternal(name, typeBuilder);
     }
 
     private <T extends Entity> EntityType<T> build(String name, EntityType.Builder<T> builder) {
         return builder.build(getModId() + ":" + name);
     }
 
-    private <T extends Entity> EntityRegisterChain<T> registerInternal(String name, EntityType<T> type) {
-        RegistryObject<EntityType<T>> holder = registerEntry(name, () -> type);
+    private <T extends Entity> EntityRegisterChain<T> registerInternal(String name, EntityType.Builder<T> type) {
+        RegistryObject<EntityType<T>> holder = registerEntry(name, () -> build(name, type));
 
-        return new EntityRegisterChain<>(holder, type);
+        return new EntityRegisterChain<T>(holder);
     }
 
     private void onEntityAttributeCreationEvent(EntityAttributeCreationEvent event) {
@@ -156,11 +145,8 @@ public class EntityRegister extends ForgeRegister<EntityType<?>> {
     }
 
     public class EntityRegisterChain<T extends Entity> extends RegisterChain<EntityType<T>> {
-        private final EntityType<T> type;
-
-        protected EntityRegisterChain(RegistryObject<EntityType<T>> holder, EntityType<T> type) {
+        protected EntityRegisterChain(RegistryObject<EntityType<T>> holder) {
             super(holder);
-            this.type = type;
         }
 //TODO add enName for spawn eggs
 
@@ -176,18 +162,11 @@ public class EntityRegister extends ForgeRegister<EntityType<?>> {
             }
             return this;
         }
-
-        /**
-         * Returns the bound {@link EntityType}
-         */
-        public EntityType<T> retrieve() {
-            return type;
-        }
     }
 
     public class LivingRegisterChain<T extends LivingEntity> extends EntityRegisterChain<T> {
         protected LivingRegisterChain(EntityRegisterChain<T> ancestor) {
-            super(ancestor.holder, ancestor.type);
+            super(ancestor.holder);
         }
 
         /**
@@ -209,7 +188,7 @@ public class EntityRegister extends ForgeRegister<EntityType<?>> {
          * Sets up settings for spawning mob in world naturally
          */
         public MobRegisterChain<T> spawnSettings(SpawnPlacements.Type spawnType, Heightmap.Types heightMapType, SpawnPlacements.SpawnPredicate<T> spawnPredicate) {
-            runOnCommonSetup(() -> SpawnPlacements.register(retrieve(), spawnType, heightMapType, spawnPredicate));
+            runOnCommonSetup(() -> SpawnPlacements.register(asRegistryObject().get(), spawnType, heightMapType, spawnPredicate));
 
             return this;
         }
@@ -247,7 +226,7 @@ public class EntityRegister extends ForgeRegister<EntityType<?>> {
          * @param properties    item properties
          */
         public MobRegisterChain<T> spawnEgg(String name, int primaryArgb, int secondaryArgb, Item.Properties properties) {
-            itemRegister.register(name, () -> new ForgeSpawnEggItem(this::retrieve, primaryArgb, secondaryArgb, properties))//FIXME Forge, wtf, it's not threadsafe!
+            itemRegister.register(name, () -> new ForgeSpawnEggItem(asRegistryObject(), primaryArgb, secondaryArgb, properties))//FIXME Forge, wtf, it's not threadsafe!
                     .model(new ItemModelLocation("minecraft", "template_spawn_egg"));
 
             return this;
