@@ -18,12 +18,12 @@ public class BoxUVResolver implements UVResolver {
     @Override
     public UVResolver.SizedUV get(Direction direction) {
         switch (direction) {
-            case WEST -> {  return UVResolver.SizedUV.fromFloats(    uv.x(),                              uv.y() + depth(), uv.x() + depth(),                               uv.y() + depth() + height())    ;}
-            case EAST -> {  return UVResolver.SizedUV.fromFloats(uv.x() + depth() + width(),           uv.y() + depth(), uv.x() + depth() + width() + depth(),          uv.y() + depth() + height())    ;}
-            case DOWN -> {  return UVResolver.SizedUV.fromFloats(uv.x() + depth() + width() + width(),    uv.y(),           uv.x() + depth() + width(),                     uv.y() + depth())               ;}
-            case UP -> {    return UVResolver.SizedUV.fromFloats(uv.x() + depth() + width(),           uv.y() + depth(), uv.x() + depth(),                                  uv.y())                         ;}
-            case SOUTH -> { return UVResolver.SizedUV.fromFloats(uv.x() + depth(),                     uv.y() + depth(), uv.x() + depth() + width(),                    uv.y() + depth() + height())    ;}
-            case NORTH -> { return UVResolver.SizedUV.fromFloats(uv.x() + depth() + width() + depth(), uv.y() + depth(), uv.x() + depth() + width() + depth() + width(), uv.y() + depth() + height())   ;}
+            case EAST -> {  return UVResolver.SizedUV.fromFloats(    uv.x(),                              uv.y() + depth(), uv.x() + depth(),                              uv.y() + depth() + height())    ;}
+            case WEST -> {  return UVResolver.SizedUV.fromFloats(uv.x() + depth() + width(),          uv.y() + depth(), uv.x() + depth() + width() + depth(),          uv.y() + depth() + height())    ;}
+            case DOWN -> {  return UVResolver.SizedUV.fromFloats(uv.x() + depth() + width(),          uv.y() + depth(), uv.x() + depth() + width() + width(),              uv.y())                         ;}
+            case UP -> {    return UVResolver.SizedUV.fromFloats(uv.x() + depth(),                        uv.y(),          uv.x() + depth() + width(),                     uv.y() + depth())               ;}
+            case NORTH -> { return UVResolver.SizedUV.fromFloats(uv.x() + depth(),                    uv.y() + depth(), uv.x() + depth() + width(),                    uv.y() + depth() + height())    ;}
+            case SOUTH -> { return UVResolver.SizedUV.fromFloats(uv.x() + depth() + width() + depth(),uv.y() + depth(), uv.x() + depth() + width() + depth() + width(),uv.y() + depth() + height())    ;}
         }
 
         throw new IllegalStateException("Shouldn't be reached");
