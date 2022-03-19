@@ -24,7 +24,7 @@ public class TowerGuardianEntity extends MonsterEntity implements AnimatedObject
         super(type, world);
 
         animationSystem = AnimationSystemBuilder.forEntity(this, world, builder ->
-                builder.addLayer(LAYER_WALKING, BlendType.OVERRIDE, 1F), predefinedAnimations ->
+                builder.addLayer(LAYER_WALKING, BlendType.OVERWRITE, 1F), predefinedAnimations ->
                 predefinedAnimations.setWalkingAnimation(new AnimationStarter(AnimTestEntityAnimations.towerGuardianWalk).setSpeed(1F), LAYER_WALKING));
     }
 

@@ -5,7 +5,6 @@ import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.client.renderer.model.ModelRenderer;
 import net.minecraft.util.math.vector.Vector3f;
 import org.jetbrains.annotations.NotNull;
-import ru.timeconqueror.timecore.client.render.model.loading.MaterialDefinition;
 
 import java.util.Collections;
 import java.util.List;
@@ -20,8 +19,8 @@ public class TimeModelPart extends ModelRenderer {
     private final Map<String, TimeModelPart> children;
     public List<TimeModelCube> cubes;
 
-    public TimeModelPart(MaterialDefinition material, Vector3f startRotRadians, @NotNull List<TimeModelCube> cubes, Map<String, TimeModelPart> children, boolean neverRender) {
-        super(material.getTextureWidth(), material.getTextureHeight(), 0, 0);
+    public TimeModelPart(int textureWidth, int textureHeight, Vector3f startRotRadians, @NotNull List<TimeModelCube> cubes, Map<String, TimeModelPart> children, boolean neverRender) {
+        super(textureWidth, textureHeight, 0, 0);
         startRotationRadians = startRotRadians;
         this.xRot = startRotRadians.x();
         this.yRot = startRotRadians.y();

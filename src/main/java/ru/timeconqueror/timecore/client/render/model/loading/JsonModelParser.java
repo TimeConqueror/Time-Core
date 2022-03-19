@@ -1,22 +1,21 @@
 package ru.timeconqueror.timecore.client.render.model.loading;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonSyntaxException;
+import com.google.gson.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
 import net.minecraft.resources.IResource;
 import net.minecraft.util.JSONUtils;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.vector.Vector2f;
 import net.minecraft.util.math.vector.Vector3f;
 import org.jetbrains.annotations.NotNull;
 import ru.timeconqueror.timecore.api.util.CollectionUtils;
 import ru.timeconqueror.timecore.api.util.Pair;
+import ru.timeconqueror.timecore.api.util.Vec2i;
 import ru.timeconqueror.timecore.api.util.json.JsonUtils;
+import ru.timeconqueror.timecore.client.render.model.FaceUVDefinition;
 import ru.timeconqueror.timecore.client.render.model.TimeModelLocation;
+import ru.timeconqueror.timecore.client.render.model.UVDefinition;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -24,6 +23,11 @@ import java.util.*;
 
 public class JsonModelParser {
     private static final String[] ACCEPTABLE_FORMAT_VERSIONS = new String[]{"1.12.0"};
+    private static final Gson GSON = new GsonBuilder()
+            .registerTypeAdapter(Vec2i.class, new Vec2i.JsonAdapter())
+            .registerTypeAdapter(FaceUVDefinition.class, new FaceUVDefinition.Deserializer())
+            .registerTypeAdapter(UVDefinition.class, new UVDefinition.Deserializer())
+            .create();
 
     /**
      * Loads json model list to be used in {@link EntityRenderer}, {@link TileEntityRenderer}, etc.
@@ -102,7 +106,7 @@ public class JsonModelParser {
         TimePartDefinition root = mesh.getRoot();
         root.addChildren(roots);
 
-        return TimeModelDefinition.create(mesh, material);
+        return TimeModelDefinition.create(mesh, material.getTextureWidth(), material.getTextureHeight());
     }
 
     private TimePartDefinition parseBone(JsonObject bone) {
@@ -122,7 +126,7 @@ public class JsonModelParser {
                 JsonObject cubeObject = JSONUtils.convertToJsonObject(cubeJson, "member of 'cubes'");
                 Vector3f origin = JsonUtils.getAsVec3f(cubeObject, "origin");
                 Vector3f size = JsonUtils.getAsVec3f(cubeObject, "size");
-                Vector2f uv = JsonUtils.getAsVec2f(cubeObject, "uv");
+                UVDefinition uv = GSON.fromJson(cubeObject.get("uv"), UVDefinition.class);
                 boolean cubeMirror = JSONUtils.getAsBoolean(cubeObject, "mirror", mirror);
                 float inflate = JSONUtils.getAsFloat(cubeObject, "inflate", 0F);
 

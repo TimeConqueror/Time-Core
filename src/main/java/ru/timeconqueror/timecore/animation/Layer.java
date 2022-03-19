@@ -10,7 +10,7 @@ import ru.timeconqueror.timecore.api.client.render.model.ITimeModel;
 import ru.timeconqueror.timecore.api.util.MathUtils;
 
 public class Layer implements AnimationLayer {
-    private String name;
+    private final String name;
 
     @Nullable
     private AnimationWatcher animationWatcher;
@@ -56,7 +56,7 @@ public class Layer implements AnimationLayer {
 
     void setAnimation(AnimationStarter.AnimationData data) {
         if (data.getTransitionTime() == 0) {
-            animationWatcher = new AnimationWatcher(data.getAnimation(), data.getSpeedFactor(), data.getNextAnimationData());
+            animationWatcher = new AnimationWatcher(data);
         } else {
             if (animationWatcher == null) {
                 animationWatcher = new TransitionWatcher(data.getTransitionTime(), data);
@@ -122,17 +122,11 @@ public class Layer implements AnimationLayer {
         return name;
     }
 
-    @Override
-    public Layer clone() throws CloneNotSupportedException {
+    public Layer copy() {
         if (this.animationWatcher != null) {
-            throw new CloneNotSupportedException("Can't clone this layer, it's already in work.");
+            throw new IllegalStateException("Can't copy this layer, because it's already in work.");
         }
 
-        Layer clone = (Layer) super.clone();
-        clone.name = name;
-        clone.blendType = blendType;
-        clone.weight = weight;
-
-        return clone;
+        return new Layer(name, blendType, weight);
     }
 }

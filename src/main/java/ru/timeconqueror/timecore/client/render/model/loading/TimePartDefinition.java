@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import net.minecraft.util.math.vector.Vector3f;
 import org.jetbrains.annotations.Nullable;
+import ru.timeconqueror.timecore.api.util.MathUtils;
 import ru.timeconqueror.timecore.client.render.model.TimeModelCube;
 import ru.timeconqueror.timecore.client.render.model.TimeModelPart;
 
@@ -40,27 +41,28 @@ public class TimePartDefinition {
         this.children.addAll(children);
     }
 
-    public TimeModelPart bake(@Nullable TimePartDefinition parent, MaterialDefinition material) {
+    public TimeModelPart bake(@Nullable TimePartDefinition parent, int textureWidth, int textureHeight) {
         ImmutableList.Builder<TimeModelCube> bakedCubes = ImmutableList.builder();
 
         for (TimeCubeDefinition cube : cubes) {
-            bakedCubes.add(cube.bake(this, material));
+            bakedCubes.add(cube.bake(this, textureWidth, textureHeight));
         }
 
-        Vector3f rotationRads = new Vector3f(rotationDegrees.x() * (float) Math.PI / 180,
-                rotationDegrees.y() * (float) Math.PI / 180,
-                rotationDegrees.z() * (float) Math.PI / 180);
+        Vector3f rotationRads = new Vector3f(MathUtils.toRadians(rotationDegrees.x()),
+                MathUtils.toRadians(rotationDegrees.y()),
+                MathUtils.toRadians(rotationDegrees.z()));
+        rotationRads.mul(-1, -1, 1);
 
         Object2ObjectArrayMap<String, TimeModelPart> bakedChildren = new Object2ObjectArrayMap<>();
         for (TimePartDefinition child : children) {
-            bakedChildren.put(child.name, child.bake(this, material));
+            bakedChildren.put(child.name, child.bake(this, textureWidth, textureHeight));
         }
 
-        TimeModelPart part = new TimeModelPart(material, rotationRads, bakedCubes.build(), bakedChildren, neverRender);
+        TimeModelPart part = new TimeModelPart(textureWidth, textureHeight, rotationRads, bakedCubes.build(), bakedChildren, neverRender);
         if (parent != null) {
-            part.setPos(pivot.x() - parent.pivot.x(), -(pivot.y() - parent.pivot.y()), pivot.z() - parent.pivot.z());
+            part.setPos(-(pivot.x() - parent.pivot.x()), (pivot.y() - parent.pivot.y()), pivot.z() - parent.pivot.z());
         } else {
-            part.setPos(pivot.x(), -pivot.y(), pivot.z());
+            part.setPos(-pivot.x(), pivot.y(), pivot.z());
         }
 
         return part;

@@ -20,6 +20,8 @@ public abstract class AnimatedTileEntityRenderer<T extends TileEntity & Animated
 
     @Override
     public void render(T tileEntityIn, float partialTicks, MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int combinedLightIn, int combinedOverlayIn) {
+        getModel().reset();
+
         tileEntityIn.getSystem().getAnimationManager().applyAnimations(getModel());
 
         ResourceLocation texture = getTexture(tileEntityIn);
@@ -29,7 +31,6 @@ public abstract class AnimatedTileEntityRenderer<T extends TileEntity & Animated
 
         matrixStackIn.translate(0.5F, 0, 0.5F);
 
-        matrixStackIn.scale(-1, -1, 1);
         model.renderToBuffer(matrixStackIn, bufferIn.getBuffer(model.renderType(texture)), combinedLightIn, combinedOverlayIn, 1, 1, 1, 1);
 
         matrixStackIn.popPose();

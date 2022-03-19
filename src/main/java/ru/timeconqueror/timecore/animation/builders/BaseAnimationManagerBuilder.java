@@ -17,24 +17,23 @@ public class BaseAnimationManagerBuilder extends SingleUseBuilder implements IAn
     public void addLayer(String name, BlendType blendType, float weight) {
         verifyNotUsed();
         Layer prev = animationLayers.put(name, new Layer(name, blendType, weight));
-        if (prev != null)
+        if (prev != null) {
             throw new IllegalArgumentException("Layer with location " + name + " already exist in provided animation manager.");
+        }
     }
 
     @Override
     public void addMainLayer() {
         verifyNotUsed();
-        addLayer(AnimationConstants.MAIN_LAYER_NAME, BlendType.OVERRIDE, 1);
+        addLayer(AnimationConstants.MAIN_LAYER_NAME, BlendType.OVERWRITE, 1);
     }
 
-    private void addLayer(Layer layer) {
+    @Override
+    public void addLayer(Layer layer) {
         verifyNotUsed();
-        try {
-            Layer prev = animationLayers.put(layer.getName(), layer.clone());
-            if (prev != null)
-                throw new IllegalArgumentException("Layer with location " + layer.getName() + " already exist in provided animation manager.");
-        } catch (CloneNotSupportedException e) {
-            throw new RuntimeException(e);
+        Layer prev = animationLayers.put(layer.getName(), layer.copy());
+        if (prev != null) {
+            throw new IllegalArgumentException("Layer with location " + layer.getName() + " already exist in provided animation manager.");
         }
     }
 

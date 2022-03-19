@@ -21,8 +21,8 @@ public abstract class AnimatedLivingEntityRenderer<T extends LivingEntity & Anim
         super.render(entity, entityYaw, partialTicks, matrixStack, buffer, packedLight);
     }
 
-    protected void setupAnimations(T living, MatrixStack stack, float partialTicks) {
-
+    protected void setupAnimations(T living, MatrixStack matrixStackIn, float partialTicks) {
+        matrixStackIn.scale(-1.0F, -1.0F, 1.0F); // to mirror models to a normal state
     }
 
     @Override

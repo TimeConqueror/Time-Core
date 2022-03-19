@@ -15,11 +15,10 @@ public class TimeModelDefinition {
     }
 
     public TimeModelPart bakeRoot() {
-        MaterialDefinition material = this.material;
-        return this.mesh.getRoot().bake(null, material);
+        return this.mesh.getRoot().bake(null, material.getTextureWidth(), material.getTextureHeight());
     }
 
-    public static TimeModelDefinition create(TimeMeshDefinition mesh, MaterialDefinition material) {
-        return new TimeModelDefinition(mesh, material);
+    public static TimeModelDefinition create(TimeMeshDefinition mesh, int texWidth, int texHeight) {
+        return new TimeModelDefinition(mesh, new MaterialDefinition(texWidth, texHeight));
     }
 }

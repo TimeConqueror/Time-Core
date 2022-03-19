@@ -80,9 +80,9 @@ public class FloroEntity extends MonsterEntity implements IRangedAttackMob, Anim
 //        });
 
         animationSystem = AnimationSystemBuilder.forEntity(this, world, builder -> {
-            builder.addLayer(LAYER_SHOWING, BlendType.OVERRIDE, 1F);
-            builder.addLayer(LAYER_WALKING, BlendType.ADDING, 1F);
-            builder.addLayer(LAYER_ATTACK, BlendType.ADDING, 0.9F);
+            builder.addLayer(LAYER_SHOWING, BlendType.OVERWRITE, 1F);
+            builder.addLayer(LAYER_WALKING, BlendType.ADD, 1F);
+            builder.addLayer(LAYER_ATTACK, BlendType.ADD, 0.9F);
         }, predefinedAnimations -> {
             predefinedAnimations.setWalkingAnimation(new AnimationStarter(EntityAnimations.floroWalk).setSpeed(3F), LAYER_WALKING);
         });
