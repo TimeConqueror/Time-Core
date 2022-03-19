@@ -28,7 +28,7 @@ public class TimeCubeDefinition {
 
     public TimeModelCube bake(TimePartDefinition ownerPart, int textureWidth, int textureHeight) {
         //The position of the cube, relative to the entity origin - located at the bottom front left point of the cube.
-        Vector3f origin = new Vector3f(this.origin.x() - ownerPart.getPivot().x(), -(this.origin.y() + size.y() - ownerPart.getPivot().y()), this.origin.z() - ownerPart.getPivot().z());
+        Vector3f origin = new Vector3f(-(this.origin.x() + this.size.x() - ownerPart.getPivot().x()), (this.origin.y() - ownerPart.getPivot().y()), this.origin.z() - ownerPart.getPivot().z());
 
         float inflate = this.inflate;
         if (size.x() == 0 || size.y() == 0 || size.z() == 0) {

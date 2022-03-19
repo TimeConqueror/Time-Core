@@ -50,6 +50,7 @@ public class TimePartDefinition {
         Vector3f rotationRads = new Vector3f(rotationDegrees.x() * (float) Math.PI / 180,
                 rotationDegrees.y() * (float) Math.PI / 180,
                 rotationDegrees.z() * (float) Math.PI / 180);
+        rotationRads.mul(-1, -1, 1);
 
         Object2ObjectArrayMap<String, TimeModelPart> bakedChildren = new Object2ObjectArrayMap<>();
         for (TimePartDefinition child : children) {
@@ -58,9 +59,9 @@ public class TimePartDefinition {
 
         TimeModelPart part = new TimeModelPart(rotationRads, bakedCubes.build(), bakedChildren, neverRender);
         if (parent != null) {
-            part.setPos(pivot.x() - parent.pivot.x(), -(pivot.y() - parent.pivot.y()), pivot.z() - parent.pivot.z());
+            part.setPos(-(pivot.x() - parent.pivot.x()), (pivot.y() - parent.pivot.y()), pivot.z() - parent.pivot.z());
         } else {
-            part.setPos(pivot.x(), -pivot.y(), pivot.z());
+            part.setPos(-pivot.x(), pivot.y(), pivot.z());
         }
 
         return part;

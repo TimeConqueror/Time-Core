@@ -29,7 +29,6 @@ public abstract class AnimatedTileEntityRenderer<T extends BlockEntity & Animate
 
         matrixStackIn.translate(0.5F, 0, 0.5F);
 
-        matrixStackIn.scale(-1, -1, 1);
         model.renderToBuffer(matrixStackIn, bufferIn.getBuffer(renderType), combinedLightIn, combinedOverlayIn, 1, 1, 1, 1);
 
         matrixStackIn.popPose();

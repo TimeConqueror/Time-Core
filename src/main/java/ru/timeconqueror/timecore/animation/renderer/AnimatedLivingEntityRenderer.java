@@ -22,7 +22,7 @@ public abstract class AnimatedLivingEntityRenderer<T extends LivingEntity & Anim
     }
 
     protected void setupAnimations(T living, PoseStack stack, float partialTicks) {
-
+        stack.scale(-1, -1, 1); // to mirror models to a normal state
     }
 
     @Override

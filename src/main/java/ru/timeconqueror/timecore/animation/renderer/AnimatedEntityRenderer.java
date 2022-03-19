@@ -36,7 +36,6 @@ public abstract class AnimatedEntityRenderer<T extends Entity & AnimatedObject<T
     }
 
     protected void setupAnimations(T entity, PoseStack matrixStackIn, float partialTicks) {
-        matrixStackIn.scale(-1.0F, -1.0F, 1.0F); // to mirror models to a normal state
     }
 
     public M getModel() {
