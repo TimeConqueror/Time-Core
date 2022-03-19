@@ -59,6 +59,10 @@ public sealed interface UVDefinition permits UVDefinition.Simple, UVDefinition.P
             this.mappings = mappings;
         }
 
+        public EnumMap<Direction, FaceUVDefinition> getMappings() {
+            return mappings;
+        }
+
         @Override
         public UVResolver bake(Vector3f size) {
             return new FacedUVResolver(Collections.unmodifiableMap(mappings));
