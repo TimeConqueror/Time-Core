@@ -19,6 +19,8 @@ public abstract class AnimatedTileEntityRenderer<T extends BlockEntity & Animate
 
     @Override
     public void render(T tileEntityIn, float partialTicks, PoseStack matrixStackIn, MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn) {
+        getModel().reset();
+
         tileEntityIn.getSystem().getAnimationManager().applyAnimations(getModel());
 
         ResourceLocation texture = getTexture(tileEntityIn);
