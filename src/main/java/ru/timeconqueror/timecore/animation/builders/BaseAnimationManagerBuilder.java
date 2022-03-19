@@ -24,7 +24,7 @@ public class BaseAnimationManagerBuilder extends SingleUseBuilder implements IAn
     @Override
     public void addMainLayer() {
         verifyNotUsed();
-        addLayer(AnimationConstants.MAIN_LAYER_NAME, BlendType.OVERRIDE, 1);
+        addLayer(AnimationConstants.MAIN_LAYER_NAME, BlendType.OVERWRITE, 1);
     }
 
     private void addLayer(Layer layer) {
