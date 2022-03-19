@@ -4,8 +4,8 @@ import com.google.gson.*;
 import com.mojang.math.Vector3f;
 import net.minecraft.core.Direction;
 import ru.timeconqueror.timecore.api.util.Vec2i;
+import ru.timeconqueror.timecore.client.render.model.uv.BoxUVResolver;
 import ru.timeconqueror.timecore.client.render.model.uv.FacedUVResolver;
-import ru.timeconqueror.timecore.client.render.model.uv.SimpleUVResolver;
 import ru.timeconqueror.timecore.client.render.model.uv.UVResolver;
 
 import java.lang.reflect.Type;
@@ -41,7 +41,7 @@ public sealed interface UVDefinition permits UVDefinition.Simple, UVDefinition.P
 
         @Override
         public UVResolver bake(Vector3f size) {
-            return new SimpleUVResolver(uv, size);
+            return new BoxUVResolver(uv, size);
         }
 
         private static class Deserializer implements JsonDeserializer<Simple> {
@@ -57,10 +57,6 @@ public sealed interface UVDefinition permits UVDefinition.Simple, UVDefinition.P
 
         private PerFace(EnumMap<Direction, FaceUVDefinition> mappings) {
             this.mappings = mappings;
-        }
-
-        public EnumMap<Direction, FaceUVDefinition> getMappings() {
-            return mappings;
         }
 
         @Override

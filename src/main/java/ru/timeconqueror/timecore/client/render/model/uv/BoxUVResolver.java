@@ -30,15 +30,15 @@ public class BoxUVResolver implements UVResolver {
     }
     //    @formatter:on
 
-    public float width() {
-        return size.x();
+    public int width() {
+        return (int) size.x();
     }
 
-    public float height() {
-        return size.y();
+    public int height() {
+        return (int) size.y();
     }
 
-    public float depth() {
-        return size.z();
+    public int depth() {
+        return (int) size.z();
     }
 }
