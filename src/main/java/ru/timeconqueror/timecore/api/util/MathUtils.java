@@ -201,11 +201,11 @@ public class MathUtils {
     }
 
     public static float toRadians(float degrees) {
-        return degrees / 180.0F * (float) Math.PI;
+        return (float) Math.toRadians(degrees);
     }
 
     public static float toDegrees(float radians) {
-        return radians * 180.0F / (float) Math.PI;
+        return (float) Math.toDegrees(radians);
     }
 
     public static double toRadians(double degrees) {

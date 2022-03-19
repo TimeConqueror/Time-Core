@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 import com.mojang.math.Vector3f;
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import org.jetbrains.annotations.Nullable;
+import ru.timeconqueror.timecore.api.util.MathUtils;
 import ru.timeconqueror.timecore.client.render.model.TimeModelCube;
 import ru.timeconqueror.timecore.client.render.model.TimeModelPart;
 
@@ -47,9 +48,9 @@ public class TimePartDefinition {
             bakedCubes.add(cube.bake(this, textureWidth, textureHeight));
         }
 
-        Vector3f rotationRads = new Vector3f(rotationDegrees.x() * (float) Math.PI / 180,
-                rotationDegrees.y() * (float) Math.PI / 180,
-                rotationDegrees.z() * (float) Math.PI / 180);
+        Vector3f rotationRads = new Vector3f(MathUtils.toRadians(rotationDegrees.x()),
+                MathUtils.toRadians(rotationDegrees.y()),
+                MathUtils.toRadians(rotationDegrees.z()));
         rotationRads.mul(-1, -1, 1);
 
         Object2ObjectArrayMap<String, TimeModelPart> bakedChildren = new Object2ObjectArrayMap<>();
