@@ -53,9 +53,13 @@ public class AnimationWatcher {
 
 			return this;
 		} else if (nextAnimation != null) {
-			return new AnimationWatcher(nextAnimation);
+			if (nextAnimation.getTransitionTime() <= 0) {
+				return new AnimationWatcher(nextAnimation);
+			} else {
+				return TransitionWatcher.from(this, nextAnimation);
+			}
 		} else {
-			return new TransitionWatcher(getAnimation(), getExistingTime(), AnimationConstants.BASIC_TRANSITION_TIME, null);
+			return TransitionWatcher.toNullDestination(this, AnimationConstants.BASIC_TRANSITION_TIME);
 		}
 	}
 
