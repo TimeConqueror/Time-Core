@@ -26,12 +26,7 @@ public class TransitionWatcher extends AnimationWatcher {
     private final Animation source;
     private final int sourceExistingTime;
 
-    //from null source
-    public TransitionWatcher(int transitionTime, @Nullable AnimationStarter.AnimationData destination) {
-        this(TRANSITION, 0, transitionTime, destination);
-    }
-
-    public TransitionWatcher(@Nullable Animation source, int sourceExistingTime, int transitionTime, @Nullable AnimationStarter.AnimationData destination) {
+    private TransitionWatcher(@Nullable Animation source, int sourceExistingTime, int transitionTime, @Nullable AnimationStarter.AnimationData destination) {
         super(TRANSITION, 1.0F, destination);
 
         Requirements.greaterOrEquals(transitionTime, 0);
@@ -40,6 +35,18 @@ public class TransitionWatcher extends AnimationWatcher {
         this.destination = destination;
         this.source = source;
         this.sourceExistingTime = sourceExistingTime;
+    }
+
+    public static TransitionWatcher fromNullSource(AnimationStarter.AnimationData destination) {
+        return new TransitionWatcher(TRANSITION, 0, destination.getTransitionTime(), destination);
+    }
+
+    public static TransitionWatcher from(AnimationWatcher source, AnimationStarter.AnimationData destination) {
+        return new TransitionWatcher(source.getAnimation(), source.getExistingTime(), destination.getTransitionTime(), destination);
+    }
+
+    public static TransitionWatcher toNullDestination(AnimationWatcher source, int transitionTime) {
+        return new TransitionWatcher(source.getAnimation(), source.getExistingTime(), transitionTime, null);
     }
 
     @Override

@@ -59,9 +59,9 @@ public class Layer implements AnimationLayer {
             animationWatcher = new AnimationWatcher(data);
         } else {
             if (animationWatcher == null) {
-                animationWatcher = new TransitionWatcher(data.getTransitionTime(), data);
+                animationWatcher = TransitionWatcher.fromNullSource(data);
             } else {
-                animationWatcher = new TransitionWatcher(animationWatcher.getAnimation(), animationWatcher.getExistingTime(), data.getTransitionTime(), data);
+                animationWatcher = TransitionWatcher.from(animationWatcher, data);
             }
         }
     }
@@ -72,7 +72,7 @@ public class Layer implements AnimationLayer {
                 animationWatcher = null;
             } else {
                 if (!(animationWatcher instanceof TransitionWatcher && ((TransitionWatcher) animationWatcher).getDestination() == Animation.NULL)) {
-                    animationWatcher = new TransitionWatcher(animationWatcher.getAnimation(), animationWatcher.getExistingTime(), transitionTime, null);
+                    animationWatcher = TransitionWatcher.toNullDestination(animationWatcher, transitionTime);
                 }
             }
         }
