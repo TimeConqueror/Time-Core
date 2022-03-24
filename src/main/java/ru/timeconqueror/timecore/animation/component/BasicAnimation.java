@@ -5,6 +5,7 @@ import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ru.timeconqueror.timecore.animation.calculation.KeyFrameInterpolator;
+import ru.timeconqueror.timecore.animation.util.Empty;
 import ru.timeconqueror.timecore.api.animation.Animation;
 import ru.timeconqueror.timecore.api.animation.AnimationLayer;
 import ru.timeconqueror.timecore.api.client.render.model.ITimeModel;
@@ -96,18 +97,18 @@ public class BasicAnimation extends Animation {
             reversedOptions = new HashMap<>();
 
             options.forEach((s, boneOption) -> {
-                List<KeyFrame> positions = null;
-                if (boneOption.getPositions() != null) {
+                List<KeyFrame> positions = Empty.list();
+                if (!boneOption.getPositions().isEmpty()) {
                     positions = reverseKeyFrames(boneOption.getPositions());
                 }
 
-                List<KeyFrame> rotations = null;
-                if (boneOption.getRotations() != null) {
+                List<KeyFrame> rotations = Empty.list();
+                if (!boneOption.getRotations().isEmpty()) {
                     rotations = reverseKeyFrames(boneOption.getRotations());
                 }
 
-                List<KeyFrame> scales = null;
-                if (boneOption.getScales() != null) {
+                List<KeyFrame> scales = Empty.list();
+                if (!boneOption.getScales().isEmpty()) {
                     scales = reverseKeyFrames(boneOption.getScales());
                 }
 
@@ -130,19 +131,17 @@ public class BasicAnimation extends Animation {
             super(source);
         }
 
-        private static KeyFrame calcStartKeyFrame(BasicAnimation sourceAnimation, @Nullable List<KeyFrame> sourceKeyFrames, Vector3f modelIdleVec, int existingTime) {
-            if (sourceKeyFrames != null) {
-                Vector3f vec = KeyFrameInterpolator.findInterpolationVec(sourceAnimation, sourceKeyFrames, modelIdleVec, existingTime);
-                if (vec != null) return new KeyFrame(0, vec);
-            }
+        private static KeyFrame calcStartKeyFrame(BasicAnimation sourceAnimation, List<KeyFrame> sourceKeyFrames, Vector3f modelIdleVec, int existingTime) {
+            Vector3f vec = KeyFrameInterpolator.findInterpolationVec(sourceAnimation, sourceKeyFrames, modelIdleVec, existingTime);
+            if (vec != null) return new KeyFrame(0, vec);
 
             return KeyFrame.createIdleKeyFrame(0, modelIdleVec);
         }
 
-        private static KeyFrame calcEndKeyFrame(@Nullable List<KeyFrame> destKeyFrames, Vector3f modelIdleVec, int transitionTime /*may cause flicking? maybe -1?*/) {
-            if (destKeyFrames != null && !destKeyFrames.isEmpty()) {
+        private static KeyFrame calcEndKeyFrame(List<KeyFrame> destKeyFrames, Vector3f modelIdleVec, int transitionTime /*may cause flicking? maybe -1?*/) {
+            if (!destKeyFrames.isEmpty()) {
                 KeyFrame keyFrame = destKeyFrames.get(0);
-                if (keyFrame.getTime() == 0) {
+                if (keyFrame.getTime() == 0) {//FIXME should have new logic
                     return keyFrame.withNewTime(transitionTime);
                 }
             }
