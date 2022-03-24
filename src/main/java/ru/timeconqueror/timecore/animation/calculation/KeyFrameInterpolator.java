@@ -15,7 +15,9 @@ public class KeyFrameInterpolator {
     private final Vector3f defaultStartVec;
     private final int existingTime;
 
+    @Nullable
     private KeyFrame before;
+    @Nullable
     private KeyFrame after;
 
     private int beforeIndex = -1;
@@ -28,34 +30,19 @@ public class KeyFrameInterpolator {
         this.existingTime = existingTime;
     }
 
+    /**
+     * Returns the vector, which satisfies the animation time.
+     * Always return a new vector.
+     */
     @Nullable
     public static Vector3f findInterpolationVec(Animation animation, List<KeyFrame> frames, Vector3f defaultStartVec, int existingTime) {
+        if (frames.isEmpty()) return null;
+
         return new KeyFrameInterpolator(animation, frames, defaultStartVec, existingTime).findInterpolationVec();
     }
 
-    public static Vector3f interpolateLinear(Animation animation, KeyFrame before, KeyFrame after, Vector3f defaultStartVec, int existingTime) {
-        Vector3f startVec;
-        Vector3f endVec;
-        int startTime;
-        int endTime;
-
-        if (before == null) {
-            startVec = defaultStartVec;
-            startTime = 0;
-        } else {
-            startVec = before.getVec();
-            startTime = before.getTime();
-        }
-
-        if (after == null) {
-            endVec = startVec;
-            endTime = animation.getLength();
-        } else {
-            endVec = after.getVec();
-            endTime = after.getTime();
-        }
-
-        return lerp(startVec, endVec, startTime, endTime, existingTime);
+    public static Vector3f interpolateLinear(KeyFrame before, KeyFrame after, int existingTime) {
+        return lerp(before.getVec(), after.getVec(), before.getTime(), after.getTime(), existingTime);
     }
 
     public static Vector3f lerp(Vector3f start, Vector3f end, int startTime, int endTime, int existingTime) {
@@ -68,17 +55,22 @@ public class KeyFrameInterpolator {
         return new Vector3f(outX, outY, outZ);
     }
 
-    @Nullable
     private Vector3f findInterpolationVec() {
-        if (frames == null || frames.isEmpty()) return null;
-
         findKeyFrames(frames, existingTime);
 
-        boolean smoothInterpolation = before != null && before instanceof CatmullRomKeyFrame || after != null && after instanceof CatmullRomKeyFrame;
-        if (smoothInterpolation) {
+        // at this point both after and before frames are not null!
+        // because findKeyFrames sets both of them
+        if (after == null) {
+            //noinspection ConstantConditions
+            return before.getVec().copy();
+        } else if (before == null) {
+            return after.getVec().copy();
+        }
+
+        if (before instanceof CatmullRomKeyFrame || after instanceof CatmullRomKeyFrame) {
             return interpolateSmoothly();
         } else {
-            return interpolateLinear(animation, before, after, defaultStartVec, existingTime);
+            return interpolateLinear(before, after, existingTime);
         }
     }
 

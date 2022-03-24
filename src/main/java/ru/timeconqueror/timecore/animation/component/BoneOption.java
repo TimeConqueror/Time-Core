@@ -1,7 +1,6 @@
 package ru.timeconqueror.timecore.animation.component;
 
 import net.minecraft.util.math.vector.Vector3f;
-import org.jetbrains.annotations.Nullable;
 import ru.timeconqueror.timecore.animation.calculation.KeyFrameInterpolator;
 import ru.timeconqueror.timecore.animation.util.AnimationUtils;
 import ru.timeconqueror.timecore.api.animation.Animation;
@@ -15,20 +14,17 @@ public class BoneOption {
     /**
      * Immutable rotation keyframe list
      */
-    @Nullable
     private final List<KeyFrame> rotations;
     /**
      * Immutable position keyframe list
      */
-    @Nullable
     private final List<KeyFrame> positions;
     /**
      * Immutable scale keyframe list
      */
-    @Nullable
     private final List<KeyFrame> scales;
 
-    public BoneOption(String boneName, @Nullable List<KeyFrame> rotations, @Nullable List<KeyFrame> positions, @Nullable List<KeyFrame> scales) {
+    public BoneOption(String boneName, List<KeyFrame> rotations, List<KeyFrame> positions, List<KeyFrame> scales) {
         this.boneName = boneName;
         this.rotations = rotations;
         this.positions = positions;
@@ -53,15 +49,15 @@ public class BoneOption {
         }
     }
 
-    public @Nullable List<KeyFrame> getPositions() {
+    public List<KeyFrame> getPositions() {
         return positions;
     }
 
-    public @Nullable List<KeyFrame> getRotations() {
+    public List<KeyFrame> getRotations() {
         return rotations;
     }
 
-    public @Nullable List<KeyFrame> getScales() {
+    public List<KeyFrame> getScales() {
         return scales;
     }
 

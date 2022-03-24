@@ -180,7 +180,7 @@ public class Transition extends Animation {
 
         private static KeyFrame calcStartKeyFrame(Animation sourceAnimation, @Nullable Pair<KeyFrame, KeyFrame> sourceFrames, Vector3f modelIdleVec, int existingTime) {
             if (sourceFrames != null) {
-                Vector3f vec = KeyFrameInterpolator.interpolateLinear(sourceAnimation, sourceFrames.left(), sourceFrames.right(), modelIdleVec, existingTime);
+                Vector3f vec = KeyFrameInterpolator.interpolateLinear(sourceFrames.left(), sourceFrames.right(), existingTime);
                 return new KeyFrame(0, vec);
             }
 
