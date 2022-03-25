@@ -21,17 +21,12 @@ public class AnimationStarter {
     }
 
     public static AnimationStarter fromAnimationData(AnimationData data) {
-        Objects.requireNonNull(data);
+		Objects.requireNonNull(data);
         return new AnimationStarter(data);
     }
 
     public AnimationStarter setIgnorable(boolean ignorable) {
         this.data.ignorable = ignorable;
-        return this;
-    }
-
-    public AnimationStarter doNotTransitToNull(boolean doNotTransitToNull) {
-        this.data.doNotTransitToNull = doNotTransitToNull;
         return this;
     }
 
@@ -65,7 +60,6 @@ public class AnimationStarter {
         private boolean ignorable = true;
         private int transitionTime = AnimationConstants.BASIC_TRANSITION_TIME;
         private float speedFactor = 1F;
-        private boolean doNotTransitToNull;
 
         private AnimationData(Animation animation) {
             this.animation = animation;
@@ -76,7 +70,6 @@ public class AnimationStarter {
             buffer.writeFloat(animationData.getSpeedFactor());
             buffer.writeInt(animationData.getTransitionTime());
             buffer.writeBoolean(animationData.isIgnorable());
-            buffer.writeBoolean(animationData.doNotTransitToNull);
 
             boolean hasNextAnim = animationData.nextAnimationData != null;
             buffer.writeBoolean(hasNextAnim);
@@ -93,7 +86,6 @@ public class AnimationStarter {
             animationData.speedFactor = buffer.readFloat();
             animationData.transitionTime = buffer.readInt();
             animationData.ignorable = buffer.readBoolean();
-            animationData.doNotTransitToNull = buffer.readBoolean();
 
             boolean hasNextAnim = buffer.readBoolean();
             if (hasNextAnim) {
@@ -119,17 +111,12 @@ public class AnimationStarter {
             return ignorable;
         }
 
-        public boolean doNotTransitToNull() {
-            return doNotTransitToNull;
-        }
-
         public AnimationData copy() {
             AnimationData animationData = new AnimationData(animation);
             animationData.speedFactor = this.speedFactor;
             animationData.ignorable = this.ignorable;
             animationData.transitionTime = this.transitionTime;
             animationData.nextAnimationData = this.nextAnimationData != null ? this.nextAnimationData.copy() : null;
-            animationData.doNotTransitToNull = doNotTransitToNull;
 
             return animationData;
         }
