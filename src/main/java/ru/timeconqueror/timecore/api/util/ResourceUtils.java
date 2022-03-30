@@ -3,6 +3,7 @@ package ru.timeconqueror.timecore.api.util;
 import com.google.common.base.Charsets;
 import com.google.common.io.CharSource;
 import com.google.common.io.Resources;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.InputStream;
 import java.net.URL;
@@ -13,6 +14,7 @@ public class ResourceUtils {
      * Returns the URL of resource in current jar file with given {@code path}.
      * Returns null, if there is no resource with given {@code path}.
      */
+    @Nullable
     public static URL getURL(String path) {
         return ResourceUtils.class.getClassLoader().getResource(path);
     }
@@ -21,6 +23,7 @@ public class ResourceUtils {
      * Returns the InputStream of resource in current jar file with given {@code path}.
      * Returns null, if there is no resource with given {@code path}.
      */
+    @Nullable
     public static InputStream getStream(String path) {
         return ResourceUtils.class.getClassLoader().getResourceAsStream(path);
     }
@@ -29,6 +32,7 @@ public class ResourceUtils {
      * Returns the CharSource of resource in current jar file with given {@code path} at UTF-8 encoding.
      * Returns null, if there is no resource with given {@code path}.
      */
+    @Nullable
     public static CharSource asCharSource(String path) {
         return asCharSource(path, Charsets.UTF_8);
     }
@@ -38,6 +42,7 @@ public class ResourceUtils {
      * Returns null, if there is no resource with given {@code path}.
      */
     @SuppressWarnings("UnstableApiUsage")
+    @Nullable
     public static CharSource asCharSource(String path, Charset charset) {
         URL resourceURL = getURL(path);
         return resourceURL != null ? Resources.asCharSource(resourceURL, charset) : null;

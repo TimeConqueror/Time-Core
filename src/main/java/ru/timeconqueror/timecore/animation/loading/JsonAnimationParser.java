@@ -13,6 +13,7 @@ import ru.timeconqueror.timecore.api.util.json.Vector3fJsonAdapter;
 import ru.timeconqueror.timecore.client.render.model.loading.JsonParsingException;
 
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Arrays;
@@ -30,8 +31,14 @@ public class JsonAnimationParser {
             .create();
 
     public Map<String, Animation> parseAnimations(@NotNull ResourceLocation fileLocation) throws JsonParsingException {
-        try (final InputStream inputStream = ResourceUtils.getStream(ResourceUtils.asDataSubpath(fileLocation.getNamespace() + "/" + fileLocation.getPath()))) {
-            BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+        String path = ResourceUtils.asDataSubpath(fileLocation.getNamespace() + "/" + fileLocation.getPath());
+
+        try (final InputStream in = ResourceUtils.getStream(path)) {
+            if (in == null) {
+                throw new FileNotFoundException(path);
+            }
+
+            BufferedReader reader = new BufferedReader(new InputStreamReader(in));
 
             JsonObject json = GsonHelper.parse(reader, true);
             return parseAnimation(fileLocation, json);
