@@ -36,7 +36,10 @@ public class RawBoneOption {
                 vec.set(MathUtils.toRadians(vec.x()), MathUtils.toRadians(vec.y()), MathUtils.toRadians(vec.z()));
                 vec.mul(-1, -1, 1);
             });
-            List<KeyFrame> positionFrames = parseKeyFrameArr(optionJson, "position", ctx, Empty.consumer());
+
+            List<KeyFrame> positionFrames = parseKeyFrameArr(optionJson, "position", ctx, vector3f -> {
+                vector3f.mul(-1, 1, 1);
+            });
 
             List<KeyFrame> scaleFrames = parseKeyFrameArr(optionJson, "scale", ctx, Empty.consumer());
 
