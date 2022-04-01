@@ -5,6 +5,7 @@ import ru.timeconqueror.timecore.animation.calculation.KeyFrameInterpolator;
 import ru.timeconqueror.timecore.animation.util.AnimationUtils;
 import ru.timeconqueror.timecore.api.animation.Animation;
 import ru.timeconqueror.timecore.api.animation.AnimationLayer;
+import ru.timeconqueror.timecore.api.animation.Channel;
 import ru.timeconqueror.timecore.client.render.model.TimeModelPart;
 
 import java.util.List;
@@ -49,19 +50,19 @@ public class BoneOption {
         }
     }
 
-    public List<KeyFrame> getPositions() {
-        return positions;
-    }
-
-    public List<KeyFrame> getRotations() {
-        return rotations;
-    }
-
-    public List<KeyFrame> getScales() {
-        return scales;
-    }
-
     public String getName() {
         return boneName;
+    }
+
+    public List<KeyFrame> getKeyFrames(Channel channel) {
+        if (channel == Channel.ROTATION) {
+            return rotations;
+        } else if (channel == Channel.POSITION) {
+            return positions;
+        } else if (channel == Channel.SCALE) {
+            return scales;
+        }
+
+        throw new IllegalArgumentException("Unknown channel: " + channel);
     }
 }

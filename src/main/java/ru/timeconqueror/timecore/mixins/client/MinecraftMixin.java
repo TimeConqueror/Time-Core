@@ -9,6 +9,7 @@ import ru.timeconqueror.timecore.internal.common.config.MainConfig;
 
 @Mixin(Minecraft.class)
 public class MinecraftMixin {
+    @SuppressWarnings("InvalidInjectorMethodSignature")
     @ModifyVariable(method = "loadWorld",
             at = @At(
                     value = "STORE",

@@ -45,7 +45,7 @@ public class KeyFrameInterpolator {
         return lerp(before.getVec(), after.getVec(), before.getTime(), after.getTime(), existingTime);
     }
 
-    public static Vector3f lerp(Vector3f start, Vector3f end, int startTime, int endTime, int existingTime) {
+    private static Vector3f lerp(Vector3f start, Vector3f end, int startTime, int endTime, int existingTime) {
         float factor = MathUtils.percentage(existingTime, startTime, endTime);
 
         float outX = MathUtils.lerp(factor, start.x(), end.x());
