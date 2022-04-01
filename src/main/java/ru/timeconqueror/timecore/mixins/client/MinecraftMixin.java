@@ -5,8 +5,8 @@ import org.spongepowered.asm.mixin.Mixin;
 
 @Mixin(Minecraft.class)//TODO check if it works in default runtime
 public abstract class MinecraftMixin {
-
     //FIXME
+    //  @SuppressWarnings("InvalidInjectorMethodSignature")
 //    @ModifyVariable(method = "doLoadLevel",
 //            at = @At(
 //                    value = "STORE",

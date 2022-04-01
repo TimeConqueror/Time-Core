@@ -2,6 +2,7 @@ package ru.timeconqueror.timecore.animation.loading;
 
 import com.google.gson.*;
 import com.mojang.math.Vector3f;
+import org.jetbrains.annotations.UnmodifiableView;
 import ru.timeconqueror.timecore.animation.component.BoneOption;
 import ru.timeconqueror.timecore.animation.component.KeyFrame;
 import ru.timeconqueror.timecore.animation.util.Empty;
@@ -46,6 +47,7 @@ public class RawBoneOption {
             return new RawBoneOption(rotationFrames, positionFrames, scaleFrames);
         }
 
+        @UnmodifiableView
         private List<KeyFrame> parseKeyFrameArr(JsonObject json, String optionName, JsonDeserializationContext ctx, Consumer<Vector3f> vecProcessor) {
             if (json.has(optionName)) {
                 List<KeyFrame> keyFrames = ctx.deserialize(json.get(optionName), KeyFrameListDeserializer.KEYFRAME_LIST_TYPE);
