@@ -7,11 +7,14 @@ import net.minecraft.client.model.geom.ModelPart;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
+import ru.timeconqueror.timecore.TimeCore;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+//TODO add method to control it so nobody hasn't dig into how it works
+//TODO name rotation be radians, because for now it's unclear
 @OnlyIn(Dist.CLIENT)
 public class TimeModelPart extends ModelPart {
     private final Vector3f scaleFactor = new Vector3f(1, 1, 1);
@@ -19,6 +22,9 @@ public class TimeModelPart extends ModelPart {
     public Vector3f startRotationRadians;
     private final Map<String, TimeModelPart> children;
     private final List<TimeModelCube> cubes;
+
+    private PoseStack.Pose lastTransform = new PoseStack().last();
+    private boolean transformValid;
 
     public TimeModelPart(Vector3f startRotRadians, @NotNull List<TimeModelCube> cubes, Map<String, TimeModelPart> children, boolean neverRender) {
         super(Collections.emptyList(), Collections.emptyMap());
@@ -33,22 +39,24 @@ public class TimeModelPart extends ModelPart {
 
     @Override
     public void render(PoseStack poseStack, VertexConsumer bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha) {
+        transformValid = true;
+
         if (this.visible) {
-            if (!cubes.isEmpty() || !this.children.isEmpty()) {
-                poseStack.pushPose();
+            poseStack.pushPose();
 
-                this.translateAndRotate(poseStack);
+            this.translateAndRotate(poseStack);
 
-                poseStack.scale(scaleFactor.x(), scaleFactor.y(), scaleFactor.z());
+            poseStack.scale(scaleFactor.x(), scaleFactor.y(), scaleFactor.z());
 
-                this.compile(poseStack.last(), bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
+            lastTransform = poseStack.last();
 
-                for (ModelPart piece : this.children.values()) {
-                    piece.render(poseStack, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
-                }
+            this.compile(poseStack.last(), bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
 
-                poseStack.popPose();
+            for (TimeModelPart part : this.children.values()) {
+                part.render(poseStack, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
             }
+
+            poseStack.popPose();
         }
     }
 
@@ -65,13 +73,22 @@ public class TimeModelPart extends ModelPart {
         }
     }
 
-    protected void reset() {
-        xRot = startRotationRadians.x();
-        yRot = startRotationRadians.y();
-        zRot = startRotationRadians.z();
+    /**
+     * Transforms current matrix stack's entry directly to this part.
+     * Does NOT require calling the same method from parent parts.
+     */
+    public void applyTransform(PoseStack stack) {
+        if (!visible) return;
 
-        offset.set(0, 0, 0);
-        scaleFactor.set(1, 1, 1);
+        if (!transformValid) {
+            TimeCore.LOGGER.warn("Method #transformTo was called in an inappropriate time. The part's transform is not calculated yet.", new Exception());
+
+            return;
+        }
+
+        PoseStack.Pose last = stack.last();
+        last.pose().load(lastTransform.pose());
+        last.normal().load(lastTransform.normal());
     }
 
     public void setScaleFactor(float scaleX, float scaleY, float scaleZ) {
@@ -84,5 +101,15 @@ public class TimeModelPart extends ModelPart {
 
     public Map<String, TimeModelPart> getChildren() {
         return Collections.unmodifiableMap(children);
+    }
+
+    protected void reset() {
+        transformValid = false;
+        xRot = startRotationRadians.x();
+        yRot = startRotationRadians.y();
+        zRot = startRotationRadians.z();
+
+        offset.set(0, 0, 0);
+        scaleFactor.set(1, 1, 1);
     }
 }
