@@ -148,11 +148,11 @@ public class BasicAnimation extends Animation {
 
             List<Transition.BoneOption> transitionBones = new ArrayList<>();
             source.getOptions().forEach((name, sourceBone) -> {
-                TimeModelPart piece = model.tryGetPart(name);
-                if (piece != null) {
-                    Pair<KeyFrame, KeyFrame> rotations = makeTransitionPair(source, piece, sourceBone, Channel.ROTATION, destFactory, existingTime, transitionTime);
-                    Pair<KeyFrame, KeyFrame> positions = makeTransitionPair(source, piece, sourceBone, Channel.POSITION, destFactory, existingTime, transitionTime);
-                    Pair<KeyFrame, KeyFrame> scales = makeTransitionPair(source, piece, sourceBone, Channel.SCALE, destFactory, existingTime, transitionTime);
+                TimeModelPart part = model.tryGetPart(name);
+                if (part != null) {
+                    Pair<KeyFrame, KeyFrame> rotations = makeTransitionPair(source, part, sourceBone, Channel.ROTATION, destFactory, existingTime, transitionTime);
+                    Pair<KeyFrame, KeyFrame> positions = makeTransitionPair(source, part, sourceBone, Channel.POSITION, destFactory, existingTime, transitionTime);
+                    Pair<KeyFrame, KeyFrame> scales = makeTransitionPair(source, part, sourceBone, Channel.SCALE, destFactory, existingTime, transitionTime);
                     transitionBones.add(new Transition.BoneOption(name, rotations, positions, scales));
                 }
             });
@@ -167,11 +167,11 @@ public class BasicAnimation extends Animation {
                     }
                 }
 
-                TimeModelPart piece = model.tryGetPart(destBoneName);
-                if (piece != null) {
-                    Pair<KeyFrame, KeyFrame> rotations = makeTransitionPairFromIdle(piece, destBoneName, Channel.ROTATION, destFactory, transitionTime);
-                    Pair<KeyFrame, KeyFrame> positions = makeTransitionPairFromIdle(piece, destBoneName, Channel.POSITION, destFactory, transitionTime);
-                    Pair<KeyFrame, KeyFrame> scales = makeTransitionPairFromIdle(piece, destBoneName, Channel.SCALE, destFactory, transitionTime);
+                TimeModelPart part = model.tryGetPart(destBoneName);
+                if (part != null) {
+                    Pair<KeyFrame, KeyFrame> rotations = makeTransitionPairFromIdle(part, destBoneName, Channel.ROTATION, destFactory, transitionTime);
+                    Pair<KeyFrame, KeyFrame> positions = makeTransitionPairFromIdle(part, destBoneName, Channel.POSITION, destFactory, transitionTime);
+                    Pair<KeyFrame, KeyFrame> scales = makeTransitionPairFromIdle(part, destBoneName, Channel.SCALE, destFactory, transitionTime);
                     transitionBones.add(new Transition.BoneOption(destBoneName, rotations, positions, scales));
                 }
             }
