@@ -12,7 +12,6 @@ public interface AnimationLayer extends Cloneable {
 
     void setBlendType(BlendType type);
 
-    @Nullable
     Animation getCurrentAnimation();
 
     boolean hasAnimation();

@@ -4,13 +4,14 @@ import net.minecraft.util.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 import ru.timeconqueror.timecore.TimeCore;
 import ru.timeconqueror.timecore.animation.component.BasicAnimation;
+import ru.timeconqueror.timecore.animation.component.LoopMode;
 import ru.timeconqueror.timecore.api.client.render.model.ITimeModel;
 
 import java.util.function.Consumer;
 
 public abstract class Animation {
 	@SuppressWarnings("StaticInitializerReferencesSubClass")
-	public static final Animation NULL = new BasicAnimation(false, TimeCore.rl("internal/null"), "null", 0, null);
+	public static final Animation NULL = new BasicAnimation(LoopMode.DO_NOT_LOOP, TimeCore.rl("internal/null"), "null", 0, null);
 
 	public abstract void apply(ITimeModel model, AnimationLayer layer, int existingTime);
 
@@ -30,7 +31,7 @@ public abstract class Animation {
 	 */
 	public abstract int getLength();
 
-	public abstract boolean isLooped();
+	public abstract LoopMode getLoopMode();
 
 	/**
 	 * Should return the factory, that can handle your IAnimation implementation class

@@ -5,6 +5,7 @@ import net.minecraft.util.JSONUtils;
 import net.minecraft.util.ResourceLocation;
 import ru.timeconqueror.timecore.animation.component.BasicAnimation;
 import ru.timeconqueror.timecore.animation.component.BoneOption;
+import ru.timeconqueror.timecore.animation.component.LoopMode;
 import ru.timeconqueror.timecore.api.util.Empty;
 import ru.timeconqueror.timecore.api.util.EnvironmentUtils;
 
@@ -16,12 +17,12 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class RawAnimation {
-    private final boolean loop;
+    private final LoopMode loopMode;
     private final int animationLength;
     private final List<BoneOption> options;
 
-    public RawAnimation(boolean loop, int animationLength, List<BoneOption> options) {
-        this.loop = loop;
+    public RawAnimation(LoopMode loopMode, int animationLength, List<BoneOption> options) {
+        this.loopMode = loopMode;
         this.animationLength = animationLength;
         this.options = options;
     }
@@ -29,7 +30,7 @@ public class RawAnimation {
 
     public BasicAnimation bake(ResourceLocation id, String name) {
         Map<String, BoneOption> bones = options.stream().collect(Collectors.toMap(BoneOption::getName, boneOption -> boneOption));
-        return new BasicAnimation(loop, id, name, animationLength, Collections.unmodifiableMap(bones));
+        return new BasicAnimation(loopMode, id, name, animationLength, Collections.unmodifiableMap(bones));
     }
 
     public static class Deserializer implements JsonDeserializer<RawAnimation> {
@@ -37,7 +38,12 @@ public class RawAnimation {
         @Override
         public RawAnimation deserialize(JsonElement jsonIn, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
             JsonObject json = jsonIn.getAsJsonObject();
-            boolean loop = JSONUtils.getAsBoolean(json, "loop", false);
+
+            LoopMode loopMode = LoopMode.DO_NOT_LOOP;
+            if (json.has("loop")) {
+                loopMode = context.deserialize(json.get("loop"), LoopMode.class);
+            }
+
             int animationLength = (int) (JSONUtils.getAsFloat(json, "animation_length", 0) * 1000);
 
             List<BoneOption> boneOptions = new ArrayList<>();
@@ -53,7 +59,7 @@ public class RawAnimation {
                 }
             }
 
-            return new RawAnimation(loop, animationLength, !boneOptions.isEmpty() ? boneOptions : Empty.list());
+            return new RawAnimation(loopMode, animationLength, !boneOptions.isEmpty() ? boneOptions : Empty.list());
         }
     }
 }

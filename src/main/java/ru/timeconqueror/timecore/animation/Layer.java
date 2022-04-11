@@ -1,6 +1,7 @@
 package ru.timeconqueror.timecore.animation;
 
 import org.jetbrains.annotations.Nullable;
+import ru.timeconqueror.timecore.animation.component.LoopMode;
 import ru.timeconqueror.timecore.animation.watcher.AnimationWatcher;
 import ru.timeconqueror.timecore.animation.watcher.TransitionWatcher;
 import ru.timeconqueror.timecore.api.animation.Animation;
@@ -94,6 +95,17 @@ public class Layer implements AnimationLayer {
                 }
 
                 if (watcher.isAnimationEnded(currentTime)) {
+                    Animation animation = watcher.getAnimation();
+
+                    if (watcher.getNextAnimationData() == null) {
+                        if (animation.getLoopMode() == LoopMode.LOOP) {
+                            watcher.resetTimer();
+                            return;
+                        } else if (animation.getLoopMode() == LoopMode.HOLD_ON_LAST_FRAME) {
+                            return;
+                        }
+                    }
+
                     manager.onAnimationEnd(model, this, watcher);
 
                     watcher = watcher.next();

@@ -7,6 +7,7 @@ import ru.timeconqueror.timecore.TimeCore;
 import ru.timeconqueror.timecore.animation.AnimationRegistry;
 import ru.timeconqueror.timecore.animation.AnimationStarter;
 import ru.timeconqueror.timecore.animation.component.BasicAnimation;
+import ru.timeconqueror.timecore.animation.component.LoopMode;
 import ru.timeconqueror.timecore.animation.component.Transition;
 import ru.timeconqueror.timecore.animation.util.WatcherSerializer;
 import ru.timeconqueror.timecore.api.animation.Animation;
@@ -16,7 +17,7 @@ import ru.timeconqueror.timecore.api.util.Requirements;
 import java.util.Objects;
 
 public class TransitionWatcher extends AnimationWatcher {
-    public static final Animation TRANSITION = new BasicAnimation(false, TimeCore.rl("internal/transition"), "transition", 0, null) {
+    public static final Animation TRANSITION = new BasicAnimation(LoopMode.DO_NOT_LOOP, TimeCore.rl("internal/transition"), "transition", 0, null) {
     };
 
     private final int transitionTime;
