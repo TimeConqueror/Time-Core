@@ -117,8 +117,8 @@ public class Transition extends Animation {
     }
 
     @Override
-    public boolean isLooped() {
-        return false;
+    public LoopMode getLoopMode() {
+        return LoopMode.DO_NOT_LOOP;
     }
 
     @Override

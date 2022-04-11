@@ -6,6 +6,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
 import org.jetbrains.annotations.NotNull;
 import ru.timeconqueror.timecore.animation.component.BasicAnimation;
+import ru.timeconqueror.timecore.animation.component.LoopMode;
 import ru.timeconqueror.timecore.api.animation.Animation;
 import ru.timeconqueror.timecore.api.util.CollectionUtils;
 import ru.timeconqueror.timecore.api.util.ResourceUtils;
@@ -28,6 +29,7 @@ public class JsonAnimationParser {
             .registerTypeAdapter(KeyFrameListDeserializer.KEYFRAME_LIST_TYPE, new KeyFrameListDeserializer())
             .registerTypeAdapter(RawBoneOption.class, new RawBoneOption.Deserializer())
             .registerTypeAdapter(RawAnimation.class, new RawAnimation.Deserializer())
+            .registerTypeAdapter(LoopMode.class, new LoopMode.Deserializer())
             .create();
 
     public Map<String, Animation> parseAnimations(@NotNull ResourceLocation fileLocation) throws JsonParsingException {

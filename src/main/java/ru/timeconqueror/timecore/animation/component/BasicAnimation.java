@@ -19,7 +19,7 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 public class BasicAnimation extends Animation {
-    private final boolean loop;
+    private final LoopMode loopMode;
     private final String name;
     private final ResourceLocation id;
     /**
@@ -34,8 +34,8 @@ public class BasicAnimation extends Animation {
     @Nullable
     private final Map<String, BoneOption> options;
 
-    public BasicAnimation(boolean loop, ResourceLocation id, String name, int length, @Nullable Map<String, BoneOption> options) {
-        this.loop = loop;
+    public BasicAnimation(LoopMode loopMode, ResourceLocation id, String name, int length, @Nullable Map<String, BoneOption> options) {
+        this.loopMode = loopMode;
         this.name = name;
         this.id = id;
         this.length = length;
@@ -69,8 +69,8 @@ public class BasicAnimation extends Animation {
         return id;
     }
 
-    public boolean isLooped() {
-        return loop;
+    public LoopMode getLoopMode() {
+        return loopMode;
     }
 
     public @Nullable Map<String, BoneOption> getOptions() {
@@ -107,7 +107,7 @@ public class BasicAnimation extends Animation {
             });
         }
 
-        return new BasicAnimation(loop, new ResourceLocation(id.getNamespace(), id.getPath() + "-reversed"), name + "-reversed", length, reversedOptions);
+        return new BasicAnimation(loopMode, new ResourceLocation(id.getNamespace(), id.getPath() + "-reversed"), name + "-reversed", length, reversedOptions);
     }
 
     private List<KeyFrame> reverseKeyFrames(List<KeyFrame> keyFrames) {
@@ -218,7 +218,7 @@ public class BasicAnimation extends Animation {
         return "BasicAnimation{" +
                 "location=" + name +
                 ", id=" + id +
-                ", looped=" + loop +
+                ", looped=" + loopMode +
                 ", length=" + length +
                 '}';
     }

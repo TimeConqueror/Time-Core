@@ -48,11 +48,7 @@ public class AnimationWatcher {
 
 	@Nullable
 	public AnimationWatcher next() {
-		if (getAnimation().isLooped()) {
-			resetTimer();
-
-			return this;
-		} else if (nextAnimation != null) {
+		if (nextAnimation != null) {
 			if (nextAnimation.getTransitionTime() <= 0) {
 				return new AnimationWatcher(nextAnimation);
 			} else {
