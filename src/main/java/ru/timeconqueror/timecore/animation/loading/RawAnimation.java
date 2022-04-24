@@ -37,7 +37,7 @@ public class RawAnimation {
         public RawAnimation deserialize(JsonElement jsonIn, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
             JsonObject json = jsonIn.getAsJsonObject();
             boolean loop = GsonHelper.getAsBoolean(json, "loop", false);
-            int animationLength = (int) (GsonHelper.getAsFloat(json, "animation_length") * 1000);
+            int animationLength = (int) (GsonHelper.getAsFloat(json, "animation_length", 0) * 1000);
 
             List<BoneOption> boneOptions = new ArrayList<>();
 
