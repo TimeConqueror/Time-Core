@@ -1,6 +1,7 @@
 package ru.timeconqueror.timecore.api.animation;
 
 import org.jetbrains.annotations.Nullable;
+import ru.timeconqueror.timecore.animation.component.IKeyFrame;
 import ru.timeconqueror.timecore.animation.component.KeyFrame;
 import ru.timeconqueror.timecore.animation.component.Transition;
 import ru.timeconqueror.timecore.api.client.render.model.ITimeModel;
@@ -43,9 +44,9 @@ public abstract class TransitionFactory {
         throw new UnsupportedOperationException(String.format("This should never be reached. TransitionFactory with source '%s' unable to be transition destination", source));
     }
 
-    public static Pair<KeyFrame, KeyFrame> makeTransitionPairFromIdle(TimeModelPart part, String partName, Channel channel, TransitionFactoryWithDestination destFactory, int transitionTime) {
-        KeyFrame startKeyFrame = KeyFrame.createIdleKeyFrame(0, channel.getDefaultVector(part));
-        KeyFrame endKeyFrame = destFactory.getDestKeyFrame(part, partName, channel, transitionTime);
+    public static Pair<IKeyFrame, IKeyFrame> makeTransitionPairFromIdle(TimeModelPart part, String partName, Channel channel, TransitionFactoryWithDestination destFactory, int transitionTime) {
+        IKeyFrame startKeyFrame = KeyFrame.createIdleKeyFrame(0, channel.getDefaultVector(part));
+        IKeyFrame endKeyFrame = destFactory.getDestKeyFrame(part, partName, channel, transitionTime);
         return Pair.of(startKeyFrame, endKeyFrame);
     }
 }

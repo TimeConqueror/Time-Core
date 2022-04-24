@@ -39,9 +39,9 @@ public class Transition extends Animation {
         dest.forEachBone(name -> {
             TimeModelPart part = model.tryGetPart(name);
             if (part != null) {
-                Pair<KeyFrame, KeyFrame> rotations = TransitionFactory.makeTransitionPairFromIdle(part, name, Channel.ROTATION, destFactory, transitionTime);
-                Pair<KeyFrame, KeyFrame> positions = TransitionFactory.makeTransitionPairFromIdle(part, name, Channel.POSITION, destFactory, transitionTime);
-                Pair<KeyFrame, KeyFrame> scales = TransitionFactory.makeTransitionPairFromIdle(part, name, Channel.SCALE, destFactory, transitionTime);
+                Pair<IKeyFrame, IKeyFrame> rotations = TransitionFactory.makeTransitionPairFromIdle(part, name, Channel.ROTATION, destFactory, transitionTime);
+                Pair<IKeyFrame, IKeyFrame> positions = TransitionFactory.makeTransitionPairFromIdle(part, name, Channel.POSITION, destFactory, transitionTime);
+                Pair<IKeyFrame, IKeyFrame> scales = TransitionFactory.makeTransitionPairFromIdle(part, name, Channel.SCALE, destFactory, transitionTime);
                 transition.options.add(new BoneOption(name, rotations, positions, scales));
             }
         });
@@ -162,7 +162,7 @@ public class Transition extends Animation {
             super(source);
         }
 
-        private static KeyFrame calcStartKeyFrame(@Nullable Pair<KeyFrame, KeyFrame> sourceFrames, Vector3f modelIdleVec, int existingTime) {
+        private static IKeyFrame calcStartKeyFrame(@Nullable Pair<IKeyFrame, IKeyFrame> sourceFrames, Vector3f modelIdleVec, int existingTime) {
             if (sourceFrames != null) {
                 Vector3f vec = KeyFrameInterpolator.interpolateLinear(sourceFrames.left(), sourceFrames.right(), existingTime);
                 return new KeyFrame(0, vec);
@@ -171,9 +171,9 @@ public class Transition extends Animation {
             return KeyFrame.createIdleKeyFrame(0, modelIdleVec);
         }
 
-        private static Pair<KeyFrame, KeyFrame> makeTransitionPair(TimeModelPart part, BoneOption option, Channel channel, TransitionFactoryWithDestination destFactory, int existingTime, int transitionTime) {
-            KeyFrame startKeyFrame = calcStartKeyFrame(option.getKeyFrames(channel), channel.getDefaultVector(part), existingTime);
-            KeyFrame endKeyFrame = destFactory.getDestKeyFrame(part, option.getName(), channel, transitionTime);
+        private static Pair<IKeyFrame, IKeyFrame> makeTransitionPair(TimeModelPart part, BoneOption option, Channel channel, TransitionFactoryWithDestination destFactory, int existingTime, int transitionTime) {
+            IKeyFrame startKeyFrame = calcStartKeyFrame(option.getKeyFrames(channel), channel.getDefaultVector(part), existingTime);
+            IKeyFrame endKeyFrame = destFactory.getDestKeyFrame(part, option.getName(), channel, transitionTime);
             return Pair.of(startKeyFrame, endKeyFrame);
         }
 
@@ -190,9 +190,9 @@ public class Transition extends Animation {
             source.options.forEach(bone -> {
                 TimeModelPart part = model.tryGetPart(bone.name);
                 if (part != null) {
-                    Pair<KeyFrame, KeyFrame> rotations = makeTransitionPair(part, bone, Channel.ROTATION, destFactory, existingTime, transitionTime);
-                    Pair<KeyFrame, KeyFrame> positions = makeTransitionPair(part, bone, Channel.POSITION, destFactory, existingTime, transitionTime);
-                    Pair<KeyFrame, KeyFrame> scales = makeTransitionPair(part, bone, Channel.SCALE, destFactory, existingTime, transitionTime);
+                    Pair<IKeyFrame, IKeyFrame> rotations = makeTransitionPair(part, bone, Channel.ROTATION, destFactory, existingTime, transitionTime);
+                    Pair<IKeyFrame, IKeyFrame> positions = makeTransitionPair(part, bone, Channel.POSITION, destFactory, existingTime, transitionTime);
+                    Pair<IKeyFrame, IKeyFrame> scales = makeTransitionPair(part, bone, Channel.SCALE, destFactory, existingTime, transitionTime);
                     transitionBones.add(new BoneOption(bone.name, rotations, positions, scales));
                 }
             });
@@ -204,11 +204,11 @@ public class Transition extends Animation {
     public static class BoneOption {
         private final String name;
 
-        private final Pair<KeyFrame, KeyFrame> rotations;
-        private final Pair<KeyFrame, KeyFrame> positions;
-        private final Pair<KeyFrame, KeyFrame> scales;
+        private final Pair<IKeyFrame, IKeyFrame> rotations;
+        private final Pair<IKeyFrame, IKeyFrame> positions;
+        private final Pair<IKeyFrame, IKeyFrame> scales;
 
-        public BoneOption(String boneName, Pair<KeyFrame, KeyFrame> rotations, Pair<KeyFrame, KeyFrame> positions, Pair<KeyFrame, KeyFrame> scales) {
+        public BoneOption(String boneName, Pair<IKeyFrame, IKeyFrame> rotations, Pair<IKeyFrame, IKeyFrame> positions, Pair<IKeyFrame, IKeyFrame> scales) {
             this.name = boneName;
             this.rotations = rotations;
             this.positions = positions;
@@ -230,7 +230,7 @@ public class Transition extends Animation {
             return name;
         }
 
-        public Pair<KeyFrame, KeyFrame> getKeyFrames(Channel channel) {
+        public Pair<IKeyFrame, IKeyFrame> getKeyFrames(Channel channel) {
             if (channel == Channel.ROTATION) {
                 return rotations;
             } else if (channel == Channel.POSITION) {

@@ -28,7 +28,7 @@ public class TransitionWatcher extends AnimationWatcher {
     private final int sourceExistingTime;
 
     private TransitionWatcher(@Nullable Animation source, int sourceExistingTime, int transitionTime, @Nullable AnimationStarter.AnimationData destination) {
-        super(TRANSITION, 1.0F, destination);
+        super(TRANSITION, 1.0F, false, destination);
 
         Requirements.greaterOrEquals(transitionTime, 0);
 

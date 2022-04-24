@@ -5,7 +5,9 @@ import com.google.gson.*;
 import com.mojang.math.Vector3f;
 import net.minecraft.util.GsonHelper;
 import ru.timeconqueror.timecore.animation.component.CatmullRomKeyFrame;
+import ru.timeconqueror.timecore.animation.component.IKeyFrame;
 import ru.timeconqueror.timecore.animation.component.KeyFrame;
+import ru.timeconqueror.timecore.animation.component.StepKeyFrame;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -13,13 +15,13 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-public class KeyFrameListDeserializer implements JsonDeserializer<List<KeyFrame>> {
-    public static final Type KEYFRAME_LIST_TYPE = new TypeToken<List<KeyFrame>>() {
+public class KeyFrameListDeserializer implements JsonDeserializer<List<IKeyFrame>> {
+    public static final Type KEYFRAME_LIST_TYPE = new TypeToken<List<IKeyFrame>>() {
     }.getType();
 
     @Override
-    public List<KeyFrame> deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext ctx) throws JsonParseException {
-        List<KeyFrame> keyFrames = new ArrayList<>();
+    public List<IKeyFrame> deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext ctx) throws JsonParseException {
+        List<IKeyFrame> keyFrames = new ArrayList<>();
 
         if (json.isJsonArray() || json.isJsonPrimitive()) {
             Vector3f vec = asVector(json, ctx);
@@ -42,20 +44,18 @@ public class KeyFrameListDeserializer implements JsonDeserializer<List<KeyFrame>
                 if (value.isJsonObject()) {
                     JsonObject frame = value.getAsJsonObject();
 
-//                    if(frame.has("pre")) {
-//                        if(!first) {
-//                            //FIXME https://docs.microsoft.com/en-us/minecraft/creator/reference/content/animationsreference/examples/animationgettingstarted#discontinuous-example
-//                            throw new JsonSyntaxException("Can't handle the 'pre' property of the non-first keyframe");
-//                        }
-//
-//                        Vector3f vec = memberAsVector(frame, "pre", ctx);
-//                        keyFrames.add(new KeyFrame(0, vec));
-//                    }
+                    //https://docs.microsoft.com/en-us/minecraft/creator/reference/content/animationsreference/examples/animationgettingstarted#discontinuous-example
+                    if (frame.has("pre")) {
+                        Vector3f pre = memberAsVector(frame, "pre", ctx);
+                        Vector3f post = memberAsVector(frame, "post", ctx);
+                        keyFrames.add(new StepKeyFrame(toMillis(time), pre, post));
+                        continue;
+                    }
 
                     String lerpMode = GsonHelper.getAsString(frame, "lerp_mode");
                     Vector3f vec = memberAsVector(frame, "post", ctx);
                     if (lerpMode.equals("catmullrom")) {
-                        keyFrames.add(catmullRomFrame(time, vec));
+                        keyFrames.add(new CatmullRomKeyFrame(toMillis(time), vec));
                     } else if (lerpMode.equals("linear")) {
                         keyFrames.add(frame(time, vec));
                     } else {
@@ -82,10 +82,10 @@ public class KeyFrameListDeserializer implements JsonDeserializer<List<KeyFrame>
     }
 
     private static KeyFrame frame(float time, Vector3f vec) {
-        return new KeyFrame((int) (time * 1000), vec);
+        return new KeyFrame(toMillis(time), vec);
     }
 
-    private static KeyFrame catmullRomFrame(float time, Vector3f vec) {
-        return new CatmullRomKeyFrame((int) (time * 1000), vec);
+    private static int toMillis(float seconds) {
+        return (int) (seconds * 1000);
     }
 }
