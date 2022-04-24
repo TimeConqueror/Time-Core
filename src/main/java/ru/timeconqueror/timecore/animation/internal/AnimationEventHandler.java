@@ -15,6 +15,7 @@ import ru.timeconqueror.timecore.api.common.event.LivingUpdateEndEvent;
 import ru.timeconqueror.timecore.internal.common.packet.InternalPacketManager;
 import ru.timeconqueror.timecore.internal.common.packet.animation.S2CSyncAnimationsMsg;
 
+//TODO add tickers for tile entities
 @Mod.EventBusSubscriber
 public class AnimationEventHandler {
 
@@ -23,7 +24,7 @@ public class AnimationEventHandler {
         LivingEntity entityLiving = event.getEntityLiving();
 
         if (entityLiving instanceof AnimatedObject<?>) {
-            if (entityLiving.isEffectiveAi()) {
+            if (!entityLiving.level.isClientSide) {
                 //needed for animation ticking on server side.
                 ((AnimatedObject<?>) entityLiving).getSystem().getAnimationManager().applyAnimations(null);
             }

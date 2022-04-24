@@ -218,7 +218,7 @@ public class BasicAnimation extends Animation {
         return "BasicAnimation{" +
                 "location=" + name +
                 ", id=" + id +
-                ", looped=" + loopMode +
+                ", loopMode=" + loopMode +
                 ", length=" + length +
                 '}';
     }

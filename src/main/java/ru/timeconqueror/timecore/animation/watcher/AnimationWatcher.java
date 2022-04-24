@@ -59,6 +59,11 @@ public class AnimationWatcher {
 		}
 	}
 
+	@Nullable
+	public AnimationStarter.AnimationData getNextAnimationData() {
+		return nextAnimation;
+	}
+
 	public void resetTimer() {
 		startTime.set(System.currentTimeMillis());
 	}
