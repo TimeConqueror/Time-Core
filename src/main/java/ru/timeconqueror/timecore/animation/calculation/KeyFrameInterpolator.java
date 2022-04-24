@@ -3,7 +3,8 @@ package ru.timeconqueror.timecore.animation.calculation;
 import net.minecraft.util.math.vector.Vector3f;
 import org.jetbrains.annotations.Nullable;
 import ru.timeconqueror.timecore.animation.component.CatmullRomKeyFrame;
-import ru.timeconqueror.timecore.animation.component.KeyFrame;
+import ru.timeconqueror.timecore.animation.component.IKeyFrame;
+import ru.timeconqueror.timecore.animation.component.KeyFrameState;
 import ru.timeconqueror.timecore.api.animation.Animation;
 import ru.timeconqueror.timecore.api.util.MathUtils;
 
@@ -11,22 +12,20 @@ import java.util.List;
 
 public class KeyFrameInterpolator {
     private final Animation animation;
-    private final List<KeyFrame> frames;
-    private final Vector3f defaultStartVec;
+    private final List<IKeyFrame> frames;
     private final int existingTime;
 
     @Nullable
-    private KeyFrame before;
+    private IKeyFrame prev;
     @Nullable
-    private KeyFrame after;
+    private IKeyFrame next;
 
-    private int beforeIndex = -1;
-    private int afterIndex = -1;
+    private int prevIndex = -1;
+    private int nextIndex = -1;
 
-    private KeyFrameInterpolator(Animation animation, List<KeyFrame> frames, Vector3f defaultStartVec, int existingTime) {
+    private KeyFrameInterpolator(Animation animation, List<IKeyFrame> frames, int existingTime) {
         this.animation = animation;
         this.frames = frames;
-        this.defaultStartVec = defaultStartVec;
         this.existingTime = existingTime;
     }
 
@@ -35,14 +34,14 @@ public class KeyFrameInterpolator {
      * Always return a new vector.
      */
     @Nullable
-    public static Vector3f findInterpolationVec(Animation animation, List<KeyFrame> frames, Vector3f defaultStartVec, int existingTime) {
+    public static Vector3f findInterpolationVec(Animation animation, List<IKeyFrame> frames, int existingTime) {
         if (frames.isEmpty()) return null;
 
-        return new KeyFrameInterpolator(animation, frames, defaultStartVec, existingTime).findInterpolationVec();
+        return new KeyFrameInterpolator(animation, frames, existingTime).findInterpolationVec();
     }
 
-    public static Vector3f interpolateLinear(KeyFrame before, KeyFrame after, int existingTime) {
-        return lerp(before.getVec(), after.getVec(), before.getTime(), after.getTime(), existingTime);
+    public static Vector3f interpolateLinear(IKeyFrame prev, IKeyFrame next, int existingTime) {
+        return lerp(prev.getVec(KeyFrameState.PREV), next.getVec(KeyFrameState.NEXT), prev.getTime(), next.getTime(), existingTime);
     }
 
     private static Vector3f lerp(Vector3f start, Vector3f end, int startTime, int endTime, int existingTime) {
@@ -56,79 +55,79 @@ public class KeyFrameInterpolator {
     }
 
     private Vector3f findInterpolationVec() {
-        findKeyFrames(frames, existingTime);
+        findIKeyFrames(frames, existingTime);
 
         // at this point both after and before frames are not null!
-        // because findKeyFrames sets both of them
-        if (after == null) {
+        // because findIKeyFrames sets both of them
+        if (next == null) {
             //noinspection ConstantConditions
-            return before.getVec().copy();
-        } else if (before == null) {
-            return after.getVec().copy();
+            return prev.getVec(KeyFrameState.NEXT).copy();
+        } else if (prev == null) {
+            return next.getVec(KeyFrameState.PREV).copy();
         }
 
-        if (before instanceof CatmullRomKeyFrame || after instanceof CatmullRomKeyFrame) {
+        if (prev instanceof CatmullRomKeyFrame || next instanceof CatmullRomKeyFrame) {
             return interpolateSmoothly();
         } else {
-            return interpolateLinear(before, after, existingTime);
+            return interpolateLinear(prev, next, existingTime);
         }
     }
 
-    private void findKeyFrames(List<KeyFrame> frames, int existingTime) {
+    private void findIKeyFrames(List<IKeyFrame> frames, int existingTime) {
         for (int i = 0; i < frames.size(); i++) {
-            KeyFrame frame = frames.get(i);
+            IKeyFrame frame = frames.get(i);
 
             if (i == 0 && frame.getTime() > existingTime) {
-                after = frame;
-                afterIndex = i;
+                next = frame;
+                nextIndex = i;
 
                 break;
             } else if (i == frames.size() - 1) {
-                before = frame;
-                beforeIndex = i;
+                prev = frame;
+                prevIndex = i;
                 break;
             }
 
             if (frame.getTime() <= existingTime && frames.get(i + 1).getTime() > existingTime) {
-                before = frame;
-                beforeIndex = i;
+                prev = frame;
+                prevIndex = i;
 
-                afterIndex = i + 1;
-                after = frames.get(afterIndex);
+                nextIndex = i + 1;
+                next = frames.get(nextIndex);
                 break;
             }
         }
     }
 
     private Vector3f interpolateSmoothly() {
-        KeyFrame beforeMinus = null;
-        if (beforeIndex > 0) {
-            beforeMinus = frames.get(beforeIndex - 1);
+        IKeyFrame beforeMinus = null;
+        if (prevIndex > 0) {
+            beforeMinus = frames.get(prevIndex - 1);
         }
 
-        KeyFrame afterPlus = null;
-        if (afterIndex < frames.size() - 1) {
-            afterPlus = frames.get(afterIndex + 1);
+        IKeyFrame afterPlus = null;
+        if (nextIndex < frames.size() - 1) {
+            afterPlus = frames.get(nextIndex + 1);
         }
 
-        return catmullRom(beforeMinus, before, after, afterPlus, existingTime, animation.getLength());
+        return catmullRom(beforeMinus, prev, next, afterPlus, existingTime, animation.getLength());
     }
 
-    private static Vector3f catmullRom(@Nullable KeyFrame beforeMinus, @Nullable KeyFrame before, @Nullable KeyFrame after, @Nullable KeyFrame afterPlus, int existedTime, int maxTime) {
+    private static Vector3f catmullRom(@Nullable IKeyFrame beforeMinus, @Nullable IKeyFrame before, @Nullable IKeyFrame after, @Nullable IKeyFrame afterPlus, int existedTime, int maxTime) {
         float factor = MathUtils.percentage(existedTime, before != null ? before.getTime() : 0, after != null ? after.getTime() : maxTime);
 
         return catmullRom(beforeMinus, before, after, afterPlus, factor);
     }
 
-    private static Vector3f catmullRom(@Nullable KeyFrame beforeMinus, @Nullable KeyFrame before, @Nullable KeyFrame after, @Nullable KeyFrame afterPlus, float factor) {
+    private static Vector3f catmullRom(@Nullable IKeyFrame beforeMinus, @Nullable IKeyFrame before, @Nullable IKeyFrame after, @Nullable IKeyFrame afterPlus, float factor) {
         int allocatedSize = countNonNls(beforeMinus, before, after, afterPlus);
         Vector3f[] points = new Vector3f[allocatedSize];
 
         int index = 0;
-        if (beforeMinus != null) points[index++] = beforeMinus.getVec();
-        if (before != null) points[index++] = before.getVec();
-        if (after != null) points[index++] = after.getVec();
-        if (afterPlus != null) points[index] = afterPlus.getVec();
+        if (beforeMinus != null) points[index++] = beforeMinus.getVec(KeyFrameState.PREV);
+        if (before != null) points[index++] = before.getVec(KeyFrameState.PREV);
+        if (after != null) points[index++] = after.getVec(KeyFrameState.NEXT);
+        if (afterPlus != null) points[index] = afterPlus.getVec(KeyFrameState.NEXT);
 
         float time = (factor + (beforeMinus != null ? 1 : 0)) / (allocatedSize - 1);
 

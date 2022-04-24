@@ -24,17 +24,19 @@ public class AnimationWatcher {
 	protected Animation animation;
 	@Nullable
 	private final AnimationStarter.AnimationData nextAnimation;
+	private final boolean doNotTransitToNull;
 
 	public AnimationWatcher(AnimationStarter.AnimationData currentAnimation) {
-		this(currentAnimation.getAnimation(), currentAnimation.getSpeedFactor(), currentAnimation.getNextAnimationData());
+		this(currentAnimation.getAnimation(), currentAnimation.getSpeedFactor(), currentAnimation.doNotTransitToNull(), currentAnimation.getNextAnimationData());
 	}
 
-	public AnimationWatcher(Animation animation, float speed, @Nullable AnimationStarter.AnimationData nextAnimation) {
+	public AnimationWatcher(Animation animation, float speed, boolean doNotTransitToNull, @Nullable AnimationStarter.AnimationData nextAnimation) {
 		Requirements.greaterThan(speed, 0);
 		this.startTime = new FreezableTime(System.currentTimeMillis());
 		this.animation = animation;
 		this.speed = speed;
 		this.nextAnimation = nextAnimation;
+		this.doNotTransitToNull = doNotTransitToNull;
 	}
 
 	public boolean requiresInit() {
@@ -54,6 +56,8 @@ public class AnimationWatcher {
 			} else {
 				return TransitionWatcher.from(this, nextAnimation);
 			}
+		} else if (doNotTransitToNull) {
+			return null;
 		} else {
 			return TransitionWatcher.toNullDestination(this, AnimationConstants.BASIC_TRANSITION_TIME);
 		}
@@ -167,6 +171,7 @@ public class AnimationWatcher {
 			buffer.writeResourceLocation(watcher.getAnimation().getId());
 			buffer.writeInt(watcher.getExistingTime());
 			buffer.writeFloat(watcher.speed);
+			buffer.writeBoolean(watcher.doNotTransitToNull);
 
 			boolean hasNextAnimation = watcher.nextAnimation != null;
 			buffer.writeBoolean(watcher.nextAnimation != null);
@@ -179,6 +184,7 @@ public class AnimationWatcher {
 			Animation animation = AnimationRegistry.getAnimation(buffer.readResourceLocation());
 			int existingTime = buffer.readInt();
 			float speed = buffer.readFloat();
+			boolean transitNo = buffer.readBoolean();
 
 			AnimationStarter.AnimationData nextAnimationData = null;
 			boolean hasNextAnimation = buffer.readBoolean();
@@ -186,7 +192,7 @@ public class AnimationWatcher {
 				nextAnimationData = AnimationStarter.AnimationData.decode(buffer);
 			}
 
-			AnimationWatcher watcher = new AnimationWatcher(animation, speed, nextAnimationData);
+			AnimationWatcher watcher = new AnimationWatcher(animation, speed, transitNo, nextAnimationData);
 			watcher.startTime.set(System.currentTimeMillis() - existingTime);
 
 			return watcher;

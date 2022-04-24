@@ -2,7 +2,7 @@ package ru.timeconqueror.timecore.animation.component;
 
 import net.minecraft.util.math.vector.Vector3f;
 
-public class KeyFrame {
+public class KeyFrame implements IKeyFrame {
     /**
      * in ms
      */
@@ -18,14 +18,17 @@ public class KeyFrame {
         return new KeyFrame(startTime, modelIdleVec);
     }
 
+    @Override
     public int getTime() {
         return time;
     }
 
-    public Vector3f getVec() {
+    @Override
+    public Vector3f getVec(KeyFrameState state) {
         return vec;
     }
 
+    @Override
     public KeyFrame withNewTime(int time) {
         return new KeyFrame(time, vec);
     }

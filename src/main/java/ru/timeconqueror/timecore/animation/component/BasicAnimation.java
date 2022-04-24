@@ -99,9 +99,9 @@ public class BasicAnimation extends Animation {
             reversedOptions = new HashMap<>();
 
             options.forEach((s, boneOption) -> {
-                List<KeyFrame> rotations = reverseKeyFrames(boneOption.getKeyFrames(Channel.ROTATION));
-                List<KeyFrame> positions = reverseKeyFrames(boneOption.getKeyFrames(Channel.POSITION));
-                List<KeyFrame> scales = reverseKeyFrames(boneOption.getKeyFrames(Channel.SCALE));
+                List<IKeyFrame> rotations = reverseKeyFrames(boneOption.getKeyFrames(Channel.ROTATION));
+                List<IKeyFrame> positions = reverseKeyFrames(boneOption.getKeyFrames(Channel.POSITION));
+                List<IKeyFrame> scales = reverseKeyFrames(boneOption.getKeyFrames(Channel.SCALE));
 
                 reversedOptions.put(boneOption.getName(), new BoneOption(boneOption.getName(), rotations, positions, scales));
             });
@@ -110,12 +110,12 @@ public class BasicAnimation extends Animation {
         return new BasicAnimation(loopMode, new ResourceLocation(id.getNamespace(), id.getPath() + "-reversed"), name + "-reversed", length, reversedOptions);
     }
 
-    private List<KeyFrame> reverseKeyFrames(List<KeyFrame> keyFrames) {
+    private List<IKeyFrame> reverseKeyFrames(List<IKeyFrame> keyFrames) {
         if (keyFrames.isEmpty()) return Empty.list();
 
         return keyFrames.stream()
-                .sorted(Collections.reverseOrder(Comparator.comparingInt(KeyFrame::getTime)))
-                .map(keyFrame -> new KeyFrame(length - keyFrame.getTime(), keyFrame.getVec()))
+                .sorted(Collections.reverseOrder(Comparator.comparingInt(IKeyFrame::getTime)))
+                //  .map(keyFrame -> new KeyFrame(length - keyFrame.getTime(), keyFrame.getVec(zzz)))//FIXME
                 .collect(Collectors.toList());
     }
 
@@ -124,16 +124,16 @@ public class BasicAnimation extends Animation {
             super(source);
         }
 
-        private static KeyFrame calcStartKeyFrame(BasicAnimation sourceAnimation, List<KeyFrame> sourceKeyFrames, Vector3f modelIdleVec, int existingTime) {
-            Vector3f vec = KeyFrameInterpolator.findInterpolationVec(sourceAnimation, sourceKeyFrames, modelIdleVec, existingTime);
+        private static IKeyFrame calcStartKeyFrame(BasicAnimation sourceAnimation, List<IKeyFrame> sourceKeyFrames, Vector3f modelIdleVec, int existingTime) {
+            Vector3f vec = KeyFrameInterpolator.findInterpolationVec(sourceAnimation, sourceKeyFrames, existingTime);
             if (vec != null) return new KeyFrame(0, vec);
 
             return KeyFrame.createIdleKeyFrame(0, modelIdleVec);
         }
 
-        private static Pair<KeyFrame, KeyFrame> makeTransitionPair(BasicAnimation source, TimeModelPart part, BoneOption option, Channel channel, TransitionFactoryWithDestination destFactory, int existingTime, int transitionTime) {
-            KeyFrame startKeyFrame = calcStartKeyFrame(source, option.getKeyFrames(channel), channel.getDefaultVector(part), existingTime);
-            KeyFrame endKeyFrame = destFactory.getDestKeyFrame(part, option.getName(), channel, transitionTime);
+        private static Pair<IKeyFrame, IKeyFrame> makeTransitionPair(BasicAnimation source, TimeModelPart part, BoneOption option, Channel channel, TransitionFactoryWithDestination destFactory, int existingTime, int transitionTime) {
+            IKeyFrame startKeyFrame = calcStartKeyFrame(source, option.getKeyFrames(channel), channel.getDefaultVector(part), existingTime);
+            IKeyFrame endKeyFrame = destFactory.getDestKeyFrame(part, option.getName(), channel, transitionTime);
             return Pair.of(startKeyFrame, endKeyFrame);
         }
 
@@ -150,9 +150,9 @@ public class BasicAnimation extends Animation {
             source.getOptions().forEach((name, sourceBone) -> {
                 TimeModelPart part = model.tryGetPart(name);
                 if (part != null) {
-                    Pair<KeyFrame, KeyFrame> rotations = makeTransitionPair(source, part, sourceBone, Channel.ROTATION, destFactory, existingTime, transitionTime);
-                    Pair<KeyFrame, KeyFrame> positions = makeTransitionPair(source, part, sourceBone, Channel.POSITION, destFactory, existingTime, transitionTime);
-                    Pair<KeyFrame, KeyFrame> scales = makeTransitionPair(source, part, sourceBone, Channel.SCALE, destFactory, existingTime, transitionTime);
+                    Pair<IKeyFrame, IKeyFrame> rotations = makeTransitionPair(source, part, sourceBone, Channel.ROTATION, destFactory, existingTime, transitionTime);
+                    Pair<IKeyFrame, IKeyFrame> positions = makeTransitionPair(source, part, sourceBone, Channel.POSITION, destFactory, existingTime, transitionTime);
+                    Pair<IKeyFrame, IKeyFrame> scales = makeTransitionPair(source, part, sourceBone, Channel.SCALE, destFactory, existingTime, transitionTime);
                     transitionBones.add(new Transition.BoneOption(name, rotations, positions, scales));
                 }
             });
@@ -169,9 +169,9 @@ public class BasicAnimation extends Animation {
 
                 TimeModelPart part = model.tryGetPart(destBoneName);
                 if (part != null) {
-                    Pair<KeyFrame, KeyFrame> rotations = makeTransitionPairFromIdle(part, destBoneName, Channel.ROTATION, destFactory, transitionTime);
-                    Pair<KeyFrame, KeyFrame> positions = makeTransitionPairFromIdle(part, destBoneName, Channel.POSITION, destFactory, transitionTime);
-                    Pair<KeyFrame, KeyFrame> scales = makeTransitionPairFromIdle(part, destBoneName, Channel.SCALE, destFactory, transitionTime);
+                    Pair<IKeyFrame, IKeyFrame> rotations = makeTransitionPairFromIdle(part, destBoneName, Channel.ROTATION, destFactory, transitionTime);
+                    Pair<IKeyFrame, IKeyFrame> positions = makeTransitionPairFromIdle(part, destBoneName, Channel.POSITION, destFactory, transitionTime);
+                    Pair<IKeyFrame, IKeyFrame> scales = makeTransitionPairFromIdle(part, destBoneName, Channel.SCALE, destFactory, transitionTime);
                     transitionBones.add(new Transition.BoneOption(destBoneName, rotations, positions, scales));
                 }
             }
@@ -185,17 +185,17 @@ public class BasicAnimation extends Animation {
             return options != null ? options.values() : Empty.list();
         }
 
-        private static KeyFrame makeDestKeyFrame(TimeModelPart part, @Nullable BoneOption destBone, Channel channel, int transitionTime) {
+        private static IKeyFrame makeDestKeyFrame(TimeModelPart part, @Nullable BoneOption destBone, Channel channel, int transitionTime) {
             if (destBone == null) {
                 return KeyFrame.createIdleKeyFrame(transitionTime, channel.getDefaultVector(part));
             }
 
-            List<KeyFrame> keyFrames = destBone.getKeyFrames(channel);
+            List<IKeyFrame> keyFrames = destBone.getKeyFrames(channel);
             if (keyFrames.isEmpty()) {
                 return KeyFrame.createIdleKeyFrame(transitionTime, channel.getDefaultVector(part));
             }
 
-            KeyFrame keyFrame = keyFrames.get(0);
+            IKeyFrame keyFrame = keyFrames.get(0);
             if (keyFrame.getTime() != 0) {//FIXME should have new logic
                 return KeyFrame.createIdleKeyFrame(transitionTime, channel.getDefaultVector(part));
             }
@@ -204,7 +204,7 @@ public class BasicAnimation extends Animation {
         }
 
         @Override
-        public @NotNull KeyFrame getDestKeyFrame(TimeModelPart part, String boneName, Channel channel, int transitionTime) {
+        public @NotNull IKeyFrame getDestKeyFrame(TimeModelPart part, String boneName, Channel channel, int transitionTime) {
             BasicAnimation dest = getSourceTyped();
             boolean destContainsSameBone = dest.getOptions() != null && dest.getOptions().containsKey(boneName);
             BoneOption destBone = destContainsSameBone ? dest.getOptions().get(boneName) : null;

@@ -15,17 +15,17 @@ public class BoneOption {
     /**
      * Immutable rotation keyframe list
      */
-    private final List<KeyFrame> rotations;
+    private final List<IKeyFrame> rotations;
     /**
      * Immutable position keyframe list
      */
-    private final List<KeyFrame> positions;
+    private final List<IKeyFrame> positions;
     /**
      * Immutable scale keyframe list
      */
-    private final List<KeyFrame> scales;
+    private final List<IKeyFrame> scales;
 
-    public BoneOption(String boneName, List<KeyFrame> rotations, List<KeyFrame> positions, List<KeyFrame> scales) {
+    public BoneOption(String boneName, List<IKeyFrame> rotations, List<IKeyFrame> positions, List<IKeyFrame> scales) {
         this.boneName = boneName;
         this.rotations = rotations;
         this.positions = positions;
@@ -33,18 +33,17 @@ public class BoneOption {
     }
 
     public void apply(Animation animation, AnimationLayer layer, TimeModelPart piece, int existingTime) {
-        Vector3f rotateVec = KeyFrameInterpolator.findInterpolationVec(animation, rotations, new Vector3f(0, 0, 0), existingTime);
+        Vector3f rotateVec = KeyFrameInterpolator.findInterpolationVec(animation, rotations, existingTime);
         if (rotateVec != null) {
             AnimationUtils.applyRotation(piece, layer, rotateVec);
         }
 
-        Vector3f posVec = KeyFrameInterpolator.findInterpolationVec(animation, positions, piece.offset, existingTime);
+        Vector3f posVec = KeyFrameInterpolator.findInterpolationVec(animation, positions, existingTime);
         if (posVec != null) {
             AnimationUtils.applyOffset(piece, layer, posVec);
         }
 
-        Vector3f currentScale = piece.getScaleFactor();
-        Vector3f scaleVec = KeyFrameInterpolator.findInterpolationVec(animation, scales, currentScale, existingTime);
+        Vector3f scaleVec = KeyFrameInterpolator.findInterpolationVec(animation, scales, existingTime);
         if (scaleVec != null) {
             AnimationUtils.applyScale(piece, layer, scaleVec);
         }
@@ -54,7 +53,7 @@ public class BoneOption {
         return boneName;
     }
 
-    public List<KeyFrame> getKeyFrames(Channel channel) {
+    public List<IKeyFrame> getKeyFrames(Channel channel) {
         if (channel == Channel.ROTATION) {
             return rotations;
         } else if (channel == Channel.POSITION) {
