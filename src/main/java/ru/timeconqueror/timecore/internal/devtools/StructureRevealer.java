@@ -2,16 +2,12 @@ package ru.timeconqueror.timecore.internal.devtools;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
-import net.minecraft.core.SectionPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ChunkMap;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.levelgen.feature.StructureFeature;
-import net.minecraft.world.level.levelgen.structure.StructurePiece;
-import net.minecraft.world.level.levelgen.structure.StructureStart;
-import net.minecraft.world.phys.AABB;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
@@ -142,16 +138,17 @@ public class StructureRevealer {
         Collection<StructureFeature<?>> structures = subscribedStructures.get(player.getUUID());
 
         for (StructureFeature<?> structure : structures) {
-            List<? extends StructureStart<?>> starts = world.startsForFeature(SectionPos.of(pos, 0), structure);
-
-            starts.forEach(start -> {
-                synchronized (start.getPieces()) {
-                    for (StructurePiece component : start.getPieces()) {
-                        AABB boundingBox = AABB.of(component.getBoundingBox());
-                        subscribedStructuresInChunk.add(new StructureData(boundingBox, structure, world));
-                    }
-                }
-            });
+            //TODO FIXME
+//            List<? extends StructureStart<?>> starts = world.startsForFeature(SectionPos.of(pos, 0), structure);
+//
+//            starts.forEach(start -> {
+//                synchronized (start.getPieces()) {
+//                    for (StructurePiece component : start.getPieces()) {
+//                        AABB boundingBox = AABB.of(component.getBoundingBox());
+//                        subscribedStructuresInChunk.add(new StructureData(boundingBox, structure, world));
+//                    }
+//                }
+//            });
         }
 
         return subscribedStructuresInChunk;

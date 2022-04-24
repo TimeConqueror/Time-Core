@@ -56,7 +56,7 @@ public class Layer implements AnimationLayer {
 
     void setAnimation(AnimationStarter.AnimationData data) {
         if (data.getTransitionTime() == 0) {
-            animationWatcher = new AnimationWatcher(data.getAnimation(), data.getSpeedFactor(), data.getNextAnimationData());
+            animationWatcher = new AnimationWatcher(data);
         } else {
             if (animationWatcher == null) {
                 animationWatcher = new TransitionWatcher(data.getTransitionTime(), data);

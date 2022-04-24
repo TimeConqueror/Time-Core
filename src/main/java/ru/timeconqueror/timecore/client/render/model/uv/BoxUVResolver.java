@@ -8,7 +8,6 @@ public class BoxUVResolver implements UVResolver {
     private final Vec2i uv;
     private final Vector3f size;
 
-
     public BoxUVResolver(Vec2i uv, Vector3f size) {
         this.uv = uv;
         this.size = size;
