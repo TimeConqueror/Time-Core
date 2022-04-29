@@ -55,15 +55,15 @@ public class KeyFrameInterpolator {
     }
 
     private Vector3f findInterpolationVec() {
-        findIKeyFrames(frames, existingTime);
+        findKeyFrames(frames, existingTime);
 
         // at this point both after and before frames are not null!
         // because findIKeyFrames sets both of them
         if (next == null) {
             //noinspection ConstantConditions
-            return prev.getVec(KeyFrameState.NEXT).copy();
+            return prev.getVec(KeyFrameState.PREV).copy();
         } else if (prev == null) {
-            return next.getVec(KeyFrameState.PREV).copy();
+            return next.getVec(KeyFrameState.NEXT).copy();
         }
 
         if (prev instanceof CatmullRomKeyFrame || next instanceof CatmullRomKeyFrame) {
@@ -73,7 +73,7 @@ public class KeyFrameInterpolator {
         }
     }
 
-    private void findIKeyFrames(List<IKeyFrame> frames, int existingTime) {
+    private void findKeyFrames(List<IKeyFrame> frames, int existingTime) {
         for (int i = 0; i < frames.size(); i++) {
             IKeyFrame frame = frames.get(i);
 
