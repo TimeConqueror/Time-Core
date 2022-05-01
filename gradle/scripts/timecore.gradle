@@ -73,7 +73,7 @@ jar.finalizedBy('reobfShadowJar')
 
 compileKotlin {
     kotlinOptions {
-        jvmTarget = '8'
+        jvmTarget = '1.8'
         languageVersion = '1.4'
         freeCompilerArgs = Arrays.asList("-Xjvm-default=all", "-Xopt-in=kotlin.RequiresOptIn")
     }
