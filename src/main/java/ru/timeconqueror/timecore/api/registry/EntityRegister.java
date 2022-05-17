@@ -48,7 +48,7 @@ import java.util.function.Supplier;
  *    {@literal @}AutoRegistrable
  *     private static final EntityRegister REGISTER = new EntityRegister(TimeCore.MODID);
  *
- *     public static final EntityType&lt;FloroEntity> FLORO = REGISTER.registerLiving("floro",
+ *     public static final EntityType<FloroEntity> FLORO = REGISTER.registerLiving("floro",
  *             EntityType.Builder.of(FloroEntity::new, EntityClassification.MONSTER)
  *                     .setTrackingRange(80)
  *                     .setShouldReceiveVelocityUpdates(true)
