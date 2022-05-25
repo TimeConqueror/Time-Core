@@ -74,6 +74,11 @@ public interface UVDefinition {
 
                 for (Direction direction : DIRECTIONS) {
                     FaceUVDefinition face = context.deserialize(json.get(direction.getName()), FaceUVDefinition.class);
+
+                    if (face == null) {
+                        face = new FaceUVDefinition(new Vec2i(), new Vec2i());
+                    }
+
                     map.put(direction, face);
 
                 }
