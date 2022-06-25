@@ -62,7 +62,7 @@ public class TimeModelPart extends ModelPart {
 
     @Override
     public void translateAndRotate(PoseStack matrixStackIn) {
-        matrixStackIn.translate(offset.x() * (1 / 16F) * scaleFactor.x(), offset.y() * (1 / 16F) * scaleFactor.y(), offset.z() * (1 / 16F) * scaleFactor.z());
+        matrixStackIn.translate(offset.x() * (1 / 16F), offset.y() * (1 / 16F), offset.z() * (1 / 16F));
 
         super.translateAndRotate(matrixStackIn);
     }
