@@ -48,4 +48,9 @@ public class TimeEntityModel<T extends Entity> extends EntityModel<T> implements
     public TimeModelPart getPart(String partName) {
         return model.getPart(partName);
     }
+
+    @Override
+    public TimeModelPart getRoot() {
+        return model.getRoot();
+    }
 }

@@ -77,6 +77,11 @@ public class AnimationStarter {
         return data;
     }
 
+    @Override
+    public String toString() {
+        return data.toString();
+    }
+
     public static class AnimationData {
         private final Animation animation;
         @Nullable
@@ -156,6 +161,18 @@ public class AnimationStarter {
         @Nullable
         public AnimationData getNextAnimationData() {
             return nextAnimationData;
+        }
+
+        @Override
+        public String toString() {
+            return "AnimationData{" +
+                    "animation=" + animation +
+                    ", nextAnimationData=" + nextAnimationData +
+                    ", ignorable=" + ignorable +
+                    ", transitionTime=" + transitionTime +
+                    ", speedFactor=" + speedFactor +
+                    ", doNotTransitToNull=" + doNotTransitToNull +
+                    '}';
         }
     }
 }
