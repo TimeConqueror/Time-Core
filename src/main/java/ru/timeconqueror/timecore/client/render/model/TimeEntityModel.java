@@ -44,4 +44,9 @@ public class TimeEntityModel<T extends Entity> extends EntityModel<T> implements
     public @Nullable TimeModelPart tryGetPart(String pieceName) {
         return model.tryGetPart(pieceName);
     }
+
+    @Override
+    public TimeModelPart getRoot() {
+        return model.getRoot();
+    }
 }

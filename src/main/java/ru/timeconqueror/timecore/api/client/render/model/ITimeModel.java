@@ -13,6 +13,9 @@ public interface ITimeModel {
     //FIXME javadoc
     TimeModelPart getPart(String partName);
 
+    //FIXME javadoc
+    TimeModelPart getRoot();
+
     /**
      * Should be called before animation applying & render.
      */
