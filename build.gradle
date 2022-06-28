@@ -184,8 +184,8 @@ dependencies {
     }
 
     groovy.lang.Closure withoutAnnotations = { exclude group: 'org.jetbrains', module: 'annotations' }
-    library "org.jetbrains.kotlin:kotlin-stdlib-jdk8", withoutAnnotations
-    library "org.jetbrains.kotlin:kotlin-reflect", withoutAnnotations
+    shade "org.jetbrains.kotlin:kotlin-stdlib-jdk8", withoutAnnotations
+    shade "org.jetbrains.kotlin:kotlin-reflect", withoutAnnotations
 
     if (System.getProperty("idea.sync.active") != "true") {
         annotationProcessor("org.spongepowered:mixin:0.8.5:processor")
@@ -211,6 +211,7 @@ shadowJar {
 
 reobf {
     shadowJar {}
+    jar {}
 }
 
 tasks.build.dependsOn reobfShadowJar
