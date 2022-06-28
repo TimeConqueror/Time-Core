@@ -13,12 +13,6 @@ import java.util.Arrays;
 import java.util.Optional;
 
 public class ReflectionHelper {
-    private static final UnlockedField<Field, Integer> F_MODIFIERS = findField(Field.class, "modifiers");
-
-    static {
-        F_MODIFIERS.getField().setAccessible(true);
-    }
-
     public static boolean isFinal(Field f) {
         return Modifier.isFinal(f.getModifiers());
     }
@@ -34,9 +28,11 @@ public class ReflectionHelper {
     /**
      * Removes {@code final} modifier from field.
      */
+    @Deprecated // deleted in 1.18 due to security changes in JDK 12
     public static void unfinalize(Field f) throws IllegalAccessException {
         if (isFinal(f)) {
-            Field modifiersField = F_MODIFIERS.getField();
+            UnlockedField<Field, Object> fModifiers = findField(Field.class, "modifiers");
+            Field modifiersField = fModifiers.getField();
             modifiersField.setInt(f, f.getModifiers() & ~Modifier.FINAL);
         }
     }
