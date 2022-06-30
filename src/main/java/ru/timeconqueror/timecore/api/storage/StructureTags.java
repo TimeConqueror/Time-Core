@@ -31,9 +31,5 @@ public class StructureTags {
     }
 
     public enum Tag {
-        /**
-         * If applied, the structure won't be broken by lakes.
-         */
-        DISABLE_BREAKING_BY_LAKES
     }
 }

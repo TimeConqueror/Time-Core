@@ -31,7 +31,7 @@ public class DelayedAction<T, EXTRA_DATA> {
     }
 
     /**
-     * Sets task, that will be run, when the predicate from {@link #setDelayPredicate(Predicate)} will return true.
+     * Sets task, that will be run, when the predicate from {@link #setDelay(Predicate)} will return true.
      * <p>
      * Default: () -> {}.
      * <p>
@@ -51,7 +51,7 @@ public class DelayedAction<T, EXTRA_DATA> {
      *
      * @see StandardDelayPredicates
      */
-    public DelayedAction<T, EXTRA_DATA> setDelayPredicate(Predicate<AnimationWatcher> delayPredicate) {
+    public DelayedAction<T, EXTRA_DATA> setDelay(Predicate<AnimationWatcher> delayPredicate) {
         this.actionDelayPredicate = delayPredicate;
 
         return this;

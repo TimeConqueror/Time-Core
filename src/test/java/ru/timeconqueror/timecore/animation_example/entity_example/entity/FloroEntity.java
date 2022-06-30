@@ -58,13 +58,13 @@ public class FloroEntity extends Monster implements RangedAttackMob, AnimatedObj
 
     static {
         RANGED_ATTACK_ACTION = Lazy.of(() -> new DelayedAction<FloroEntity, AnimatedRangedAttackGoal.ActionData>(TimeCore.rl("floro/shoot"), new AnimationStarter(EntityAnimations.floroShoot).setSpeed(1.5F), "attack")
-                .setDelayPredicate(StandardDelayPredicates.whenPassed(0.5F))
+                .setDelay(StandardDelayPredicates.whenPassed(0.5F))
                 .setOnCall(AnimatedRangedAttackGoal.STANDARD_RUNNER));
         REVEALING_ACTION = Lazy.of(() -> new DelayedAction<FloroEntity, Object>(TimeCore.rl("floro/reveal"), new AnimationStarter(EntityAnimations.floroReveal).setTransitionTime(0), LAYER_SHOWING)
-                .setDelayPredicate(StandardDelayPredicates.onEnd())
+                .setDelay(StandardDelayPredicates.onEnd())
                 .setOnCall((floroEntity, o) -> floroEntity.setHidden(false)));
         HIDING_ACTION = Lazy.of(() -> new DelayedAction<FloroEntity, Void>(TimeCore.rl("floro/hiding"), new AnimationStarter(EntityAnimations.floroHide).setNextAnimation(AnimationAPI.createStarter(EntityAnimations.floroHidden).setTransitionTime(0)), LAYER_SHOWING)
-                .setDelayPredicate(StandardDelayPredicates.onEnd())
+                .setDelay(StandardDelayPredicates.onEnd())
                 .setOnCall((floroEntity, nothing) -> floroEntity.setHidden(true)));
     }
 

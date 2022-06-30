@@ -20,7 +20,6 @@ import ru.timeconqueror.timecore.common.capability.CoffeeCapabilityManager;
 import ru.timeconqueror.timecore.internal.devtools.StructureRevealer;
 
 @Mod(TimeCore.MODID)//todo add null check in ObjectHolder
-//TODO setDealyPredicate -> setDelay
 //TODO full time delayed actions
 //TODO add readable exception when there's no animation file, for now it's just nullpointer
 //FIXME repackage stuff before first release!
