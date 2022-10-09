@@ -23,6 +23,10 @@ public class TimeModelSet implements IResourceManagerReloadListener {
     private Map<TimeModelLocation, TimeModelDefinition> roots = ImmutableMap.of();
 
     public TimeModelPart bakeRoot(TimeModelLocation location) {
+        if (!models.contains(location)) {
+            throw new IllegalArgumentException(String.format("Location '%s' was used before it was registered!", location));
+        }
+
         TimeModelDefinition definition = this.roots.get(location);
         if (definition == null) {
             throw new IllegalArgumentException("No model was found with location " + location);
