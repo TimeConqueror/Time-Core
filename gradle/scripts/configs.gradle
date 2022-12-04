@@ -4,7 +4,11 @@ ext.updateConfigs = new Runnable() {
     @Override
     void run() {
         ext.buildProps = parseConfig(buildPropsFile)
-        ext.secretProps = parseConfig(file("secret.properties"))
+
+        def secrets = file("secret.properties")
+        if (secrets.exists()) {
+            ext.secretProps = parseConfig(secrets)
+        }
     }
 }
 
