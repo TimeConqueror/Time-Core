@@ -14,6 +14,7 @@ import java.util.Map;
 public class TimeModel extends Model implements ITimeModel {
     public static final String INTERNAL_ROOT_NAME = "i$root";
     private final TimeModelLocation location;
+    @Deprecated // TODO remove 1.18
     private final float scaleMultiplier;
     private final ReloadableContainer container = new ReloadableContainer();
 

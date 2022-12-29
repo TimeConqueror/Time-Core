@@ -6,16 +6,20 @@ import net.minecraft.client.renderer.model.ModelRenderer;
 import net.minecraft.util.math.vector.Vector3f;
 import org.jetbrains.annotations.NotNull;
 import ru.timeconqueror.timecore.TimeCore;
+import ru.timeconqueror.timecore.api.client.render.model.ITimeModelPart;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-//TODO add method to control it so nobody hasn't dig into how it works
-//TODO name rotation be radians, because for now it's unclear
-public class TimeModelPart extends ModelRenderer {
-    private final Vector3f scaleFactor = new Vector3f(1, 1, 1);
+public class TimeModelPart extends ModelRenderer implements ITimeModelPart {
+    private final Vector3f scale = new Vector3f(1, 1, 1);
+    @Deprecated // use #getOffset
     public Vector3f offset = new Vector3f();
+    /**
+     * in radians
+     */
+    private final Vector3f rotation;
     public Vector3f startRotationRadians;
     private final Map<String, TimeModelPart> children;
     public List<TimeModelCube> cubes;
@@ -25,10 +29,8 @@ public class TimeModelPart extends ModelRenderer {
 
     public TimeModelPart(int textureWidth, int textureHeight, Vector3f startRotRadians, @NotNull List<TimeModelCube> cubes, Map<String, TimeModelPart> children, boolean neverRender) {
         super(textureWidth, textureHeight, 0, 0);
-        startRotationRadians = startRotRadians;
-        this.xRot = startRotRadians.x();
-        this.yRot = startRotRadians.y();
-        this.zRot = startRotRadians.z();
+        this.startRotationRadians = startRotRadians;
+        this.rotation = startRotRadians.copy();
         this.visible = !neverRender;
         this.children = children;
         this.cubes = cubes;
@@ -43,7 +45,7 @@ public class TimeModelPart extends ModelRenderer {
 
             this.translateAndRotate(matrixStackIn);
 
-            matrixStackIn.scale(scaleFactor.x(), scaleFactor.y(), scaleFactor.z());
+            matrixStackIn.scale(scale.x(), scale.y(), scale.z());
 
             lastTransform = matrixStackIn.last();
 
@@ -59,8 +61,13 @@ public class TimeModelPart extends ModelRenderer {
 
     @Override
     public void translateAndRotate(MatrixStack matrixStackIn) {
-        matrixStackIn.translate(offset.x() * (1 / 16F), offset.y() * (1 / 16F), offset.z() * (1 / 16F));
+        //TODO 1.18+ removal
+        setRotations();
+        //^
 
+        matrixStackIn.translate(offset.x() / 16F, offset.y() / 16F, offset.z() / 16F);
+
+        //TODO 1.18+ removal -> pull inners here and use rotation instead of xRot, etc.
         super.translateAndRotate(matrixStackIn);
     }
 
@@ -70,10 +77,7 @@ public class TimeModelPart extends ModelRenderer {
         }
     }
 
-    /**
-     * Transforms current matrix stack's entry directly to this part.
-     * Does NOT require calling the same method from parent parts.
-     */
+    @Override
     public void applyTransform(MatrixStack stack) {
         if (!visible) return;
 
@@ -88,25 +92,51 @@ public class TimeModelPart extends ModelRenderer {
         last.normal().load(lastTransform.normal());
     }
 
+    @Override
+    public Vector3f getTranslation() {
+        return offset;
+    }
+
+    @Override
+    public Vector3f getRotation() {
+        return rotation;
+    }
+
+    @Override
+    public Vector3f getScale() {
+        return scale;
+    }
+
+    @Deprecated // use #getScale().set
     public void setScaleFactor(float scaleX, float scaleY, float scaleZ) {
-        this.scaleFactor.set(scaleX, scaleY, scaleZ);
+        this.scale.set(scaleX, scaleY, scaleZ);
     }
 
+    @Deprecated // use getScale
     public Vector3f getScaleFactor() {
-        return scaleFactor;
+        return getScale();
     }
 
+    @Override
     public Map<String, TimeModelPart> getChildren() {
         return Collections.unmodifiableMap(children);
     }
 
-    protected void reset() {
+    @Override
+    public void reset() {
         transformValid = false;
-        xRot = startRotationRadians.x();
-        yRot = startRotationRadians.y();
-        zRot = startRotationRadians.z();
-
+        rotation.set(startRotationRadians.x(), startRotationRadians.y(), startRotationRadians.z());
         offset.set(0, 0, 0);
-        scaleFactor.set(1, 1, 1);
+        scale.set(1, 1, 1);
+
+        //TODO 1.18+ removal
+        setRotations();
+    }
+
+    @Deprecated // TODO 1.18 removal
+    private void setRotations() {
+        this.xRot = rotation.x();
+        this.yRot = rotation.y();
+        this.zRot = rotation.z();
     }
 }

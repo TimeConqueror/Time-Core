@@ -8,8 +8,17 @@ import java.util.function.Function;
 public class ModelConfiguration {
     private final TimeModelLocation location;
     private final Function<ResourceLocation, RenderType> renderTypeProvider;
+    @Deprecated // 1.18 removal, use #getRoot.getScale().set where needed
     private final float scale;
 
+    public ModelConfiguration(TimeModelLocation location, Function<ResourceLocation, RenderType> renderTypeProvider) {
+        this.location = location;
+        this.renderTypeProvider = renderTypeProvider;
+
+        this.scale = 1;
+    }
+
+    @Deprecated
     public ModelConfiguration(TimeModelLocation location, Function<ResourceLocation, RenderType> renderTypeProvider, float scale) {
         this.location = location;
         this.renderTypeProvider = renderTypeProvider;

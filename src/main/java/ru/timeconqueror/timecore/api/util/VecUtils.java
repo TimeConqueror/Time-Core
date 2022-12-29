@@ -18,7 +18,7 @@ public class VecUtils {
         float scaleY = (ySize / 2) / Math.abs(direction.y());
         float scaleZ = (zSize / 2) / Math.abs(direction.z());
         float scale = MathUtils.min(scaleX, scaleY, scaleZ);
-        scaleFirst(direction, scale, scale, scale);
+        direction.mul(scale, scale, scale);
     }
 
     /**
@@ -70,7 +70,16 @@ public class VecUtils {
         first.set(first.x() - (float) second.x, first.y() - (float) second.y, first.z() - (float) second.z);
     }
 
+    @Deprecated // use Vector3f#mul, will be removed in 1.18+
     public static void scaleFirst(Vector3f first, float x, float y, float z) {
         first.set(first.x() * x, first.y() * y, first.z() * z);
+    }
+
+    public static void scaleFirst(Vector3f first, Vector3f second) {
+        first.mul(second.x(), second.y(), second.z());
+    }
+
+    public static void setFirst(Vector3f first, Vector3f second) {
+        first.set(second.x(), second.y(), second.z());
     }
 }

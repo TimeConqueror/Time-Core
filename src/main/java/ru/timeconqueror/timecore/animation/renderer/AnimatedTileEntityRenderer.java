@@ -23,6 +23,7 @@ public abstract class AnimatedTileEntityRenderer<T extends TileEntity & Animated
         getModel().reset();
 
         tileEntityIn.getSystem().getAnimationManager().applyAnimations(getModel());
+        setupAnimations(tileEntityIn, matrixStackIn, partialTicks);
 
         ResourceLocation texture = getTexture(tileEntityIn);
         this.renderer.textureManager.bind(texture);
@@ -34,6 +35,16 @@ public abstract class AnimatedTileEntityRenderer<T extends TileEntity & Animated
         model.renderToBuffer(matrixStackIn, bufferIn.getBuffer(model.renderType(texture)), combinedLightIn, combinedOverlayIn, 1, 1, 1, 1);
 
         matrixStackIn.popPose();
+    }
+
+    /**
+     * Method, which can be used to apply some manually handled transformation.
+     * Be attentive, the animation transformation is already applied on parts at this point.
+     * It's advisable to use math operations on part's transformation instead of overwriting it,
+     * because the second one may have unsuspected behaviour.
+     */
+    protected void setupAnimations(T animatedObject, MatrixStack matrixStackIn, float partialTick) {
+        matrixStackIn.scale(-1.0F, -1.0F, 1.0F); // to mirror models to a normal state
     }
 
     protected abstract ResourceLocation getTexture(T tileEntityIn);

@@ -7,8 +7,9 @@ import java.util.function.Function;
 
 public enum Channel {
     ROTATION(part -> new Vector3f(0, 0, 0)),
-    POSITION(part -> part.offset),
-    SCALE(TimeModelPart::getScaleFactor);
+    //TODO 1.18 rename to TRANSLATION
+    POSITION(TimeModelPart::getTranslation),
+    SCALE(TimeModelPart::getScale);
 
     private final Function<TimeModelPart, Vector3f> defaultVectorMaker;
 
