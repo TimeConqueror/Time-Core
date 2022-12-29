@@ -100,10 +100,10 @@ public class BasicAnimation extends Animation {
 
             options.forEach((s, boneOption) -> {
                 List<IKeyFrame> rotations = reverseKeyFrames(boneOption.getKeyFrames(Channel.ROTATION));
-                List<IKeyFrame> positions = reverseKeyFrames(boneOption.getKeyFrames(Channel.POSITION));
+                List<IKeyFrame> translations = reverseKeyFrames(boneOption.getKeyFrames(Channel.TRANSLATION));
                 List<IKeyFrame> scales = reverseKeyFrames(boneOption.getKeyFrames(Channel.SCALE));
 
-                reversedOptions.put(boneOption.getName(), new BoneOption(boneOption.getName(), rotations, positions, scales));
+                reversedOptions.put(boneOption.getName(), new BoneOption(boneOption.getName(), rotations, translations, scales));
             });
         }
 
@@ -151,9 +151,9 @@ public class BasicAnimation extends Animation {
                 TimeModelPart part = model.tryGetPart(name);
                 if (part != null) {
                     Pair<IKeyFrame, IKeyFrame> rotations = makeTransitionPair(source, part, sourceBone, Channel.ROTATION, destFactory, existingTime, transitionTime);
-                    Pair<IKeyFrame, IKeyFrame> positions = makeTransitionPair(source, part, sourceBone, Channel.POSITION, destFactory, existingTime, transitionTime);
+                    Pair<IKeyFrame, IKeyFrame> translations = makeTransitionPair(source, part, sourceBone, Channel.TRANSLATION, destFactory, existingTime, transitionTime);
                     Pair<IKeyFrame, IKeyFrame> scales = makeTransitionPair(source, part, sourceBone, Channel.SCALE, destFactory, existingTime, transitionTime);
-                    transitionBones.add(new Transition.BoneOption(name, rotations, positions, scales));
+                    transitionBones.add(new Transition.BoneOption(name, rotations, translations, scales));
                 }
             });
 
@@ -170,9 +170,9 @@ public class BasicAnimation extends Animation {
                 TimeModelPart part = model.tryGetPart(destBoneName);
                 if (part != null) {
                     Pair<IKeyFrame, IKeyFrame> rotations = makeTransitionPairFromIdle(part, destBoneName, Channel.ROTATION, destFactory, transitionTime);
-                    Pair<IKeyFrame, IKeyFrame> positions = makeTransitionPairFromIdle(part, destBoneName, Channel.POSITION, destFactory, transitionTime);
+                    Pair<IKeyFrame, IKeyFrame> translations = makeTransitionPairFromIdle(part, destBoneName, Channel.TRANSLATION, destFactory, transitionTime);
                     Pair<IKeyFrame, IKeyFrame> scales = makeTransitionPairFromIdle(part, destBoneName, Channel.SCALE, destFactory, transitionTime);
-                    transitionBones.add(new Transition.BoneOption(destBoneName, rotations, positions, scales));
+                    transitionBones.add(new Transition.BoneOption(destBoneName, rotations, translations, scales));
                 }
             }
 

@@ -6,9 +6,9 @@ import ru.timeconqueror.timecore.client.render.model.TimeModelPart;
 import java.util.function.Function;
 
 public enum Channel {
-    ROTATION(part -> new Vector3f(0, 0, 0)),
-    POSITION(part -> part.offset),
-    SCALE(TimeModelPart::getScaleFactor);
+    ROTATION(part -> new Vector3f(0, 0, 0)),//TODO getRotation?
+    TRANSLATION(TimeModelPart::getTranslation),
+    SCALE(TimeModelPart::getScale);
 
     private final Function<TimeModelPart, Vector3f> defaultVectorMaker;
 

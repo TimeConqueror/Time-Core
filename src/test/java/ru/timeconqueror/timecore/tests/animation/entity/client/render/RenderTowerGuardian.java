@@ -1,5 +1,6 @@
 package ru.timeconqueror.timecore.tests.animation.entity.client.render;
 
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.resources.ResourceLocation;
 import ru.timeconqueror.timecore.TimeCore;
@@ -11,7 +12,13 @@ import ru.timeconqueror.timecore.tests.animation.entity.entity.TowerGuardianEnti
 
 public class RenderTowerGuardian extends AnimatedLivingEntityRenderer<TowerGuardianEntity, TimeEntityModel<TowerGuardianEntity>> {
     public RenderTowerGuardian(EntityRendererProvider.Context context) {
-        super(context, new TimeEntityModel<>(ModelConfiguration.builder(AnimationTestEntityRenderers.TOWER_GUARDIAN).scaled(1.6F).build()), 0.5F);
+        super(context, new TimeEntityModel<>(ModelConfiguration.builder(AnimationTestEntityRenderers.TOWER_GUARDIAN).build()), 0.5F);
+    }
+
+    @Override
+    protected void setupAnimations(TowerGuardianEntity animatedObject, PoseStack matrixStackIn, float partialTick) {
+        super.setupAnimations(animatedObject, matrixStackIn, partialTick);
+        getModel().getRoot().getScale().mul(1.6F, 1.6F, 1.6F);
     }
 
     @Override

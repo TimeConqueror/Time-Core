@@ -294,7 +294,7 @@ public class ItemRegister extends ForgeRegister<Item> {
 
         /**
          * Runs task for current registrator directly after registering object.
-         * Entry for {@link #asRegistryObject()} is already registered in this moment, so it can be retrieved inside this task.
+         * Entry for {@link #asRegistryObject()} is already registered at this moment, so it can be retrieved inside this task.
          */
         public ItemRegisterChain<I> doAfterRegister(Consumer<ItemRegisterChain<I>> task) {
             runAfterRegistering(() -> task.accept(this));
@@ -303,7 +303,7 @@ public class ItemRegister extends ForgeRegister<Item> {
 
         /**
          * Runs task for current registrator  on client setup.
-         * Entry for {@link #asRegistryObject()} is already registered in this moment, so it can be retrieved inside this task.
+         * Entry for {@link #asRegistryObject()} is already registered at this moment, so it can be retrieved inside this task.
          */
         public ItemRegisterChain<I> doOnClientSetup(Consumer<ItemRegisterChain<I>> task) {
             runOnClientSetup(() -> task.accept(this));

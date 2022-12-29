@@ -17,18 +17,18 @@ public class BoneOption {
      */
     private final List<IKeyFrame> rotations;
     /**
-     * Immutable position keyframe list
+     * Immutable translation keyframe list
      */
-    private final List<IKeyFrame> positions;
+    private final List<IKeyFrame> translations;
     /**
      * Immutable scale keyframe list
      */
     private final List<IKeyFrame> scales;
 
-    public BoneOption(String boneName, List<IKeyFrame> rotations, List<IKeyFrame> positions, List<IKeyFrame> scales) {
+    public BoneOption(String boneName, List<IKeyFrame> rotations, List<IKeyFrame> translations, List<IKeyFrame> scales) {
         this.boneName = boneName;
         this.rotations = rotations;
-        this.positions = positions;
+        this.translations = translations;
         this.scales = scales;
     }
 
@@ -38,7 +38,7 @@ public class BoneOption {
             AnimationUtils.applyRotation(piece, layer, rotateVec);
         }
 
-        Vector3f posVec = KeyFrameInterpolator.findInterpolationVec(animation, positions, existingTime);
+        Vector3f posVec = KeyFrameInterpolator.findInterpolationVec(animation, translations, existingTime);
         if (posVec != null) {
             AnimationUtils.applyOffset(piece, layer, posVec);
         }
@@ -56,8 +56,8 @@ public class BoneOption {
     public List<IKeyFrame> getKeyFrames(Channel channel) {
         if (channel == Channel.ROTATION) {
             return rotations;
-        } else if (channel == Channel.POSITION) {
-            return positions;
+        } else if (channel == Channel.TRANSLATION) {
+            return translations;
         } else if (channel == Channel.SCALE) {
             return scales;
         }

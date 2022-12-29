@@ -18,12 +18,12 @@ import java.util.stream.Collectors;
 public class TimeModelSet implements ResourceManagerReloadListener {
     //TODO make TimeModelRegister#register be called upon reload!
     private final List<WeakReference<ReloadListener>> reloadListeners = new ArrayList<>();
-    private final Set<TimeModelLocation> models = ConcurrentHashMap.newKeySet();
+    private final Set<TimeModelLocation> modelLocations = ConcurrentHashMap.newKeySet();
 
     private Map<TimeModelLocation, TimeModelDefinition> roots = ImmutableMap.of();
 
     public TimeModelPart bakeRoot(TimeModelLocation location) {
-        if (!models.contains(location)) {
+        if (!modelLocations.contains(location)) {
             throw new IllegalArgumentException(String.format("Location '%s' was used before it was registered!", location));
         }
 
@@ -36,11 +36,11 @@ public class TimeModelSet implements ResourceManagerReloadListener {
     }
 
     public void regModelLocation(TimeModelLocation location) {
-        models.add(location);
+        modelLocations.add(location);
     }
 
     public void regModelLocations(Collection<TimeModelLocation> locations) {
-        models.addAll(locations);
+        modelLocations.addAll(locations);
     }
 
     /**
@@ -57,7 +57,7 @@ public class TimeModelSet implements ResourceManagerReloadListener {
 
         Map<TimeModelLocation, TimeModelDefinition> roots = new HashMap<>();
 
-        for (TimeModelLocation model : models) {
+        for (TimeModelLocation model : modelLocations) {
             if (roots.containsKey(model)) {
                 continue;
             }

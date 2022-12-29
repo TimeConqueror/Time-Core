@@ -40,9 +40,9 @@ public class Transition extends Animation {
             TimeModelPart part = model.tryGetPart(name);
             if (part != null) {
                 Pair<IKeyFrame, IKeyFrame> rotations = TransitionFactory.makeTransitionPairFromIdle(part, name, Channel.ROTATION, destFactory, transitionTime);
-                Pair<IKeyFrame, IKeyFrame> positions = TransitionFactory.makeTransitionPairFromIdle(part, name, Channel.POSITION, destFactory, transitionTime);
+                Pair<IKeyFrame, IKeyFrame> translations = TransitionFactory.makeTransitionPairFromIdle(part, name, Channel.TRANSLATION, destFactory, transitionTime);
                 Pair<IKeyFrame, IKeyFrame> scales = TransitionFactory.makeTransitionPairFromIdle(part, name, Channel.SCALE, destFactory, transitionTime);
-                transition.options.add(new BoneOption(name, rotations, positions, scales));
+                transition.options.add(new BoneOption(name, rotations, translations, scales));
             }
         });
 
@@ -191,9 +191,9 @@ public class Transition extends Animation {
                 TimeModelPart part = model.tryGetPart(bone.name);
                 if (part != null) {
                     Pair<IKeyFrame, IKeyFrame> rotations = makeTransitionPair(part, bone, Channel.ROTATION, destFactory, existingTime, transitionTime);
-                    Pair<IKeyFrame, IKeyFrame> positions = makeTransitionPair(part, bone, Channel.POSITION, destFactory, existingTime, transitionTime);
+                    Pair<IKeyFrame, IKeyFrame> translations = makeTransitionPair(part, bone, Channel.TRANSLATION, destFactory, existingTime, transitionTime);
                     Pair<IKeyFrame, IKeyFrame> scales = makeTransitionPair(part, bone, Channel.SCALE, destFactory, existingTime, transitionTime);
-                    transitionBones.add(new BoneOption(bone.name, rotations, positions, scales));
+                    transitionBones.add(new BoneOption(bone.name, rotations, translations, scales));
                 }
             });
 
@@ -233,7 +233,7 @@ public class Transition extends Animation {
         public Pair<IKeyFrame, IKeyFrame> getKeyFrames(Channel channel) {
             if (channel == Channel.ROTATION) {
                 return rotations;
-            } else if (channel == Channel.POSITION) {
+            } else if (channel == Channel.TRANSLATION) {
                 return positions;
             } else if (channel == Channel.SCALE) {
                 return scales;

@@ -6,8 +6,8 @@ import ru.timeconqueror.timecore.client.render.model.TimeModelLocation;
 
 import java.util.function.Function;
 
-public record ModelConfiguration(TimeModelLocation location, Function<ResourceLocation, RenderType> renderTypeProvider,
-                                 float scale) {
+public record ModelConfiguration(TimeModelLocation location,
+                                 Function<ResourceLocation, RenderType> renderTypeProvider) {
     public static Builder builder(TimeModelLocation location) {
         return new Builder(location);
     }
@@ -15,7 +15,6 @@ public record ModelConfiguration(TimeModelLocation location, Function<ResourceLo
     public static class Builder {
         private final TimeModelLocation location;
         private Function<ResourceLocation, RenderType> renderTypeProvider = RenderType::entityCutoutNoCull;
-        private float scale = 1.0F;
 
         private Builder(TimeModelLocation location) {
             this.location = location;
@@ -29,16 +28,8 @@ public record ModelConfiguration(TimeModelLocation location, Function<ResourceLo
             return this;
         }
 
-        /**
-         * Set custom scale for the model
-         */
-        public Builder scaled(float scale) {
-            this.scale = scale;
-            return this;
-        }
-
         public ModelConfiguration build() {
-            return new ModelConfiguration(location, renderTypeProvider, scale);
+            return new ModelConfiguration(location, renderTypeProvider);
         }
     }
 }

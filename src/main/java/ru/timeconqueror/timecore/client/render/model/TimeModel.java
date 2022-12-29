@@ -15,14 +15,12 @@ import java.util.Map;
 public class TimeModel extends Model implements ITimeModel {
     public static final String INTERNAL_ROOT_NAME = "i$root";
     private final TimeModelLocation location;
-    private final float scaleMultiplier;
     private final ReloadableContainer container = new ReloadableContainer();
 
     public TimeModel(ModelConfiguration modelConfig) {
         super(modelConfig.renderTypeProvider());
 
         this.location = modelConfig.location();
-        this.scaleMultiplier = modelConfig.scale();
     }
 
     @Override
@@ -59,9 +57,7 @@ public class TimeModel extends Model implements ITimeModel {
 
     @Override
     public void renderToBuffer(PoseStack matrixStackIn, VertexConsumer bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha) {
-        matrixStackIn.scale(scaleMultiplier, scaleMultiplier, scaleMultiplier);
         getRoot().render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
-        matrixStackIn.scale(1 / scaleMultiplier, 1 / scaleMultiplier, 1 / scaleMultiplier);
     }
 
     private class ReloadableContainer extends TimeModelSet.ReloadListener {
