@@ -7,10 +7,13 @@ import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import ru.timeconqueror.timecore.api.animation.AnimatedObject;
+import ru.timeconqueror.timecore.api.client.render.model.IModelPuppeteer;
 import ru.timeconqueror.timecore.api.client.render.model.ITimeModel;
+import ru.timeconqueror.timecore.api.client.render.model.ITimeModelRenderer;
 import ru.timeconqueror.timecore.client.render.model.TimeModel;
 
-public abstract class AnimatedTileEntityRenderer<T extends TileEntity & AnimatedObject<T>> extends TileEntityRenderer<T> {
+public abstract class AnimatedTileEntityRenderer<T extends TileEntity & AnimatedObject<T>> extends TileEntityRenderer<T> implements ITimeModelRenderer<T> {
+    private final ModelPuppeteer<T> puppeteer = new ModelPuppeteer<>();
     protected TimeModel model;
 
     public AnimatedTileEntityRenderer(TileEntityRendererDispatcher rendererDispatcherIn, TimeModel model) {
@@ -20,10 +23,10 @@ public abstract class AnimatedTileEntityRenderer<T extends TileEntity & Animated
 
     @Override
     public void render(T tileEntityIn, float partialTicks, MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int combinedLightIn, int combinedOverlayIn) {
-        getModel().reset();
+        getTimeModel().reset();
 
-        tileEntityIn.getSystem().getAnimationManager().applyAnimations(getModel());
-        setupAnimations(tileEntityIn, matrixStackIn, partialTicks);
+        tileEntityIn.getSystem().getAnimationManager().applyAnimations(getTimeModel());
+        puppeteer.processModel(tileEntityIn, model, partialTicks);
 
         ResourceLocation texture = getTexture(tileEntityIn);
         this.renderer.textureManager.bind(texture);
@@ -37,19 +40,20 @@ public abstract class AnimatedTileEntityRenderer<T extends TileEntity & Animated
         matrixStackIn.popPose();
     }
 
-    /**
-     * Method, which can be used to apply some manually handled transformation.
-     * Be attentive, the animation transformation is already applied on parts at this point.
-     * It's advisable to use math operations on part's transformation instead of overwriting it,
-     * because the second one may have unsuspected behaviour.
-     */
-    protected void setupAnimations(T animatedObject, MatrixStack matrixStackIn, float partialTick) {
-        matrixStackIn.scale(-1.0F, -1.0F, 1.0F); // to mirror models to a normal state
-    }
-
     protected abstract ResourceLocation getTexture(T tileEntityIn);
 
-    public ITimeModel getModel() {
+    @Override
+    public TimeModel getTimeModel() {
         return model;
+    }
+
+    @Override
+    public IModelPuppeteer<T> getPuppeteer() {
+        return puppeteer;
+    }
+
+    @Deprecated //use #getTimeModel
+    public ITimeModel getModel() {
+        return getTimeModel();
     }
 }

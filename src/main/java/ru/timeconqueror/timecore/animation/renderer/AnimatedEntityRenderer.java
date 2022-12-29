@@ -9,11 +9,14 @@ import net.minecraft.entity.Entity;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import ru.timeconqueror.timecore.api.animation.AnimatedObject;
+import ru.timeconqueror.timecore.api.client.render.model.IModelPuppeteer;
+import ru.timeconqueror.timecore.api.client.render.model.ITimeModelRenderer;
 import ru.timeconqueror.timecore.api.util.client.DrawHelper;
 import ru.timeconqueror.timecore.client.render.model.TimeEntityModel;
 
 @OnlyIn(Dist.CLIENT)
-public abstract class AnimatedEntityRenderer<T extends Entity & AnimatedObject<T>, M extends TimeEntityModel<T>> extends EntityRenderer<T> {
+public abstract class AnimatedEntityRenderer<T extends Entity & AnimatedObject<T>, M extends TimeEntityModel<T>> extends EntityRenderer<T> implements ITimeModelRenderer<T> {
+    private final ModelPuppeteer<T> puppeteer = new ModelPuppeteer<>();
     protected M model;
 
     public AnimatedEntityRenderer(EntityRendererManager rendererManager, M entityModelIn) {
@@ -23,10 +26,11 @@ public abstract class AnimatedEntityRenderer<T extends Entity & AnimatedObject<T
 
     @Override
     public void render(T entity, float entityYaw, float partialTicks, MatrixStack matrixStack, IRenderTypeBuffer buffer, int packedLight) {
-        getModel().reset();
+        model.reset();
 
-        entity.getSystem().getAnimationManager().applyAnimations(getModel());
+        entity.getSystem().getAnimationManager().applyAnimations(model);
 
+        puppeteer.processModel(entity, model, partialTicks);
         setupAnimations(entity, matrixStack, partialTicks);
 
         RenderType type = model.renderType(getTextureLocation(entity));
@@ -35,20 +39,25 @@ public abstract class AnimatedEntityRenderer<T extends Entity & AnimatedObject<T
         super.render(entity, entityYaw, partialTicks, matrixStack, buffer, packedLight);
     }
 
-    /**
-     * Method, which can be used to apply some manually handled transformation.
-     * Be attentive, the animation transformation is already applied on parts at this point.
-     * It's advisable to use math operations on part's transformation instead of overwriting it,
-     * because the second one may have unsuspected behaviour.
-     */
-    protected void setupAnimations(T animatedObject, MatrixStack matrixStack, float partialTick) {
+    @Override
+    public M getTimeModel() {
+        return model;
     }
 
-    public M getModel() {
-        return model;
+    public IModelPuppeteer<T> getPuppeteer() {
+        return puppeteer;
     }
 
     public int getRGBA(T entity) {
         return 0xFFFFFFFF;
+    }
+
+    @Deprecated // Use ModelProcessor
+    protected void setupAnimations(T animatedObject, MatrixStack matrixStack, float partialTick) {
+    }
+
+    @Deprecated // use #getTimeModel
+    public M getModel() {
+        return getTimeModel();
     }
 }

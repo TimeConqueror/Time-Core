@@ -8,7 +8,7 @@ import java.util.function.Function;
 public class ModelConfiguration {
     private final TimeModelLocation location;
     private final Function<ResourceLocation, RenderType> renderTypeProvider;
-    @Deprecated // 1.18 removal, use #getRoot.getScale().set where needed
+    @Deprecated // 1.18 removal, use ScaleProcessor
     private final float scale;
 
     public ModelConfiguration(TimeModelLocation location, Function<ResourceLocation, RenderType> renderTypeProvider) {
@@ -61,6 +61,7 @@ public class ModelConfiguration {
         /**
          * Set custom scale for the model
          */
+        @Deprecated // use ScaleProcessor
         public Builder scaled(float scale) {
             this.scale = scale;
             return this;
