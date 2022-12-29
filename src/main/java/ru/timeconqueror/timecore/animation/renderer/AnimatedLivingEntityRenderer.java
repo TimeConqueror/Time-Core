@@ -6,11 +6,15 @@ import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.world.entity.LivingEntity;
 import ru.timeconqueror.timecore.api.animation.AnimatedObject;
+import ru.timeconqueror.timecore.api.client.render.model.IModelPuppeteer;
+import ru.timeconqueror.timecore.api.client.render.model.ITimeModelRenderer;
 import ru.timeconqueror.timecore.client.render.model.TimeEntityModel;
 
-public abstract class AnimatedLivingEntityRenderer<T extends LivingEntity & AnimatedObject<T>, M extends TimeEntityModel<T>> extends LivingEntityRenderer<T, M> {
-    public AnimatedLivingEntityRenderer(EntityRendererProvider.Context ctx, M model, float shadowSizeIn) {
-        super(ctx, model, shadowSizeIn);
+public abstract class AnimatedLivingEntityRenderer<T extends LivingEntity & AnimatedObject<T>, M extends TimeEntityModel<T>> extends LivingEntityRenderer<T, M> implements ITimeModelRenderer<T> {
+    private final ModelPuppeteer<T> puppeteer = new ModelPuppeteer<>();
+
+    public AnimatedLivingEntityRenderer(EntityRendererProvider.Context ctx, M entityModelIn, float shadowSizeIn) {
+        super(ctx, entityModelIn, shadowSizeIn);
     }
 
     @Override
@@ -21,21 +25,11 @@ public abstract class AnimatedLivingEntityRenderer<T extends LivingEntity & Anim
         super.render(entity, entityYaw, partialTicks, matrixStack, buffer, packedLight);
     }
 
-    /**
-     * Method, which can be used to apply some manually handled transformation.
-     * Be attentive, the animation transformation is already applied on parts at this point.
-     * It's advisable to use math operations on part's transformation instead of overwriting it,
-     * because the second one may have unsuspected behaviour.
-     */
-    protected void setupAnimations(T animatedObject, PoseStack matrixStackIn, float partialTick) {
-
-    }
-
     @Override
     protected void setupRotations(T entityLiving, PoseStack matrixStackIn, float ageInTicks, float rotationYaw, float partialTicks) {
         super.setupRotations(entityLiving, matrixStackIn, ageInTicks, rotationYaw, partialTicks);
         matrixStackIn.scale(-1.0F, -1.0F, 1.0F); // to mirror models to a normal state
-        setupAnimations(entityLiving, matrixStackIn, partialTicks);
+        puppeteer.processModel(entityLiving, getModel(), partialTicks);
     }
 
     @Override
@@ -48,5 +42,15 @@ public abstract class AnimatedLivingEntityRenderer<T extends LivingEntity & Anim
     //copy from MobRenderer to prevent default name showing
     protected boolean shouldShowName(T entityIn) {
         return super.shouldShowName(entityIn) && (entityIn.shouldShowName() || entityIn.hasCustomName() && entityIn == this.entityRenderDispatcher.crosshairPickEntity);
+    }
+
+    @Override
+    public TimeEntityModel<T> getTimeModel() {
+        return getModel();
+    }
+
+    @Override
+    public IModelPuppeteer<T> getPuppeteer() {
+        return puppeteer;
     }
 }
