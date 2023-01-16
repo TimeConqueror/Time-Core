@@ -9,6 +9,7 @@ import ru.timeconqueror.timecore.api.util.Pair;
 import ru.timeconqueror.timecore.client.render.model.loading.JsonModelParser;
 import ru.timeconqueror.timecore.client.render.model.loading.TimeModelDefinition;
 import ru.timeconqueror.timecore.internal.client.handlers.ClientLoadingHandler;
+import ru.timeconqueror.timecore.mixins.accessor.client.ClientModLoaderAccessor;
 
 import java.lang.ref.WeakReference;
 import java.util.*;
@@ -51,6 +52,12 @@ public class TimeModelSet implements ResourceManagerReloadListener {
     @Override
     public void onResourceManagerReload(ResourceManager resourceManager) {
         TimeCore.LOGGER.debug("Loading models from TimeModelSet...");
+
+        if (ClientModLoaderAccessor.getError() != null) {
+            TimeCore.LOGGER.warn("Loading models will be skipped due to global mod loading error.");
+            return;
+        }
+
         Stopwatch watch = Stopwatch.createStarted();
 
         JsonModelParser parser = new JsonModelParser();

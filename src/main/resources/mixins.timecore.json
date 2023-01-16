@@ -17,6 +17,7 @@
     "config.ConfigTrackerMixin"
   ],
   "client": [
+    "accessor.client.ClientModLoaderAccessor",
     "accessor.client.MaterialDefinitionAccessor",
     "accessor.client.ViewDistanceProvider",
     "client.ClientModelLoaderMixin",
