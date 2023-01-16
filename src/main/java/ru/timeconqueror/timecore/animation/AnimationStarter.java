@@ -164,6 +164,30 @@ public class AnimationStarter {
         }
 
         @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (!(o instanceof AnimationData that)) return false;
+
+            if (ignorable != that.ignorable) return false;
+            if (transitionTime != that.transitionTime) return false;
+            if (Float.compare(that.speedFactor, speedFactor) != 0) return false;
+            if (doNotTransitToNull != that.doNotTransitToNull) return false;
+            if (!animation.equals(that.animation)) return false;
+            return Objects.equals(nextAnimationData, that.nextAnimationData);
+        }
+
+        @Override
+        public int hashCode() {
+            int result = animation.hashCode();
+            result = 31 * result + (nextAnimationData != null ? nextAnimationData.hashCode() : 0);
+            result = 31 * result + (ignorable ? 1 : 0);
+            result = 31 * result + transitionTime;
+            result = 31 * result + (speedFactor != +0.0f ? Float.floatToIntBits(speedFactor) : 0);
+            result = 31 * result + (doNotTransitToNull ? 1 : 0);
+            return result;
+        }
+
+        @Override
         public String toString() {
             return "AnimationData{" +
                     "animation=" + animation +
