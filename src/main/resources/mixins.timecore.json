@@ -16,6 +16,7 @@
     "config.ConfigTrackerMixin"
   ],
   "client": [
+    "accessor.client.ClientModLoaderAccessor",
     "accessor.client.ViewDistanceProvider",
     "client.ClientModelLoaderMixin",
     "client.MinecraftMixin",
