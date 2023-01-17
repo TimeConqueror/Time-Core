@@ -19,19 +19,18 @@ import java.util.function.Consumer;
 public class Transition extends Animation {
     private final int transitionLength;
     private final String name;
-    @Nullable
     private final Animation destAnimation;
     private final ResourceLocation id;
     private List<BoneOption> options = new ArrayList<>();
 
-    private Transition(int transitionLength, String name, @Nullable Animation destAnimation) {
+    private Transition(int transitionLength, String name, Animation destAnimation) {
         this.transitionLength = transitionLength;
         this.name = name;
         this.id = new ResourceLocation(TimeCore.MODID, "internal/" + getName());
         this.destAnimation = destAnimation;
     }
 
-    private static Transition createFromIdleState(@NotNull Animation dest, ITimeModel model, int transitionTime) {
+    private static Transition createFromIdleState(Animation dest, ITimeModel model, int transitionTime) {
         Transition transition = new Transition(transitionTime, "idle_to_" + dest.getName(), dest);
 
         TransitionFactoryWithDestination destFactory = dest.getTransitionFactory().withRequiredDestination();
@@ -49,43 +48,11 @@ public class Transition extends Animation {
         return transition;
     }
 
-    private static Transition createToIdleState(@Nullable Animation source, ITimeModel model, int existingTime, int transitionTime) {
-        Transition transition = new Transition(transitionTime, (source != null ? source.getName() : "idle") + "_to_idle", null);
-
-        if (source != null) {
-            TransitionFactory transitionFactory = source.getTransitionFactory();
-            transition.options = transitionFactory.createBoneOptions(Animation.NULL, model, existingTime, transitionTime);
-        }
-
-        return transition;
+    public static Animation createForServer(Animation source, Animation dest, int transitionTime) {
+        return new Transition(transitionTime, source.getName() + "_to_" + dest.getName(), dest);
     }
 
-    @NotNull
-    public static Animation create(Animation source, int sourceExistingTime, @Nullable Animation dest, ITimeModel model, int transitionTime) {
-        if (source == Animation.NULL) {
-            source = null;
-        }
-
-        if (dest == null) {
-            return createToIdleState(source, model, source != null ? sourceExistingTime : 0, transitionTime);
-        } else if (source == null) {
-            return createFromIdleState(dest, model, transitionTime);
-        }
-
-        return create(source, dest, model, sourceExistingTime, transitionTime);
-    }
-
-    public static Animation createForServer(Animation source, @Nullable Animation dest, int transitionTime) {
-        if (source == Animation.NULL) {
-            source = null;
-        }
-
-        String sourceName = source != null ? source.getName() : "idle";
-        String destName = dest != null ? dest.getName() : "idle";
-        return new Transition(transitionTime, sourceName + "_to_" + destName, dest);
-    }
-
-    private static Animation create(@NotNull Animation source, @NotNull Animation dest, ITimeModel model, int existingTime, int transitionTime) {
+    public static Animation create(Animation source, Animation dest, ITimeModel model, int existingTime, int transitionTime) {
         TransitionFactory sourceTFactory = source.getTransitionFactory();
 
         List<BoneOption> options = sourceTFactory.createBoneOptions(dest, model, existingTime, transitionTime);
@@ -151,7 +118,6 @@ public class Transition extends Animation {
         return id;
     }
 
-    @Nullable
     public Animation getDestination() {
         return destAnimation;
     }

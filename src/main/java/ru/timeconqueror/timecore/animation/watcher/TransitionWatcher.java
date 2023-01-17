@@ -54,7 +54,7 @@ public class TransitionWatcher extends AnimationWatcher {
         super.init(model);
 
         if (model != null) {
-            animation = Transition.create(source, sourceExistingTime, getDestination(), model, transitionTime);
+            animation = Transition.create(source, getDestination(), model, sourceExistingTime, transitionTime);
         } else {
             animation = Transition.createForServer(source, getDestination(), transitionTime);
         }
