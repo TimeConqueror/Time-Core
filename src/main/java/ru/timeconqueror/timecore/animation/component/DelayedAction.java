@@ -1,92 +1,58 @@
 package ru.timeconqueror.timecore.animation.component;
 
-import net.minecraft.resources.ResourceLocation;
 import ru.timeconqueror.timecore.animation.AnimationStarter;
-import ru.timeconqueror.timecore.animation.util.StandardDelayPredicates;
-import ru.timeconqueror.timecore.animation.watcher.AnimationWatcher;
 import ru.timeconqueror.timecore.api.animation.Animation;
+import ru.timeconqueror.timecore.api.animation.action.IDelayedAction;
 
-import java.util.Objects;
-import java.util.function.BiConsumer;
-import java.util.function.Predicate;
+public class DelayedAction<T, EXTRA_DATA> implements IDelayedAction<T, EXTRA_DATA> {
+    @SuppressWarnings("rawtypes")
+    private static final Handler EMPTY_HANDLER = (watcher, object, o) -> true;
 
-//TODO add multiple runnables with single or continuing action and merge delay predicates with runnable
-public class DelayedAction<T, EXTRA_DATA> {
-    private final AnimationStarter animationStarter;
-    private final String animationLayer;
-    private final ResourceLocation id;
-    private Predicate<AnimationWatcher> actionDelayPredicate = StandardDelayPredicates.onStart();
-    private BiConsumer<? super T, ? super EXTRA_DATA> action = (entity, data) -> {
-    };
+    protected final String id;
+    protected final AnimationStarter starter;
+    protected final String layer;
+    protected final Handler<? super T, ? super EXTRA_DATA> handler;
+    protected final boolean repeatedOnLoop;
 
-    /**
-     * @param id               ID of action. By this ID they will be compared for deletion and addition.
-     * @param animationStarter animation, which will be played when action is started.
-     * @param animationLayer   layer, where animation will be played.
-     */
-    public DelayedAction(ResourceLocation id, AnimationStarter animationStarter, String animationLayer) {
+    public DelayedAction(String id, String layer, AnimationStarter starter, Handler<? super T, ? super EXTRA_DATA> handler, boolean repeatedOnLoop) {
         this.id = id;
-        this.animationStarter = animationStarter;
-        this.animationLayer = animationLayer;
-    }
-
-    /**
-     * Sets task, that will be run, when the predicate from {@link #setDelay(Predicate)} will return true.
-     * <p>
-     * Default: () -> {}.
-     * <p>
-     * So far, task from setOnCall can only be played once per animation.
-     */
-    public DelayedAction<T, EXTRA_DATA> setOnCall(BiConsumer<? super T, ? super EXTRA_DATA> action) {
-        this.action = action;
-
-        return this;
-    }
-
-    /**
-     * Determines in which moment of time (relatively to the playing animation, in milliseconds) task,
-     * which is set by {@link #setOnCall(BiConsumer)} will be run.
-     * <p>
-     * Default: {@link StandardDelayPredicates#onStart()}.
-     *
-     * @see StandardDelayPredicates
-     */
-    public DelayedAction<T, EXTRA_DATA> setDelay(Predicate<AnimationWatcher> delayPredicate) {
-        this.actionDelayPredicate = delayPredicate;
-
-        return this;
-    }
-
-    public BiConsumer<? super T, ? super EXTRA_DATA> getAction() {
-        return action;
-    }
-
-    public AnimationStarter getAnimationStarter() {
-        return animationStarter;
-    }
-
-    public Predicate<AnimationWatcher> getActionDelayPredicate() {
-        return actionDelayPredicate;
-    }
-
-    public String getAnimationLayer() {
-        return animationLayer;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof DelayedAction)) return false;
-        DelayedAction<?, ?> action = (DelayedAction<?, ?>) o;
-        return id.equals(action.id);
+        this.starter = starter;
+        this.layer = layer;
+        this.handler = handler;
+        this.repeatedOnLoop = repeatedOnLoop;
     }
 
     public boolean isBound(Animation animation) {
-        return animationStarter.getData().getAnimation().equals(animation);
+        return getStarter().getData().getAnimation().equals(animation);
     }
 
     @Override
-    public int hashCode() {
-        return Objects.hash(id);
+    public String getId() {
+        return id;
+    }
+
+    @Override
+    public AnimationStarter getStarter() {
+        return starter;
+    }
+
+    @Override
+    public String getLayerName() {
+        return layer;
+    }
+
+    @Override
+    public Handler<? super T, ? super EXTRA_DATA> getHandler() {
+        return handler;
+    }
+
+    @Override
+    public boolean isRepeatedOnLoop() {
+        return repeatedOnLoop;
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T, EXTRA_DATA> Handler<T, EXTRA_DATA> emptyHandler() {
+        return EMPTY_HANDLER;
     }
 }
