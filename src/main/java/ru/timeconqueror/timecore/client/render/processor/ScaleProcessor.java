@@ -17,7 +17,7 @@ public class ScaleProcessor<T> implements IModelProcessor<T> {
 
     @Override
     public void process(T object, ITimeModel model, float partialTick) {
-        model.getRoot().getScale().add(scale);
+        model.getRoot().getScale().mul(scale.x(), scale.y(), scale.z());
     }
 
     public Vector3f getScale() {
