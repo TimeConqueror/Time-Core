@@ -21,9 +21,9 @@ public abstract class Animation {
 	public abstract String getName();
 
 	/**
-	 * By default contains the path to the file, from which this animation was parsed,
-	 * merged with the animation location from the file.
-	 */
+     * By default, contains the path to the file, from which this animation was parsed,
+     * merged with the animation location from the file.
+     */
 	public abstract ResourceLocation getId();
 
 	/**

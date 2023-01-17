@@ -23,11 +23,10 @@ public class TransitionWatcher extends AnimationWatcher {
     private final int transitionTime;
     @Nullable
     private final AnimationStarter.AnimationData destination;
-    @Nullable
     private final Animation source;
     private final int sourceExistingTime;
 
-    private TransitionWatcher(@Nullable Animation source, int sourceExistingTime, int transitionTime, @Nullable AnimationStarter.AnimationData destination) {
+    private TransitionWatcher(Animation source, int sourceExistingTime, int transitionTime, @Nullable AnimationStarter.AnimationData destination) {
         super(TRANSITION, 1.0F, false, destination);
 
         Requirements.greaterOrEquals(transitionTime, 0);
@@ -72,8 +71,23 @@ public class TransitionWatcher extends AnimationWatcher {
     }
 
     @Override
-    public int getAnimationLength() {
+    public boolean isAutoTransition() {
+        return true;
+    }
+
+    @Override
+    public boolean autoTransitsFrom(Animation animation) {
+        return animation.equals(source);
+    }
+
+    @Override
+    public int getLength() {
         return transitionTime;
+    }
+
+    @Override
+    public boolean autoTransitsTo(Animation animation) {
+        return animation.equals(getDestination());
     }
 
     @Override
@@ -134,7 +148,7 @@ public class TransitionWatcher extends AnimationWatcher {
                 AnimationStarter.AnimationData.encode(watcher.destination, buffer);
             }
 
-            int transitionTime = Math.max(watcher.getAnimationLength() - watcher.getExistingTime(), 0);
+            int transitionTime = Math.max(watcher.getLength() - watcher.getExistingTime(), 0);
             buffer.writeInt(transitionTime);
         }
 
@@ -142,7 +156,7 @@ public class TransitionWatcher extends AnimationWatcher {
         public TransitionWatcher deserialize(PacketBuffer buffer) {
             boolean hasSource = buffer.readBoolean();
 
-            Animation source = null;
+            Animation source = Animation.NULL;
             int sourceExistingTime = -1;
             if (hasSource) {
                 ResourceLocation id = buffer.readResourceLocation();

@@ -3,7 +3,7 @@ package ru.timeconqueror.timecore.api.animation.action;
 import ru.timeconqueror.timecore.animation.AnimationStarter;
 import ru.timeconqueror.timecore.animation.component.action.NewDelayedAction;
 import ru.timeconqueror.timecore.animation.util.StandardDelayPredicates;
-import ru.timeconqueror.timecore.animation.watcher.AnimationWatcher;
+import ru.timeconqueror.timecore.api.animation.IAnimationInfo;
 import ru.timeconqueror.timecore.api.animation.action.IDelayedAction.Handler;
 
 import java.util.function.BiConsumer;
@@ -46,7 +46,7 @@ public class Builder<T, EXTRA_DATA> {
      * @param action         action, which will be run once when delayPredicate will return true.
      * @see StandardDelayPredicates
      */
-    public Builder<T, EXTRA_DATA> withSimpleHandler(Predicate<AnimationWatcher> delayPredicate, BiConsumer<? super T, ? super EXTRA_DATA> action) {
+    public Builder<T, EXTRA_DATA> withSimpleHandler(Predicate<IAnimationInfo> delayPredicate, BiConsumer<? super T, ? super EXTRA_DATA> action) {
         this.handler = (watcher, object, extraData) -> {
             if (delayPredicate.test(watcher)) {
                 action.accept(object, extraData);
