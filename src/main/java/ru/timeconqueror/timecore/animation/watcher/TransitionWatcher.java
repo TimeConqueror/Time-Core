@@ -42,11 +42,11 @@ public class TransitionWatcher extends AnimationWatcher {
     }
 
     public static TransitionWatcher from(AnimationWatcher source, AnimationStarter.AnimationData destination) {
-        return new TransitionWatcher(source.getAnimation(), source.getExistingTime(), destination.getTransitionTime(), destination);
+        return new TransitionWatcher(source.getAnimation(), source.getCurrentAnimationTime(), destination.getTransitionTime(), destination);
     }
 
     public static TransitionWatcher toNullDestination(AnimationWatcher source, int transitionTime) {
-        return new TransitionWatcher(source.getAnimation(), source.getExistingTime(), transitionTime, null);
+        return new TransitionWatcher(source.getAnimation(), source.getCurrentAnimationTime(), transitionTime, null);
     }
 
     @Override
