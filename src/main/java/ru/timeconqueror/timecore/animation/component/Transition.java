@@ -61,7 +61,11 @@ public class Transition extends Animation {
     }
 
     @NotNull
-    public static Animation create(@Nullable Animation source, int sourceExistingTime, @Nullable Animation dest, ITimeModel model, int transitionTime) {
+    public static Animation create(Animation source, int sourceExistingTime, @Nullable Animation dest, ITimeModel model, int transitionTime) {
+        if (source == Animation.NULL) {
+            source = null;
+        }
+
         if (dest == null) {
             return createToIdleState(source, model, source != null ? sourceExistingTime : 0, transitionTime);
         } else if (source == null) {
@@ -71,7 +75,11 @@ public class Transition extends Animation {
         return create(source, dest, model, sourceExistingTime, transitionTime);
     }
 
-    public static Animation createForServer(@Nullable Animation source, @Nullable Animation dest, int transitionTime) {
+    public static Animation createForServer(Animation source, @Nullable Animation dest, int transitionTime) {
+        if (source == Animation.NULL) {
+            source = null;
+        }
+
         String sourceName = source != null ? source.getName() : "idle";
         String destName = dest != null ? dest.getName() : "idle";
         return new Transition(transitionTime, sourceName + "_to_" + destName, dest);

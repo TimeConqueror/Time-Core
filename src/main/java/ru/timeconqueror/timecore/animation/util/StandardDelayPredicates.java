@@ -1,29 +1,29 @@
 package ru.timeconqueror.timecore.animation.util;
 
-import ru.timeconqueror.timecore.animation.watcher.AnimationWatcher;
+import ru.timeconqueror.timecore.api.animation.IAnimationInfo;
 import ru.timeconqueror.timecore.api.util.Requirements;
 
 import java.util.function.Predicate;
 
 public class StandardDelayPredicates {
-    public static Predicate<AnimationWatcher> onStart() {
+    public static Predicate<IAnimationInfo> onStart() {
         return watcher -> true;
     }
 
-    public static Predicate<AnimationWatcher> onEnd() {
-        return watcher -> watcher.getExistingTime() == watcher.getAnimationLength();
+    public static Predicate<IAnimationInfo> onEnd() {
+        return watcher -> watcher.getExistingTime() == watcher.getLength();
     }
 
-    public static Predicate<AnimationWatcher> whenPassed(int animationTime) {
-        return watcher -> watcher.getExistingTime() >= animationTime;
+    public static Predicate<IAnimationInfo> whenPassed(int animationTime) {
+        return info -> info.getExistingTime() >= animationTime;
     }
 
-    public static Predicate<AnimationWatcher> whenPassed(float percents) {
+    public static Predicate<IAnimationInfo> whenPassed(float percents) {
         Requirements.inRangeInclusive(percents, 0, 1);
 
-        return watcher -> {
-            float length = watcher.getAnimationLength();
-            float existingTime = watcher.getExistingTime();
+        return info -> {
+            float length = info.getLength();
+            float existingTime = info.getExistingTime();
 
             return existingTime >= length * percents;
         };

@@ -56,7 +56,7 @@ public class FloroEntity extends Monster implements RangedAttackMob, AnimatedObj
     private static final String LAYER_ATTACK = "attack";
 
     static {
-        RANGED_ATTACK_ACTION = Lazy.of(() -> IDelayedAction.<FloroEntity, AnimatedRangedAttackGoal.ActionData>builder("shoot", "attack", new AnimationStarter(EntityAnimations.floroShoot))
+        RANGED_ATTACK_ACTION = Lazy.of(() -> IDelayedAction.<FloroEntity, AnimatedRangedAttackGoal.ActionData>builder("shoot", LAYER_ATTACK, new AnimationStarter(EntityAnimations.floroShoot))
                 .withSimpleHandler(StandardDelayPredicates.whenPassed(0.5F), AnimatedRangedAttackGoal.STANDARD_RUNNER)
                 .build());
         REVEALING_ACTION = Lazy.of(() -> IDelayedAction.<FloroEntity, Void>builder("reveal", LAYER_SHOWING, new AnimationStarter(EntityAnimations.floroReveal).setTransitionTime(0))

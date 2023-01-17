@@ -7,6 +7,7 @@ import ru.timeconqueror.timecore.animation.watcher.TransitionWatcher;
 import ru.timeconqueror.timecore.api.animation.Animation;
 import ru.timeconqueror.timecore.api.animation.AnimationLayer;
 import ru.timeconqueror.timecore.api.animation.BlendType;
+import ru.timeconqueror.timecore.api.animation.IAnimationInfo;
 import ru.timeconqueror.timecore.api.client.render.model.ITimeModel;
 import ru.timeconqueror.timecore.api.util.MathUtils;
 
@@ -144,6 +145,11 @@ public class Layer implements AnimationLayer {
 
     public void setAnimationWatcher(@Nullable AnimationWatcher animationWatcher) {
         this.animationWatcher = animationWatcher;
+    }
+
+    @Override
+    public IAnimationInfo getAnimationInfo() {
+        return animationWatcher != null ? animationWatcher : IAnimationInfo.EMPTY;
     }
 
     @Override

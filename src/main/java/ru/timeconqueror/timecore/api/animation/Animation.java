@@ -21,9 +21,9 @@ public abstract class Animation {
 	public abstract String getName();
 
 	/**
-	 * By default contains the path to the file, from which this animation was parsed,
-	 * merged with the animation location from the file.
-	 */
+     * By default, contains the path to the file, from which this animation was parsed,
+     * merged with the animation location from the file.
+     */
 	public abstract ResourceLocation getId();
 
 	/**
@@ -56,9 +56,8 @@ public abstract class Animation {
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) return true;
-		if (!(obj instanceof Animation)) return false;
-		Animation animation = (Animation) obj;
-		return getId().equals(animation.getId());
+		if (!(obj instanceof Animation animation)) return false;
+        return getId().equals(animation.getId());
 	}
 
 	@Override

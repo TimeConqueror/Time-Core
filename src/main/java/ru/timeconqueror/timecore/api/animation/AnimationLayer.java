@@ -16,10 +16,9 @@ public interface AnimationLayer extends Cloneable {
 
     boolean hasAnimation();
 
-    @Nullable
-    AnimationWatcher getAnimationWatcher();
-
     String getName();
+
+    IAnimationInfo getAnimationInfo();
 
 //    /**
 //     * Pauses the layer as well as the played animation.
@@ -36,4 +35,9 @@ public interface AnimationLayer extends Cloneable {
 //     * Returns true if layer & animation on it is paused, otherwise returns false.
 //     */
 //    boolean isFrozen();
+
+    @Nullable
+    @Deprecated
+        //use #getAnimationInfo
+    AnimationWatcher getAnimationWatcher();
 }

@@ -7,6 +7,7 @@ import ru.timeconqueror.timecore.animation.AnimationStarter;
 import ru.timeconqueror.timecore.animation.util.WatcherSerializer;
 import ru.timeconqueror.timecore.api.animation.Animation;
 import ru.timeconqueror.timecore.api.animation.AnimationConstants;
+import ru.timeconqueror.timecore.api.animation.IAnimationInfo;
 import ru.timeconqueror.timecore.api.client.render.model.ITimeModel;
 import ru.timeconqueror.timecore.api.util.MathUtils;
 import ru.timeconqueror.timecore.api.util.Requirements;
@@ -14,21 +15,21 @@ import ru.timeconqueror.timecore.api.util.Requirements;
 import javax.annotation.OverridingMethodsMustInvokeSuper;
 import java.util.Objects;
 
-public class AnimationWatcher {
-	protected final FreezableTime startTime;
-	/**
-	 * Speed factor of the animation
-	 */
-	protected final float speed;
-	private boolean inited = false;
-	protected Animation animation;
-	@Nullable
+public class AnimationWatcher implements IAnimationInfo {
+    protected final FreezableTime startTime;
+    /**
+     * Speed factor of the animation
+     */
+    protected final float speed;
+    private boolean inited = false;
+    protected Animation animation;
+    @Nullable
     private final AnimationStarter.AnimationData nextAnimation;
     private final boolean doNotTransitToNull;
 
-	public AnimationWatcher(AnimationStarter.AnimationData currentAnimation) {
+    public AnimationWatcher(AnimationStarter.AnimationData currentAnimation) {
         this(currentAnimation.getAnimation(), currentAnimation.getSpeedFactor(), currentAnimation.doNotTransitToNull(), currentAnimation.getNextAnimationData());
-	}
+    }
 
     public AnimationWatcher(Animation animation, float speed, boolean doNotTransitToNull, @Nullable AnimationStarter.AnimationData nextAnimation) {
         Requirements.greaterThan(speed, 0);
@@ -70,80 +71,106 @@ public class AnimationWatcher {
 
 	public void resetTimer() {
 		startTime.set(System.currentTimeMillis());
-	}
+    }
 
-	public Animation getAnimation() {
-		return animation;
-	}
+    public Animation getAnimation() {
+        return animation;
+    }
 
-	public boolean isAnimationEnded(long time) {
-		return time > startTime.get() + Math.round(animation.getLength() / speed);
-	}
+    public boolean isAnimationEnded(long time) {
+        return time > startTime.get() + Math.round(animation.getLength() / speed);
+    }
 
-	public int getExistingTime(long time) {
-		return (int) MathUtils.coerceInRange((time - startTime.get()) * speed, 0, animation.getLength());
-	}
+    public int getExistingTime(long time) {
+        return (int) MathUtils.coerceInRange((time - startTime.get()) * speed, 0, animation.getLength());
+    }
 
-	public int getExistingTime() {
-		return getExistingTime(System.currentTimeMillis());
-	}
+    @Override
+    public int getExistingTime() {
+        return getExistingTime(System.currentTimeMillis());
+    }
 
-	public void freeze() {
-		startTime.freeze();
-	}
+    public void freeze() {
+        startTime.freeze();
+    }
 
-	public void unfreeze() {
-		startTime.unfreeze();
-	}
+    public void unfreeze() {
+        startTime.unfreeze();
+    }
 
-	public int getAnimationLength() {
-		return getAnimation().getLength();
-	}
+    @Override
+    public int getLength() {
+        return getAnimation().getLength();
+    }
 
-	@Override
-	public String toString() {
-		return "AnimationWatcher {" +
-				"animation=" + animation +
-				", existingTime=" + getExistingTime() +
-				", speed=" + speed +
-				", inited=" + inited +
-				'}';
-	}
+    @Override
+    public String toString() {
+        return "AnimationWatcher {" +
+                "animation=" + animation +
+                ", existingTime=" + getExistingTime() +
+                ", speed=" + speed +
+                ", inited=" + inited +
+                '}';
+    }
 
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) return true;
-		if (!(o instanceof AnimationWatcher)) return false;
-		AnimationWatcher watcher = (AnimationWatcher) o;
-		return Float.compare(watcher.speed, speed) == 0 &&
-				animation.equals(watcher.animation);
-	}
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof AnimationWatcher watcher)) return false;
+        return Float.compare(watcher.speed, speed) == 0 &&
+                animation.equals(watcher.animation);
+    }
 
-	@Override
-	public int hashCode() {
-		return Objects.hash(speed, animation);
-	}
+    @Override
+    public int hashCode() {
+        return Objects.hash(speed, animation);
+    }
 
-	protected static class FreezableTime {
-		private long time;
-		private long freezingTime = -1;
+    @Deprecated // 1.18+ removal, use #getLength
+    public int getAnimationLength() {
+        return getLength();
+    }
 
-		public FreezableTime(long time) {
-			this.time = time;
-		}
+    @Override
+    public boolean isAutoTransition() {
+        return false;
+    }
 
-		public void freeze() {
-			if (freezingTime == -1) {
-				freezingTime = System.currentTimeMillis();
-			}
-		}
+    @Override
+    public boolean autoTransitsFrom(Animation animation) {
+        return false;
+    }
 
-		public void unfreeze() {
-			if (freezingTime != -1) {
-				time += System.currentTimeMillis() - freezingTime;
-				freezingTime = -1;
-			}
-		}
+    @Override
+    public boolean autoTransitsTo(Animation animation) {
+        return false;
+    }
+
+    @Override
+    public boolean isNull() {
+        return false;
+    }
+
+    protected static class FreezableTime {
+        private long time;
+        private long freezingTime = -1;
+
+        public FreezableTime(long time) {
+            this.time = time;
+        }
+
+        public void freeze() {
+            if (freezingTime == -1) {
+                freezingTime = System.currentTimeMillis();
+            }
+        }
+
+        public void unfreeze() {
+            if (freezingTime != -1) {
+                time += System.currentTimeMillis() - freezingTime;
+                freezingTime = -1;
+            }
+        }
 
 		public long get() {
 			if (freezingTime != -1) {
