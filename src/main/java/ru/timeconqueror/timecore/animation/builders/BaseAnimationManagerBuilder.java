@@ -31,7 +31,7 @@ public class BaseAnimationManagerBuilder extends SingleUseBuilder implements IAn
     @Override
     public void addLayer(Layer layer) {
         verifyNotUsed();
-        Layer prev = animationLayers.put(layer.getName(), layer.copy());
+        Layer prev = animationLayers.put(layer.getName(), layer.copySettings());
         if (prev != null) {
             throw new IllegalArgumentException("Layer with location " + layer.getName() + " already exist in provided animation manager.");
         }

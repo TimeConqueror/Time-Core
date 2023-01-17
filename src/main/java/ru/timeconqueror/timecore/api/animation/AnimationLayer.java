@@ -20,4 +20,20 @@ public interface AnimationLayer extends Cloneable {
     AnimationWatcher getAnimationWatcher();
 
     String getName();
+
+//    /**
+//     * Pauses the layer as well as the played animation.
+//     * Being frozen layer will also ignore animation adding and removal
+//     */
+//    void freeze();
+//
+//    /**
+//     * Unpauses the layer and the animation started on it.
+//     */
+//    void unfreeze();
+//
+//    /**
+//     * Returns true if layer & animation on it is paused, otherwise returns false.
+//     */
+//    boolean isFrozen();
 }

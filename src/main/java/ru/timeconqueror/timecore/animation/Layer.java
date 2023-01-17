@@ -10,7 +10,9 @@ import ru.timeconqueror.timecore.api.animation.BlendType;
 import ru.timeconqueror.timecore.api.client.render.model.ITimeModel;
 import ru.timeconqueror.timecore.api.util.MathUtils;
 
+//TODO 1.18 make LayerDefinition instead of using Layer in Builder
 public class Layer implements AnimationLayer {
+    private BaseAnimationManager manager;
     private final String name;
 
     @Nullable
@@ -56,6 +58,10 @@ public class Layer implements AnimationLayer {
     }
 
     void setAnimation(AnimationStarter.AnimationData data) {
+        if (animationWatcher != null) {
+            manager.onAnimationStop(animationWatcher);
+        }
+
         if (data.getTransitionTime() == 0) {
             animationWatcher = new AnimationWatcher(data);
         } else {
@@ -65,10 +71,14 @@ public class Layer implements AnimationLayer {
                 animationWatcher = TransitionWatcher.from(animationWatcher, data);
             }
         }
+
+        manager.onAnimationStart(this, data, animationWatcher);
     }
 
     void removeAnimation(int transitionTime) {
         if (animationWatcher != null) {
+            manager.onAnimationEnd(null, this, animationWatcher);
+
             if (transitionTime == 0) {
                 animationWatcher = null;
             } else {
@@ -80,6 +90,7 @@ public class Layer implements AnimationLayer {
     }
 
     void update(BaseAnimationManager manager, ITimeModel model, long currentTime) {
+//        boolean paused = manager.isGamePaused() || frozen;
         boolean paused = manager.isGamePaused();
 
         AnimationWatcher watcher = getAnimationWatcher();
@@ -100,6 +111,7 @@ public class Layer implements AnimationLayer {
                     if (watcher.getNextAnimationData() == null) {
                         if (animation.getLoopMode() == LoopMode.LOOP) {
                             watcher.resetTimer();
+                            manager.onLoopedAnimationRestart(watcher);
                             return;
                         } else if (animation.getLoopMode() == LoopMode.HOLD_ON_LAST_FRAME) {
                             return;
@@ -120,6 +132,11 @@ public class Layer implements AnimationLayer {
         }
     }
 
+    //TODO 1.18+ move to constructor
+    void setManager(BaseAnimationManager manager) {
+        this.manager = manager;
+    }
+
     @Nullable
     public AnimationWatcher getAnimationWatcher() {
         return animationWatcher;
@@ -134,11 +151,7 @@ public class Layer implements AnimationLayer {
         return name;
     }
 
-    public Layer copy() {
-        if (this.animationWatcher != null) {
-            throw new IllegalStateException("Can't copy this layer, because it's already in work.");
-        }
-
+    public Layer copySettings() {
         return new Layer(name, blendType, weight);
     }
 }

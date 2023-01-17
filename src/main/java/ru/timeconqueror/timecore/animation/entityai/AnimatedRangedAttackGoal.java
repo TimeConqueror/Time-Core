@@ -6,9 +6,9 @@ import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.util.math.MathHelper;
 import ru.timeconqueror.timecore.animation.AnimationStarter.AnimationData;
-import ru.timeconqueror.timecore.animation.component.DelayedAction;
 import ru.timeconqueror.timecore.animation.util.AnimationUtils;
 import ru.timeconqueror.timecore.api.animation.AnimatedObject;
+import ru.timeconqueror.timecore.api.animation.action.IDelayedAction;
 
 import java.util.EnumSet;
 import java.util.function.BiConsumer;
@@ -25,9 +25,9 @@ public class AnimatedRangedAttackGoal<T extends MobEntity & AnimatedObject<T>> e
     private final float attackInterval;
     private final float attackRadius;
     private final float maxAttackDistance;
-    private final DelayedAction<T, ActionData> attackAction;
+    private final IDelayedAction<T, ActionData> attackAction;
 
-    public AnimatedRangedAttackGoal(T attacker, DelayedAction<T, ActionData> attackAction, double moveSpeed, float maxAttackDistance) {
+    public AnimatedRangedAttackGoal(T attacker, IDelayedAction<T, ActionData> attackAction, double moveSpeed, float maxAttackDistance) {
         this.entity = attacker;
         this.entityMoveSpeed = moveSpeed;
         this.attackRadius = maxAttackDistance;
@@ -35,7 +35,7 @@ public class AnimatedRangedAttackGoal<T extends MobEntity & AnimatedObject<T>> e
         this.attackAction = attackAction;
         this.setFlags(EnumSet.of(Goal.Flag.MOVE, Goal.Flag.LOOK));
 
-        AnimationData data = attackAction.getAnimationStarter().getData();
+        AnimationData data = attackAction.getStarter().getData();
         this.attackInterval = AnimationUtils.milliSecondsToTicks(data.getAnimation().getLength()) * data.getSpeedFactor();
     }
 

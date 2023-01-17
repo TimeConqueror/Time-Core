@@ -5,6 +5,7 @@ import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import ru.timeconqueror.timecore.api.registry.base.RunnableStoringRegister;
+import ru.timeconqueror.timecore.common.capability.EmptyCapabilityStorage;
 
 import java.util.concurrent.Callable;
 
@@ -23,10 +24,21 @@ public class CapabilityRegister extends RunnableStoringRegister {
         catchErrors(event, this::runAll);
     }
 
+
+    public <T> void regCapability(Class<T> type, Callable<? extends T> factory) {
+        add(() -> CapabilityManager.INSTANCE.register(type, new EmptyCapabilityStorage<>(), factory));
+    }
+
+    public <T> void regCapability(Class<T> type) {
+        regCapability(type, () -> null);
+    }
+
+    @Deprecated //TODO 1.18+ removal
     public <T> void regCapability(Class<T> type, Capability.IStorage<T> storage, Callable<? extends T> factory) {
         add(() -> CapabilityManager.INSTANCE.register(type, storage, factory));
     }
 
+    @Deprecated //TODO 1.18+ removal
     public <T> void regCapability(Class<T> type, Capability.IStorage<T> storage) {
         regCapability(type, storage, () -> null);
     }

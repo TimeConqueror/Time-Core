@@ -3,7 +3,6 @@ package ru.timeconqueror.timecore.animation;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.loading.FMLEnvironment;
-import org.jetbrains.annotations.Nullable;
 import ru.timeconqueror.timecore.animation.action.ActionManagerImpl;
 import ru.timeconqueror.timecore.animation.watcher.AnimationWatcher;
 import ru.timeconqueror.timecore.api.animation.AnimatedObject;
@@ -23,31 +22,27 @@ public class ServerAnimationManager<T extends AnimatedObject<T>> extends BaseAni
 
     @Override
     protected void applyAnimation(ITimeModel model, Layer layer, AnimationWatcher watcher, long currentTime) {
-        proceedActions(watcher);
+        actionManager.updateActions(watcher);
     }
 
     @Override
-    protected void onAnimationSet(AnimationStarter.AnimationData data, Layer layer) {
-        super.onAnimationSet(data, layer);
+    protected void onAnimationStart(Layer layer, AnimationStarter.AnimationData data, AnimationWatcher watcher) {
+        super.onAnimationStart(layer, data, watcher);
 
         networkDispatcher.sendSetAnimationPacket(actionManager, data, layer);
     }
 
     @Override
-    protected void onAnimationEnd(@Nullable ITimeModel model, Layer layer, AnimationWatcher watcher) {
-        proceedActions(watcher);
-
-        actionManager.getActionWatchers().removeIf(actionWatcher -> actionWatcher.isBound(watcher.getAnimation()));
+    protected void onAnimationStop(AnimationWatcher watcher) {
+        actionManager.updateActions(watcher);
+        actionManager.onAnimationStop(watcher);
     }
 
-    private void proceedActions(AnimationWatcher watcher) {
-        for (ActionManagerImpl.ActionWatcher<T, ?> actionWatcher : actionManager.getActionWatchers()) {
-            if (actionWatcher.isBound(watcher.getAnimation())) {
-                if (actionWatcher.shouldBeExecuted(watcher)) {
-                    actionWatcher.runAction(actionManager.getBoundObject());
-                }
-            }
-        }
+    @Override
+    public void onLoopedAnimationRestart(AnimationWatcher watcher) {
+        super.onLoopedAnimationRestart(watcher);
+
+        actionManager.onLoopedAnimationRestart(watcher);
     }
 
     @Override

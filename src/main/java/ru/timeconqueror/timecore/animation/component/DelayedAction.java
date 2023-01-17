@@ -2,32 +2,29 @@ package ru.timeconqueror.timecore.animation.component;
 
 import net.minecraft.util.ResourceLocation;
 import ru.timeconqueror.timecore.animation.AnimationStarter;
+import ru.timeconqueror.timecore.animation.component.action.NewDelayedAction;
 import ru.timeconqueror.timecore.animation.util.StandardDelayPredicates;
 import ru.timeconqueror.timecore.animation.watcher.AnimationWatcher;
-import ru.timeconqueror.timecore.api.animation.Animation;
 
 import java.util.Objects;
 import java.util.function.BiConsumer;
 import java.util.function.Predicate;
 
-//TODO add multiple runnables with single or continuing action and merge delay predicates with runnable
-public class DelayedAction<T, EXTRA_DATA> {
-    private final AnimationStarter animationStarter;
-    private final String animationLayer;
-    private final ResourceLocation id;
+@Deprecated // for removal 1.18+, use IDelayedAction#builder()
+public class DelayedAction<T, EXTRA_DATA> extends NewDelayedAction<T, EXTRA_DATA> {
     private Predicate<AnimationWatcher> actionDelayPredicate = StandardDelayPredicates.onStart();
     private BiConsumer<? super T, ? super EXTRA_DATA> action = (entity, data) -> {
     };
 
-    /**
-     * @param id               ID of action. By this ID they will be compared for deletion and addition.
-     * @param animationStarter animation, which will be played when action is started.
-     * @param animationLayer   layer, where animation will be played.
-     */
+    private final Handler<T, EXTRA_DATA> handler = makeHandler();
+
+    @Deprecated // 1.18 removal, use string id instead of resource location
     public DelayedAction(ResourceLocation id, AnimationStarter animationStarter, String animationLayer) {
-        this.id = id;
-        this.animationStarter = animationStarter;
-        this.animationLayer = animationLayer;
+        this(id.toString(), animationStarter, animationLayer);
+    }
+
+    public DelayedAction(String id, AnimationStarter animationStarter, String animationLayer) {
+        super(id, animationLayer, animationStarter, emptyHandler(), false);
     }
 
     /**
@@ -61,16 +58,13 @@ public class DelayedAction<T, EXTRA_DATA> {
         return action;
     }
 
-    public AnimationStarter getAnimationStarter() {
-        return animationStarter;
-    }
-
     public Predicate<AnimationWatcher> getActionDelayPredicate() {
         return actionDelayPredicate;
     }
 
-    public String getAnimationLayer() {
-        return animationLayer;
+    @Override
+    public Handler<T, EXTRA_DATA> getHandler() {
+        return handler;
     }
 
     @Override
@@ -78,15 +72,22 @@ public class DelayedAction<T, EXTRA_DATA> {
         if (this == o) return true;
         if (!(o instanceof DelayedAction)) return false;
         DelayedAction<?, ?> action = (DelayedAction<?, ?>) o;
-        return id.equals(action.id);
-    }
-
-    public boolean isBound(Animation animation) {
-        return animationStarter.getData().getAnimation().equals(animation);
+        return getId().equals(action.getId());
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(id);
+    }
+
+    private Handler<T, EXTRA_DATA> makeHandler() {
+        return (watcher, obj, data) -> {
+            if (getActionDelayPredicate().test(watcher)) {
+                getAction().accept(obj, data);
+                return true;
+            }
+
+            return false;
+        };
     }
 }

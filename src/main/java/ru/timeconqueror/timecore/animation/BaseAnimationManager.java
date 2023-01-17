@@ -10,11 +10,13 @@ import ru.timeconqueror.timecore.api.animation.AnimationConstants;
 import ru.timeconqueror.timecore.api.animation.AnimationManager;
 import ru.timeconqueror.timecore.api.client.render.model.ITimeModel;
 
-import java.util.*;
+import javax.annotation.OverridingMethodsMustInvokeSuper;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Set;
 
 public abstract class BaseAnimationManager implements AnimationManager {
     private Map<String, Layer> layerMap;
-    private List<Layer> layers;
 
     @Override
     public boolean containsLayer(String name) {
@@ -52,13 +54,12 @@ public abstract class BaseAnimationManager implements AnimationManager {
             }
 
             layer.setAnimation(data);
-            onAnimationSet(data, layer);
         } else {
             TimeCore.LOGGER.error("Can't start animation: layer with location " + layerName + " doesn't exist in provided animation manager.");
         }
     }
 
-    protected void onAnimationSet(AnimationStarter.AnimationData data, Layer layer) {
+    protected void onAnimationStart(Layer layer, AnimationStarter.AnimationData data, AnimationWatcher watcher) {
 
     }
 
@@ -71,13 +72,7 @@ public abstract class BaseAnimationManager implements AnimationManager {
     public void removeAnimation(String layerName, int transitionTime) {
         if (containsLayer(layerName)) {
             Layer layer = getLayer(layerName);
-            AnimationWatcher oldWatcher = layer.getAnimationWatcher();
-
             layer.removeAnimation(transitionTime);
-
-            if (oldWatcher != null) {
-                onAnimationEnd(null, layer, oldWatcher);
-            }
         } else {
             TimeCore.LOGGER.error("Can't find layer with location " + layerName);
         }
@@ -86,7 +81,7 @@ public abstract class BaseAnimationManager implements AnimationManager {
     @Override
     public void applyAnimations(ITimeModel model) {
         long currentTime = System.currentTimeMillis();
-        for (Layer layer : layers) {
+        for (Layer layer : layerMap.values()) {
             layer.update(this, model, currentTime);
 
             AnimationWatcher watcher = layer.getAnimationWatcher();
@@ -101,13 +96,33 @@ public abstract class BaseAnimationManager implements AnimationManager {
 
     protected abstract boolean isGamePaused();
 
+    /**
+     * Called when the animation was removed or ended.
+     *
+     * @param watcher
+     */
+    @OverridingMethodsMustInvokeSuper
     protected void onAnimationEnd(@Nullable ITimeModel model, Layer layer, AnimationWatcher watcher) {
-
+        onAnimationStop(watcher);
     }
 
     public void buildLayers(LinkedHashMap<String, Layer> layers) {
         layerMap = layers;
+        for (Layer layer : layers.values()) {
+            layer.setManager(this);
+        }
+    }
 
-        this.layers = new ArrayList<>(layers.values());
+    /**
+     * Called on every animation stop like removing animation or replacing it.
+     *
+     * @param watcher
+     */
+    protected void onAnimationStop(AnimationWatcher watcher) {
+
+    }
+
+    public void onLoopedAnimationRestart(AnimationWatcher watcher) {
+
     }
 }
