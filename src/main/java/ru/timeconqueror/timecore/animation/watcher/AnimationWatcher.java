@@ -7,7 +7,7 @@ import ru.timeconqueror.timecore.animation.AnimationStarter;
 import ru.timeconqueror.timecore.animation.util.WatcherSerializer;
 import ru.timeconqueror.timecore.api.animation.Animation;
 import ru.timeconqueror.timecore.api.animation.AnimationConstants;
-import ru.timeconqueror.timecore.api.animation.IAnimationInfo;
+import ru.timeconqueror.timecore.api.animation.IAnimationWatcherInfo;
 import ru.timeconqueror.timecore.api.client.render.model.ITimeModel;
 import ru.timeconqueror.timecore.api.util.MathUtils;
 import ru.timeconqueror.timecore.api.util.Requirements;
@@ -15,7 +15,7 @@ import ru.timeconqueror.timecore.api.util.Requirements;
 import javax.annotation.OverridingMethodsMustInvokeSuper;
 import java.util.Objects;
 
-public class AnimationWatcher implements IAnimationInfo {
+public class AnimationWatcher implements IAnimationWatcherInfo {
     protected final FreezableTime startTime;
     /**
      * Speed factor of the animation
@@ -73,21 +73,23 @@ public class AnimationWatcher implements IAnimationInfo {
 		startTime.set(System.currentTimeMillis());
 	}
 
-	public Animation getAnimation() {
-		return animation;
-	}
+    @Override
+    public Animation getAnimation() {
+        return animation;
+    }
 
 	public boolean isAnimationEnded(long time) {
 		return time > startTime.get() + Math.round(animation.getLength() / speed);
 	}
 
+    @Override
     public int getExistingTime(long time) {
-        return (int) MathUtils.coerceInRange((time - startTime.get()) * speed, 0, animation.getLength());
+        return (int) MathUtils.coerceInRange((time - startTime.get()), 0, getLength());
     }
 
     @Override
-    public int getExistingTime() {
-        return getExistingTime(System.currentTimeMillis());
+    public float getSpeed() {
+        return speed;
     }
 
     public void freeze() {
@@ -100,23 +102,26 @@ public class AnimationWatcher implements IAnimationInfo {
 
     @Override
     public int getLength() {
-        return getAnimation().getLength();
+        return Math.round(getAnimation().getLength() / speed);
+    }
+
+    /**
+     * Returns animation time to be used in animation frame calculation.
+     */
+    @Override
+    public int getCurrentAnimationTime(long time) {
+        return Math.round(getExistingTime(time) * getSpeed());
     }
 
     @Override
     public String toString() {
-        return "AnimationWatcher {" +
-                "animation=" + animation +
-                ", existingTime=" + getExistingTime() +
-                ", speed=" + speed +
-                ", inited=" + inited +
-                '}';
-	}
+        return String.format("AnimationWatcher {Animation: %s, Time Passed: %d / %d, Passed Animation Time: %d, Speed: %f, Initialized: %b}", animation, getExistingTime(), getLength(), getCurrentAnimationTime(), getSpeed(), inited);
+    }
 
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) return true;
-		if (!(o instanceof AnimationWatcher)) return false;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof AnimationWatcher)) return false;
         AnimationWatcher watcher = (AnimationWatcher) o;
         return Float.compare(watcher.speed, speed) == 0 &&
                 animation.equals(watcher.animation);
@@ -125,11 +130,6 @@ public class AnimationWatcher implements IAnimationInfo {
     @Override
     public int hashCode() {
         return Objects.hash(speed, animation);
-    }
-
-    @Deprecated // 1.18+ removal, use #getLength
-    public int getAnimationLength() {
-        return getLength();
     }
 
     @Override
@@ -150,6 +150,11 @@ public class AnimationWatcher implements IAnimationInfo {
     @Override
     public boolean isNull() {
         return false;
+    }
+
+    @Deprecated // 1.18+ removal, use #getLength
+    public int getAnimationLength() {
+        return getLength();
     }
 
     protected static class FreezableTime {

@@ -1,11 +1,16 @@
 package ru.timeconqueror.timecore.animation.watcher;
 
 import ru.timeconqueror.timecore.api.animation.Animation;
-import ru.timeconqueror.timecore.api.animation.IAnimationInfo;
+import ru.timeconqueror.timecore.api.animation.IAnimationWatcherInfo;
 
-public class EmptyAnimationInfo implements IAnimationInfo {
+public class EmptyAnimationWatcherInfo implements IAnimationWatcherInfo {
     @Override
-    public int getExistingTime() {
+    public int getExistingTime(long currentMillis) {
+        return 0;
+    }
+
+    @Override
+    public int getCurrentAnimationTime(long currentMillis) {
         return 0;
     }
 
@@ -37,5 +42,10 @@ public class EmptyAnimationInfo implements IAnimationInfo {
     @Override
     public boolean autoTransitsFrom(Animation animation) {
         return false;
+    }
+
+    @Override
+    public float getSpeed() {
+        return 0;
     }
 }

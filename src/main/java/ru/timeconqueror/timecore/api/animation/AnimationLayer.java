@@ -18,7 +18,7 @@ public interface AnimationLayer extends Cloneable {
 
     String getName();
 
-    IAnimationInfo getAnimationInfo();
+    IAnimationWatcherInfo getAnimationInfo();
 
 //    /**
 //     * Pauses the layer as well as the played animation.

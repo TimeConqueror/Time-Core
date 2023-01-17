@@ -4,7 +4,7 @@ import net.minecraft.util.ResourceLocation;
 import ru.timeconqueror.timecore.animation.AnimationStarter;
 import ru.timeconqueror.timecore.animation.component.action.NewDelayedAction;
 import ru.timeconqueror.timecore.animation.util.StandardDelayPredicates;
-import ru.timeconqueror.timecore.api.animation.IAnimationInfo;
+import ru.timeconqueror.timecore.api.animation.IAnimationWatcherInfo;
 
 import java.util.Objects;
 import java.util.function.BiConsumer;
@@ -12,7 +12,7 @@ import java.util.function.Predicate;
 
 @Deprecated // for removal 1.18+, use IDelayedAction#builder()
 public class DelayedAction<T, EXTRA_DATA> extends NewDelayedAction<T, EXTRA_DATA> {
-    private Predicate<IAnimationInfo> actionDelayPredicate = StandardDelayPredicates.onStart();
+    private Predicate<IAnimationWatcherInfo> actionDelayPredicate = StandardDelayPredicates.onStart();
     private BiConsumer<? super T, ? super EXTRA_DATA> action = (entity, data) -> {
     };
 
@@ -48,7 +48,7 @@ public class DelayedAction<T, EXTRA_DATA> extends NewDelayedAction<T, EXTRA_DATA
      *
      * @see StandardDelayPredicates
      */
-    public DelayedAction<T, EXTRA_DATA> setDelayPredicate(Predicate<IAnimationInfo> delayPredicate) {
+    public DelayedAction<T, EXTRA_DATA> setDelayPredicate(Predicate<IAnimationWatcherInfo> delayPredicate) {
         this.actionDelayPredicate = delayPredicate;
 
         return this;
@@ -58,7 +58,7 @@ public class DelayedAction<T, EXTRA_DATA> extends NewDelayedAction<T, EXTRA_DATA
         return action;
     }
 
-    public Predicate<IAnimationInfo> getActionDelayPredicate() {
+    public Predicate<IAnimationWatcherInfo> getActionDelayPredicate() {
         return actionDelayPredicate;
     }
 
