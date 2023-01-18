@@ -1,8 +1,5 @@
 package ru.timeconqueror.timecore.api.animation;
 
-import org.jetbrains.annotations.Nullable;
-import ru.timeconqueror.timecore.animation.watcher.AnimationWatcher;
-
 public interface AnimationLayer extends Cloneable {
     float getWeight();
 
@@ -12,13 +9,15 @@ public interface AnimationLayer extends Cloneable {
 
     void setBlendType(BlendType type);
 
-    Animation getCurrentAnimation();
-
-    boolean hasAnimation();
-
+    /**
+     * Returns layer name.
+     */
     String getName();
 
-    IAnimationWatcherInfo getAnimationInfo();
+    /**
+     * Returns the information about animation currently played on layer.
+     */
+    IAnimationWatcherInfo getWatcherInfo();
 
 //    /**
 //     * Pauses the layer as well as the played animation.
@@ -35,9 +34,4 @@ public interface AnimationLayer extends Cloneable {
 //     * Returns true if layer & animation on it is paused, otherwise returns false.
 //     */
 //    boolean isFrozen();
-
-    @Nullable
-    @Deprecated
-        //use #getAnimationInfo
-    AnimationWatcher getAnimationWatcher();
 }

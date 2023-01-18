@@ -47,17 +47,6 @@ public class Layer implements AnimationLayer {
         blendType = type;
     }
 
-    @Override
-    @SuppressWarnings("ConstantConditions")
-    public Animation getCurrentAnimation() {
-        return hasAnimation() ? getAnimationWatcher().getAnimation() : Animation.NULL;
-    }
-
-    @Override
-    public boolean hasAnimation() {
-        return getAnimationWatcher() != null && getAnimationWatcher().getAnimation() != Animation.NULL;
-    }
-
     void setAnimation(AnimationStarter.AnimationData data) {
         if (animationWatcher != null) {
             manager.onAnimationStop(animationWatcher);
@@ -148,7 +137,7 @@ public class Layer implements AnimationLayer {
     }
 
     @Override
-    public IAnimationWatcherInfo getAnimationInfo() {
+    public IAnimationWatcherInfo getWatcherInfo() {
         return animationWatcher != null ? animationWatcher : IAnimationWatcherInfo.EMPTY;
     }
 

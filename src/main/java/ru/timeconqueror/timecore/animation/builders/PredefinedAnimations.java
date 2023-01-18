@@ -21,7 +21,7 @@ public class PredefinedAnimations implements IPredefinedAnimations {
     }
 
     public static boolean areAnimationsEqual(@NotNull PredefinedAnimation anim, Layer layer) {
-        return anim.getAnimationStarter().getData().getAnimation().equals(layer.getCurrentAnimation());
+        return anim.getAnimationStarter().getData().getAnimation().equals(layer.getWatcherInfo().getAnimation());
     }
 
     public static class EntityPredefinedAnimations extends PredefinedAnimations implements IEntityPredefinedAnimations {
