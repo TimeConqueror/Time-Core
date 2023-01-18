@@ -12,13 +12,15 @@ public interface AnimationLayer extends Cloneable {
 
     void setBlendType(BlendType type);
 
-    Animation getCurrentAnimation();
-
-    boolean hasAnimation();
-
+    /**
+     * Returns layer name.
+     */
     String getName();
 
-    IAnimationWatcherInfo getAnimationInfo();
+    /**
+     * Returns the information about animation currently played on layer.
+     */
+    IAnimationWatcherInfo getWatcherInfo();
 
 //    /**
 //     * Pauses the layer as well as the played animation.
@@ -40,4 +42,12 @@ public interface AnimationLayer extends Cloneable {
     @Deprecated
         //use #getAnimationInfo
     AnimationWatcher getAnimationWatcher();
+
+    @Deprecated
+        // TODO 1.18+ removal, use #getAnimationInfo()
+    Animation getCurrentAnimation();
+
+    @Deprecated
+//TODO 1.18+ removal, use #getAnimationInfo()
+    boolean hasAnimation();
 }

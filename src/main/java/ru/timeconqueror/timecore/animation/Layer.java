@@ -49,13 +49,14 @@ public class Layer implements AnimationLayer {
 
     @Override
     @SuppressWarnings("ConstantConditions")
+    @Deprecated // 1.18+ removal
     public Animation getCurrentAnimation() {
-        return hasAnimation() ? getAnimationWatcher().getAnimation() : Animation.NULL;
+        return getWatcherInfo().getAnimation();
     }
 
     @Override
     public boolean hasAnimation() {
-        return getAnimationWatcher() != null && getAnimationWatcher().getAnimation() != Animation.NULL;
+        return getWatcherInfo().getAnimation() != Animation.NULL;
     }
 
     void setAnimation(AnimationStarter.AnimationData data) {
@@ -148,7 +149,7 @@ public class Layer implements AnimationLayer {
     }
 
     @Override
-    public IAnimationWatcherInfo getAnimationInfo() {
+    public IAnimationWatcherInfo getWatcherInfo() {
         return animationWatcher != null ? animationWatcher : IAnimationWatcherInfo.EMPTY;
     }
 
