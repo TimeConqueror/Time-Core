@@ -20,7 +20,6 @@
     "accessor.client.MaterialDefinitionAccessor",
     "accessor.client.ViewDistanceProvider",
     "client.ClientModelLoaderMixin",
-    "client.EntityModelSetMixin",
     "client.MinecraftMixin",
     "client.WorldRendererMixin",
     "client.command.ClientPlayerEntityMixin",

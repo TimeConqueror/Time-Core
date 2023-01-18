@@ -90,6 +90,15 @@ public class TimeModelSet implements ResourceManagerReloadListener {
 
         this.roots = roots;
 
+        reloadListeners();
+
+        TimeCore.LOGGER.debug("Loading TimeModelSet took {}", watch);
+    }
+
+    private void reloadListeners() {
+        TimeCore.LOGGER.debug("Reloading listeners...");
+        Stopwatch w = Stopwatch.createStarted();
+
         reloadListeners.removeIf(ref -> ref.get() == null);
 
         for (WeakReference<ReloadListener> watchedListener : reloadListeners) {
@@ -99,7 +108,7 @@ public class TimeModelSet implements ResourceManagerReloadListener {
             }
         }
 
-        TimeCore.LOGGER.debug("Loading TimeModelSet took {}", watch);
+        TimeCore.LOGGER.debug("Reloading listeners took {}", w);
     }
 
     private String mapToModelNames(List<Pair<TimeModelLocation, TimeModelDefinition>> definitions) {

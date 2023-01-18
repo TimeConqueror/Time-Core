@@ -1,7 +1,10 @@
 package ru.timeconqueror.timecore.internal.client.handlers;
 
+import net.minecraft.client.Minecraft;
+import net.minecraft.server.packs.resources.ReloadableResourceManager;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ModelRegistryEvent;
+import net.minecraftforge.client.event.ParticleFactoryRegisterEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
@@ -21,5 +24,11 @@ public class ClientLoadingHandler {
     @SubscribeEvent
     public static void onModelRegistry(ModelRegistryEvent event) {
         LoadingOnlyStorage.tryLoadResourceHolders();
+    }
+
+    @SubscribeEvent
+    public static void onMinecraftConstructor(ParticleFactoryRegisterEvent event) {
+        ReloadableResourceManager resourceManager = (ReloadableResourceManager) Minecraft.getInstance().getResourceManager();
+        resourceManager.registerReloadListener(MODEL_SET);
     }
 }
