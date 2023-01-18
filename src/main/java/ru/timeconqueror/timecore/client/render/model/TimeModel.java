@@ -15,23 +15,14 @@ import java.util.Map;
 public class TimeModel extends Model implements ITimeModel {
     public static final String INTERNAL_ROOT_NAME = "i$root";
     private final TimeModelLocation location;
-    private final TimeModelPart root;
-    private Map<String, TimeModelPart> partMap;
-
     private final float scaleMultiplier;
+    private final ReloadableContainer container = new ReloadableContainer();
 
     public TimeModel(ModelConfiguration modelConfig) {
         super(modelConfig.renderTypeProvider());
 
         this.location = modelConfig.location();
-        this.root = ClientLoadingHandler.MODEL_SET.bakeRoot(location);
         this.scaleMultiplier = modelConfig.scale();
-        buildPartMap();
-        init();
-    }
-
-    protected void init() {
-
     }
 
     @Override
@@ -50,18 +41,18 @@ public class TimeModel extends Model implements ITimeModel {
 
     @Nullable
     public TimeModelPart tryGetPart(String partName) {
-        return partMap.get(partName);
+        return container.getPartMap().get(partName);
     }
 
     public TimeModelPart getRoot() {
-        return root;
+        return container.getRoot();
     }
 
     /**
      * Should be called before animation applying & render.
      */
     public void reset() {
-        for (TimeModelPart part : partMap.values()) {
+        for (TimeModelPart part : container.getPartMap().values()) {
             part.reset();
         }
     }
@@ -69,24 +60,51 @@ public class TimeModel extends Model implements ITimeModel {
     @Override
     public void renderToBuffer(PoseStack matrixStackIn, VertexConsumer bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha) {
         matrixStackIn.scale(scaleMultiplier, scaleMultiplier, scaleMultiplier);
-        root.render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
+        getRoot().render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
         matrixStackIn.scale(1 / scaleMultiplier, 1 / scaleMultiplier, 1 / scaleMultiplier);
     }
 
-    private void buildPartMap() {
-        ImmutableMap.Builder<String, TimeModelPart> builder = ImmutableMap.builder();
+    private class ReloadableContainer extends TimeModelSet.ReloadListener {
+        private TimeModelPart root;
+        private Map<String, TimeModelPart> partMap;
 
-        addPartToMap(builder, INTERNAL_ROOT_NAME, root);
+        public TimeModelPart getRoot() {
+            check(root);
+            return root;
+        }
 
-        this.partMap = builder.build();
-    }
+        public Map<String, TimeModelPart> getPartMap() {
+            check(partMap);
+            return partMap;
+        }
 
-    private void addPartToMap(ImmutableMap.Builder<String, TimeModelPart> builder, String name, TimeModelPart part) {
-        builder.put(name, part);
+        private void check(Object object) {
+            if (object == null) {
+                throw new IllegalStateException("Reloadable parts were not loaded yet");
+            }
+        }
 
-        Map<String, TimeModelPart> children = part.getChildren();
-        for (Map.Entry<String, TimeModelPart> e : children.entrySet()) {
-            addPartToMap(builder, e.getKey(), e.getValue());
+        @Override
+        void reload() {
+            root = ClientLoadingHandler.MODEL_SET.bakeRoot(location);
+            buildPartMap();
+        }
+
+        private void buildPartMap() {
+            ImmutableMap.Builder<String, TimeModelPart> builder = ImmutableMap.builder();
+
+            addPartToMap(builder, INTERNAL_ROOT_NAME, root);
+
+            this.partMap = builder.build();
+        }
+
+        private void addPartToMap(ImmutableMap.Builder<String, TimeModelPart> builder, String name, TimeModelPart part) {
+            builder.put(name, part);
+
+            Map<String, TimeModelPart> children = part.getChildren();
+            for (Map.Entry<String, TimeModelPart> e : children.entrySet()) {
+                addPartToMap(builder, e.getKey(), e.getValue());
+            }
         }
     }
 }

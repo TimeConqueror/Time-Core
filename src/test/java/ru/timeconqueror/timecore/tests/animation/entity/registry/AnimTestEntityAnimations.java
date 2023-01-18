@@ -8,7 +8,7 @@ import ru.timeconqueror.timecore.api.animation.Animation;
 import ru.timeconqueror.timecore.api.animation.AnimationAPI;
 
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
-public class AnimTestEntityAnimation {
+public class AnimTestEntityAnimations {
     public static Animation towerGuardianWalk;
 
     @SubscribeEvent

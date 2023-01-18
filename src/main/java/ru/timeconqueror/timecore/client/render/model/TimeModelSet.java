@@ -8,13 +8,16 @@ import ru.timeconqueror.timecore.TimeCore;
 import ru.timeconqueror.timecore.api.util.Pair;
 import ru.timeconqueror.timecore.client.render.model.loading.JsonModelParser;
 import ru.timeconqueror.timecore.client.render.model.loading.TimeModelDefinition;
+import ru.timeconqueror.timecore.internal.client.handlers.ClientLoadingHandler;
 
+import java.lang.ref.WeakReference;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 public class TimeModelSet implements ResourceManagerReloadListener {
     //TODO make TimeModelRegister#register be called upon reload!
+    private final List<WeakReference<ReloadListener>> reloadListeners = new ArrayList<>();
     private final Set<TimeModelLocation> models = ConcurrentHashMap.newKeySet();
 
     private Map<TimeModelLocation, TimeModelDefinition> roots = ImmutableMap.of();
@@ -87,10 +90,27 @@ public class TimeModelSet implements ResourceManagerReloadListener {
 
         this.roots = roots;
 
+        reloadListeners.removeIf(ref -> ref.get() == null);
+
+        for (WeakReference<ReloadListener> watchedListener : reloadListeners) {
+            ReloadListener listener = watchedListener.get();
+            if (listener != null) {
+                listener.reload();
+            }
+        }
+
         TimeCore.LOGGER.debug("Loading TimeModelSet took {}", watch);
     }
 
     private String mapToModelNames(List<Pair<TimeModelLocation, TimeModelDefinition>> definitions) {
         return definitions.stream().map(pair -> pair.left().modelName()).collect(Collectors.joining());
+    }
+
+    public static abstract class ReloadListener {
+        public ReloadListener() {
+            ClientLoadingHandler.MODEL_SET.reloadListeners.add(new WeakReference<>(this));
+        }
+
+        abstract void reload();
     }
 }
