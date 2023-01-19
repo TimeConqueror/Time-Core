@@ -1,4 +1,4 @@
-package ru.timeconqueror.timecore.api;
+package ru.timeconqueror.timecore.api.client.render.model;
 
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
