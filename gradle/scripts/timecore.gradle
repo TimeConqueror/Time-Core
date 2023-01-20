@@ -36,6 +36,13 @@ minecraft.runs.all {
     }
 }
 
+repositories {
+    maven {
+        name = "TimeConqueror's Maven" // dot to make it first priority
+        url = "https://repo.repsy.io/mvn/timeconqueror/mc/"
+    }
+}
+
 dependencies {
     library 'org.jetbrains:annotations:23.1.0'
 
