@@ -51,7 +51,8 @@ public abstract class Animation {
 	 * It is slow, so you need to call this once.
 	 * Don't forget about registering returned animation.
 	 */
-	public abstract Animation reverse();
+    @Deprecated // FIXME doesn't work for now
+    public abstract Animation reverse();
 
 	@Override
 	public boolean equals(Object obj) {

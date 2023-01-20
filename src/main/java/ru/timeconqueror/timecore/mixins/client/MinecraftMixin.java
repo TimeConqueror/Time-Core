@@ -7,7 +7,7 @@ import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import ru.timeconqueror.timecore.TimeCore;
 import ru.timeconqueror.timecore.internal.common.config.MainConfig;
 
-@Mixin(Minecraft.class)//TODO check if it works in default runtime
+@Mixin(Minecraft.class)
 public abstract class MinecraftMixin {
     @SuppressWarnings("InvalidInjectorMethodSignature")
     @ModifyVariable(method = "doLoadLevel",

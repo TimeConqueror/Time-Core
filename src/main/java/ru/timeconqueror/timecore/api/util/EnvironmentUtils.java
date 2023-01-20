@@ -28,7 +28,7 @@ public class EnvironmentUtils {
         return FMLEnvironment.dist == Dist.DEDICATED_SERVER;
     }
 
-    public static boolean isInDev() {//TODO maybe move to FMLEnvironment.production
+    public static boolean isInDev() {
         return !FMLEnvironment.production;
     }
 
