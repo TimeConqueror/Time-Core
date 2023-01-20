@@ -67,7 +67,7 @@ public class Transition extends Animation {
     }
 
     @Override
-    public void apply(ITimeModel model, AnimationLayer layer, int existingTime) {
+    public void apply(ITimeModel model, ILayer layer, int existingTime) {
         if (options != null) {
             if (existingTime <= transitionLength) {
                 options.forEach(boneOption -> {
@@ -189,7 +189,7 @@ public class Transition extends Animation {
             this.scales = scales;
         }
 
-        public void apply(TimeModelPart piece, AnimationLayer layer, int existingTime) {
+        public void apply(TimeModelPart piece, ILayer layer, int existingTime) {
             Vector3f interpolated = KeyFrameInterpolator.interpolateLinear(rotations.left(), rotations.right(), existingTime);
             AnimationUtils.applyRotation(piece, layer, interpolated);
 

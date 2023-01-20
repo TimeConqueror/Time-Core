@@ -1,6 +1,6 @@
 package ru.timeconqueror.timecore.api.animation;
 
-public interface AnimationLayer extends Cloneable {
+public interface ILayer {
     float getWeight();
 
     void setWeight(float weight);

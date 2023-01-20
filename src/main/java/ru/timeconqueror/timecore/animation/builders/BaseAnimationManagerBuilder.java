@@ -1,25 +1,25 @@
 package ru.timeconqueror.timecore.animation.builders;
 
-import ru.timeconqueror.timecore.animation.*;
+import ru.timeconqueror.timecore.animation.BaseAnimationManager;
+import ru.timeconqueror.timecore.animation.ClientAnimationManager;
+import ru.timeconqueror.timecore.animation.EnumAnimatedObjectType;
+import ru.timeconqueror.timecore.animation.ServerAnimationManager;
 import ru.timeconqueror.timecore.animation.action.ActionManagerImpl;
 import ru.timeconqueror.timecore.api.animation.AnimatedObject;
 import ru.timeconqueror.timecore.api.animation.AnimationConstants;
 import ru.timeconqueror.timecore.api.animation.BlendType;
 import ru.timeconqueror.timecore.api.animation.builders.IAnimationManagerBuilder;
+import ru.timeconqueror.timecore.api.animation.builders.LayerDefinition;
 import ru.timeconqueror.timecore.api.util.SingleUseBuilder;
 
 import java.util.LinkedHashMap;
 
 public class BaseAnimationManagerBuilder extends SingleUseBuilder implements IAnimationManagerBuilder {
-    private final LinkedHashMap<String, Layer> animationLayers = new LinkedHashMap<>();
+    private final LinkedHashMap<String, LayerDefinition> layerDefinitions = new LinkedHashMap<>();
 
     @Override
     public void addLayer(String name, BlendType blendType, float weight) {
-        verifyNotUsed();
-        Layer prev = animationLayers.put(name, new Layer(name, blendType, weight));
-        if (prev != null) {
-            throw new IllegalArgumentException("Layer with location " + name + " already exist in provided animation manager.");
-        }
+        addLayer(new LayerDefinition(name, blendType, weight));
     }
 
     @Override
@@ -29,16 +29,11 @@ public class BaseAnimationManagerBuilder extends SingleUseBuilder implements IAn
     }
 
     @Override
-    public void addLayer(Layer layer) {
+    public void addLayer(LayerDefinition layerDefinition) {
         verifyNotUsed();
-        Layer prev = animationLayers.put(layer.getName(), layer.copySettings());
-        if (prev != null) {
-            throw new IllegalArgumentException("Layer with location " + layer.getName() + " already exist in provided animation manager.");
+        if (layerDefinitions.put(layerDefinition.name(), layerDefinition) != null) {
+            throw new IllegalArgumentException("Layer with location " + layerDefinition.name() + " already exist in provided animation manager.");
         }
-    }
-
-    protected LinkedHashMap<String, Layer> getAnimationLayers() {
-        return animationLayers;
     }
 
     BaseAnimationManager build(boolean serverSide, EnumAnimatedObjectType type) {
@@ -49,11 +44,11 @@ public class BaseAnimationManagerBuilder extends SingleUseBuilder implements IAn
             manager = new ClientAnimationManager();
         }
 
-        if (animationLayers.isEmpty()) {
+        if (layerDefinitions.isEmpty()) {
             addMainLayer();
         }
 
-        manager.buildLayers(animationLayers);
+        manager.buildLayers(layerDefinitions);
 
         setUsed();
 

@@ -15,13 +15,13 @@ public interface AnimationManager {
 	boolean containsLayer(String name);
 
 	/**
-	 * Returns layer object by its location.
-	 *
-	 * @throws RuntimeException if layer is not found,
-	 *                          so you should check existing of the layer in {@link #containsLayer(String)} firstly.
-	 */
-	@NotNull
-	AnimationLayer getLayer(String name);
+     * Returns layer object by its location.
+     *
+     * @throws RuntimeException if layer is not found,
+     *                          so you should check existing of the layer in {@link #containsLayer(String)} firstly.
+     */
+    @NotNull
+    ILayer getLayer(String name);
 
 	/**
 	 * Returns all layer names.

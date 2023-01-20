@@ -5,15 +5,14 @@ import ru.timeconqueror.timecore.animation.component.LoopMode;
 import ru.timeconqueror.timecore.animation.watcher.AnimationWatcher;
 import ru.timeconqueror.timecore.animation.watcher.TransitionWatcher;
 import ru.timeconqueror.timecore.api.animation.Animation;
-import ru.timeconqueror.timecore.api.animation.AnimationLayer;
 import ru.timeconqueror.timecore.api.animation.BlendType;
 import ru.timeconqueror.timecore.api.animation.IAnimationWatcherInfo;
+import ru.timeconqueror.timecore.api.animation.ILayer;
+import ru.timeconqueror.timecore.api.animation.builders.LayerDefinition;
 import ru.timeconqueror.timecore.api.client.render.model.ITimeModel;
-import ru.timeconqueror.timecore.api.util.MathUtils;
 
-//TODO 1.18 make LayerDefinition instead of using Layer in Builder
-public class Layer implements AnimationLayer {
-    private BaseAnimationManager manager;
+public class Layer implements ILayer {
+    private final BaseAnimationManager manager;
     private final String name;
 
     @Nullable
@@ -21,10 +20,11 @@ public class Layer implements AnimationLayer {
     private BlendType blendType;
     private float weight;
 
-    public Layer(String name, BlendType blendType, float weight) {
-        this.name = name;
-        this.weight = MathUtils.coerceInRange(weight, 0, 1);
-        this.blendType = blendType;
+    public Layer(BaseAnimationManager manager, LayerDefinition layerDefinition) {
+        this.manager = manager;
+        this.name = layerDefinition.name();
+        this.blendType = layerDefinition.blendType();
+        this.weight = layerDefinition.weight();
     }
 
     @Override
@@ -122,11 +122,6 @@ public class Layer implements AnimationLayer {
         }
     }
 
-    //TODO 1.18+ move to constructor
-    void setManager(BaseAnimationManager manager) {
-        this.manager = manager;
-    }
-
     @Nullable
     public AnimationWatcher getAnimationWatcher() {
         return animationWatcher;
@@ -144,9 +139,5 @@ public class Layer implements AnimationLayer {
     @Override
     public String getName() {
         return name;
-    }
-
-    public Layer copySettings() {
-        return new Layer(name, blendType, weight);
     }
 }

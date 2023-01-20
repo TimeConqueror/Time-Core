@@ -4,8 +4,8 @@ import com.mojang.math.Vector3f;
 import ru.timeconqueror.timecore.animation.calculation.KeyFrameInterpolator;
 import ru.timeconqueror.timecore.animation.util.AnimationUtils;
 import ru.timeconqueror.timecore.api.animation.Animation;
-import ru.timeconqueror.timecore.api.animation.AnimationLayer;
 import ru.timeconqueror.timecore.api.animation.Channel;
+import ru.timeconqueror.timecore.api.animation.ILayer;
 import ru.timeconqueror.timecore.client.render.model.TimeModelPart;
 
 import java.util.List;
@@ -32,7 +32,7 @@ public class BoneOption {
         this.scales = scales;
     }
 
-    public void apply(Animation animation, AnimationLayer layer, TimeModelPart piece, int existingTime) {
+    public void apply(Animation animation, ILayer layer, TimeModelPart piece, int existingTime) {
         Vector3f rotateVec = KeyFrameInterpolator.findInterpolationVec(animation, rotations, existingTime);
         if (rotateVec != null) {
             AnimationUtils.applyRotation(piece, layer, rotateVec);

@@ -13,7 +13,7 @@ public abstract class Animation {
 	@SuppressWarnings("StaticInitializerReferencesSubClass")
 	public static final Animation NULL = new BasicAnimation(LoopMode.DO_NOT_LOOP, TimeCore.rl("internal/null"), "null", 0, null);
 
-	public abstract void apply(ITimeModel model, AnimationLayer layer, int existingTime);
+	public abstract void apply(ITimeModel model, ILayer layer, int existingTime);
 
 	/**
 	 * Name of the animation, that is indicated in animation file.

@@ -7,8 +7,8 @@ import org.jetbrains.annotations.Nullable;
 import ru.timeconqueror.timecore.animation.calculation.KeyFrameInterpolator;
 import ru.timeconqueror.timecore.animation.util.Empty;
 import ru.timeconqueror.timecore.api.animation.Animation;
-import ru.timeconqueror.timecore.api.animation.AnimationLayer;
 import ru.timeconqueror.timecore.api.animation.Channel;
+import ru.timeconqueror.timecore.api.animation.ILayer;
 import ru.timeconqueror.timecore.api.animation.TransitionFactoryWithDestination;
 import ru.timeconqueror.timecore.api.client.render.model.ITimeModel;
 import ru.timeconqueror.timecore.api.util.Pair;
@@ -42,7 +42,7 @@ public class BasicAnimation extends Animation {
         this.options = options;
     }
 
-    public void apply(ITimeModel model, AnimationLayer layer, int existingTime) {
+    public void apply(ITimeModel model, ILayer layer, int existingTime) {
         if (options != null) {
             if (existingTime <= length) {
                 options.forEach((s, boneOption) -> {

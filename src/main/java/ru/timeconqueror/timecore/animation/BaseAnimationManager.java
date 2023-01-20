@@ -8,12 +8,14 @@ import ru.timeconqueror.timecore.animation.watcher.TransitionWatcher;
 import ru.timeconqueror.timecore.api.animation.Animation;
 import ru.timeconqueror.timecore.api.animation.AnimationConstants;
 import ru.timeconqueror.timecore.api.animation.AnimationManager;
+import ru.timeconqueror.timecore.api.animation.builders.LayerDefinition;
 import ru.timeconqueror.timecore.api.client.render.model.ITimeModel;
 
 import javax.annotation.OverridingMethodsMustInvokeSuper;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public abstract class BaseAnimationManager implements AnimationManager {
     private Map<String, Layer> layerMap;
@@ -106,11 +108,10 @@ public abstract class BaseAnimationManager implements AnimationManager {
         onAnimationStop(watcher);
     }
 
-    public void buildLayers(LinkedHashMap<String, Layer> layers) {
-        layerMap = layers;
-        for (Layer layer : layers.values()) {
-            layer.setManager(this);
-        }
+    public void buildLayers(LinkedHashMap<String, LayerDefinition> layers) {
+        layerMap = layers.values().stream()
+                .map(layerDefinition -> new Layer(this, layerDefinition))
+                .collect(Collectors.toMap(Layer::getName, layer -> layer, (o, o2) -> o, LinkedHashMap::new));
     }
 
     /**
