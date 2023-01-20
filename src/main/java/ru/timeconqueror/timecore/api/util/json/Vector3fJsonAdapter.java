@@ -2,7 +2,7 @@ package ru.timeconqueror.timecore.api.util.json;
 
 import com.google.gson.JsonElement;
 import com.google.gson.*;
-import com.mojang.math.Vector3f;
+import org.joml.Vector3f;
 
 import java.lang.reflect.Type;
 

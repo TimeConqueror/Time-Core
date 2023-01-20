@@ -1,11 +1,11 @@
 package ru.timeconqueror.timecore.devtools.client;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Vector3f;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.Vec3i;
 import net.minecraft.world.phys.Vec3;
+import org.joml.Vector3f;
 import ru.timeconqueror.timecore.api.util.client.DrawHelper;
 
 public class DebugRenderer {

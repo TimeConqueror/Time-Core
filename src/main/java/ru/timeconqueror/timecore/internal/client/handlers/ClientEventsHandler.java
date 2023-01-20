@@ -15,7 +15,7 @@ import ru.timeconqueror.timecore.internal.client.TKeyBinds;
 @Mod.EventBusSubscriber
 public class ClientEventsHandler {
     @SubscribeEvent
-    public static void handleRawMouse(InputEvent.RawMouseEvent event) {
+    public static void handleRawMouse(InputEvent.MouseButton.Pre event) {
         Minecraft mc = Minecraft.getInstance();
 
         if (mc.player != null && mc.player.isCreative() && event.getButton() == GLFW.GLFW_MOUSE_BUTTON_RIGHT && event.getAction() == GLFW.GLFW_PRESS) {
@@ -30,7 +30,7 @@ public class ClientEventsHandler {
                         MultiPlayerGameMode controller = mc.gameMode;
 
                         controller.startDestroyBlock(pos, blockTraceResult.getDirection());
-                        controller.useItemOn(mc.player, mc.level, InteractionHand.MAIN_HAND, blockTraceResult);
+                        controller.useItemOn(mc.player, InteractionHand.MAIN_HAND, blockTraceResult);
                     }
                 }
 

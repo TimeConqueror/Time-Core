@@ -2,9 +2,8 @@ package ru.timeconqueror.timecore.api.util
 
 @JvmName("StringUtils")
 
-@OptIn(ExperimentalStdlibApi::class)
 fun String.capitalizeFirstLetter(): String {
-    return replaceFirstChar { it.toUpperCase() }
+    return replaceFirstChar { it.uppercaseChar() }
 }
 
 /**

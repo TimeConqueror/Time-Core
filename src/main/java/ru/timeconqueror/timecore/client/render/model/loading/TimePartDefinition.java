@@ -1,9 +1,9 @@
 package ru.timeconqueror.timecore.client.render.model.loading;
 
 import com.google.common.collect.ImmutableList;
-import com.mojang.math.Vector3f;
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import org.jetbrains.annotations.Nullable;
+import org.joml.Vector3f;
 import ru.timeconqueror.timecore.api.util.MathUtils;
 import ru.timeconqueror.timecore.client.render.model.TimeModelCube;
 import ru.timeconqueror.timecore.client.render.model.TimeModelPart;

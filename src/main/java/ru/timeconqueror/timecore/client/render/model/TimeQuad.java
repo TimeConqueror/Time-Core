@@ -1,7 +1,7 @@
 package ru.timeconqueror.timecore.client.render.model;
 
-import com.mojang.math.Vector3f;
 import net.minecraft.core.Direction;
+import org.joml.Vector3f;
 
 public class TimeQuad {
     public final TimeVertex[] vertices;

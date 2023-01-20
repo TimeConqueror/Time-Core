@@ -1,9 +1,9 @@
 package ru.timeconqueror.timecore.animation.component;
 
-import com.mojang.math.Vector3f;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.joml.Vector3f;
 import ru.timeconqueror.timecore.animation.calculation.KeyFrameInterpolator;
 import ru.timeconqueror.timecore.animation.util.Empty;
 import ru.timeconqueror.timecore.api.animation.Animation;

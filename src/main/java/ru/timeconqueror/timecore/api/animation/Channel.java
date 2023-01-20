@@ -1,6 +1,6 @@
 package ru.timeconqueror.timecore.api.animation;
 
-import com.mojang.math.Vector3f;
+import org.joml.Vector3f;
 import ru.timeconqueror.timecore.client.render.model.TimeModelPart;
 
 import java.util.function.Function;

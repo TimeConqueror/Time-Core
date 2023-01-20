@@ -46,7 +46,7 @@ public class AnimationEventHandler {
         if (target instanceof AnimatedObject<?>) {
             AnimationManager animationManager = ((AnimatedObject<?>) target).getSystem().getActionManager().getAnimationManager();
             ServerAnimationManager<?> serverAnimationManager = (ServerAnimationManager<?>) animationManager;
-            InternalPacketManager.sendToPlayer(((ServerPlayer) event.getPlayer()), new S2CSyncAnimationsMsg(serverAnimationManager, target));
+            InternalPacketManager.sendToPlayer(((ServerPlayer) event.getEntity()), new S2CSyncAnimationsMsg(serverAnimationManager, target));
         }
     }
 }

@@ -1,6 +1,6 @@
 package ru.timeconqueror.timecore.animation.util;
 
-import com.mojang.math.Vector3f;
+import org.joml.Vector3f;
 import ru.timeconqueror.timecore.api.animation.BlendType;
 import ru.timeconqueror.timecore.api.animation.ILayer;
 import ru.timeconqueror.timecore.api.util.VecUtils;
