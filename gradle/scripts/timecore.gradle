@@ -1,3 +1,7 @@
+if (!project.properties["timecore.version"]) {
+    throw new IllegalStateException("gradle.properties should contain property 'timecore.version=<VERSION_PLACEHOLDER>' with defined timecore version.")
+}
+
 buildscript {
     repositories {
         mavenCentral()
@@ -11,23 +15,14 @@ buildscript {
         }
     }
     dependencies {
-        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.27-patched'
+        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+'
         classpath "gradle.plugin.com.github.jengelman.gradle.plugins:shadow:7.0.0"
+
     }
 }
 
 apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'com.github.johnrengelman.shadow'
-
-if (file("timecore.properties").exists()) {
-    ext.tcProps = parseConfig(file("timecore.properties"))
-} else {
-    throw new IllegalStateException("timecore.properties weren't found in the root of the project.\nPlease create the file and add the following property:\ntimecore.version=<VERSION_PLACEHOLDER>")
-}
-
-if (!tcProps.timecore.containsKey("version") || tcProps.timecore.version.toString().isEmpty()) {
-    throw new IllegalStateException("timecore.properties exists, but the property timecore.version=<VERSION_PLACEHOLDER> was not found or is empty.")
-}
 
 configurations {
     //library - 3rd-party library (not a mod)
@@ -42,11 +37,13 @@ minecraft.runs.all {
 }
 
 dependencies {
+    library 'org.jetbrains:annotations:23.1.0'
+
     groovy.lang.Closure withoutAnnotations = { exclude group: 'org.jetbrains', module: 'annotations' }
     library "org.jetbrains.kotlin:kotlin-stdlib-jdk8", withoutAnnotations
     library "org.jetbrains.kotlin:kotlin-reflect", withoutAnnotations
 
-    implementation fg.deobf("ru.timeconqueror:TimeCore:${tcProps.timecore.version}:dev")
+    implementation fg.deobf("ru.timeconqueror:TimeCore:${project.properties["timecore.version"]}:dev")
 }
 
 shadowJar {
@@ -62,27 +59,16 @@ shadowJar {
     shadowPackages.forEach {
         relocate(it, "tcrepack.$it")
     }
+    finalizedBy('reobfShadowJar')
 }
 
 reobf {
+    jar {}
     shadowJar {}
 }
 
-tasks.build.dependsOn reobfShadowJar
-jar.finalizedBy('reobfShadowJar')
-
 compileKotlin {
     kotlinOptions {
-        jvmTarget = '1.8'
-        languageVersion = '1.4'
         freeCompilerArgs = Arrays.asList("-Xjvm-default=all", "-Xopt-in=kotlin.RequiresOptIn")
-    }
-}
-
-static def parseConfig(File config) {
-    config.withReader {
-        def prop = new Properties()
-        prop.load(it)
-        return new ConfigSlurper().parse(prop)
     }
 }

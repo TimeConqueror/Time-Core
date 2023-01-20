@@ -40,6 +40,7 @@ public interface AnimationLayer extends Cloneable {
 
     @Nullable
     @Deprecated
+        //TODO 1.18+ removal
         //use #getAnimationInfo
     AnimationWatcher getAnimationWatcher();
 

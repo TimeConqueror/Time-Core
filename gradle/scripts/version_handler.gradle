@@ -30,4 +30,5 @@ task incrementBuild {
         }
     }
 }
-jar.finalizedBy(incrementBuild)
+publish.finalizedBy(incrementBuild)
+build.finalizedBy(incrementBuild)
