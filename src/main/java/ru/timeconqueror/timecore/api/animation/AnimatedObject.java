@@ -10,7 +10,7 @@ import ru.timeconqueror.timecore.animation.renderer.AnimatedLivingEntityRenderer
  * <br>
  * Example of implementing:
  * <blockquote><pre>
- *  public class EntityFloro extends MonsterEntity implements AnimationProvider<EntityFloro> {
+ *  public class EntityFloro extends MonsterEntity implements AnimatedObject<EntityFloro> {
  *     private final ActionController<EntityFloro> actionController;
  *
  *     public EntityFloro(EntityType<? extends MonsterEntity> type, World worldIn) {

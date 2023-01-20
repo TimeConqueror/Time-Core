@@ -28,7 +28,7 @@ public abstract class TransitionFactory {
     /**
      * Returns list of bones with calculated change vectors.
      * Returns null if list can't be created due to, for example, lack of bone option list.
-     * In this case transition will be created with more strong dependence to destination animation.
+     * In this case transition will be created with stronger dependence to destination animation.
      * <p>
      * Will be called only when {@link #source} is a start animation.
      *
