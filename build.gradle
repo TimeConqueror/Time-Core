@@ -13,15 +13,12 @@ buildscript {
         }
     }
     dependencies {
-        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.27-patched'
+        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+'
         classpath 'org.parchmentmc:librarian:1.+'
         classpath 'org.spongepowered:mixingradle:0.7.+'
         classpath "gradle.plugin.com.github.jengelman.gradle.plugins:shadow:7.0.0"
+        classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin:1.8.0'
     }
-}
-
-plugins {
-    id "org.jetbrains.kotlin.jvm" version "1.6.10"
 }
 
 apply plugin: 'net.minecraftforge.gradle'
@@ -30,6 +27,7 @@ apply plugin: 'maven-publish'
 apply plugin: 'org.spongepowered.mixin'
 apply plugin: 'org.parchmentmc.librarian.forgegradle'
 apply plugin: 'com.github.johnrengelman.shadow'
+apply plugin: 'kotlin'
 
 apply from: 'gradle/scripts/configs.gradle'
 apply from: 'gradle/scripts/version_handler.gradle'
@@ -154,8 +152,6 @@ minecraft {
 sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 configurations {
-    // configuration that holds jars to include in the jar
-
     //library - 3rd-party library (not a mod)
     //shade - dep that should be shaded
     implementation.extendsFrom(library)
@@ -194,6 +190,7 @@ dependencies {
 
 shadowJar {
     configurations = [project.configurations.shade]
+    archiveClassifier.set("")
 
     def shadowPackages = [
             'kotlin',
@@ -207,17 +204,16 @@ shadowJar {
 
     mergeServiceFiles()
     exclude '**/module-info.class'
+    finalizedBy('reobfShadowJar')
 }
 
 reobf {
-    shadowJar {}
     jar {}
+    shadowJar {}
 }
 
-tasks.build.dependsOn reobfShadowJar
-jar.finalizedBy('reobfShadowJar')
-
 jar {
+    archiveClassifier.set("")
     from sourceSets.main.output
     exclude '**/module-info.class'
 
@@ -277,7 +273,7 @@ publishing {
     publications {
         mavenJava(MavenPublication) { p ->
 
-            artifact jar
+            artifact shadowJar
             artifact devJar
             artifact sourcesJar
 
@@ -299,13 +295,13 @@ publishing {
             url inProjectMaven
         }
         if (secretProps != null) {
-            maven {
-                url "https://repo.repsy.io/mvn/${secretProps.repsy.user}/${secretProps.repsy.repo_name}"
-                credentials {
-                    username secretProps.repsy.login
-                    password secretProps.repsy.password
-                }
-            }
+//            maven {
+//                url "https://repo.repsy.io/mvn/${secretProps.repsy.user}/${secretProps.repsy.repo_name}"
+//                credentials {
+//                    username secretProps.repsy.login
+//                    password secretProps.repsy.password
+//                }
+//            }
         }
     }
 }
@@ -313,7 +309,7 @@ publishing {
 compileKotlin {
     kotlinOptions {
         jvmTarget = '17'
-        languageVersion = '1.6'
+        languageVersion = '1.8'
         freeCompilerArgs = Arrays.asList("-Xjvm-default=all", "-Xopt-in=kotlin.RequiresOptIn")
     }
 }
