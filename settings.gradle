@@ -1,1 +1,10 @@
-rootProject.name = "TimeCore"
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+        mavenCentral()
+        maven { url = 'https://maven.minecraftforge.net/' }
+        maven { url = 'https://maven.parchmentmc.org' }
+        maven { url = 'https://repo.spongepowered.org/repository/maven-public' }
+        maven { url = "https://repo.repsy.io/mvn/timeconqueror/mc/" }
+    }
+}
