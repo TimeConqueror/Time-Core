@@ -16,7 +16,7 @@ public class AnimationUtils {
         rotationIn.mul(layer.getWeight());
 
         if (blendType == BlendType.OVERWRITE) {
-            VecUtils.setFirst(piece.getRotation(), piece.startRotationRadians);
+            piece.getRotation().set(piece.startRotationRadians);
         } else if (blendType != BlendType.ADD) throw new UnsupportedOperationException();
 
         piece.getRotation().add(rotationIn);
@@ -27,7 +27,7 @@ public class AnimationUtils {
         offsetIn.mul(layer.getWeight());
 
         if (blendType == BlendType.OVERWRITE) {
-            VecUtils.setFirst(piece.getTranslation(), offsetIn);
+            piece.getTranslation().set(offsetIn);
         } else if (blendType == BlendType.ADD) {
             piece.getTranslation().add(offsetIn);
         } else throw new UnsupportedOperationException();
@@ -44,7 +44,7 @@ public class AnimationUtils {
         if (blendType == BlendType.OVERWRITE) {
             piece.getScale().set(scaleIn.x(), scaleIn.y(), scaleIn.z());
         } else if (blendType == BlendType.ADD) {
-            VecUtils.scaleFirst(piece.getScale(), scaleIn);
+            piece.getScale().mul(scaleIn);
         } else throw new UnsupportedOperationException();
     }
 

@@ -2,9 +2,9 @@ package ru.timeconqueror.timecore.api.util;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.ChatType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import org.apache.logging.log4j.LogManager;
@@ -22,7 +22,8 @@ public class ChatUtils {
      */
     public static void sendToAllNearby(BlockPos fromPos, Component msg, double distanceIn) {
         for (ServerPlayer player : NetworkUtils.getPlayersNearby(fromPos, distanceIn)) {
-            player.sendMessage(msg, player.getUUID());
+            //FIXME port
+           // player.sendMessage(msg, player.getUUID());
         }
     }
 
@@ -55,8 +56,8 @@ public class ChatUtils {
      */
     @SafeVarargs
     public static void sendInformativeError(String modId, Player player, String msg, Exception exception, Pair<String, Object>... extraInfo) {
-        NetworkUtils.sendMessage(player, new TranslatableComponent("msg.timecore.chat_error_header").withStyle(ChatFormatting.RED).append(msg));
-        NetworkUtils.sendMessage(player, new TranslatableComponent("msg.timecore.chat_error_contact_us").withStyle(ChatFormatting.RED).append(modId));
+        NetworkUtils.sendMessage(player, Component.translatable("msg.timecore.chat_error_header").withStyle(ChatFormatting.RED).append(msg));
+        NetworkUtils.sendMessage(player, Component.translatable("msg.timecore.chat_error_contact_us").withStyle(ChatFormatting.RED).append(modId));
         LOGGER.error(msg);
         LOGGER.error("Extra information: " + Arrays.toString(extraInfo));
         LOGGER.error(exception);

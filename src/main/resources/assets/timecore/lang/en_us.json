@@ -7,5 +7,7 @@
   "msg.timecore.chat_error_header": "Error: %s",
   "msg.timecore.chat_error_contact_us": "Please, contact with the authors of %s to fix this issue",
   "#MARK AUTO GEN START": "",
-  "#MARK AUTO GEN END": ""
+  "#MARK AUTO GEN END": "",
+  "key.timecore.category": "TimeCore",
+  "key.timecore.toggle_replace_mode": "Toggle Replace Mode"
 }

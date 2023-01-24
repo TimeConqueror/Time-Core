@@ -1,8 +1,8 @@
 package ru.timeconqueror.timecore.api.util;
 
-import com.mojang.math.Vector3f;
 import net.minecraft.core.Vec3i;
 import net.minecraft.world.phys.Vec3;
+import org.joml.Vector3f;
 
 /**
  * All methods here work on both sides
@@ -68,13 +68,5 @@ public class VecUtils {
 
     public static void subtractToFirst(Vector3f first, Vec3 second) {
         first.set(first.x() - (float) second.x, first.y() - (float) second.y, first.z() - (float) second.z);
-    }
-
-    public static void scaleFirst(Vector3f first, Vector3f second) {
-        first.mul(second.x(), second.y(), second.z());
-    }
-
-    public static void setFirst(Vector3f first, Vector3f second) {
-        first.set(second.x(), second.y(), second.z());
     }
 }

@@ -11,7 +11,7 @@ import ru.timeconqueror.timecore.animation.ServerAnimationManager;
 import ru.timeconqueror.timecore.animation.action.EntityActionManager;
 import ru.timeconqueror.timecore.api.animation.AnimatedObject;
 import ru.timeconqueror.timecore.api.animation.AnimationManager;
-import ru.timeconqueror.timecore.api.common.event.LivingUpdateEndEvent;
+import ru.timeconqueror.timecore.api.common.event.LivingTickEndEvent;
 import ru.timeconqueror.timecore.internal.common.packet.InternalPacketManager;
 import ru.timeconqueror.timecore.internal.common.packet.animation.S2CSyncAnimationsMsg;
 
@@ -20,8 +20,8 @@ import ru.timeconqueror.timecore.internal.common.packet.animation.S2CSyncAnimati
 public class AnimationEventHandler {
 
     @SubscribeEvent
-    public static void onEntityTick(LivingEvent.LivingUpdateEvent event) {
-        LivingEntity entityLiving = event.getEntityLiving();
+    public static void onEntityTick(LivingEvent.LivingTickEvent event) {
+        LivingEntity entityLiving = event.getEntity();
 
         if (entityLiving instanceof AnimatedObject<?>) {
             if (!entityLiving.level.isClientSide) {
@@ -31,8 +31,8 @@ public class AnimationEventHandler {
         }
     }
 
-    public static void onEntityTickEnd(LivingUpdateEndEvent event) {
-        LivingEntity entityLiving = event.getEntityLiving();
+    public static void onEntityTickEnd(LivingTickEndEvent event) {
+        LivingEntity entityLiving = event.getEntity();
 
         if (entityLiving instanceof AnimatedObject<?>) {
             EntityActionManager<?> actionManager = (EntityActionManager<?>) (((AnimatedObject<?>) entityLiving).getSystem().getActionManager());

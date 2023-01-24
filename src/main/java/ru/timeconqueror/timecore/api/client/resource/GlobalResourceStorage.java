@@ -1,6 +1,9 @@
 package ru.timeconqueror.timecore.api.client.resource;
 
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.PackResources;
+import net.minecraft.server.packs.resources.IoSupplier;
+import org.jetbrains.annotations.Nullable;
 import ru.timeconqueror.timecore.TimeCore;
 import ru.timeconqueror.timecore.api.Markers;
 import ru.timeconqueror.timecore.storage.LoadingOnlyStorage;
@@ -34,26 +37,22 @@ public enum GlobalResourceStorage {
         }));
     }
 
-    public InputStream getResource(ResourceLocation location) throws FileNotFoundException {
+    @Nullable
+    public IoSupplier<InputStream> getResource(ResourceLocation location) {
         byte[] resource = resources.get(location);
         if (resource != null) {
-            return new ByteArrayInputStream(resource);
+            return () -> new ByteArrayInputStream(resource);
         }
 
-        throw new FileNotFoundException("Can't find resource with " + location + " in TimeCore's GlobalResourceStorage");
+       return null;
     }
 
-    public Collection<ResourceLocation> getResources(String namespaceIn, String pathIn, Predicate<String> filter) {
+    public void listResources(String namespaceIn, String pathIn, PackResources.ResourceOutput resourceOutput) {
         LoadingOnlyStorage.tryLoadResourceHolders();
-
-        return resources.keySet().stream()
+        resources.keySet().stream()
                 .filter(location -> location.getNamespace().equals(namespaceIn))
-                .filter(location -> location.getPath().startsWith(pathIn) && filter.test(location.getPath()))
-                .collect(Collectors.toList());
-    }
-
-    public boolean hasResource(ResourceLocation location) {
-        return resources.containsKey(location);
+                .filter(location -> location.getPath().startsWith(pathIn))
+                .forEach(location -> resourceOutput.accept(location, getResource(location)));
     }
 
     public Set<String> getDomains() {
