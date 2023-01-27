@@ -2,21 +2,21 @@ package ru.timeconqueror.timecore.animation.renderer;
 
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
-import ru.timeconqueror.timecore.client.render.model.TimeModelLocation;
+import ru.timeconqueror.timecore.client.render.model.InFileLocation;
 
 import java.util.function.Function;
 
-public record ModelConfiguration(TimeModelLocation location,
+public record ModelConfiguration(InFileLocation location,
                                  Function<ResourceLocation, RenderType> renderTypeProvider) {
-    public static Builder builder(TimeModelLocation location) {
+    public static Builder builder(InFileLocation location) {
         return new Builder(location);
     }
 
     public static class Builder {
-        private final TimeModelLocation location;
+        private final InFileLocation location;
         private Function<ResourceLocation, RenderType> renderTypeProvider = RenderType::entityCutoutNoCull;
 
-        private Builder(TimeModelLocation location) {
+        private Builder(InFileLocation location) {
             this.location = location;
         }
 

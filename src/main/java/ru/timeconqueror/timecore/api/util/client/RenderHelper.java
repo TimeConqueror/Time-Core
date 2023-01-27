@@ -91,7 +91,7 @@ public class RenderHelper extends RenderType {
     }
 
     public static boolean isFabulousModeEnabled() {
-        return Minecraft.getInstance().options.graphicsMode == GraphicsStatus.FABULOUS;
+        return Minecraft.getInstance().options.graphicsMode().get() == GraphicsStatus.FABULOUS;
     }
 
     public static class RenderPipeline {

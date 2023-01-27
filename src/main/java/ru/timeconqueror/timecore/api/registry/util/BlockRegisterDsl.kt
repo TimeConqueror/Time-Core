@@ -21,11 +21,11 @@ class BlockRegisterContext<B : Block>(val register: BlockRegister, private val c
         return BlockChainContext(chain)
     }
 
-    infix fun <E : B> BlockChainContext<E>.with(settings: ChainConfigurator<E>): RegistryObject<E> {
+    infix fun <E : B> BlockChainContext<E>.with(settings: ChainConfigurator<E>): Promised<E> {
         chainConfigurator?.invoke(chain)
         chain.also { settings(it) }
         chain.name
-        return chain.asRegistryObject()
+        return chain.asPromised()
     }
 
     /**

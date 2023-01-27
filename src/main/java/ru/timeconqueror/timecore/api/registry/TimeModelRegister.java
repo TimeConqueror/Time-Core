@@ -4,24 +4,24 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import ru.timeconqueror.timecore.api.registry.base.TaskHolder;
-import ru.timeconqueror.timecore.client.render.model.TimeModelLocation;
+import ru.timeconqueror.timecore.client.render.model.InFileLocation;
 import ru.timeconqueror.timecore.internal.client.handlers.ClientLoadingHandler;
 
 //TODO check on server side
 //TODO javadoc
 public class TimeModelRegister extends TimeRegister {
-    private final TaskHolder<TimeModelLocation> locations = TaskHolder.make(FMLClientSetupEvent.class);
+    private final TaskHolder<InFileLocation> locations = TaskHolder.make(FMLClientSetupEvent.class);
 
     public TimeModelRegister(String modId) {
         super(modId);
     }
 
-    public TimeModelLocation register(String path) {
-        return register(path, TimeModelLocation.WILDCARD);
+    public InFileLocation register(String path) {
+        return register(path, InFileLocation.WILDCARD);
     }
 
-    public TimeModelLocation register(String path, String modelName) {
-        TimeModelLocation tml = new TimeModelLocation(new ResourceLocation(getModId(), path), modelName);
+    public InFileLocation register(String path, String modelName) {
+        InFileLocation tml = new InFileLocation(new ResourceLocation(getModId(), path), modelName);
         locations.add(tml);
 
         return tml;

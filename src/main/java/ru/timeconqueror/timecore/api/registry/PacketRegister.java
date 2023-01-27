@@ -143,7 +143,7 @@ public class PacketRegister extends RunnableStoringRegister {
                     } catch (IOException e) {
                         throw new RuntimeException("Can't decode packet: " + e.getMessage(), e);
                     }
-                })
+                })//FIXME port and add mein threading
                 .consumer((msg, contextSupplier) -> {
                     NetworkEvent.Context ctx = contextSupplier.get();
                     return packetHandler.handle(msg, ctx);

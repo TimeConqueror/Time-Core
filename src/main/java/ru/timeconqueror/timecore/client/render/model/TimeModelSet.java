@@ -19,11 +19,11 @@ import java.util.stream.Collectors;
 public class TimeModelSet implements ResourceManagerReloadListener {
     //TODO make TimeModelRegister#register be called upon reload!
     private final List<WeakReference<ReloadListener>> reloadListeners = new ArrayList<>();
-    private final Set<TimeModelLocation> modelLocations = ConcurrentHashMap.newKeySet();
+    private final Set<InFileLocation> modelLocations = ConcurrentHashMap.newKeySet();
 
-    private Map<TimeModelLocation, TimeModelDefinition> roots = ImmutableMap.of();
+    private Map<InFileLocation, TimeModelDefinition> roots = ImmutableMap.of();
 
-    public TimeModelPart bakeRoot(TimeModelLocation location) {
+    public TimeModelPart bakeRoot(InFileLocation location) {
         if (!modelLocations.contains(location)) {
             throw new IllegalArgumentException(String.format("Location '%s' was used before it was registered!", location));
         }
@@ -36,11 +36,11 @@ public class TimeModelSet implements ResourceManagerReloadListener {
         }
     }
 
-    public void regModelLocation(TimeModelLocation location) {
+    public void regModelLocation(InFileLocation location) {
         modelLocations.add(location);
     }
 
-    public void regModelLocations(Collection<TimeModelLocation> locations) {
+    public void regModelLocations(Collection<InFileLocation> locations) {
         modelLocations.addAll(locations);
     }
 
@@ -62,36 +62,36 @@ public class TimeModelSet implements ResourceManagerReloadListener {
 
         JsonModelParser parser = new JsonModelParser();
 
-        Map<TimeModelLocation, TimeModelDefinition> roots = new HashMap<>();
+        Map<InFileLocation, TimeModelDefinition> roots = new HashMap<>();
 
-        for (TimeModelLocation model : modelLocations) {
+        for (InFileLocation model : modelLocations) {
             if (roots.containsKey(model)) {
                 continue;
             }
 
-            List<Pair<TimeModelLocation, TimeModelDefinition>> pairs = parser.parseGeometryFile(model.location());
+            List<Pair<InFileLocation, TimeModelDefinition>> pairs = parser.parseGeometryFile(model.location());
             if (model.isWildcard() && pairs.size() != 1) {
                 throw new IllegalStateException(String.format("Expected to find single model in file %s but found %d ('%s)'", model, pairs.size(), mapToModelNames(pairs)));
             }
 
             if (pairs.size() == 1) {
-                Pair<TimeModelLocation, TimeModelDefinition> pair = pairs.get(0);
+                Pair<InFileLocation, TimeModelDefinition> pair = pairs.get(0);
                 roots.put(pair.left(), pair.right());
-                roots.put(TimeModelLocation.wildcarded(pair.left().location()), pair.right());
+                roots.put(InFileLocation.wildcarded(pair.left().location()), pair.right());
                 continue;
             }
 
 
             boolean found = false;
 
-            for (Pair<TimeModelLocation, TimeModelDefinition> pair : pairs) {
+            for (Pair<InFileLocation, TimeModelDefinition> pair : pairs) {
                 if (pair.left().equals(model)) found = true;
 
                 roots.put(pair.left(), pair.right());
             }
 
             if (!found) {
-                throw new IllegalStateException("Tried to find model '" + model.modelName() + "' in file " + model + " but found '" + mapToModelNames(pairs) + "'");
+                throw new IllegalStateException("Tried to find model '" + model.name() + "' in file " + model + " but found '" + mapToModelNames(pairs) + "'");
             }
         }
 
@@ -118,8 +118,8 @@ public class TimeModelSet implements ResourceManagerReloadListener {
         TimeCore.LOGGER.debug("Reloading listeners took {}", w);
     }
 
-    private String mapToModelNames(List<Pair<TimeModelLocation, TimeModelDefinition>> definitions) {
-        return definitions.stream().map(pair -> pair.left().modelName()).collect(Collectors.joining());
+    private String mapToModelNames(List<Pair<InFileLocation, TimeModelDefinition>> definitions) {
+        return definitions.stream().map(pair -> pair.left().name()).collect(Collectors.joining());
     }
 
     public static abstract class ReloadListener {

@@ -16,6 +16,7 @@ import net.minecraftforge.registries.RegistryObject;
 import ru.timeconqueror.timecore.api.TimeCoreAPI;
 import ru.timeconqueror.timecore.api.client.render.tile.ProfiledTileEntityRenderer;
 import ru.timeconqueror.timecore.api.registry.util.AutoRegistrable;
+import ru.timeconqueror.timecore.api.registry.util.Promised;
 import ru.timeconqueror.timecore.api.util.Hacks;
 
 import java.util.List;
@@ -104,9 +105,9 @@ import java.util.function.Supplier;
  * <p>
  * Examples can be seen at test module.
  */
-public class TileEntityRegister extends ForgeRegister<BlockEntityType<?>> {
+public class TileEntityRegister extends VanillaRegister<BlockEntityType<?>> {
     public TileEntityRegister(String modid) {
-        super(ForgeRegistries.BLOCK_ENTITIES, modid);
+        super(ForgeRegistries.BLOCK_ENTITY_TYPES, modid);
     }
 
     /**
@@ -142,23 +143,23 @@ public class TileEntityRegister extends ForgeRegister<BlockEntityType<?>> {
                 BlockEntityType.Builder.of(tileEntityFactory, validBlocks.get().toArray(new Block[0]))
                         .build(null /*forge doesn't have support for it*/);
 
-        RegistryObject<BlockEntityType<T>> holder = registerEntry(name, typeSupplier);
+        Promised<BlockEntityType<T>> holder = registerEntry(name, typeSupplier);
         return new TileEntityRegisterChain<>(holder);
     }
 
     public class TileEntityRegisterChain<T extends BlockEntity> extends RegisterChain<BlockEntityType<T>> {
-        private TileEntityRegisterChain(RegistryObject<BlockEntityType<T>> holder) {
+        private TileEntityRegisterChain(Promised<BlockEntityType<T>> holder) {
             super(holder);
         }
 
         public TileEntityRegisterChain<T> regCustomRenderer(Supplier<Function<? super BlockEntityRendererProvider.Context, BlockEntityRenderer<? super T>>> rendererFactory) {
-            clientSideOnly(() -> TileEntityRegister.regCustomRenderer(TileEntityRegister.this, asRegistryObject(), rendererFactory));
+            clientSideOnly(() -> TileEntityRegister.regCustomRenderer(TileEntityRegister.this, asPromised(), rendererFactory));
             return this;
         }
     }
 
     @OnlyIn(Dist.CLIENT)
-    private static <T extends BlockEntity> void regCustomRenderer(TileEntityRegister register, RegistryObject<BlockEntityType<T>> registryObject, Supplier<Function<? super BlockEntityRendererProvider.Context, BlockEntityRenderer<? super T>>> rendererFactory) {
+    private static <T extends BlockEntity> void regCustomRenderer(TileEntityRegister register, Promised<BlockEntityType<T>> registryObject, Supplier<Function<? super BlockEntityRendererProvider.Context, BlockEntityRenderer<? super T>>> rendererFactory) {
         register.runOnClientSetup(() -> {
             BlockEntityRenderers.register(registryObject.get(), context_ -> new ProfiledTileEntityRenderer<>(context_, rendererFactory.get()));
         });

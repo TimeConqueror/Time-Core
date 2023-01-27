@@ -5,13 +5,11 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.INBTSerializable;
-import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
-import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
-import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.Nullable;
 import ru.timeconqueror.timecore.common.capability.listener.CoffeeKeepPlayerCapabilityListener;
@@ -62,13 +60,13 @@ public class CoffeeCapabilityManager {
     }
 
     public void addDefaultAttachers() {
-        attachDynamicCapability(CapabilityOwner.TILE_ENTITY, CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, tile -> tile instanceof IItemHandlerProvider,
+        attachDynamicCapability(CapabilityOwner.TILE_ENTITY, ForgeCapabilities.ITEM_HANDLER, tile -> tile instanceof IItemHandlerProvider,
                 ((CoffeeCapabilityGetter<BlockEntity, IItemHandler>) (target, facing) -> ((IItemHandlerProvider) target).getItemHandler(facing)).supply());
 
-        attachDynamicCapability(CapabilityOwner.TILE_ENTITY, CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, tile -> tile instanceof IFluidHandlerProvider,
+        attachDynamicCapability(CapabilityOwner.TILE_ENTITY, ForgeCapabilities.FLUID_HANDLER, tile -> tile instanceof IFluidHandlerProvider,
                 ((CoffeeCapabilityGetter<BlockEntity, IFluidHandler>) (target, facing) -> ((IFluidHandlerProvider) target).getFluidHandler(facing)).supply());
 
-        attachDynamicCapability(CapabilityOwner.TILE_ENTITY, CapabilityEnergy.ENERGY, tile -> tile instanceof IEnergyStorageProvider,
+        attachDynamicCapability(CapabilityOwner.TILE_ENTITY, ForgeCapabilities.ENERGY, tile -> tile instanceof IEnergyStorageProvider,
                 ((CoffeeCapabilityGetter<BlockEntity, IEnergyStorage>) (target, facing) -> ((IEnergyStorageProvider) target).getEnergyStorage(facing)).supply());
     }
 

@@ -1,17 +1,16 @@
 package ru.timeconqueror.timecore.api.registry;
 
-import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraftforge.data.event.GatherDataEvent;
-import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.ObjectHolder;
+import net.minecraftforge.registries.RegisterEvent;
 import net.minecraftforge.registries.RegistryObject;
 import org.jetbrains.annotations.Nullable;
 import ru.timeconqueror.timecore.api.TimeCoreAPI;
@@ -25,6 +24,7 @@ import ru.timeconqueror.timecore.api.devtools.gen.lang.LangGeneratorFacade;
 import ru.timeconqueror.timecore.api.registry.ItemRegister.ItemRegisterChain;
 import ru.timeconqueror.timecore.api.registry.util.AutoRegistrable;
 import ru.timeconqueror.timecore.api.registry.util.ItemPropsFactory;
+import ru.timeconqueror.timecore.api.registry.util.Promised;
 import ru.timeconqueror.timecore.api.util.EnvironmentUtils;
 import ru.timeconqueror.timecore.api.util.Hacks;
 import ru.timeconqueror.timecore.api.util.Temporal;
@@ -48,7 +48,7 @@ import java.util.function.Supplier;
  * If you need to register stuff, your first step will be to call method #register.
  * If the register system has any extra available registering stuff, then this method will return Register Chain,
  * which will have extra methods to apply.
- * Otherwise it will RegistryObject, which can be used or not used (depending on your registry style).
+ * Otherwise, it will RegistryObject, which can be used or not used (depending on your registry style).
  * <br>
  * <br>
  * <b>{@link RegistryObject} style:</b>
@@ -74,8 +74,8 @@ import java.util.function.Supplier;
  * If you want, you may store them in separate files, there's no matter.
  * <p>
  * So the storing (main) class needs to have {@link ObjectHolder} annotation with your mod id to inject values in all public static final fields.
- * The name of the field should match it's registry name (ignoring case).
- * More about it you can check in (<a href=https://mcforge.readthedocs.io/en/1.16.x/>Forge Documentation</a>)
+ * The name of the field should match its registry name (ignoring case).
+ * More info about it you can check in (<a href=https://mcforge.readthedocs.io/en/1.16.x/>Forge Documentation</a>)
  * <p>
  * The inner class will be used for us as a registrator. It should be static, but can have any access modifier.
  * We still add {@link TimeRegister} there as stated above. (with AutoRegistrable annotation, etc.)]
@@ -115,13 +115,13 @@ import java.util.function.Supplier;
  * <p>
  * Examples can be seen at test module.
  */
-public class BlockRegister extends ForgeRegister<Block> {
+public class BlockRegister extends VanillaRegister<Block> {
     private final ItemRegister itemRegister;
     private final Temporal<TimeResourceHolder> resourceHolder = Temporal.of(new TimeResourceHolder(), "Called too late. Resources were already loaded.");
 
-    public BlockRegister(String modid) {
-        super(ForgeRegistries.BLOCKS, modid);
-        itemRegister = new ItemRegister(modid);
+    public BlockRegister(String modId) {
+        super(ForgeRegistries.Keys.BLOCKS, modId);
+        itemRegister = new ItemRegister(modId);
     }
 
     /**
@@ -136,13 +136,13 @@ public class BlockRegister extends ForgeRegister<Block> {
      * @see BlockRegisterChain
      */
     public <B extends Block> BlockRegisterChain<B> register(String name, Supplier<B> entrySup) {
-        RegistryObject<B> holder = registerEntry(name, entrySup);
+        Promised<B> holder = registerEntry(name, entrySup);
 
         return new BlockRegisterChain<>(holder);
     }
 
     @Override
-    protected void onRegEvent(RegistryEvent.Register<Block> event) {
+    protected void onRegEvent(RegisterEvent event) {
         super.onRegEvent(event);
 
         LoadingOnlyStorage.addResourceHolder(resourceHolder.remove());
@@ -155,26 +155,16 @@ public class BlockRegister extends ForgeRegister<Block> {
     }
 
     public class BlockRegisterChain<B extends Block> extends RegisterChain<B> {
-        private BlockRegisterChain(RegistryObject<B> holder) {
+        private BlockRegisterChain(Promised<B> holder) {
             super(holder);
-        }
-
-        /**
-         * Registers the default item block for this block. (which will place the block upon clicking)
-         * It will be with the same registry location as block has.
-         * It will also generate default item model automatically based on the block one.
-         *
-         * @param group creative tab in which item will be placed. Can be null, which means that item will be placed nowhere.
-         */
-        public BlockRegisterChain<B> defaultBlockItem(@Nullable CreativeModeTab group) {
-            return defaultBlockItem(group, itemRegistrator -> itemRegistrator.modelFromBlockParent(new BlockModelLocation(getModId(), getName())));
         }
 
         /**
          * Sets render layer for this block.
          */
         public BlockRegisterChain<B> renderLayer(Supplier<RenderTypeWrapper> renderTypeSup) {
-            runOnClientSetup(() -> ItemBlockRenderTypes.setRenderLayer(asRegistryObject().get(), renderTypeSup.get().renderType()));
+            //FIXME port
+            //  runOnClientSetup(() -> ItemBlockRenderTypes.setRenderLayer(asRegistryObject().get(), renderTypeSup.get().renderType()));
             return this;
         }
 
@@ -183,11 +173,22 @@ public class BlockRegister extends ForgeRegister<Block> {
          * It will be with the same registry location as block has.
          * It will also generate default item model automatically based on the block one.
          *
-         * @param group              creative tab in which item will be placed. Can be null, which means that item will be placed nowhere.
+         * @param tab creative tab in which item will be placed. Can be null, which means that item will be placed nowhere.
+         */
+        public BlockRegisterChain<B> defaultBlockItem(@Nullable CreativeModeTab tab) {
+            return defaultBlockItem(tab, itemRegistrator -> itemRegistrator.modelFromBlockParent(new BlockModelLocation(getModId(), getName())));
+        }
+
+        /**
+         * Registers the default item block for this block. (which will place the block upon clicking)
+         * It will be with the same registry location as block has.
+         * It will also generate default item model automatically based on the block one.
+         *
+         * @param tab                creative tab in which item will be placed. Can be null, which means that item will be placed nowhere.
          * @param blockModelLocation parent block model location for auto-generated item model based on block one.
          */
-        public BlockRegisterChain<B> defaultBlockItem(@Nullable CreativeModeTab group, BlockModelLocation blockModelLocation) {
-            return defaultBlockItem(group, itemRegistrator -> itemRegistrator.modelFromBlockParent(blockModelLocation));
+        public BlockRegisterChain<B> defaultBlockItem(@Nullable CreativeModeTab tab, BlockModelLocation blockModelLocation) {
+            return defaultBlockItem(tab, itemRegistrator -> itemRegistrator.modelFromBlockParent(blockModelLocation));
         }
 
         /**
@@ -195,11 +196,11 @@ public class BlockRegister extends ForgeRegister<Block> {
          * It will be with the same registry location as block has.
          * This method doesn't generate item model automatically, so if you want to generate it, do it by yourselves in {@code itemSettings} consumer.
          *
-         * @param group        creative tab in which item will be placed. Can be null, which means that item will be placed nowhere.
+         * @param tab          creative tab in which item will be placed. Can be null, which means that item will be placed nowhere.
          * @param itemSettings extra stuff, that you can do for that item, like generating item model.
          */
-        public BlockRegisterChain<B> defaultBlockItem(@Nullable CreativeModeTab group, Consumer<ItemRegisterChain<BlockItem>> itemSettings) {
-            return defaultBlockItem(new Item.Properties().tab(group), itemSettings);
+        public BlockRegisterChain<B> defaultBlockItem(@Nullable CreativeModeTab tab, Consumer<ItemRegisterChain<BlockItem>> itemSettings) {
+            return defaultBlockItem(tab, new Item.Properties(), itemSettings);
         }
 
         /**
@@ -207,11 +208,18 @@ public class BlockRegister extends ForgeRegister<Block> {
          * It will be with the same registry location as block has.
          * This method doesn't generate item model automatically, so if you want to generate it, do it by yourselves in {@code itemSettings} consumer.
          *
+         * @param tab          creative tab in which item will be placed. Can be null, which means that item will be placed nowhere.
          * @param props        properties, that will be inserted in the item. Can also be created with {@link ItemPropsFactory}
          * @param itemSettings extra stuff, that you can do for that item, like generating item model.
          */
-        public BlockRegisterChain<B> defaultBlockItem(Item.Properties props, Consumer<ItemRegisterChain<BlockItem>> itemSettings) {
-            return item(() -> new BlockItem(asRegistryObject().get(), props), itemSettings);
+        public BlockRegisterChain<B> defaultBlockItem(@Nullable CreativeModeTab tab, Item.Properties props, Consumer<ItemRegisterChain<BlockItem>> itemSettings) {
+            return item(() -> new BlockItem(asPromised().get(), props), chain -> {
+                if (tab != null) {
+                    chain.tab(tab);
+                }
+
+                itemSettings.accept(chain);
+            });
         }
 
         /**
@@ -338,13 +346,13 @@ public class BlockRegister extends ForgeRegister<Block> {
          * @param enName english name of block
          */
         public BlockRegisterChain<B> name(String enName) {
-            runAfterRegistering(() -> BlockRegister.this.getLangGeneratorFacade().addBlockEntry(asRegistryObject().get(), enName));
+            runAfterRegistering(() -> BlockRegister.this.getLangGeneratorFacade().addBlockEntry(asPromised().get(), enName));
             return this;
         }
 
         /**
          * Runs task for current registrator directly after registering object.
-         * Entry for {@link #asRegistryObject()} is already registered in this moment, so it can be retrieved inside this task.
+         * Entry for {@link #asPromised()} is already registered at this moment, so it can be retrieved inside this task.
          */
         public BlockRegisterChain<B> doAfterRegistering(Consumer<BlockRegisterChain<B>> task) {
             runAfterRegistering(() -> task.accept(this));
@@ -353,7 +361,7 @@ public class BlockRegister extends ForgeRegister<Block> {
 
         /**
          * Runs task for current registrator  on client setup.
-         * Entry for {@link #asRegistryObject()} is already registered in this moment, so it can be retrieved inside this task.
+         * Entry for {@link #asPromised()} is already registered at this moment, so it can be retrieved inside this task.
          */
         public BlockRegisterChain<B> doOnClientSetup(Consumer<BlockRegisterChain<B>> task) {
             runOnClientSetup(() -> task.accept(this));

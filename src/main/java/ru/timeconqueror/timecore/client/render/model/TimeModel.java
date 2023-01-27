@@ -14,7 +14,7 @@ import java.util.Map;
 
 public class TimeModel extends Model implements ITimeModel {
     public static final String INTERNAL_ROOT_NAME = "i$root";
-    private final TimeModelLocation location;
+    private final InFileLocation location;
     private final ReloadableContainer container = new ReloadableContainer();
 
     public TimeModel(ModelConfiguration modelConfig) {
@@ -24,7 +24,7 @@ public class TimeModel extends Model implements ITimeModel {
     }
 
     @Override
-    public TimeModelLocation getLocation() {
+    public InFileLocation getLocation() {
         return location;
     }
 

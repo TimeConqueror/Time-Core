@@ -9,6 +9,7 @@ import net.minecraftforge.registries.RegistryObject;
 import ru.timeconqueror.timecore.api.TimeCoreAPI;
 import ru.timeconqueror.timecore.api.registry.util.AutoRegistrable;
 import ru.timeconqueror.timecore.api.registry.util.AutoRegistrable.Init;
+import ru.timeconqueror.timecore.api.registry.util.Promised;
 import ru.timeconqueror.timecore.api.util.Hacks;
 
 /**
@@ -93,7 +94,7 @@ import ru.timeconqueror.timecore.api.util.Hacks;
  * <p>
  * Examples can be seen at test module.
  */
-public class SoundRegister extends ForgeRegister<SoundEvent> {
+public class SoundRegister extends VanillaRegister<SoundEvent> {
     public SoundRegister(String modid) {
         super(ForgeRegistries.SOUND_EVENTS, modid);
     }
@@ -104,9 +105,9 @@ public class SoundRegister extends ForgeRegister<SoundEvent> {
      * @param location sound location.
      *                 It will be used as a part of registry key. Should NOT contain mod ID, because it will be bound automatically.
      */
-    public RegistryObject<SoundEvent> register(String location) {
+    public Promised<SoundEvent> register(String location) {
         ResourceLocation registryName = new ResourceLocation(getModId(), location);
 
-        return registerEntry(location, () -> new SoundEvent(registryName));
+        return registerEntry(location, () -> SoundEvent.createVariableRangeEvent(registryName));
     }
 }

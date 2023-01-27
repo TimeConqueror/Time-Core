@@ -9,8 +9,8 @@ import java.nio.file.Path;
 
 @Mixin(AdvancementProvider.class)
 public interface UnlockedAdvancementProvider {
-    @Invoker("createPath")
-    static Path createPath(Path pathIn, Advancement advancementIn) {
-        throw new IllegalStateException("Mixin " + UnlockedAdvancementProvider.class + " doesn't work.");
-    }
+//    @Invoker("createPath")
+//    static Path createPath(Path pathIn, Advancement advancementIn) {
+//        throw new IllegalStateException("Mixin " + UnlockedAdvancementProvider.class + " doesn't work.");
+//    } //FIXME port?
 }

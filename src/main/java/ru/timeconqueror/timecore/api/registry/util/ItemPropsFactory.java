@@ -12,16 +12,9 @@ public class ItemPropsFactory {
     private final Consumer<Item.Properties> processor;
 
     /**
-     * @param group Item Group that will be applied for every properties object, created via {{@link #create()}}.
+     * @param processor used to apply your options, like adding max damage for every properties' object, created via {{@link #create()}}.
      */
-    public ItemPropsFactory(CreativeModeTab group) {
-        this(props -> props.tab(group));
-    }
-
-    /**
-     * @param processor used to apply your options, like adding max damage for every properties object, created via {{@link #create()}}.
-     */
-    public ItemPropsFactory(Consumer<Item.Properties> processor) {
+    protected ItemPropsFactory(Consumer<Item.Properties> processor) {
         this.processor = processor;
     }
 
@@ -36,16 +29,9 @@ public class ItemPropsFactory {
     }
 
     /**
-     * @param processor used to apply your options, like adding max damage for every properties object, created via {{@link #create()}}.
+     * @param processor used to apply your options, like adding max damage for every properties' object, created via {{@link #create()}}.
      */
     public static ItemPropsFactory of(Consumer<Item.Properties> processor) {
         return new ItemPropsFactory(processor);
-    }
-
-    /**
-     * @param group Item Group that will be applied for every properties object, created via {{@link #create()}}.
-     */
-    public static ItemPropsFactory of(CreativeModeTab group) {
-        return new ItemPropsFactory(group);
     }
 }

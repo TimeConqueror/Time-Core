@@ -35,7 +35,7 @@ public class TimeEntityModel<T extends Entity> extends EntityModel<T> implements
     }
 
     @Override
-    public TimeModelLocation getLocation() {
+    public InFileLocation getLocation() {
         return model.getLocation();
     }
 

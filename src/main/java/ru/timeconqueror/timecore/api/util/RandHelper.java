@@ -1,5 +1,7 @@
 package ru.timeconqueror.timecore.api.util;
 
+import net.minecraft.util.RandomSource;
+
 import java.util.Collection;
 import java.util.List;
 import java.util.Random;
@@ -57,6 +59,18 @@ public class RandHelper {
      * @throws IllegalArgumentException if provided chance is more than 100.
      */
     public static boolean chance(Random random, int chance) {
+        if (chance > 100)
+            throw new IllegalArgumentException("Chance shouldn't be greater than 100. Provided: " + chance);
+
+        return random.nextInt(100) < chance;
+    }
+
+    /**
+     * Returns true with {@code chance}% (from 0 to 100).
+     *
+     * @throws IllegalArgumentException if provided chance is more than 100.
+     */
+    public static boolean chance(RandomSource random, int chance) {
         if (chance > 100)
             throw new IllegalArgumentException("Chance shouldn't be greater than 100. Provided: " + chance);
 

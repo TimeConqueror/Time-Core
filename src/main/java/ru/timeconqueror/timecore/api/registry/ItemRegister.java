@@ -1,12 +1,16 @@
 package ru.timeconqueror.timecore.api.registry;
 
 import net.minecraft.world.item.ArmorItem;
+import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
-import net.minecraftforge.event.RegistryEvent;
+import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.data.event.GatherDataEvent;
+import net.minecraftforge.event.CreativeModeTabEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent;
-import net.minecraftforge.forge.event.lifecycle.GatherDataEvent;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.ObjectHolder;
+import net.minecraftforge.registries.RegisterEvent;
 import net.minecraftforge.registries.RegistryObject;
 import ru.timeconqueror.timecore.api.TimeCoreAPI;
 import ru.timeconqueror.timecore.api.client.resource.ItemModel;
@@ -17,17 +21,21 @@ import ru.timeconqueror.timecore.api.client.resource.location.ModelLocation;
 import ru.timeconqueror.timecore.api.client.resource.location.TextureLocation;
 import ru.timeconqueror.timecore.api.devtools.gen.lang.LangGeneratorFacade;
 import ru.timeconqueror.timecore.api.registry.util.AutoRegistrable;
+import ru.timeconqueror.timecore.api.registry.util.Promised;
 import ru.timeconqueror.timecore.api.util.EnvironmentUtils;
 import ru.timeconqueror.timecore.api.util.Hacks;
 import ru.timeconqueror.timecore.api.util.Temporal;
 import ru.timeconqueror.timecore.storage.LoadingOnlyStorage;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 /**
  * All {@link TimeRegister}s are used to simplify stuff registering.
- * You can use it for both {@link RegistryObject} or {@link ObjectHolder} style.
+ * You can use it for both {@link Promised} or {@link ObjectHolder} style.
  * <p>
  * To use it you need to:
  * <ol>
@@ -40,10 +48,10 @@ import java.util.function.Supplier;
  * If you need to register stuff, your first step will be to call method #register.
  * If the register system has any extra available registering stuff, then this method will return Register Chain,
  * which will have extra methods to apply.
- * Otherwise it will RegistryObject, which can be used or not used (depending on your registry style).
+ * Otherwise, it will return {@link Promised}, which can be used or not used (depending on your registry style).
  * <br>
  * <br>
- * <b>{@link RegistryObject} style:</b>
+ * <b>{@link Promised} style:</b>
  * <br>
  * <blockquote>
  *     <pre>
@@ -53,7 +61,7 @@ import java.util.function.Supplier;
  *
  *          public static RegistryObject<TileEntityType<DummyTileEntity>> TEST_TE_TYPE = REGISTER.register("test_tile", DummyTileEntity::new, BlockRegistryExample.TEST_BLOCK_WITH_TILE)
  *              .regCustomRenderer(() -> DummyTileEntityRenderer::new) // <- one of extra features
- *              .asRegistryObject(); // <- retrieving registry object from our register chain.
+ *              .asPromised(); // <- retrieving promised object from our register chain.
  *      }
  *     </pre>
  * </blockquote>
@@ -66,7 +74,7 @@ import java.util.function.Supplier;
  * If you want, you may store them in separate files, there's no matter.
  * <p>
  * So the storing (main) class needs to have {@link ObjectHolder} annotation with your mod id to inject values in all public static final fields.
- * The name of the field should match it's registry name (ignoring case).
+ * The name of the field should match its registry name (ignoring case).
  * More about it you can check in (<a href=https://mcforge.readthedocs.io/en/1.16.x/>Forge Documentation</a>)
  * <p>
  * The inner class will be used for us as a registrator. It should be static, but can have any access modifier.
@@ -81,18 +89,17 @@ import java.util.function.Supplier;
  * You can place there null, but some IDE may always tell you, that it expects the NullPointerException in all places, where you call it.
  * We know, that it will be initialized later, so using {@link Hacks#promise()} we set null in this field, but disables IDE null checks for it.
  *
- * <br>
- * <blockquote>
- *     <pre>
- *     {@literal @}ObjectHolder(TimeCore.MODID)
+ * <br>//TODO fix comments and copy over registers
+ * <pre>{@code
+ *     @ObjectHolder(TimeCore.MODID)
  *      public class ItemRegistryExample {
  *          public static final Item TEST_DIAMOND = Hacks.promise();
  *
  *          private static class Init {
- *             {@literal @}AutoRegistrable
+ *             @AutoRegistrable
  *              private static final ItemRegister REGISTER = new ItemRegister(TimeCore.MODID);
  *
- *             {@literal @}AutoRegistrable.InitMethod
+ *             @AutoRegistrable.InitMethod
  *              private static void register() {
  *                  ItemPropsFactory miscGrouped = new ItemPropsFactory(ItemGroup.TAB_MISC);
  *
@@ -101,17 +108,17 @@ import java.util.function.Supplier;
  *               }
  *          }
  *      }
- *     </pre>
- * </blockquote>
+ * </pre>
  * <p>
  * <p>
  * Examples can be seen at test module.
  */
-public class ItemRegister extends ForgeRegister<Item> {
+public class ItemRegister extends VanillaRegister<Item> {
     private final Temporal<TimeResourceHolder> resourceHolder = Temporal.of(new TimeResourceHolder(), "Called too late. Resources were already loaded.");
+    private final List<Consumer<CreativeModeTabEvent.BuildContents>> tabBuildingTasks = new ArrayList<>();
 
     public ItemRegister(String modid) {
-        super(ForgeRegistries.ITEMS, modid);
+        super(ForgeRegistries.Keys.ITEMS, modid);
     }
 
     /**
@@ -126,21 +133,28 @@ public class ItemRegister extends ForgeRegister<Item> {
      * @see ItemRegisterChain
      */
     public <I extends Item> ItemRegisterChain<I> register(String name, Supplier<I> entrySup) {
-        RegistryObject<I> holder = registerEntry(name, entrySup);
+        Promised<I> holder = registerEntry(name, entrySup);
 
-        return new ItemRegisterChain<>(holder);
+        return new ItemRegisterChain<>(this, holder);
     }
 
     @Override
-    protected void onRegEvent(RegistryEvent.Register<Item> event) {
+    protected void onRegEvent(RegisterEvent event) {
         super.onRegEvent(event);
-
         LoadingOnlyStorage.addResourceHolder(resourceHolder.remove());
     }
 
-    public class ItemRegisterChain<I extends Item> extends RegisterChain<I> {
-        private ItemRegisterChain(RegistryObject<I> holder) {
+    @SubscribeEvent
+    public void buildContents(CreativeModeTabEvent.BuildContents event) {
+        tabBuildingTasks.forEach(task -> task.accept(event));
+    }
+
+    public static class ItemRegisterChain<I extends Item> extends RegisterChain<I> {
+        private final ItemRegister register;
+
+        protected ItemRegisterChain(ItemRegister register, Promised<I> holder) {
             super(holder);
+            this.register = register;
         }
 
         /**
@@ -226,7 +240,7 @@ public class ItemRegister extends ForgeRegister<Item> {
          *                  For details see {@link ItemModel}.
          */
         public ItemRegisterChain<I> model(ItemModel itemModel) {
-            clientSideOnly(() -> resourceHolder.get().addItemModel(getRegistryName(), itemModel));
+            clientSideOnly(() -> register.resourceHolder.get().addItemModel(getRegistryName(), itemModel));
             return this;
         }
 
@@ -238,7 +252,7 @@ public class ItemRegister extends ForgeRegister<Item> {
          */
         public ItemRegisterChain<I> name(String enName) {
             if (EnvironmentUtils.isInDev()) {
-                runAfterRegistering(() -> ItemRegister.this.getLangGeneratorFacade().addItemEntry(asRegistryObject().get(), enName));
+                register.runAfterRegistering(() -> register.getLangGeneratorFacade().addItemEntry(asPromised().get(), enName));
             }
             return this;
         }
@@ -257,10 +271,10 @@ public class ItemRegister extends ForgeRegister<Item> {
          */
         public ItemRegisterChain<I> nameArmorByMaterial(String materialEnName) {
             if (EnvironmentUtils.isInDev()) {
-                runAfterRegistering(() -> {
-                    Item item = asRegistryObject().get();
+                register.runAfterRegistering(() -> {
+                    Item item = asPromised().get();
                     if (item instanceof ArmorItem) {
-                        ItemRegister.this.getLangGeneratorFacade().addArmorEntryByMaterial((ArmorItem) item, materialEnName);
+                        register.getLangGeneratorFacade().addArmorEntryByMaterial((ArmorItem) item, materialEnName);
                     } else {
                         throw new IllegalArgumentException("#genArmorLangEntry will only work with armor items. For common items use #genLangEntry instead.");
                     }
@@ -281,10 +295,10 @@ public class ItemRegister extends ForgeRegister<Item> {
          * @throws IllegalArgumentException if it is called for Items, that don't extend {@link ArmorItem}
          */
         public ItemRegisterChain<I> nameArmor(String enName) {
-            runAfterRegistering(() -> {
-                Item item = asRegistryObject().get();
+            register.runAfterRegistering(() -> {
+                Item item = asPromised().get();
                 if (item instanceof ArmorItem) {
-                    ItemRegister.this.getLangGeneratorFacade().addArmorEntry((ArmorItem) item, enName);
+                    register.getLangGeneratorFacade().addArmorEntry((ArmorItem) item, enName);
                 } else {
                     throw new IllegalArgumentException("#genArmorLangEntry will only work with armor items. For common items use #genLangEntry instead.");
                 }
@@ -293,21 +307,77 @@ public class ItemRegister extends ForgeRegister<Item> {
         }
 
         /**
+         * Registers the item to provided creative tab.
+         *
+         * @param tab tab to put items in
+         */
+        public ItemRegisterChain<I> tab(CreativeModeTab tab) {
+            return onCreativeTabBuilding(CreativeTabAdder.tabBased(tab));
+        }
+
+        public ItemRegisterChain<I> onCreativeTabBuilding(CreativeTabAdder<I> task) {
+            register.tabBuildingTasks.add(buildContents -> task.run(buildContents, promise.get()));
+
+            return this;
+        }
+
+        /**
          * Runs task for current registrator directly after registering object.
-         * Entry for {@link #asRegistryObject()} is already registered at this moment, so it can be retrieved inside this task.
+         * Entry for {@link #asPromised()} is already registered at this moment, so it can be retrieved inside this task.
          */
         public ItemRegisterChain<I> doAfterRegister(Consumer<ItemRegisterChain<I>> task) {
-            runAfterRegistering(() -> task.accept(this));
+            register.runAfterRegistering(() -> task.accept(this));
             return this;
         }
 
         /**
          * Runs task for current registrator  on client setup.
-         * Entry for {@link #asRegistryObject()} is already registered at this moment, so it can be retrieved inside this task.
+         * Entry for {@link #asPromised()} is already registered at this moment, so it can be retrieved inside this task.
          */
         public ItemRegisterChain<I> doOnClientSetup(Consumer<ItemRegisterChain<I>> task) {
-            runOnClientSetup(() -> task.accept(this));
+            register.runOnClientSetup(() -> task.accept(this));
             return this;
+        }
+    }
+
+    public interface CreativeTabAdder<I extends Item> {
+        Function<Item, ItemStack> defaultStackMaker = ItemStack::new;
+
+        void run(CreativeModeTabEvent.BuildContents event, I item);
+
+        static <I extends Item> CreativeTabAdder<I> tabBased(CreativeModeTab tab) {
+            return tabBased(tab, CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
+        }
+
+        static <I extends Item> CreativeTabAdder<I> tabBased(CreativeModeTab tab, CreativeModeTab.TabVisibility visibility) {
+            return CreativeTabAdder.tabBased(tab, visibility, defaultStackMaker);
+        }
+
+        static <I extends Item> CreativeTabAdder<I> tabBased(CreativeModeTab tab, Function<? super I, ItemStack> stackMaker) {
+            return CreativeTabAdder.tabBased(tab, CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS, stackMaker);
+        }
+
+        static <I extends Item> CreativeTabAdder<I> tabBased(CreativeModeTab tab, CreativeModeTab.TabVisibility visibility, Function<? super I, ItemStack> stackMaker) {
+            return new TabBased<>(tab, visibility, stackMaker);
+        }
+
+        class TabBased<I extends Item> implements CreativeTabAdder<I> {
+            private final CreativeModeTab tab;
+            private final CreativeModeTab.TabVisibility visibility;
+            private final Function<? super I, ItemStack> stackMaker;
+
+            public TabBased(CreativeModeTab tab, CreativeModeTab.TabVisibility visibility, Function<? super I, ItemStack> stackMaker) {
+                this.tab = tab;
+                this.visibility = visibility;
+                this.stackMaker = stackMaker;
+            }
+
+            @Override
+            public void run(CreativeModeTabEvent.BuildContents event, I item) {
+                if (event.getTab() == tab) {
+                    event.accept(stackMaker.apply(item), visibility);
+                }
+            }
         }
     }
 }

@@ -6,16 +6,17 @@ import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraftforge.common.ForgeSpawnEggItem;
+import net.minecraftforge.data.event.GatherDataEvent;
 import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.forge.event.lifecycle.GatherDataEvent;
 import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.RegistryObject;
+import org.jetbrains.annotations.Nullable;
 import ru.timeconqueror.timecore.api.TimeCoreAPI;
 import ru.timeconqueror.timecore.api.client.resource.location.ItemModelLocation;
 import ru.timeconqueror.timecore.api.devtools.gen.lang.LangGeneratorFacade;
 import ru.timeconqueror.timecore.api.registry.base.TaskHolder;
 import ru.timeconqueror.timecore.api.registry.util.AutoRegistrable;
+import ru.timeconqueror.timecore.api.registry.util.Promised;
 import ru.timeconqueror.timecore.api.util.EnvironmentUtils;
 
 import java.util.function.Consumer;
@@ -63,12 +64,12 @@ import java.util.function.Supplier;
  * <p>
  * Examples can be seen at test module.
  */
-public class EntityRegister extends ForgeRegister<EntityType<?>> {
+public class EntityRegister extends VanillaRegister<EntityType<?>> {
     private final ItemRegister itemRegister;
     private final TaskHolder<Consumer<EntityAttributeCreationEvent>> entityAttributesEventRuns = TaskHolder.make(EntityAttributeCreationEvent.class);
 
     public EntityRegister(String modid) {
-        super(ForgeRegistries.ENTITIES, modid);
+        super(ForgeRegistries.ENTITY_TYPES, modid);
         itemRegister = new ItemRegister(modid);
     }
 
@@ -128,7 +129,7 @@ public class EntityRegister extends ForgeRegister<EntityType<?>> {
     }
 
     private <T extends Entity> EntityRegisterChain<T> registerInternal(String name, EntityType.Builder<T> type) {
-        RegistryObject<EntityType<T>> holder = registerEntry(name, () -> build(name, type));
+        Promised<EntityType<T>> holder = registerEntry(name, () -> build(name, type));
 
         return new EntityRegisterChain<T>(holder);
     }
@@ -145,7 +146,7 @@ public class EntityRegister extends ForgeRegister<EntityType<?>> {
     }
 
     public class EntityRegisterChain<T extends Entity> extends RegisterChain<EntityType<T>> {
-        protected EntityRegisterChain(RegistryObject<EntityType<T>> holder) {
+        protected EntityRegisterChain(Promised<EntityType<T>> holder) {
             super(holder);
         }
 //TODO add enName for spawn eggs
@@ -158,7 +159,7 @@ public class EntityRegister extends ForgeRegister<EntityType<?>> {
          */
         public EntityRegisterChain<T> name(String enName) {
             if (EnvironmentUtils.isInDev()) {
-                runAfterRegistering(() -> EntityRegister.this.getLangGeneratorFacade().addEntityEntry(asRegistryObject().get(), enName));
+                runAfterRegistering(() -> EntityRegister.this.getLangGeneratorFacade().addEntityEntry(asPromised().get(), enName));
             }
             return this;
         }
@@ -166,7 +167,7 @@ public class EntityRegister extends ForgeRegister<EntityType<?>> {
 
     public class LivingRegisterChain<T extends LivingEntity> extends EntityRegisterChain<T> {
         protected LivingRegisterChain(EntityRegisterChain<T> ancestor) {
-            super(ancestor.holder);
+            super(ancestor.promise);
         }
 
         /**
@@ -174,7 +175,7 @@ public class EntityRegister extends ForgeRegister<EntityType<?>> {
          * Required for every living entity, which {@link MobCategory} is not equal to {@link MobCategory#MISC}
          */
         public LivingRegisterChain<T> attributes(Supplier<AttributeSupplier> attributesSup) {
-            entityAttributesEventRuns.add(e -> e.put(asRegistryObject().get(), attributesSup.get()));
+            entityAttributesEventRuns.add(e -> e.put(asPromised().get(), attributesSup.get()));
             return this;
         }
     }
@@ -188,7 +189,7 @@ public class EntityRegister extends ForgeRegister<EntityType<?>> {
          * Sets up settings for spawning mob in world naturally
          */
         public MobRegisterChain<T> spawnSettings(SpawnPlacements.Type spawnType, Heightmap.Types heightMapType, SpawnPlacements.SpawnPredicate<T> spawnPredicate) {
-            runOnCommonSetup(() -> SpawnPlacements.register(asRegistryObject().get(), spawnType, heightMapType, spawnPredicate));
+            runOnCommonSetup(() -> SpawnPlacements.register(asPromised().get(), spawnType, heightMapType, spawnPredicate));
 
             return this;
         }
@@ -202,7 +203,7 @@ public class EntityRegister extends ForgeRegister<EntityType<?>> {
          * @param tab           creative tab where item will be placed
          */
         public MobRegisterChain<T> spawnEgg(int primaryArgb, int secondaryArgb, CreativeModeTab tab) {
-            return spawnEgg(primaryArgb, secondaryArgb, new Item.Properties().tab(tab));
+            return spawnEgg(primaryArgb, secondaryArgb, tab, new Item.Properties());
         }
 
         /**
@@ -211,10 +212,11 @@ public class EntityRegister extends ForgeRegister<EntityType<?>> {
          *
          * @param primaryArgb   primary color
          * @param secondaryArgb secondary color
+         * @param tab           creative mod tab, which will hold the provided spawn egg.
          * @param properties    item properties
          */
-        public MobRegisterChain<T> spawnEgg(int primaryArgb, int secondaryArgb, Item.Properties properties) {
-            return spawnEgg(getName() + "_spawn_egg", primaryArgb, secondaryArgb, properties);
+        public MobRegisterChain<T> spawnEgg(int primaryArgb, int secondaryArgb, @Nullable CreativeModeTab tab, Item.Properties properties) {
+            return spawnEgg(getName() + "_spawn_egg", primaryArgb, secondaryArgb, tab, properties);
         }
 
         /**
@@ -223,11 +225,18 @@ public class EntityRegister extends ForgeRegister<EntityType<?>> {
          *
          * @param primaryArgb   primary color
          * @param secondaryArgb secondary color
+         * @param tab           creative mod tab, which will hold the provided spawn egg.
          * @param properties    item properties
          */
-        public MobRegisterChain<T> spawnEgg(String name, int primaryArgb, int secondaryArgb, Item.Properties properties) {
-            itemRegister.register(name, () -> new ForgeSpawnEggItem(asRegistryObject(), primaryArgb, secondaryArgb, properties))//FIXME Forge, wtf, it's not threadsafe!
+        public MobRegisterChain<T> spawnEgg(String name, int primaryArgb, int secondaryArgb, @Nullable CreativeModeTab tab, Item.Properties properties) {
+            //FIXME Forge, wtf, it's not threadsafe!
+            ItemRegister.ItemRegisterChain<ForgeSpawnEggItem> chain = itemRegister
+                    .register(name, () -> new ForgeSpawnEggItem(asPromised(), primaryArgb, secondaryArgb, properties))
                     .model(new ItemModelLocation("minecraft", "template_spawn_egg"));
+
+            if(tab != null) {
+                chain.tab(tab);
+            }
 
             return this;
         }

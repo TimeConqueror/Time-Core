@@ -17,7 +17,6 @@ import ru.timeconqueror.timecore.api.animation.Animation;
 import ru.timeconqueror.timecore.api.reflection.ReflectionHelper;
 import ru.timeconqueror.timecore.api.util.EnvironmentUtils;
 import ru.timeconqueror.timecore.common.capability.CoffeeCapabilityManager;
-import ru.timeconqueror.timecore.internal.devtools.StructureRevealer;
 
 @Mod(TimeCore.MODID)//todo add null check in ObjectHolder
 //TODO add readable exception when there's no animation file, for now it's just nullpointer
@@ -57,7 +56,7 @@ public final class TimeCore {
     }
 
     private void setup(final FMLCommonSetupEvent event) {
-        ReflectionHelper.loadClass(StructureRevealer.class);
+//        ReflectionHelper.loadClass(StructureRevealer.class); //FIXME port?
         event.enqueueWork(capabilityManager::addDefaultAttachers);
 
         AnimationRegistry.registerAnimation(Animation.NULL);

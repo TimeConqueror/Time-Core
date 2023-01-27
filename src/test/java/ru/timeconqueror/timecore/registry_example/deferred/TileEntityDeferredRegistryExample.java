@@ -15,5 +15,5 @@ public class TileEntityDeferredRegistryExample {
 
     public static RegistryObject<BlockEntityType<DummyTileEntity>> TEST_TE_TYPE = REGISTER.registerSingleBound("test_tile", DummyTileEntity::new, () -> BlockRegistryExample.TEST_BLOCK_WITH_TILE)
             .regCustomRenderer(() -> DummyTileEntityRenderer::new)
-            .asRegistryObject();
+            .asPromised();
 }

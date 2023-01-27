@@ -8,7 +8,7 @@ import net.minecraftforge.fml.common.Mod;
 import ru.timeconqueror.timecore.TimeCore;
 import ru.timeconqueror.timecore.api.registry.TimeModelRegister;
 import ru.timeconqueror.timecore.api.registry.util.AutoRegistrable;
-import ru.timeconqueror.timecore.client.render.model.TimeModelLocation;
+import ru.timeconqueror.timecore.client.render.model.InFileLocation;
 import ru.timeconqueror.timecore.tests.animation.entity.client.render.RenderTowerGuardian;
 import ru.timeconqueror.timecore.tests.animation.entity.registry.AnimTestEntityRegistry;
 
@@ -16,7 +16,7 @@ import ru.timeconqueror.timecore.tests.animation.entity.registry.AnimTestEntityR
 public class AnimationTestEntityRenderers {
     @AutoRegistrable
     private static final TimeModelRegister REGISTER = new TimeModelRegister(TimeCore.MODID);
-    public static TimeModelLocation TOWER_GUARDIAN = REGISTER.register("models/entity/tower_guardian.json");
+    public static InFileLocation TOWER_GUARDIAN = REGISTER.register("models/entity/tower_guardian.json");
 
     @SubscribeEvent
     @OnlyIn(Dist.CLIENT)

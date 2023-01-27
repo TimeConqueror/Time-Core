@@ -3,6 +3,7 @@ package ru.timeconqueror.timecore.tests.animation.entity.registry;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraftforge.registries.ObjectHolder;
 import ru.timeconqueror.timecore.TimeCore;
 import ru.timeconqueror.timecore.api.registry.EntityRegister;
@@ -25,7 +26,7 @@ public class AnimTestEntityRegistry {
                                 .setShouldReceiveVelocityUpdates(true)
                                 .sized(1, 2)
                 )
-                .spawnEgg(0xFF00FF00, 0xFF000000, CreativeModeTab.TAB_MISC)
+                .spawnEgg(0xFF00FF00, 0xFF000000, CreativeModeTabs.SPAWN_EGGS)
                 .attributes(() -> TowerGuardianEntity.createAttributes().build());
     }
 }

@@ -19,8 +19,9 @@ public class CommandRegistrar {
 
     @SubscribeEvent//TODO move to client commands event
     public static void onClient(FMLClientSetupEvent event) {
-        CommandDispatcher<CommandSourceStack> commandDispatcher = ClientCommandDispatcher.get();
-        TimeCoreCommand.registerClient(commandDispatcher);
+        //ToDo port?
+//        CommandDispatcher<CommandSourceStack> commandDispatcher = ClientCommandDispatcher.get();
+//        TimeCoreCommand.registerClient(commandDispatcher);
     }
 
     @Mod.EventBusSubscriber

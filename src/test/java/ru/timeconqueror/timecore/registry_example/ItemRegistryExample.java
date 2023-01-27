@@ -20,9 +20,7 @@ public class ItemRegistryExample {
 
         @AutoRegistrable.Init
         private static void register() {
-            ItemPropsFactory miscGrouped = new ItemPropsFactory(CreativeModeTab.TAB_MISC);
-
-            REGISTER.register("test_diamond", () -> new Item(miscGrouped.create()))
+            REGISTER.register("test_diamond", () -> new Item(new Item.Properties()))
                     .defaultModel(new TextureLocation("minecraft", "item/diamond"));
         }
     }

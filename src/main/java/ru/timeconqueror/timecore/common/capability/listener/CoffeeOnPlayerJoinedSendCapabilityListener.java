@@ -15,18 +15,18 @@ public class CoffeeOnPlayerJoinedSendCapabilityListener {
 
     @SubscribeEvent
     public void onJoinWorld(PlayerEvent.PlayerLoggedInEvent event) {
-        onUpdate.accept(event.getPlayer());
+        onUpdate.accept(event.getEntity());
     }
 
     @SubscribeEvent
     public void onChangeWorld(PlayerEvent.PlayerChangedDimensionEvent event) {
-        onUpdate.accept(event.getPlayer());
+        onUpdate.accept(event.getEntity());
     }
 
     @SubscribeEvent
     public void onPlayerRespawn(PlayerEvent.PlayerRespawnEvent e) {
-        if (!e.getPlayer().level.isClientSide()) {
-            onUpdate.accept(e.getPlayer());
+        if (!e.getEntity().level.isClientSide()) {
+            onUpdate.accept(e.getEntity());
         }
     }
 }

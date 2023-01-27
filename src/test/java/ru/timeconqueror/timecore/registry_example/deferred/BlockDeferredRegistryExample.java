@@ -20,9 +20,9 @@ public class BlockDeferredRegistryExample {
             .oneVarStateAndCubeAllModel(new TextureLocation("minecraft", "block/cobblestone"))
             .defaultBlockItem(CreativeModeTab.TAB_MISC)
 //          .genLangEntry("Test Cobble")
-            .asRegistryObject();
+            .asPromised();
 
     public static RegistryObject<Block> TEST_GRAVEL = REGISTER.register("test_gravel", () -> new Block(BLOCK_PROPS_CREATOR.create()))
             .defaultBlockItem(CreativeModeTab.TAB_MISC)
-            .asRegistryObject();
+            .asPromised();
 }

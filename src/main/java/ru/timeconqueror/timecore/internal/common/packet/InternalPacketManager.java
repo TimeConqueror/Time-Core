@@ -18,8 +18,9 @@ public class InternalPacketManager {
     private static final String PROTOCOL_STRING = "1";
 
     public static final SimpleChannel INSTANCE = REGISTER.createChannel("main", () -> PROTOCOL_STRING, PROTOCOL_STRING::equals, PROTOCOL_STRING::equals)
-            .regPacket(S2CSRSendSinglePiecePacket.class, new S2CSRSendSinglePiecePacket.Handler(), NetworkDirection.PLAY_TO_CLIENT)
-            .regPacket(S2CSRClearPiecesPacket.class, new S2CSRClearPiecesPacket.Handler(), NetworkDirection.PLAY_TO_CLIENT)
+          //  .regPacket(S2CSRSendSinglePiecePacket.class, new S2CSRSendSinglePiecePacket.Handler(), NetworkDirection.PLAY_TO_CLIENT)
+          //  .regPacket(S2CSRClearPiecesPacket.class, new S2CSRClearPiecesPacket.Handler(), NetworkDirection.PLAY_TO_CLIENT)
+            //todo port?
             .regPacket(S2CStartAnimationMsg.class, new S2CStartAnimationMsg.Handler(), NetworkDirection.PLAY_TO_CLIENT)
             .regPacket(S2CEndAnimationMsg.class, new S2CEndAnimationMsg.Handler(), NetworkDirection.PLAY_TO_CLIENT)
             .regPacket(S2CSyncAnimationsMsg.class, new S2CSyncAnimationsMsg.Handler(), NetworkDirection.PLAY_TO_CLIENT)

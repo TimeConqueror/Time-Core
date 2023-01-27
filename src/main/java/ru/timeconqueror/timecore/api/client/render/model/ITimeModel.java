@@ -1,11 +1,11 @@
 package ru.timeconqueror.timecore.api.client.render.model;
 
 import org.jetbrains.annotations.Nullable;
-import ru.timeconqueror.timecore.client.render.model.TimeModelLocation;
+import ru.timeconqueror.timecore.client.render.model.InFileLocation;
 import ru.timeconqueror.timecore.client.render.model.TimeModelPart;
 
 public interface ITimeModel {
-    TimeModelLocation getLocation();
+    InFileLocation getLocation();
 
     /**
      * Returns model part by its name or null if there's no model part with provided name.

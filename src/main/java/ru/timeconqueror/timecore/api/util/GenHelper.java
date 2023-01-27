@@ -7,6 +7,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.level.LevelHeightAccessor;
 import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.Heightmap;
+import net.minecraft.world.level.levelgen.RandomState;
 
 import java.util.function.BiConsumer;
 import java.util.function.BiPredicate;
@@ -84,16 +85,11 @@ public class GenHelper {
     }
 
     private static BlockPos.MutableBlockPos applyDirection(BlockPos.MutableBlockPos pos, int x, int y, int z, Direction.Axis direction) {
-        switch (direction) {
-            case X:
-                return pos.set(z, y, x);
-            case Y:
-                return pos.set(x, z, y);
-            case Z:
-                return pos.set(x, y, z);
-            default:
-                throw new UnsupportedOperationException("Unsupported direction: " + direction);
-        }
+        return switch (direction) {
+            case X -> pos.set(z, y, x);
+            case Y -> pos.set(x, z, y);
+            case Z -> pos.set(x, y, z);
+        };
     }
 
     public interface IBorderGenerator {
@@ -262,36 +258,36 @@ public class GenHelper {
         });
     }
 
-    public static int getAverageFirstFreeHeight(ChunkGenerator chunkGenerator, int x, int z, int x1, int z1, LevelHeightAccessor levelHeightAccessor) {
-        return getAverageFirstFreeHeight(chunkGenerator, x, z, x1, z1, Heightmap.Types.WORLD_SURFACE_WG, levelHeightAccessor);
+    public static int getAverageFirstFreeHeight(ChunkGenerator chunkGenerator, int x, int z, int x1, int z1, LevelHeightAccessor levelHeightAccessor, RandomState random) {
+        return getAverageFirstFreeHeight(chunkGenerator, x, z, x1, z1, Heightmap.Types.WORLD_SURFACE_WG, levelHeightAccessor, random);
     }
 
-    public static int getAverageFirstFreeHeight(ChunkGenerator chunkGenerator, int x, int z, int x1, int z1, Heightmap.Types type, LevelHeightAccessor levelHeightAccessor) {
-        return MathUtils.average(getBoxCornerFirstFreeHeights(chunkGenerator, x, z, x1, z1, type, levelHeightAccessor));
+    public static int getAverageFirstFreeHeight(ChunkGenerator chunkGenerator, int x, int z, int x1, int z1, Heightmap.Types type, LevelHeightAccessor levelHeightAccessor, RandomState random) {
+        return MathUtils.average(getBoxCornerFirstFreeHeights(chunkGenerator, x, z, x1, z1, type, levelHeightAccessor, random));
     }
 
-    public static int getMinFirstFreeHeight(ChunkGenerator chunkGenerator, int x, int z, int x1, int z1, LevelHeightAccessor levelHeightAccessor) {
-        return getMinFirstFreeHeight(chunkGenerator, x, z, x1, z1, Heightmap.Types.WORLD_SURFACE_WG, levelHeightAccessor);
+    public static int getMinFirstFreeHeight(ChunkGenerator chunkGenerator, int x, int z, int x1, int z1, LevelHeightAccessor levelHeightAccessor, RandomState random) {
+        return getMinFirstFreeHeight(chunkGenerator, x, z, x1, z1, Heightmap.Types.WORLD_SURFACE_WG, levelHeightAccessor, random);
     }
 
-    public static int getMinFirstFreeHeight(ChunkGenerator chunkGenerator, int x, int z, int x1, int z1, Heightmap.Types type, LevelHeightAccessor levelHeightAccessor) {
-        return MathUtils.min(getBoxCornerFirstFreeHeights(chunkGenerator, x, z, x1, z1, type, levelHeightAccessor));
+    public static int getMinFirstFreeHeight(ChunkGenerator chunkGenerator, int x, int z, int x1, int z1, Heightmap.Types type, LevelHeightAccessor levelHeightAccessor, RandomState random) {
+        return MathUtils.min(getBoxCornerFirstFreeHeights(chunkGenerator, x, z, x1, z1, type, levelHeightAccessor, random));
     }
 
-    public static int getMaxFirstFreeHeight(ChunkGenerator chunkGenerator, int x, int z, int x1, int z1, LevelHeightAccessor levelHeightAccessor) {
-        return getMaxFirstFreeHeight(chunkGenerator, x, z, x1, z1, Heightmap.Types.WORLD_SURFACE_WG, levelHeightAccessor);
+    public static int getMaxFirstFreeHeight(ChunkGenerator chunkGenerator, int x, int z, int x1, int z1, LevelHeightAccessor levelHeightAccessor, RandomState random) {
+        return getMaxFirstFreeHeight(chunkGenerator, x, z, x1, z1, Heightmap.Types.WORLD_SURFACE_WG, levelHeightAccessor, random);
     }
 
-    public static int getMaxFirstFreeHeight(ChunkGenerator chunkGenerator, int x, int z, int x1, int z1, Heightmap.Types type, LevelHeightAccessor levelHeightAccessor) {
-        return MathUtils.max(getBoxCornerFirstFreeHeights(chunkGenerator, x, z, x1, z1, type, levelHeightAccessor));
+    public static int getMaxFirstFreeHeight(ChunkGenerator chunkGenerator, int x, int z, int x1, int z1, Heightmap.Types type, LevelHeightAccessor levelHeightAccessor, RandomState random) {
+        return MathUtils.max(getBoxCornerFirstFreeHeights(chunkGenerator, x, z, x1, z1, type, levelHeightAccessor, random));
     }
 
-    private static int[] getBoxCornerFirstFreeHeights(ChunkGenerator chunkGenerator, int x, int z, int x1, int z1, Heightmap.Types type, LevelHeightAccessor levelHeightAccessor) {
+    private static int[] getBoxCornerFirstFreeHeights(ChunkGenerator chunkGenerator, int x, int z, int x1, int z1, Heightmap.Types type, LevelHeightAccessor levelHeightAccessor, RandomState random) {
         return new int[]{
-                chunkGenerator.getFirstFreeHeight(x, z, type, levelHeightAccessor),
-                chunkGenerator.getFirstFreeHeight(x1, z, type, levelHeightAccessor),
-                chunkGenerator.getFirstFreeHeight(x, z1, type, levelHeightAccessor),
-                chunkGenerator.getFirstFreeHeight(x1, z1, type, levelHeightAccessor)
+                chunkGenerator.getFirstFreeHeight(x, z, type, levelHeightAccessor, random),
+                chunkGenerator.getFirstFreeHeight(x1, z, type, levelHeightAccessor, random),
+                chunkGenerator.getFirstFreeHeight(x, z1, type, levelHeightAccessor, random),
+                chunkGenerator.getFirstFreeHeight(x1, z1, type, levelHeightAccessor, random)
         };
     }
 

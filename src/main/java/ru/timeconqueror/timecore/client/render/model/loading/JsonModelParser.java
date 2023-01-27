@@ -1,23 +1,21 @@
 package ru.timeconqueror.timecore.client.render.model.loading;
 
 import com.google.gson.*;
-import com.mojang.math.Vector3f;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.util.GsonHelper;
 import org.jetbrains.annotations.NotNull;
+import org.joml.Vector3f;
 import ru.timeconqueror.timecore.api.util.CollectionUtils;
 import ru.timeconqueror.timecore.api.util.Pair;
 import ru.timeconqueror.timecore.api.util.Vec2i;
 import ru.timeconqueror.timecore.api.util.json.JsonUtils;
 import ru.timeconqueror.timecore.client.render.model.FaceUVDefinition;
-import ru.timeconqueror.timecore.client.render.model.TimeModelLocation;
+import ru.timeconqueror.timecore.client.render.model.InFileLocation;
 import ru.timeconqueror.timecore.client.render.model.UVDefinition;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.util.*;
 
 public class JsonModelParser {
@@ -35,26 +33,31 @@ public class JsonModelParser {
      * @param fileLocation location of file, example: {@code new ResourceLocation(TimeCore.MODID, "models/entity/broken.json")}
      * @return list of models from the file with provided {@code location}
      *///FiXME shrink resource location
-    public List<Pair<TimeModelLocation, TimeModelDefinition>> parseGeometryFile(@NotNull ResourceLocation fileLocation) {
-        try (final Resource resource = Minecraft.getInstance().getResourceManager().getResource(fileLocation)) {
-            BufferedReader reader = new BufferedReader(new InputStreamReader(resource.getInputStream()));
+    public List<Pair<InFileLocation, TimeModelDefinition>> parseGeometryFile(@NotNull ResourceLocation fileLocation) {
+        Optional<Resource> resourceOpt = Minecraft.getInstance().getResourceManager().getResource(fileLocation);
+        if(resourceOpt.isPresent()) {
+            Resource resource = resourceOpt.get();
 
-            JsonObject json = GsonHelper.parse(reader, true);
-            return parseGeometryFile(fileLocation, json);
+            try(var reader = resource.openAsReader()) {
+                JsonObject json = GsonHelper.parse(reader, true);
+                return parseGeometryFile(fileLocation, json);
+            } catch (Throwable e) {
+                throw new RuntimeException("Geometry file can't be loaded", e);
+            }
 
-        } catch (Throwable e) {
-            throw new RuntimeException("Can't load model file " + fileLocation, e);
+        } else {
+            throw new RuntimeException("Geometry file not found: " + fileLocation);
         }
     }
 
-    private List<Pair<TimeModelLocation, TimeModelDefinition>> parseGeometryFile(ResourceLocation fileLocation, JsonObject object) {
-        List<Pair<TimeModelLocation, TimeModelDefinition>> definitions = new ArrayList<>();
+    private List<Pair<InFileLocation, TimeModelDefinition>> parseGeometryFile(ResourceLocation fileLocation, JsonObject object) {
+        List<Pair<InFileLocation, TimeModelDefinition>> definitions = new ArrayList<>();
         for (Map.Entry<String, JsonElement> entry : object.entrySet()) {
             if (entry.getKey().equals("format_version")) {
                 String formatVersion = GsonHelper.convertToString(entry.getValue(), entry.getKey());
                 checkFormatVersion(formatVersion);
             } else if (entry.getKey().equals("minecraft:geometry")) {
-                Pair<TimeModelLocation, TimeModelDefinition> identifierAndModel = parseGeometry(fileLocation, GsonHelper.convertToJsonArray(entry.getValue(), entry.getKey()));
+                Pair<InFileLocation, TimeModelDefinition> identifierAndModel = parseGeometry(fileLocation, GsonHelper.convertToJsonArray(entry.getValue(), entry.getKey()));
                 definitions.add(identifierAndModel);
             } else {
                 throw new JsonSyntaxException("Unrecognized key while parsing json model file: " + entry.getKey());
@@ -64,14 +67,14 @@ public class JsonModelParser {
         return definitions;
     }
 
-    private Pair<TimeModelLocation, TimeModelDefinition> parseGeometry(ResourceLocation fileLocation, JsonArray subModelArr) {
+    private Pair<InFileLocation, TimeModelDefinition> parseGeometry(ResourceLocation fileLocation, JsonArray subModelArr) {
         JsonObject subModel = GsonHelper.convertToJsonObject(subModelArr.get(0), "member of 'minecraft:geometry'");
         JsonArray bones = GsonHelper.getAsJsonArray(subModel, "bones");
 
         JsonObject description = GsonHelper.getAsJsonObject(subModel, "description");
         String identifier = GsonHelper.getAsString(description, "identifier");
-        if (identifier.equals(TimeModelLocation.WILDCARD)) {
-            throw new JsonSyntaxException("Found forbidden model identifier: '" + TimeModelLocation.WILDCARD + "'. Change it, the current one is reserved for internal purposes.");
+        if (identifier.equals(InFileLocation.WILDCARD)) {
+            throw new JsonSyntaxException("Found forbidden model identifier: '" + InFileLocation.WILDCARD + "'. Change it, the current one is reserved for internal purposes.");
         }
 
         MaterialDefinition material = new MaterialDefinition(GsonHelper.getAsInt(description, "texture_width"), GsonHelper.getAsInt(description, "texture_height"));
@@ -96,7 +99,7 @@ public class JsonModelParser {
             }
         }
 
-        return Pair.of(new TimeModelLocation(fileLocation, identifier), makeDefinition(material, rootChildren));
+        return Pair.of(new InFileLocation(fileLocation, identifier), makeDefinition(material, rootChildren));
 
     }
 

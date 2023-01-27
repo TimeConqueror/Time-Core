@@ -1,18 +1,28 @@
 package ru.timeconqueror.timecore.api.registry;
 
 import net.minecraft.core.Registry;
-import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.minecraft.resources.ResourceKey;
+import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.IForgeRegistry;
 import ru.timeconqueror.timecore.api.registry.util.Promised;
 
 import java.util.function.Supplier;
 
 /**
- * You can use it as a wrapper for all vanilla registries, which don't have forge wrapper.
- * All entries will be registered on the main thread on {@link FMLCommonSetupEvent}
+ * Simple register, which can be used for every stuff,
+ * which is handled by {@link ForgeRegistries} or built-in vanilla registries, but doesn't have any extra settings provided by TimeCore.
  */
 public class SimpleVanillaRegister<T> extends VanillaRegister<T> {
-    public SimpleVanillaRegister(String modId, Registry<T> registry) {
-        super(modId, registry);
+    public SimpleVanillaRegister(ResourceKey<? extends Registry<T>> registryKey, String modId) {
+        super(registryKey, modId);
+    }
+
+    public SimpleVanillaRegister(Registry<T> registry, String modId) {
+        super(registry, modId);
+    }
+
+    public SimpleVanillaRegister(IForgeRegistry<T> registry, String modId) {
+        super(registry, modId);
     }
 
     /**

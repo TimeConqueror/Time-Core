@@ -19,4 +19,9 @@ public class Hacks {
     public static <R, T extends R> R safeCast(T obj) {
         return obj;
     }
+
+    @SuppressWarnings("unchecked")
+    public static <I, O> O accessor(I in) {
+        return (O) in;
+    }
 }

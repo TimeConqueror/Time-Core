@@ -1,11 +1,11 @@
 {
-  "required": true,
-  "minVersion": "0.8.5",
-  "package": "ru.timeconqueror.timecore.mixins",
-  "refmap": "mixins.timecore.refmap.json",
-  "setSourceFile": true,
-  "compatibilityLevel": "JAVA_17",
-  "mixins": [
+  "required" : true,
+  "minVersion" : "0.8.5",
+  "package" : "ru.timeconqueror.timecore.mixins",
+  "refmap" : "mixins.timecore.refmap.json",
+  "setSourceFile" : true,
+  "compatibilityLevel" : "JAVA_17",
+  "mixins" : [
     "MixinLivingEntity",
     "NoiseChunkGeneratorMixin",
     "accessor.CapabilityManagerAccessor",
@@ -16,7 +16,7 @@
     "accessor.UnlockedAdvancementProvider",
     "config.ConfigTrackerMixin"
   ],
-  "client": [
+  "client" : [
     "accessor.client.ClientModLoaderAccessor",
     "accessor.client.MaterialDefinitionAccessor",
     "accessor.client.ViewDistanceProvider",

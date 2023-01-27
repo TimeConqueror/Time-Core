@@ -2,7 +2,7 @@ package ru.timeconqueror.timecore.api.util;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -18,7 +18,7 @@ public class WorldUtils {
 
     public static <T> void forTypedTileWithWarn(Player player, Level world, BlockPos pos, Class<T> clazz, Consumer<T> action) {
         forTypedTile(world, pos, clazz, action, message -> {
-            NetworkUtils.sendMessage(player, new TextComponent(message).withStyle(ChatFormatting.RED));
+            NetworkUtils.sendMessage(player, Component.literal(message).withStyle(ChatFormatting.RED));
             TimeCore.LOGGER.warn(message, new IllegalAccessException());
         });
     }

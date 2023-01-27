@@ -15,7 +15,7 @@ import ru.timeconqueror.timecore.api.reflection.UnlockedField;
 import ru.timeconqueror.timecore.api.reflection.UnlockedMethod;
 import ru.timeconqueror.timecore.api.reflection.provider.ClassHandler;
 import ru.timeconqueror.timecore.api.reflection.provider.ClassHandlers;
-import ru.timeconqueror.timecore.api.registry.ForgeRegister;
+import ru.timeconqueror.timecore.api.registry.VanillaRegister;
 import ru.timeconqueror.timecore.api.registry.TimeRegister;
 import ru.timeconqueror.timecore.api.registry.util.AutoRegistrable;
 import ru.timeconqueror.timecore.api.registry.util.AutoRegistrable.Init;
@@ -102,7 +102,7 @@ public class ModInitializer {
 
                 registerSubscriber.accept(register);
             } else {
-                throw new UnsupportedOperationException(AutoRegistrable.class.getSimpleName() + " can be used only on fields that have " + ForgeRegister.class.getSimpleName() + " type. Error is in: " + field);
+                throw new UnsupportedOperationException(AutoRegistrable.class.getSimpleName() + " can be used only on fields that have " + VanillaRegister.class.getSimpleName() + " type. Error is in: " + field);
             }
         } else {
             throw new UnsupportedOperationException(AutoRegistrable.class.getSimpleName() + " can be used only on static fields. Error is in: " + field);

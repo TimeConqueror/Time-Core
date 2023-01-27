@@ -3,10 +3,10 @@ package ru.timeconqueror.timecore.api.util.client;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Matrix4f;
-import com.mojang.math.Vector3f;
 import net.minecraft.client.gui.Font;
 import net.minecraft.world.phys.AABB;
+import org.joml.Matrix4f;
+import org.joml.Vector3f;
 import org.lwjgl.opengl.GL11;
 import ru.timeconqueror.timecore.api.util.Requirements;
 

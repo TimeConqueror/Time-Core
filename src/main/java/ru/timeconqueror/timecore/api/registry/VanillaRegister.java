@@ -1,80 +1,155 @@
 package ru.timeconqueror.timecore.api.registry;
 
+import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
 import net.minecraft.core.Registry;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.minecraftforge.registries.IForgeRegistry;
+import net.minecraftforge.registries.RegisterEvent;
+import ru.timeconqueror.timecore.api.devtools.gen.lang.LangGeneratorFacade;
 import ru.timeconqueror.timecore.api.registry.base.TaskHolder;
 import ru.timeconqueror.timecore.api.registry.util.Promised;
+import ru.timeconqueror.timecore.api.util.EnvironmentUtils;
+import ru.timeconqueror.timecore.api.util.Pair;
+import ru.timeconqueror.timecore.api.util.Wrapper;
 import ru.timeconqueror.timecore.internal.registry.InsertablePromised;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Supplier;
 
-/**
- * You can {@link SimpleVanillaRegister} it as a wrapper for all vanilla registries, which don't have forge wrapper.
- * All values will be registered on the main thread on {@link FMLCommonSetupEvent}
- */
 public abstract class VanillaRegister<T> extends TimeRegister {
-    private final Registry<? super T> registry;
-    private final TaskHolder<Entry<? extends T>> entries = TaskHolder.make(FMLCommonSetupEvent.class);
+    private final ResourceKey<? extends Registry<T>> registryKey;
+    private Map<InsertablePromised<T>, Supplier<T>> entries = new HashMap<>();
 
-    public VanillaRegister(String modId, Registry<? super T> registry) {
+    private final TaskHolder<Runnable> clientSetupTasks = TaskHolder.make(FMLClientSetupEvent.class);
+    private final TaskHolder<Runnable> regEventTasks = TaskHolder.make(RegisterEvent.class);
+    private final TaskHolder<Runnable> commonSetupTasks = TaskHolder.make(FMLCommonSetupEvent.class);
+
+    public VanillaRegister(ResourceKey<? extends Registry<T>> registryKey, String modId) {
         super(modId);
-        this.registry = registry;
+        this.registryKey = registryKey;
     }
 
+    public VanillaRegister(Registry<T> registry, String modId) {
+        this(registry.key(), modId);
+    }
+
+    public VanillaRegister(IForgeRegistry<T> registry, String modId) {
+        this(registry.getRegistryKey(), modId);
+    }
+
+    @SuppressWarnings("unchecked")
     protected <I extends T> Promised<I> registerEntry(String name, Supplier<I> entrySup) {
-        InsertablePromised<I> promised = new InsertablePromised<>(new ResourceLocation(getModId(), name));
-        entries.add(new Entry<>(promised, entrySup));
+        Preconditions.checkNotNull(entries, "Cannot register new entries after RegistryEvent.Register has been fired.");
+
+        ResourceLocation registryName = new ResourceLocation(getModId(), name);
+        InsertablePromised<I> promised = new InsertablePromised<>(registryName);
+        if (entries.put((InsertablePromised<T>) promised, entrySup::get) != null) {
+            throw new IllegalArgumentException("Attempted to register " + name + " twice for registry " + registryKey.registry());
+        }
 
         return promised;
     }
 
+    protected void runOnClientSetup(Runnable task) {
+        if (EnvironmentUtils.isOnPhysicalClient()) {
+            clientSetupTasks.add(task);
+        }
+    }
+
+    protected void runOnCommonSetup(Runnable task) {
+        commonSetupTasks.add(task);
+    }
+
+    protected void runAfterRegistering(Runnable task) {
+        regEventTasks.add(task);
+    }
+
     @Override
-    public void regToBus(IEventBus bus) {
-        super.regToBus(bus);
-        bus.addListener(this::onSetup);
+    public void regToBus(IEventBus modEventBus) {
+        super.regToBus(modEventBus);
+        modEventBus.addListener(EventPriority.LOWEST, this::onClientSetup);
+        modEventBus.addListener(this::onCommonSetup);
+        modEventBus.addListener(this::onAllRegEvent);
     }
 
-    private void onSetup(FMLCommonSetupEvent event) {
-        enqueueWork(event, () -> {
-            entries.doForEachAndRemove(entry -> Registry.register(registry, entry.getId(), entry.pull()));
-        });
+    private void onAllRegEvent(RegisterEvent event) {
+        if (!event.getRegistryKey().equals(registryKey)) return;
+        onRegEvent(event);
     }
 
-    public static class RegisterChain<T> {
-        private final Promised<T> promised;
+    protected void onRegEvent(RegisterEvent event) {
+        Wrapper<Promised<T>> promiseWrapper = new Wrapper<>(null);
 
-        public RegisterChain(Promised<T> promised) {
-            this.promised = promised;
+        catchErrors("registering " + registryKey.registry() + " entries ", () -> {
+            for (Map.Entry<InsertablePromised<T>, Supplier<T>> entry : entries.entrySet()) {
+                InsertablePromised<T> promise = entry.getKey();
+                T value = entry.getValue().get();
+
+                promiseWrapper.set(promise);
+                validateEntry(value);
+                event.register(registryKey, promise.getId(), entry.getValue());
+
+                promise.insert(value);
+            }
+        }, () -> Lists.newArrayList(
+                Pair.of("Registry type", registryKey.registry()),
+                Pair.of("Currently registering object", promiseWrapper.get() != null ? promiseWrapper.get().getId() : null)));
+
+        entries = null;
+
+        catchErrors("finishing register event of type " + registryKey.registry(), () -> regEventTasks.doForEachAndRemove(Runnable::run));
+    }
+
+    /**
+     * Throws error if the entry is invalid upon the register event
+     */
+    protected void validateEntry(T entry) {
+    }
+
+    protected void onClientSetup(FMLClientSetupEvent event) {
+        enqueueWork(event, () -> clientSetupTasks.doForEachAndRemove(Runnable::run));
+    }
+
+    protected void onCommonSetup(FMLCommonSetupEvent event) {
+        enqueueWork(event, () -> commonSetupTasks.doForEachAndRemove(Runnable::run));
+    }
+
+    protected LangGeneratorFacade getLangGeneratorFacade() {
+        return modFeatures.getLangGeneratorFacade();
+    }
+
+    public static class RegisterChain<I> {
+        protected final Promised<I> promise;
+
+        protected RegisterChain(Promised<I> promise) {
+            this.promise = promise;
         }
 
-        public Promised<T> asPromise() {
-            return promised;
+        public Promised<I> asPromised() {
+            return promise;
         }
 
         public ResourceLocation getRegistryName() {
-            return promised.getId();
-        }
-    }
-
-    private static class Entry<T> {
-        private final InsertablePromised<T> promised;
-        private final Supplier<T> entrySup;
-
-        public Entry(InsertablePromised<T> promised, Supplier<T> entrySup) {
-            this.promised = promised;
-            this.entrySup = entrySup;
+            return asPromised().getId();
         }
 
-        public ResourceLocation getId() {
-            return promised.getId();
+        public String getModId() {
+            return getRegistryName().getNamespace();
         }
 
-        private T pull() {
-            T val = entrySup.get();
-            promised.insert(val);
-            return val;
+        public String getName() {
+            return getRegistryName().getPath();
+        }
+
+        public void clientSideOnly(Runnable runnable) {
+            if (EnvironmentUtils.isOnPhysicalClient()) runnable.run();
         }
     }
 }
