@@ -63,7 +63,7 @@ public class TimeModelPart extends ModelPart implements ITimeModelPart {
         matrixStackIn.translate(this.x / 16.0F, this.y / 16.0F, this.z / 16.0F);
 
         if (this.rotation.x != 0.0F || this.rotation.y != 0.0F || this.rotation.z != 0.0F) {
-            matrixStackIn.mulPose((new Quaternionf()).rotationZYX(rotation.x, rotation.y, rotation.z));
+            matrixStackIn.mulPose((new Quaternionf()).rotationZYX(rotation.z, rotation.y, rotation.x));
         }
 
         if (this.scale.x != 1.0F || this.scale.y != 1.0F || this.scale.z != 1.0F) {
