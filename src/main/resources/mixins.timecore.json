@@ -22,7 +22,6 @@
     "accessor.client.ViewDistanceProvider",
     "client.MinecraftMixin",
     "client.WorldRendererMixin",
-    "client.command.ClientPlayerEntityMixin",
-    "client.command.ClientPlayNetHandlerMixin"
+    "client.command.ClientPlayerEntityMixin"
   ]
 }

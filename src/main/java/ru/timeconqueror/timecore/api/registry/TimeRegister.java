@@ -10,6 +10,7 @@ import ru.timeconqueror.timecore.storage.Features;
 import ru.timeconqueror.timecore.storage.Storage;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -80,7 +81,7 @@ public abstract class TimeRegister {
             runnable.run();
         } catch (Throwable e) {
             String culpritInfo = getOwner() != null ? "Currently handling stuff from class: " + getOwner().getName() + "." : "Unknown owner.";
-            String extra = "Extra Info:\n" + extraInfo.get().stream().map(pair -> pair.left().toString() + " -> " + pair.right().toString() + "\n").collect(Collectors.joining());
+            String extra = "Extra Info:\n" + extraInfo.get().stream().map(pair ->pair.left() + ": " + pair.right() + "\n").collect(Collectors.joining());
             RuntimeException exception = new RuntimeException("Caught exception during " + action + ". \n" + culpritInfo + "\n" + extra, e);
             storeException(exception);
         }

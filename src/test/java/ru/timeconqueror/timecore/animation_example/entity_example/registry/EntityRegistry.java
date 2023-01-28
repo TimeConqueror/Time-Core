@@ -4,6 +4,7 @@ import net.minecraft.client.renderer.entity.ThrownItemRenderer;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.EntityRenderersEvent;
@@ -19,13 +20,13 @@ import ru.timeconqueror.timecore.api.registry.util.AutoRegistrable;
 import ru.timeconqueror.timecore.api.util.Hacks;
 
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
-@ObjectHolder(TimeCore.MODID)
+@AutoRegistrable.Entries(value = TimeCore.MODID, registryKey = "entity_type")
 public class EntityRegistry {
     @AutoRegistrable
     private static final EntityRegister REGISTER = new EntityRegister(TimeCore.MODID);
 
-    public static final EntityType<FloroEntity> FLORO = Hacks.promise();
-    public static final EntityType<FloroMudEntity> FLORO_PROJ = Hacks.promise();
+    public static EntityType<FloroEntity> FLORO = Hacks.promise();
+    public static EntityType<FloroMudEntity> FLORO_PROJ = Hacks.promise();
 
     @AutoRegistrable.Init()
     private static void register() {
@@ -35,7 +36,7 @@ public class EntityRegistry {
                                 .setShouldReceiveVelocityUpdates(true)
                                 .sized(1, 2)
                 )
-                .spawnEgg(0xFF00FF00, 0xFF000000, CreativeModeTab.TAB_MISC)
+          //      .spawnEgg(0xFF00FF00, 0xFF000000, CreativeModeTabs.TOOLS_AND_UTILITIES)
                 .attributes(() -> FloroEntity.createAttributes().build());
 
         REGISTER.register("floro_proj",

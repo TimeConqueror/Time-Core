@@ -49,7 +49,9 @@ public class ImprovedConfigBuilder extends ForgeConfigSpec.Builder {
         this.defValueToComment = addDefaultValueToComment;
         this.autoLangKey = autoGenLangKey;
 
-        comment(section.getComment() != null ? section.getComment() : "");
+        if(section.getComment() != null) {
+            comment(section.getComment());
+        }
         pushWithLang(section.getKey());
     }
 

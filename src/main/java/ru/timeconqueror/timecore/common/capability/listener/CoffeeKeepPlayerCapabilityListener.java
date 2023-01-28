@@ -18,7 +18,7 @@ public class CoffeeKeepPlayerCapabilityListener<T extends Tag> {
 
     @SubscribeEvent
     public void onPlayerClone(PlayerEvent.Clone event) {
-        INBTSerializable<T> newCap = extractor.apply(event.getPlayer());
+        INBTSerializable<T> newCap = extractor.apply(event.getEntity());
         INBTSerializable<T> oldCap = extractor.apply(event.getOriginal());
 
         if (newCap != null && oldCap != null) {

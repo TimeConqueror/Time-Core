@@ -44,18 +44,18 @@ public class NetworkUtils {
      * Send provided message for each player, who is in specific distance from given pos.//FIXME check for shouldn't be called on client?
      */
     public static void sendForEachPlayerNearby(BlockPos fromPos, double distanceIn, Component component) {
-        forEachPlayerNearby(fromPos, distanceIn, serverPlayerEntity -> serverPlayerEntity.sendMessage(component, serverPlayerEntity.getUUID()));
+        forEachPlayerNearby(fromPos, distanceIn, player -> player.displayClientMessage(component, false));
     }
 
     /**
      * Send provided message for provided player.
-     */
+     *///FIXME check for both client and server
     public static void sendMessage(Player player, Component component) {
-        player.sendMessage(component, player.getUUID());
+        player.displayClientMessage(component, false);
     }
 
     /**
-     * Do provided action for each player, who is tracking this block position.
+     * Runs provided action for each player, who is tracking this block position.
      */
     public static void forAllTracking(ServerLevel world, BlockPos fromPos, Consumer<ServerPlayer> action) {
         ChunkPos chunkPos = new ChunkPos(fromPos);

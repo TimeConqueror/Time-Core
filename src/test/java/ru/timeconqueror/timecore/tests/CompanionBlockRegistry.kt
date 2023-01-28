@@ -1,6 +1,7 @@
 package ru.timeconqueror.timecore.tests
 
 import net.minecraft.world.item.CreativeModeTab
+import net.minecraft.world.item.CreativeModeTabs
 import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.state.BlockBehaviour
 import net.minecraft.world.level.material.Material
@@ -28,7 +29,7 @@ class CompanionBlockRegistry {
                     Block(propsCreator.create())
                 } with {
                     name("Companion Test")
-                    defaultBlockItem(CreativeModeTab.TAB_MISC)
+                    defaultBlockItem(CreativeModeTabs.TOOLS_AND_UTILITIES)
                     state(BlockStateResource.fromBuilder(BlockStateResource.Builder.create()))
                 }
             }

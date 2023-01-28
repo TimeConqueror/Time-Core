@@ -10,9 +10,9 @@ import ru.timeconqueror.timecore.api.registry.util.AutoRegistrable;
 
 import static ru.timeconqueror.timecore.api.util.Hacks.promise;
 
-@ObjectHolder(TimeCore.MODID)
+@AutoRegistrable.Entries(value = TimeCore.MODID, registryKey = "block_entity_type")
 public class ATileRegistry {
-    public static final BlockEntityType<TileHeatCube> HEAT_CUBE = promise();
+    public static BlockEntityType<TileHeatCube> HEAT_CUBE = promise();
 
     private static class Init {
         @AutoRegistrable

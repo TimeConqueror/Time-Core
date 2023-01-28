@@ -1,16 +1,23 @@
 package ru.timeconqueror.timecore.api.util;
 
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.fml.loading.FMLLoader;
 import net.minecraftforge.fml.loading.FMLPaths;
+import net.minecraftforge.registries.ForgeRegistry;
+import net.minecraftforge.registries.IForgeRegistry;
+import net.minecraftforge.registries.RegistryManager;
 import net.minecraftforge.server.ServerLifecycleHooks;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.core.Filter;
 import org.apache.logging.log4j.core.LoggerContext;
 import org.apache.logging.log4j.core.filter.MarkerFilter;
+import org.jetbrains.annotations.Nullable;
 import ru.timeconqueror.timecore.TimeCore;
 import ru.timeconqueror.timecore.mixins.accessor.MinecraftServerAccessor;
 
@@ -128,5 +135,21 @@ public class EnvironmentUtils {
             TimeCore.LOGGER.info("Enabled logger markers for mod id {}: {}", modId, enabledMarkers);
         }
         EnvironmentUtils.disableLogMarkers(disabledMarkers);
+    }
+
+    public static <E> ForgeRegistry<E> getForgeRegistry(ResourceLocation registryName) {
+        return RegistryManager.ACTIVE.getRegistry(registryName);
+    }
+
+    public static Registry<?> getVanillaRegistry(ResourceLocation registryName) {
+        return BuiltInRegistries.REGISTRY.get(registryName);
+    }
+
+    public static boolean registryExists(ResourceLocation registryName) {
+        if (getForgeRegistry(registryName) != null) {
+            return true;
+        }
+
+        return getVanillaRegistry(registryName) != null;
     }
 }

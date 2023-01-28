@@ -10,9 +10,9 @@ import ru.timeconqueror.timecore.api.registry.util.AutoRegistrable;
 import ru.timeconqueror.timecore.api.registry.util.ItemPropsFactory;
 import ru.timeconqueror.timecore.api.util.Hacks;
 
-@ObjectHolder(TimeCore.MODID)
+@AutoRegistrable.Entries(value = TimeCore.MODID, registryKey = "item")
 public class ItemRegistryExample {
-    public static final Item TEST_DIAMOND = Hacks.promise();
+    public static Item TEST_DIAMOND = Hacks.promise();
 
     private static class Init {
         @AutoRegistrable

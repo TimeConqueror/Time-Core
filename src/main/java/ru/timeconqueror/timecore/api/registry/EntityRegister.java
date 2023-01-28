@@ -134,6 +134,12 @@ public class EntityRegister extends VanillaRegister<EntityType<?>> {
         return new EntityRegisterChain<T>(holder);
     }
 
+    @Override
+    public void setOwner(Class<?> owner) {
+        super.setOwner(owner);
+        itemRegister.setOwner(owner);
+    }
+
     private void onEntityAttributeCreationEvent(EntityAttributeCreationEvent event) {
         entityAttributesEventRuns.doForEachAndRemove(consumer -> consumer.accept(event));
     }

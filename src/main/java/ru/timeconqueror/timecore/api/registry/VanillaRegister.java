@@ -87,24 +87,24 @@ public abstract class VanillaRegister<T> extends TimeRegister {
     protected void onRegEvent(RegisterEvent event) {
         Wrapper<Promised<T>> promiseWrapper = new Wrapper<>(null);
 
-        catchErrors("registering " + registryKey.registry() + " entries ", () -> {
+        catchErrors("registering " + registryKey.location() + " entries", () -> {
             for (Map.Entry<InsertablePromised<T>, Supplier<T>> entry : entries.entrySet()) {
                 InsertablePromised<T> promise = entry.getKey();
                 T value = entry.getValue().get();
 
                 promiseWrapper.set(promise);
                 validateEntry(value);
-                event.register(registryKey, promise.getId(), entry.getValue());
+                event.register(registryKey, promise.getId(), () -> value);
 
                 promise.insert(value);
             }
         }, () -> Lists.newArrayList(
-                Pair.of("Registry type", registryKey.registry()),
+                Pair.of("Registry type", registryKey.location()),
                 Pair.of("Currently registering object", promiseWrapper.get() != null ? promiseWrapper.get().getId() : null)));
 
         entries = null;
 
-        catchErrors("finishing register event of type " + registryKey.registry(), () -> regEventTasks.doForEachAndRemove(Runnable::run));
+        catchErrors("finishing register event of type " + registryKey.location(), () -> regEventTasks.doForEachAndRemove(Runnable::run));
     }
 
     /**
