@@ -6,12 +6,11 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.data.event.GatherDataEvent;
 import net.minecraftforge.event.CreativeModeTabEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.ObjectHolder;
 import net.minecraftforge.registries.RegisterEvent;
-import net.minecraftforge.registries.RegistryObject;
 import ru.timeconqueror.timecore.api.TimeCoreAPI;
 import ru.timeconqueror.timecore.api.client.resource.ItemModel;
 import ru.timeconqueror.timecore.api.client.resource.StandardItemModelParents;
@@ -139,12 +138,17 @@ public class ItemRegister extends VanillaRegister<Item> {
     }
 
     @Override
+    public void regToBus(IEventBus modEventBus) {
+        super.regToBus(modEventBus);
+        modEventBus.addListener(this::buildContents);
+    }
+
+    @Override
     protected void onRegEvent(RegisterEvent event) {
         super.onRegEvent(event);
         LoadingOnlyStorage.addResourceHolder(resourceHolder.remove());
     }
 
-    @SubscribeEvent
     public void buildContents(CreativeModeTabEvent.BuildContents event) {
         tabBuildingTasks.forEach(task -> task.accept(event));
     }
