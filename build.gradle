@@ -287,13 +287,13 @@ publishing {
             url inProjectMaven
         }
         if (secretProps != null) {
-//            maven {
-//                url "https://repo.repsy.io/mvn/${secretProps.repsy.user}/${secretProps.repsy.repo_name}"
-//                credentials {
-//                    username secretProps.repsy.login
-//                    password secretProps.repsy.password
-//                }
-//            }
+            maven {
+                url "https://repo.repsy.io/mvn/${secretProps.repsy.user}/${secretProps.repsy.repo_name}"
+                credentials {
+                    username secretProps.repsy.login
+                    password secretProps.repsy.password
+                }
+            }
         }
     }
 }
