@@ -62,14 +62,7 @@ public class ModInitializer {
 
         runKotlinAutomaticEventSubscriber(modId, modContainer, scanResults, mod.getClass());
 
-        List<Runnable> initMethods = new ArrayList<>();
-        List<TimeRegister> registers = new ArrayList<>();
-
-        setupAutoRegistries(scanResults, initMethods::add, registers::add);
-
-        RegisterSubscriber.regToBus(registers, modEventBus);
-
-        processInitMethods(initMethods);
+        setupAutoRegistries(scanResults, modContainer, modEventBus);
 
         GlobalResourceStorage.INSTANCE.setup(modId);
     }
@@ -80,8 +73,10 @@ public class ModInitializer {
         TimeCore.LOGGER.debug(LOADING, "Completed Automatic event subscribers for {}", modId);
     }
 
-    private static void setupAutoRegistries(ModFileScanData scanResults, Consumer<Runnable> initMethodRegistrator, Consumer<TimeRegister> registerSubscriber) {
+    private static void setupAutoRegistries(ModFileScanData scanResults, ModContainer mod, IEventBus eventBus) {
         Multimap<ResourceKey<?>, Stream<ParentableField>> holderFillers = ArrayListMultimap.create();
+        List<TimeRegister> registers = new ArrayList<>();
+        List<Runnable> initMethods = new ArrayList<>();
 
         scanResults.getAnnotations().stream()
                 .filter(annotationData -> annotationData.annotationType().equals(TIME_AUTO_REG_TYPE)
@@ -100,9 +95,9 @@ public class ModInitializer {
                         Type type = annotationData.annotationType();
 
                         if (type.equals(TIME_AUTO_REG_TYPE)) {
-                            processAutoRegistrable(containerClass, annotationData, registerSubscriber);
+                            processAutoRegistrable(containerClass, annotationData, registers::add);
                         } else if (type.equals(TIME_AUTO_REG_INIT_TYPE)) {
-                            processTimeAutoRegInitMethod(containerClass, annotationData, initMethodRegistrator);
+                            processTimeAutoRegInitMethod(containerClass, annotationData, initMethods::add);
                         } else {
                             processEntries(containerClass, annotationData, holderFillers::put);
                         }
@@ -111,7 +106,9 @@ public class ModInitializer {
                     }
                 });
 
-        FMLJavaModLoadingContext.get().getModEventBus().register(new EntryFiller(holderFillers));
+        FMLJavaModLoadingContext.get().getModEventBus().register(new EntryFiller(mod.getModId(), holderFillers));
+        RegisterSubscriber.regToBus(registers, eventBus);
+        processInitMethods(initMethods);
     }
 
     private static void processEntries(Class<?> containerClass, ModFileScanData.AnnotationData annotationData, BiConsumer<ResourceKey<?>, Stream<ParentableField>> holderFillerAdder) {
@@ -131,7 +128,7 @@ public class ModInitializer {
 
         Stream<ParentableField> fields;
 
-        if (KotlinModInitializerModule.INSTANCE.canEntriesAnnoBeHandled(containerClass)) {
+        if (KotlinModInitializerModule.INSTANCE.handlesEntriesAnno(containerClass)) {
             fields = KotlinModInitializerModule.INSTANCE.processEntriesAnno(containerClass);
         } else {
             fields = Arrays.stream(containerClass.getDeclaredFields())
@@ -207,8 +204,10 @@ public class ModInitializer {
 
     private static class EntryFiller {
         private final Multimap<ResourceKey<?>, Stream<ParentableField>> holderFillers;
+        private final String modId;
 
-        public EntryFiller(Multimap<ResourceKey<?>, Stream<ParentableField>> holderFillers) {
+        public EntryFiller(String modId, Multimap<ResourceKey<?>, Stream<ParentableField>> holderFillers) {
+            this.modId = modId;
             this.holderFillers = holderFillers;
         }
 
@@ -220,7 +219,7 @@ public class ModInitializer {
                     .forEach(parentableField -> {
                         Field field = parentableField.self();
                         String name = field.getName().toLowerCase();
-                        ResourceLocation registryName = new ResourceLocation(TimeCore.MODID, name);//FIXME change modid
+                        ResourceLocation registryName = new ResourceLocation(modId, name);//FIXME change modid
 
                         Object value = null;
                         boolean error = false;

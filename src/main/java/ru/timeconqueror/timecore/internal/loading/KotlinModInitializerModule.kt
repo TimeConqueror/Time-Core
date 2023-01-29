@@ -8,7 +8,7 @@ import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.jvm.javaField
 
 object KotlinModInitializerModule {
-    fun canEntriesAnnoBeHandled(containerClass: Class<*>): Boolean {
+    fun handlesEntriesAnno(containerClass: Class<*>): Boolean {
         return containerClass.kotlin.objectInstance != null
     }
 
