@@ -1,7 +1,6 @@
 package ru.timeconqueror.timecore.animation_example.block_example.registry;
 
 import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.minecraftforge.registries.ObjectHolder;
 import ru.timeconqueror.timecore.TimeCore;
 import ru.timeconqueror.timecore.animation_example.block_example.block.tile.TileHeatCube;
 import ru.timeconqueror.timecore.animation_example.block_example.client.render.TERHeatCube;
@@ -10,7 +9,7 @@ import ru.timeconqueror.timecore.api.registry.util.AutoRegistrable;
 
 import static ru.timeconqueror.timecore.api.util.Hacks.promise;
 
-@AutoRegistrable.Entries(value = TimeCore.MODID, registryKey = "block_entity_type")
+@AutoRegistrable.Entries("block_entity_type")
 public class ATileRegistry {
     public static BlockEntityType<TileHeatCube> HEAT_CUBE = promise();
 

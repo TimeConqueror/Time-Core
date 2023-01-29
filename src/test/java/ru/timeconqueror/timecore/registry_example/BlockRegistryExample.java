@@ -1,11 +1,9 @@
 package ru.timeconqueror.timecore.registry_example;
 
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.material.Material;
-import net.minecraftforge.registries.ObjectHolder;
 import ru.timeconqueror.timecore.TimeCore;
 import ru.timeconqueror.timecore.api.client.resource.BlockModels;
 import ru.timeconqueror.timecore.api.client.resource.location.BlockModelLocation;
@@ -18,7 +16,7 @@ import ru.timeconqueror.timecore.block.DummyBlockWithTileEntity;
 
 import static ru.timeconqueror.timecore.api.util.Hacks.promise;
 
-@AutoRegistrable.Entries(value = TimeCore.MODID, registryKey = "block")
+@AutoRegistrable.Entries("block")
 public class BlockRegistryExample {
     public static Block TEST_SAND = promise();
     public static Block TEST_DIRT = promise();

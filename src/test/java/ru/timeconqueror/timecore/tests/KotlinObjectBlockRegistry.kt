@@ -12,7 +12,7 @@ import ru.timeconqueror.timecore.api.registry.util.AutoRegistrable.Init
 import ru.timeconqueror.timecore.api.registry.util.BlockPropsFactory
 import ru.timeconqueror.timecore.api.registry.util.invoke
 
-@AutoRegistrable.Entries(value = TimeCore.MODID, registryKey = "block")
+@AutoRegistrable.Entries("block")
 object KotlinObjectBlockRegistry {
     @AutoRegistrable
     private val REGISTER = BlockRegister(TimeCore.MODID)
