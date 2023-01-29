@@ -183,6 +183,7 @@ dependencies {
 shadowJar {
     configurations = [project.configurations.shade]
     archiveClassifier.set("")
+    archiveBaseName.set("TimeCore")
 
     def shadowPackages = [
             'kotlin',
@@ -263,8 +264,8 @@ def inProjectMaven = "${project.projectDir.absolutePath.replace("\\", "/")}/mave
 
 publishing {
     publications {
-        mavenJava(MavenPublication) { p ->
-
+        maven(MavenPublication) { p ->
+            artifactId archivesBaseName
             artifact shadowJar
             artifact devJar
             artifact sourcesJar
