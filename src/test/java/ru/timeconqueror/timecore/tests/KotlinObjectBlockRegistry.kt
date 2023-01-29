@@ -1,6 +1,5 @@
 package ru.timeconqueror.timecore.tests
 
-import net.minecraft.world.item.CreativeModeTab
 import net.minecraft.world.item.CreativeModeTabs
 import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.state.BlockBehaviour
@@ -13,9 +12,12 @@ import ru.timeconqueror.timecore.api.registry.util.AutoRegistrable.Init
 import ru.timeconqueror.timecore.api.registry.util.BlockPropsFactory
 import ru.timeconqueror.timecore.api.registry.util.invoke
 
+@AutoRegistrable.Entries(value = TimeCore.MODID, registryKey = "block")
 object KotlinObjectBlockRegistry {
     @AutoRegistrable
     private val REGISTER = BlockRegister(TimeCore.MODID)
+
+    lateinit var KOTLIN_OBJECT_TEST: Block
 
     @Init
     private fun register() {

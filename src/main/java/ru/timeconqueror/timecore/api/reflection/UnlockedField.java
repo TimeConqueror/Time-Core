@@ -89,13 +89,12 @@ public class UnlockedField<O, T> {
         return isStatic;
     }
 
-    @Override
-    public String toString() {
-        return field.toString();
-    }
-
     public boolean guessIsAccessible(AccessType accessType) {
         return validateAccessible(accessType, false);
+    }
+
+    public String getQualifiedName() {
+        return ReflectionHelper.getFieldQualifiedName(field);
     }
 
     private boolean validateAccessible(AccessType accessType, boolean strict) {
@@ -119,6 +118,11 @@ public class UnlockedField<O, T> {
         }
 
         return true;
+    }
+
+    @Override
+    public String toString() {
+        return field.toString();
     }
 
     public enum AccessType {
