@@ -298,4 +298,8 @@ public class ReflectionHelper {
         s.append(')');
         return s + getDescriptorForClass(m.getReturnType());
     }
+
+    public static String getFieldQualifiedName(Field field) {
+        return field.getDeclaringClass().getName() + "#" + field.getName();
+    }
 }

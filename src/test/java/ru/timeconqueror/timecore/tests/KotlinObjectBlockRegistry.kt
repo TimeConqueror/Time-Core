@@ -12,9 +12,12 @@ import ru.timeconqueror.timecore.api.registry.util.AutoRegistrable.InitMethod
 import ru.timeconqueror.timecore.api.registry.util.BlockPropsFactory
 import ru.timeconqueror.timecore.api.registry.util.invoke
 
+@AutoRegistrable.Entries(value = TimeCore.MODID, registryKey = "block")
 object KotlinObjectBlockRegistry {
     @AutoRegistrable
     private val REGISTER = BlockRegister(TimeCore.MODID)
+
+    lateinit var KOTLIN_OBJECT_TEST: Block
 
     @InitMethod
     private fun register() {
