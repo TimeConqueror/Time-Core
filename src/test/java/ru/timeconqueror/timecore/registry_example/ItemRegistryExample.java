@@ -9,7 +9,7 @@ import ru.timeconqueror.timecore.api.registry.util.AutoRegistrable;
 import ru.timeconqueror.timecore.api.registry.util.ItemPropsFactory;
 import ru.timeconqueror.timecore.api.util.Hacks;
 
-@AutoRegistrable.Entries(value = TimeCore.MODID, registryKey = "item")
+@AutoRegistrable.Entries("item")
 public class ItemRegistryExample {
     public static Item TEST_DIAMOND = Hacks.promise();
 

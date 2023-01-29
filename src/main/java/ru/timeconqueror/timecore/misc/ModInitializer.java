@@ -111,7 +111,7 @@ public class ModInitializer {
     }
 
     private static void processEntries(Class<?> containerClass, ModFileScanData.AnnotationData annotationData, BiConsumer<RegistryKey<?>, Stream<ParentableField>> holderFillerAdder) {
-        String registryKeyName = "registryKey";
+        String registryKeyName = "value";
         String registryKeyStr = (String) annotationData.getAnnotationData().get(registryKeyName);
 
         if (!ResourceLocation.isValidResourceLocation(registryKeyStr)) {

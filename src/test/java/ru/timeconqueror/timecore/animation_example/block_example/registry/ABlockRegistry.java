@@ -11,7 +11,7 @@ import ru.timeconqueror.timecore.api.registry.util.BlockPropsFactory;
 
 import static ru.timeconqueror.timecore.api.util.Hacks.promise;
 
-@AutoRegistrable.Entries(value = TimeCore.MODID, registryKey = "block")
+@AutoRegistrable.Entries("block")
 public class ABlockRegistry {
     public static HeatCubeBlock HEAT_CUBE = promise();
 

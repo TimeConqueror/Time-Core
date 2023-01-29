@@ -16,7 +16,7 @@ import ru.timeconqueror.timecore.block.DummyBlockWithTileEntity;
 
 import static ru.timeconqueror.timecore.api.util.Hacks.promise;
 
-@AutoRegistrable.Entries(value = TimeCore.MODID, registryKey = "block")
+@AutoRegistrable.Entries("block")
 public class BlockRegistryExample {
     public static Block TEST_SAND = promise();
     public static Block TEST_DIRT = promise();

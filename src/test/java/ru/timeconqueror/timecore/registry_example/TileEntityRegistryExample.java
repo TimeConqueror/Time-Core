@@ -7,7 +7,7 @@ import ru.timeconqueror.timecore.api.registry.util.AutoRegistrable;
 import ru.timeconqueror.timecore.api.util.Hacks;
 import ru.timeconqueror.timecore.block.tile.DummyTileEntity;
 
-@AutoRegistrable.Entries(value = TimeCore.MODID, registryKey = "block_entity_type")
+@AutoRegistrable.Entries("block_entity_type")
 public class TileEntityRegistryExample {
     public static TileEntityType<DummyTileEntity> TEST_TILE_1 = Hacks.promise();
 

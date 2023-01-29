@@ -31,13 +31,13 @@ public @interface AutoRegistrable {
     @Target({ElementType.TYPE})
     @Retention(RetentionPolicy.RUNTIME)
     @interface Entries {
+        //TODO javadoc
         String value();
-
-        String registryKey();
     }
 
     @Target({ElementType.FIELD})
     @Retention(RetentionPolicy.RUNTIME)
     @interface Ignore {
+        //TODO javadoc
     }
 }
