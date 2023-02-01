@@ -5,8 +5,8 @@ import java.util.Objects;
 /**
  * Provides ability to set variable created outside of lambda function from this lambda.
  * <br>Example:<br>
- * <blockquote><pre>
- * Holder&lt;Boolean&gt; passed = new Holder<>(false);
+ * <pre>{@code
+ * Holder<Boolean> passed = new Holder<>(false);
  *
  * someMethod(it -> {
  *     passed.set(true);
@@ -16,7 +16,7 @@ import java.util.Objects;
  *     doSmth();
  * }
  *
- * </pre></blockquote>
+ * }</pre>
  */
 public class Holder<T> {
     private T value;
