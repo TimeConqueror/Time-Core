@@ -1,4 +1,4 @@
-package ru.timeconqueror.timecore.api.util;
+package ru.timeconqueror.timecore.api.util.holder;
 
 import java.util.Objects;
 
@@ -6,7 +6,7 @@ import java.util.Objects;
  * Provides ability to set variable created outside of lambda function from this lambda.
  * <br>Example:<br>
  * <blockquote><pre>
- * Wrapper&lt;Boolean&gt; passed = new Wrapper<>(false);
+ * Holder&lt;Boolean&gt; passed = new Holder<>(false);
  *
  * someMethod(it -> {
  *     passed.set(true);
@@ -18,10 +18,10 @@ import java.util.Objects;
  *
  * </pre></blockquote>
  */
-public class Wrapper<T> {
+public class Holder<T> {
     private T value;
 
-    public Wrapper(T value) {
+    public Holder(T value) {
         this.value = value;
     }
 
@@ -41,9 +41,8 @@ public class Wrapper<T> {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof Wrapper)) return false;
-        Wrapper<?> wrapper = (Wrapper<?>) o;
-        return Objects.equals(value, wrapper.value);
+        if (!(o instanceof Holder<?> holder)) return false;
+        return Objects.equals(value, holder.value);
     }
 
     @Override

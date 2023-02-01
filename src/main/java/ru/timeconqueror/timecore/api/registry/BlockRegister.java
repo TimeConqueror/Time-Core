@@ -27,7 +27,7 @@ import ru.timeconqueror.timecore.api.registry.util.ItemPropsFactory;
 import ru.timeconqueror.timecore.api.registry.util.Promised;
 import ru.timeconqueror.timecore.api.util.EnvironmentUtils;
 import ru.timeconqueror.timecore.api.util.Hacks;
-import ru.timeconqueror.timecore.api.util.Temporal;
+import ru.timeconqueror.timecore.api.util.holder.Temporal;
 import ru.timeconqueror.timecore.storage.LoadingOnlyStorage;
 
 import java.util.function.Consumer;

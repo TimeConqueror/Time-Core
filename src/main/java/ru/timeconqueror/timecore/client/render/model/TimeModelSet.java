@@ -5,7 +5,7 @@ import com.google.common.collect.ImmutableMap;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.ResourceManagerReloadListener;
 import ru.timeconqueror.timecore.TimeCore;
-import ru.timeconqueror.timecore.api.util.Pair;
+import ru.timeconqueror.timecore.api.util.holder.Pair;
 import ru.timeconqueror.timecore.client.render.model.loading.JsonModelParser;
 import ru.timeconqueror.timecore.client.render.model.loading.TimeModelDefinition;
 import ru.timeconqueror.timecore.internal.client.handlers.ClientLoadingHandler;

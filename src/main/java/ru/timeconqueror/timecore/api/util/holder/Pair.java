@@ -1,4 +1,4 @@
-package ru.timeconqueror.timecore.api.util;
+package ru.timeconqueror.timecore.api.util.holder;
 
 import com.google.common.collect.ImmutableMap;
 

@@ -1,7 +1,7 @@
 package ru.timeconqueror.timecore.api.registry.base;
 
 import ru.timeconqueror.timecore.api.registry.TimeRegister;
-import ru.timeconqueror.timecore.api.util.Temporal;
+import ru.timeconqueror.timecore.api.util.holder.Temporal;
 
 import java.util.ArrayList;
 import java.util.List;

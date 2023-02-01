@@ -1,7 +1,7 @@
 package ru.timeconqueror.timecore.api.registry.util;
 
 import net.minecraft.resources.ResourceLocation;
-import ru.timeconqueror.timecore.api.util.Late;
+import ru.timeconqueror.timecore.api.util.holder.Late;
 
 import java.util.Objects;
 

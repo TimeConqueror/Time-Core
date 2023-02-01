@@ -5,7 +5,7 @@ import ru.timeconqueror.timecore.animation.component.IKeyFrame;
 import ru.timeconqueror.timecore.animation.component.KeyFrame;
 import ru.timeconqueror.timecore.animation.component.Transition;
 import ru.timeconqueror.timecore.api.client.render.model.ITimeModel;
-import ru.timeconqueror.timecore.api.util.Pair;
+import ru.timeconqueror.timecore.api.util.holder.Pair;
 import ru.timeconqueror.timecore.client.render.model.TimeModelPart;
 
 import java.util.List;

@@ -3,6 +3,8 @@ package ru.timeconqueror.timecore.api.util;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Nullable;
 import ru.timeconqueror.timecore.TimeCore;
+import ru.timeconqueror.timecore.api.util.holder.ThrowingRunnable;
+import ru.timeconqueror.timecore.api.util.holder.ThrowingSupplier;
 
 import java.util.function.Consumer;
 import java.util.function.Function;

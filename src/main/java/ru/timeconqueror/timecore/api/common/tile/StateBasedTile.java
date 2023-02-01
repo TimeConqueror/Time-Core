@@ -3,7 +3,7 @@ package ru.timeconqueror.timecore.api.common.tile;//package ru.timeconqueror.tim
 //import net.minecraft.nbt.CompoundNBT;
 //import net.minecraft.tileentity.TileEntityType;
 //import org.jetbrains.annotations.Nullable;
-//import ru.timeconqueror.timecore.api.util.Pair;
+//import ru.timeconqueror.timecore.api.util.holder.Pair;
 //
 //public abstract class StateBasedTile extends SyncableTile {
 //    public StateBasedTile(TileEntityType<?> tileEntityTypeIn) {

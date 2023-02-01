@@ -7,7 +7,7 @@ import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 import ru.timeconqueror.timecore.TimeCore;
 import ru.timeconqueror.timecore.api.util.FileUtils;
-import ru.timeconqueror.timecore.api.util.Wrapper;
+import ru.timeconqueror.timecore.api.util.holder.Holder;
 import ru.timeconqueror.timecore.storage.Storage;
 
 import java.io.File;
@@ -41,9 +41,9 @@ public class LangJsonGenerator {
                 entries = new LinkedHashMap<>();
             }
 
-            Wrapper<Integer> index = new Wrapper<>(0);
-            Wrapper<Integer> startIndex = new Wrapper<>(-1);
-            Wrapper<Integer> endIndex = new Wrapper<>(-1);
+            Holder<Integer> index = new Holder<>(0);
+            Holder<Integer> startIndex = new Holder<>(-1);
+            Holder<Integer> endIndex = new Holder<>(-1);
 
             entries.forEach((key, value) -> {
                 if (key.equals(START_MARK)) {
@@ -78,7 +78,7 @@ public class LangJsonGenerator {
 
             LinkedHashMap<String, String> newValues = new LinkedHashMap<>(entries.size());
             index.set(0);
-            Wrapper<Boolean> generated = new Wrapper<>(false);
+            Holder<Boolean> generated = new Holder<>(false);
 
             LinkedHashMap<String, String> finalEntries = entries;
             if (entries.isEmpty()) {

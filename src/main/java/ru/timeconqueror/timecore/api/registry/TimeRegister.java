@@ -5,12 +5,11 @@ import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
 import net.minecraftforge.fml.event.lifecycle.ParallelDispatchEvent;
 import org.jetbrains.annotations.Nullable;
-import ru.timeconqueror.timecore.api.util.Pair;
+import ru.timeconqueror.timecore.api.util.holder.Pair;
 import ru.timeconqueror.timecore.storage.Features;
 import ru.timeconqueror.timecore.storage.Storage;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;

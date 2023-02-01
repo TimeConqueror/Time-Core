@@ -17,7 +17,7 @@ package ru.timeconqueror.timecore.api.common.tile;//package ru.timeconqueror.tim
 //import org.jetbrains.annotations.Nullable;
 //import ru.timeconqueror.timecore.api.util.Auxiliary;
 //import ru.timeconqueror.timecore.api.util.NetworkUtils;
-//import ru.timeconqueror.timecore.api.util.Pair;
+//import ru.timeconqueror.timecore.api.util.holder.Pair;
 //
 //import javax.annotation.OverridingMethodsMustInvokeSuper;
 //import java.util.Objects;

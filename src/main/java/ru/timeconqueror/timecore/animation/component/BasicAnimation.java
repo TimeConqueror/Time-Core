@@ -11,7 +11,7 @@ import ru.timeconqueror.timecore.api.animation.Channel;
 import ru.timeconqueror.timecore.api.animation.ILayer;
 import ru.timeconqueror.timecore.api.animation.TransitionFactoryWithDestination;
 import ru.timeconqueror.timecore.api.client.render.model.ITimeModel;
-import ru.timeconqueror.timecore.api.util.Pair;
+import ru.timeconqueror.timecore.api.util.holder.Pair;
 import ru.timeconqueror.timecore.client.render.model.TimeModelPart;
 
 import java.util.*;

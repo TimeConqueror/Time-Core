@@ -15,8 +15,8 @@ import ru.timeconqueror.timecore.api.devtools.gen.lang.LangGeneratorFacade;
 import ru.timeconqueror.timecore.api.registry.base.TaskHolder;
 import ru.timeconqueror.timecore.api.registry.util.Promised;
 import ru.timeconqueror.timecore.api.util.EnvironmentUtils;
-import ru.timeconqueror.timecore.api.util.Pair;
-import ru.timeconqueror.timecore.api.util.Wrapper;
+import ru.timeconqueror.timecore.api.util.holder.Holder;
+import ru.timeconqueror.timecore.api.util.holder.Pair;
 import ru.timeconqueror.timecore.internal.registry.InsertablePromised;
 
 import java.util.HashMap;
@@ -85,14 +85,14 @@ public abstract class VanillaRegister<T> extends TimeRegister {
     }
 
     protected void onRegEvent(RegisterEvent event) {
-        Wrapper<Promised<T>> promiseWrapper = new Wrapper<>(null);
+        Holder<Promised<T>> promiseHolder = new Holder<>(null);
 
         catchErrors("registering " + registryKey.location() + " entries", () -> {
             for (Map.Entry<InsertablePromised<T>, Supplier<T>> entry : entries.entrySet()) {
                 InsertablePromised<T> promise = entry.getKey();
                 T value = entry.getValue().get();
 
-                promiseWrapper.set(promise);
+                promiseHolder.set(promise);
                 validateEntry(value);
                 event.register(registryKey, promise.getId(), () -> value);
 
@@ -100,7 +100,7 @@ public abstract class VanillaRegister<T> extends TimeRegister {
             }
         }, () -> Lists.newArrayList(
                 Pair.of("Registry type", registryKey.location()),
-                Pair.of("Currently registering object", promiseWrapper.get() != null ? promiseWrapper.get().getId() : null)));
+                Pair.of("Currently registering object", promiseHolder.get() != null ? promiseHolder.get().getId() : null)));
 
         entries = null;
 
