@@ -172,7 +172,7 @@ public abstract class Late<T> implements Supplier<T> {
         return value != null ? value.hashCode() : 0;
     }
 
-    public static class InsertableLate<T> extends Late<T> {
+    public static class Insertable<T> extends Late<T> {
         public void set(T value) {
             this.value = value;
         }
