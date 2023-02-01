@@ -219,7 +219,7 @@ public class ModInitializer {
                     .forEach(parentableField -> {
                         Field field = parentableField.self();
                         String name = field.getName().toLowerCase();
-                        ResourceLocation registryName = new ResourceLocation(modId, name);//FIXME change modid
+                        ResourceLocation registryName = new ResourceLocation(modId, name);
 
                         Object value = null;
                         boolean error = false;
@@ -240,7 +240,7 @@ public class ModInitializer {
                         }
 
                         if (error) {
-                            throw new IllegalStateException(String.format("Can't found value with registry name '%s' to set field %s", registryName, ReflectionHelper.getFieldQualifiedName(field)));
+                            throw new IllegalStateException(String.format("Can't find value with registry name '%s' to set field %s", registryName, ReflectionHelper.getFieldQualifiedName(field)));
                         }
 
                         try {
