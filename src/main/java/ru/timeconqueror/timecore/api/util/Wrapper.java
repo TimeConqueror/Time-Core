@@ -5,8 +5,8 @@ import java.util.Objects;
 /**
  * Provides ability to set variable created outside of lambda function from this lambda.
  * <br>Example:<br>
- * <blockquote><pre>
- * Wrapper&lt;Boolean&gt; passed = new Wrapper<>(false);
+ * <pre>{@code
+ * Wrapper<Boolean> passed = new Wrapper<>(false);
  *
  * someMethod(it -> {
  *     passed.set(true);
@@ -16,7 +16,7 @@ import java.util.Objects;
  *     doSmth();
  * }
  *
- * </pre></blockquote>
+ * }</pre>
  */
 public class Wrapper<T> {
     private T value;

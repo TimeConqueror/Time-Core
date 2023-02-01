@@ -22,19 +22,19 @@ public abstract class Late<T> implements Supplier<T> {
     }
 
     /**
-     * Returns {@code true} if there is a object present, otherwise {@code false}.
+     * Returns {@code true} if there is an object present, otherwise {@code false}.
      *
-     * @return {@code true} if there is a object present, otherwise {@code false}
+     * @return {@code true} if there is an object present, otherwise {@code false}
      */
     public boolean isPresent() {
         return this.value != null;
     }
 
     /**
-     * If a object is present, invoke the specified consumer with the object,
+     * If an object is present, invoke the specified consumer with the object,
      * otherwise do nothing.
      *
-     * @param consumer block to be executed if a object is present
+     * @param consumer block to be executed if an object is present
      * @throws NullPointerException if object is present and {@code consumer} is
      *                              null
      */
@@ -44,14 +44,14 @@ public abstract class Late<T> implements Supplier<T> {
     }
 
     /**
-     * If a object is present, apply the provided mapping function to it,
+     * If an object is present, apply the provided mapping function to it,
      * and if the result is non-null, return an {@code Optional} describing the
      * result. Otherwise, return an empty {@code Optional}.
      *
      * @param <U>    The type of the result of the mapping function
      * @param mapper a mapping function to apply to the object, if present
      * @return an {@code Optional} describing the result of applying a mapping
-     * function to the object of this {@code Promised}, if a object is present,
+     * function to the object of this {@code Promised}, if an object is present,
      * otherwise an empty {@code Optional}
      * @throws NullPointerException if the mapping function is null
      * @apiNote This method supports post-processing on optional values, without
@@ -93,14 +93,14 @@ public abstract class Late<T> implements Supplier<T> {
     }
 
     /**
-     * If a object is present, lazily apply the provided mapping function to it,
+     * If an object is present, lazily apply the provided mapping function to it,
      * returning a supplier for the transformed result. If this object is empty, or the
      * mapping function returns {@code null}, the supplier will return {@code null}.
      *
      * @param <U>    The type of the result of the mapping function
      * @param mapper A mapping function to apply to the object, if present
      * @return A {@code Supplier} lazily providing the result of applying a mapping
-     * function to the object of this {@code Promised}, if a object is present,
+     * function to the object of this {@code Promised}, if an object is present,
      * otherwise a supplier returning {@code null}
      * @throws NullPointerException if the mapping function is {@code null}
      * @apiNote This method supports post-processing on optional values, without
