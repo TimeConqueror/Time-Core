@@ -208,7 +208,7 @@ public class EntityRegister extends VanillaRegister<EntityType<?>> {
          * @param secondaryArgb secondary color
          * @param tab           creative tab where item will be placed
          */
-        public MobRegisterChain<T> spawnEgg(int primaryArgb, int secondaryArgb, CreativeModeTab tab) {
+        public MobRegisterChain<T> spawnEgg(int primaryArgb, int secondaryArgb, Supplier<CreativeModeTab> tab) {
             return spawnEgg(primaryArgb, secondaryArgb, tab, new Item.Properties());
         }
 
@@ -221,7 +221,7 @@ public class EntityRegister extends VanillaRegister<EntityType<?>> {
          * @param tab           creative mod tab, which will hold the provided spawn egg.
          * @param properties    item properties
          */
-        public MobRegisterChain<T> spawnEgg(int primaryArgb, int secondaryArgb, @Nullable CreativeModeTab tab, Item.Properties properties) {
+        public MobRegisterChain<T> spawnEgg(int primaryArgb, int secondaryArgb, @Nullable Supplier<CreativeModeTab> tab, Item.Properties properties) {
             return spawnEgg(getName() + "_spawn_egg", primaryArgb, secondaryArgb, tab, properties);
         }
 
@@ -234,13 +234,13 @@ public class EntityRegister extends VanillaRegister<EntityType<?>> {
          * @param tab           creative mod tab, which will hold the provided spawn egg.
          * @param properties    item properties
          */
-        public MobRegisterChain<T> spawnEgg(String name, int primaryArgb, int secondaryArgb, @Nullable CreativeModeTab tab, Item.Properties properties) {
+        public MobRegisterChain<T> spawnEgg(String name, int primaryArgb, int secondaryArgb, @Nullable Supplier<CreativeModeTab> tab, Item.Properties properties) {
             //FIXME Forge, wtf, it's not threadsafe!
             ItemRegister.ItemRegisterChain<ForgeSpawnEggItem> chain = itemRegister
                     .register(name, () -> new ForgeSpawnEggItem(asPromised(), primaryArgb, secondaryArgb, properties))
                     .model(new ItemModelLocation("minecraft", "template_spawn_egg"));
 
-            if(tab != null) {
+            if (tab != null) {
                 chain.tab(tab);
             }
 

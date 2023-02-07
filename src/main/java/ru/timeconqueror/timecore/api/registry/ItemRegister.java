@@ -1,5 +1,6 @@
 package ru.timeconqueror.timecore.api.registry;
 
+import com.google.common.base.Suppliers;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
@@ -315,7 +316,7 @@ public class ItemRegister extends VanillaRegister<Item> {
          *
          * @param tab tab to put items in
          */
-        public ItemRegisterChain<I> tab(CreativeModeTab tab) {
+        public ItemRegisterChain<I> tab(Supplier<CreativeModeTab> tab) {
             return onCreativeTabBuilding(CreativeTabAdder.tabBased(tab));
         }
 
@@ -349,36 +350,36 @@ public class ItemRegister extends VanillaRegister<Item> {
 
         void run(CreativeModeTabEvent.BuildContents event, I item);
 
-        static <I extends Item> CreativeTabAdder<I> tabBased(CreativeModeTab tab) {
+        static <I extends Item> CreativeTabAdder<I> tabBased(Supplier<CreativeModeTab> tab) {
             return tabBased(tab, CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
         }
 
-        static <I extends Item> CreativeTabAdder<I> tabBased(CreativeModeTab tab, CreativeModeTab.TabVisibility visibility) {
+        static <I extends Item> CreativeTabAdder<I> tabBased(Supplier<CreativeModeTab> tab, CreativeModeTab.TabVisibility visibility) {
             return CreativeTabAdder.tabBased(tab, visibility, defaultStackMaker);
         }
 
-        static <I extends Item> CreativeTabAdder<I> tabBased(CreativeModeTab tab, Function<? super I, ItemStack> stackMaker) {
+        static <I extends Item> CreativeTabAdder<I> tabBased(Supplier<CreativeModeTab> tab, Function<? super I, ItemStack> stackMaker) {
             return CreativeTabAdder.tabBased(tab, CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS, stackMaker);
         }
 
-        static <I extends Item> CreativeTabAdder<I> tabBased(CreativeModeTab tab, CreativeModeTab.TabVisibility visibility, Function<? super I, ItemStack> stackMaker) {
+        static <I extends Item> CreativeTabAdder<I> tabBased(Supplier<CreativeModeTab> tab, CreativeModeTab.TabVisibility visibility, Function<? super I, ItemStack> stackMaker) {
             return new TabBased<>(tab, visibility, stackMaker);
         }
 
         class TabBased<I extends Item> implements CreativeTabAdder<I> {
-            private final CreativeModeTab tab;
+            private final Supplier<CreativeModeTab> tab;
             private final CreativeModeTab.TabVisibility visibility;
             private final Function<? super I, ItemStack> stackMaker;
 
-            public TabBased(CreativeModeTab tab, CreativeModeTab.TabVisibility visibility, Function<? super I, ItemStack> stackMaker) {
-                this.tab = tab;
+            public TabBased(Supplier<CreativeModeTab> tab, CreativeModeTab.TabVisibility visibility, Function<? super I, ItemStack> stackMaker) {
+                this.tab = Suppliers.memoize(tab::get);
                 this.visibility = visibility;
                 this.stackMaker = stackMaker;
             }
 
             @Override
             public void run(CreativeModeTabEvent.BuildContents event, I item) {
-                if (event.getTab() == tab) {
+                if (event.getTab() == tab.get()) {
                     event.accept(stackMaker.apply(item), visibility);
                 }
             }
