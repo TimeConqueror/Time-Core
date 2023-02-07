@@ -11,7 +11,7 @@ public class DataGeneration {
     /**
      * Makes simple to use advancement provider factory
      *
-     * @see SaverAwareAdvancementProviderKt
+     * @see AdvancementProviderExtKt
      */
     public static DataProvider.Factory<ForgeAdvancementProvider> advancementProvider(GatherDataEvent event, ForgeAdvancementProvider.AdvancementGenerator... generators) {
         return output_ -> new ForgeAdvancementProvider(output_, event.getLookupProvider(), event.getExistingFileHelper(), List.of(generators));
