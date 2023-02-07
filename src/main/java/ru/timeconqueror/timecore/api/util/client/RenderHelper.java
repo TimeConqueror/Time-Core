@@ -35,8 +35,8 @@ public class RenderHelper extends RenderType {
      *
      * @param texture texture location
      */
-    public static RenderType rtTexturedRectangles(ResourceLocation texture) {
-        return RenderHelper.rtTexturedAlphaSupport(TimeCore.rl("textured_rectangles"), VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX, texture, RenderHelper.emptyTuner());
+    public static RenderType rtPosTexQuads(ResourceLocation texture, ShaderStateShard shader) {
+        return RenderHelper.rtTranslucent(TimeCore.rl("textured_rectangles"), VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX, texture, shader, RenderHelper.emptyTuner());
     }
 
     /**
@@ -48,8 +48,8 @@ public class RenderHelper extends RenderType {
      * @param texture      texture location
      * @param builderTuner tuner for applying extra settings
      */
-    public static RenderType rtTexturedAlphaSupport(ResourceLocation name, VertexFormat.Mode mode, VertexFormat format, ResourceLocation texture, Consumer<CompositeState.CompositeStateBuilder> builderTuner) {
-        Consumer<CompositeState.CompositeStateBuilder> alphaApplier = builder -> builder.setTransparencyState(RenderStateShard.TRANSLUCENT_TRANSPARENCY);
+    public static RenderType rtTranslucent(ResourceLocation name, VertexFormat.Mode mode, VertexFormat format, ResourceLocation texture, ShaderStateShard shader, Consumer<CompositeState.CompositeStateBuilder> builderTuner) {
+        Consumer<CompositeState.CompositeStateBuilder> alphaApplier = builder -> builder.setTransparencyState(RenderStateShard.TRANSLUCENT_TRANSPARENCY).setShaderState(shader);
         return rtTextured(name, mode, format, texture, builderTuner.andThen(alphaApplier));
     }
 
@@ -101,17 +101,17 @@ public class RenderHelper extends RenderType {
             buffer = MultiBufferSource.immediate(Tesselator.getInstance().getBuilder());
         }
 
-        public void render(RenderType renderType, Consumer<VertexConsumer> renderer) {
+        public void build(RenderType renderType, Consumer<VertexConsumer> renderer) {
             VertexConsumer vertexBuilder = this.buffer.getBuffer(renderType);
             renderer.accept(vertexBuilder);
         }
 
-        public void renderAndEnd(RenderType renderType, Consumer<VertexConsumer> renderer) {
-            render(renderType, renderer);
+        public void buildAndDraw(RenderType renderType, Consumer<VertexConsumer> renderer) {
+            build(renderType, renderer);
             buffer.endBatch(renderType);
         }
 
-        public void end() {
+        public void draw() {
             buffer.endBatch();
         }
     }

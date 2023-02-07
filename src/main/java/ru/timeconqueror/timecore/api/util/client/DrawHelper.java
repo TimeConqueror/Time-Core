@@ -1,18 +1,22 @@
 package ru.timeconqueror.timecore.api.util.client;
 
-import com.mojang.blaze3d.vertex.DefaultVertexFormat;
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.blaze3d.vertex.*;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.core.Vec3i;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.lwjgl.opengl.GL11;
 import ru.timeconqueror.timecore.api.util.Requirements;
 
+import java.util.function.Consumer;
+
 public class DrawHelper {
     /**
-     * Draws textured rectangle.
+     * Adds textured rectangle to provided buffer.
      * <p>
      * Required GL Mode: {@link GL11#GL_QUADS}
      * Required VertexFormat: {@link DefaultVertexFormat#POSITION_TEX}
@@ -34,12 +38,12 @@ public class DrawHelper {
      * @param textureY         index of start subtexture part on axis Y (y of left-top texture corner).
      * @param texturePartCount in how many parts texture must be divided in both axis. Part description is mentioned above.
      */
-    public static void drawTexturedRectByParts(VertexConsumer vertexBuilder, PoseStack matrixStack, float x0, float y0, float width, float height, float zLevel, float textureX, float textureY, float texturePartCount) {
-        drawTexturedRectByParts(vertexBuilder, matrixStack, x0, y0, width, height, zLevel, textureX, textureY, width, height, texturePartCount);
+    public static void buildTexturedRectByParts(VertexConsumer vertexBuilder, PoseStack matrixStack, float x0, float y0, float width, float height, float zLevel, float textureX, float textureY, float texturePartCount) {
+        buildTexturedRectByParts(vertexBuilder, matrixStack, x0, y0, width, height, zLevel, textureX, textureY, width, height, texturePartCount);
     }
 
     /**
-     * Draws textured rectangle.
+     * Adds textured rectangle to provided buffer.
      * <p>
      * Required GL Mode: {@link GL11#GL_QUADS}
      * Required VertexFormat: {@link DefaultVertexFormat#POSITION_TEX}
@@ -63,13 +67,13 @@ public class DrawHelper {
      * @param textureHeight    subtexture height in parts.
      * @param texturePartCount in how many parts texture must be divided in both axis. Part description is mentioned above.
      */
-    public static void drawTexturedRectByParts(VertexConsumer vertexBuilder, PoseStack matrixStack, float x0, float y0, float width, float height, float zLevel, float textureX, float textureY, float textureWidth, float textureHeight, float texturePartCount) {
+    public static void buildTexturedRectByParts(VertexConsumer vertexBuilder, PoseStack matrixStack, float x0, float y0, float width, float height, float zLevel, float textureX, float textureY, float textureWidth, float textureHeight, float texturePartCount) {
         float portionFactor = 1 / texturePartCount;
-        drawTexturedRect(vertexBuilder, matrixStack, x0, y0, width, height, zLevel, textureX, textureY, textureWidth, textureHeight, portionFactor);
+        buildTexturedRect(vertexBuilder, matrixStack, x0, y0, width, height, zLevel, textureX, textureY, textureWidth, textureHeight, portionFactor);
     }
 
     /**
-     * Draws textured rectangle.
+     * Adds textured rectangle to provided buffer.
      * <p>
      * Required GL Mode: {@link GL11#GL_QUADS}
      * Required VertexFormat: {@link DefaultVertexFormat#POSITION_TEX}
@@ -93,7 +97,7 @@ public class DrawHelper {
      * @param textureHeight       subtexture height in parts.
      * @param textureDivideFactor represents the value equal to 1 / parts. Part count determines in how many parts texture must be divided in both axis. Part description is mentioned above.
      */
-    private static void drawTexturedRect(VertexConsumer vertexBuilder, PoseStack matrixStack, float x0, float y0, float width, float height, float zLevel, float textureX, float textureY, float textureWidth, float textureHeight, float textureDivideFactor) {
+    private static void buildTexturedRect(VertexConsumer vertexBuilder, PoseStack matrixStack, float x0, float y0, float width, float height, float zLevel, float textureX, float textureY, float textureWidth, float textureHeight, float textureDivideFactor) {
         Matrix4f pose = matrixStack.last().pose();
         vertexBuilder.vertex(pose, x0, y0, zLevel).uv(textureX * textureDivideFactor, textureY * textureDivideFactor).endVertex();
         vertexBuilder.vertex(pose, x0, y0 + height, zLevel).uv(textureX * textureDivideFactor, (textureY + textureHeight) * textureDivideFactor).endVertex();
@@ -102,7 +106,7 @@ public class DrawHelper {
     }
 
     /**
-     * Draws textured rectangle.
+     * Adds textured rectangle to provided buffer.
      * <p>
      * Required GL Mode: {@link GL11#GL_QUADS}
      * Required VertexFormat: {@link DefaultVertexFormat#POSITION_COLOR_TEX}
@@ -125,12 +129,12 @@ public class DrawHelper {
      * @param texturePartCount in how many parts texture must be divided in both axis. Part description is mentioned above.
      * @param argbColor        color which will be applied to the texture
      */
-    public static void drawTexturedRectByParts(VertexConsumer vertexBuilder, PoseStack matrixStack, float x0, float y0, float width, float height, float zLevel, float textureX, float textureY, float texturePartCount, int argbColor) {
-        drawTexturedRectByParts(vertexBuilder, matrixStack, x0, y0, width, height, zLevel, textureX, textureY, width, height, texturePartCount, argbColor);
+    public static void buildTexturedRectByParts(VertexConsumer vertexBuilder, PoseStack matrixStack, float x0, float y0, float width, float height, float zLevel, float textureX, float textureY, float texturePartCount, int argbColor) {
+        buildTexturedRectByParts(vertexBuilder, matrixStack, x0, y0, width, height, zLevel, textureX, textureY, width, height, texturePartCount, argbColor);
     }
 
     /**
-     * Draws textured rectangle.
+     * Adds textured rectangle to provided buffer.
      * <p>
      * Required GL Mode: {@link GL11#GL_QUADS}
      * Required VertexFormat: {@link DefaultVertexFormat#POSITION_COLOR_TEX}
@@ -155,13 +159,13 @@ public class DrawHelper {
      * @param texturePartCount in how many parts texture must be divided in both axis. Part description is mentioned above.
      * @param argbColor        color which will be applied to the texture
      */
-    public static void drawTexturedRectByParts(VertexConsumer vertexBuilder, PoseStack matrixStack, float x0, float y0, float width, float height, float zLevel, float textureX, float textureY, float textureWidth, float textureHeight, float texturePartCount, int argbColor) {
+    public static void buildTexturedRectByParts(VertexConsumer vertexBuilder, PoseStack matrixStack, float x0, float y0, float width, float height, float zLevel, float textureX, float textureY, float textureWidth, float textureHeight, float texturePartCount, int argbColor) {
         float portionFactor = 1 / texturePartCount;
-        drawTexturedRect(vertexBuilder, matrixStack, x0, y0, width, height, zLevel, textureX, textureY, textureWidth, textureHeight, portionFactor, argbColor);
+        buildTexturedRect(vertexBuilder, matrixStack, x0, y0, width, height, zLevel, textureX, textureY, textureWidth, textureHeight, portionFactor, argbColor);
     }
 
     /**
-     * Draws textured rectangle.
+     * Adds textured rectangle to provided buffer.
      * <p>
      * Required GL Mode: {@link GL11#GL_QUADS}
      * Required VertexFormat: {@link DefaultVertexFormat#POSITION_COLOR_TEX}
@@ -186,7 +190,7 @@ public class DrawHelper {
      * @param textureDivideFactor represents the value equal to 1 / parts. Part count determines in how many parts texture must be divided in both axis. Part description is mentioned above.
      * @param argbColor           color which will be applied to the texture
      */
-    private static void drawTexturedRect(VertexConsumer vertexBuilder, PoseStack matrixStack, float x0, float y0, float width, float height, float zLevel, float textureX, float textureY, float textureWidth, float textureHeight, float textureDivideFactor, int argbColor) {
+    private static void buildTexturedRect(VertexConsumer vertexBuilder, PoseStack matrixStack, float x0, float y0, float width, float height, float zLevel, float textureX, float textureY, float textureWidth, float textureHeight, float textureDivideFactor, int argbColor) {
         Matrix4f pose = matrixStack.last().pose();
 
         int r = getRed(argbColor);
@@ -201,7 +205,8 @@ public class DrawHelper {
     }
 
     /**
-     * Draws textured rectangle with fully bound texture.
+     * Adds textured rectangle to provided buffer.
+     * Draws with fully bound texture.
      * <p>
      * Required GL Mode: {@link GL11#GL_QUADS}
      * Required VertexFormat: {@link DefaultVertexFormat#POSITION_TEX}
@@ -212,7 +217,7 @@ public class DrawHelper {
      * @param height Represents coordinate length along the axis Y.
      * @param zLevel z-coordinate.
      */
-    public static void drawTexturedRect(VertexConsumer builder, PoseStack matrixStack, float x0, float y0, float width, float height, float zLevel) {
+    public static void buildTexturedRect(VertexConsumer builder, PoseStack matrixStack, float x0, float y0, float width, float height, float zLevel) {
         Matrix4f pose = matrixStack.last().pose();
 
         builder.vertex(pose, x0, y0, zLevel).uv(0, 0).endVertex();
@@ -222,7 +227,8 @@ public class DrawHelper {
     }
 
     /**
-     * Draws textured rectangle with autoexpandable width.
+     * Adds textured rectangle to provided buffer.
+     * Draws with autoexpandable width.
      * How it works: this method renders left and right part of rectangle, depending on given {@code requiredWidth}, and then repeats center element until it fill all remaining width.
      * <p>
      * If {@code requiredWidth} is less than the sum of {@code startElement, endElement} width, it will be expanded to this sum.
@@ -244,14 +250,14 @@ public class DrawHelper {
      * @param endElement       element, that represents right rectangle part.
      * @param texturePartCount in how many parts texture must be divided in both axis. Part description is mentioned above.
      */
-    public static void drawWidthExpandableTexturedRect(VertexConsumer builder, PoseStack matrixStack, float x0, float y0, float requiredWidth, float zLevel, TexturedRect startElement, TexturedRect repeatElement, TexturedRect endElement, float texturePartCount) {
+    public static void buildWidthExpandableTexturedRect(VertexConsumer builder, PoseStack matrixStack, float x0, float y0, float requiredWidth, float zLevel, TexturedRect startElement, TexturedRect repeatElement, TexturedRect endElement, float texturePartCount) {
         float startWidth = startElement.width;
         float endWidth = endElement.width;
         float minWidth = startWidth + endWidth;
 
         if (requiredWidth <= minWidth) {
-            DrawHelper.drawTexturedRectByParts(builder, matrixStack, x0, y0, startWidth, startElement.height, zLevel, startElement.textureX, startElement.textureY, startElement.textureWidth, startElement.textureHeight, texturePartCount);
-            DrawHelper.drawTexturedRectByParts(builder, matrixStack, x0 + startWidth, y0, endWidth, endElement.height, zLevel, endElement.textureX, endElement.textureY, endElement.textureWidth, endElement.textureHeight, texturePartCount);
+            DrawHelper.buildTexturedRectByParts(builder, matrixStack, x0, y0, startWidth, startElement.height, zLevel, startElement.textureX, startElement.textureY, startElement.textureWidth, startElement.textureHeight, texturePartCount);
+            DrawHelper.buildTexturedRectByParts(builder, matrixStack, x0 + startWidth, y0, endWidth, endElement.height, zLevel, endElement.textureX, endElement.textureY, endElement.textureWidth, endElement.textureHeight, texturePartCount);
         } else {
             float remainingWidth = requiredWidth - minWidth;
             float repeatWidth = repeatElement.width;
@@ -260,18 +266,18 @@ public class DrawHelper {
             int fullTimes = (int) repeatTimes;
             float fracPart = repeatTimes - (int) repeatTimes;
 
-            DrawHelper.drawTexturedRectByParts(builder, matrixStack, x0, y0, startWidth, startElement.height, zLevel, startElement.textureX, startElement.textureY, startElement.textureWidth, startElement.textureHeight, texturePartCount);
+            DrawHelper.buildTexturedRectByParts(builder, matrixStack, x0, y0, startWidth, startElement.height, zLevel, startElement.textureX, startElement.textureY, startElement.textureWidth, startElement.textureHeight, texturePartCount);
 
             float extraX = startWidth;
             for (int i = 0; i < fullTimes; i++) {
-                DrawHelper.drawTexturedRectByParts(builder, matrixStack, x0 + extraX, y0, repeatElement.width, repeatElement.height, zLevel, repeatElement.textureX, repeatElement.textureY, repeatElement.textureWidth, repeatElement.textureHeight, texturePartCount);
+                DrawHelper.buildTexturedRectByParts(builder, matrixStack, x0 + extraX, y0, repeatElement.width, repeatElement.height, zLevel, repeatElement.textureX, repeatElement.textureY, repeatElement.textureWidth, repeatElement.textureHeight, texturePartCount);
                 extraX += repeatElement.width;
             }
 
-            DrawHelper.drawTexturedRectByParts(builder, matrixStack, x0 + extraX, y0, repeatWidth * fracPart, repeatElement.height, zLevel, repeatElement.textureX, repeatElement.textureY, repeatElement.textureWidth * fracPart, repeatElement.textureHeight, texturePartCount);
+            DrawHelper.buildTexturedRectByParts(builder, matrixStack, x0 + extraX, y0, repeatWidth * fracPart, repeatElement.height, zLevel, repeatElement.textureX, repeatElement.textureY, repeatElement.textureWidth * fracPart, repeatElement.textureHeight, texturePartCount);
             extraX += repeatWidth * fracPart;
 
-            DrawHelper.drawTexturedRectByParts(builder, matrixStack, x0 + extraX, y0, endWidth, endElement.height, zLevel, endElement.textureX, endElement.textureY, endElement.textureWidth, endElement.textureHeight, texturePartCount);
+            DrawHelper.buildTexturedRectByParts(builder, matrixStack, x0 + extraX, y0, endWidth, endElement.height, zLevel, endElement.textureX, endElement.textureY, endElement.textureWidth, endElement.textureHeight, texturePartCount);
         }
     }
 
@@ -452,11 +458,11 @@ public class DrawHelper {
     }
 
     /**
-     * Adds filled bounding box to provider vertex builder.
+     * Adds filled bounding box to provided buffer.
      * <p>
      * Provided builder should have {@link DefaultVertexFormat#POSITION_COLOR} mode and {@link GL11#GL_QUADS} render type.
      */
-    public static void drawFilledBoundingBox(PoseStack matrixStack, VertexConsumer builder, AABB bb, int argbColor) {
+    public static void buildFilledBoundingBox(PoseStack matrixStack, VertexConsumer builder, AABB bb, int argbColor) {
         float red = getRed(argbColor) / 255F;
         float green = getGreen(argbColor) / 255F;
         float blue = getBlue(argbColor) / 255F;
@@ -503,7 +509,7 @@ public class DrawHelper {
     }
 
     /**
-     * Adds line to renderToBuffer buffer.
+     * Adds line to provided buffer.
      * <p>
      * Provided builder should have {@link DefaultVertexFormat#POSITION_COLOR} mode and {@link GL11#GL_LINES} render type.
      *
@@ -513,12 +519,12 @@ public class DrawHelper {
      * @param vec2    end vector
      * @param argb    color
      */
-    public static void drawLine(VertexConsumer builder, PoseStack stack, Vector3f vec1, Vector3f vec2, int argb) {
-        drawLine(builder, stack, vec1.x(), vec1.y(), vec1.z(), vec2.x(), vec2.y(), vec2.z(), argb);
+    public static void buildLine(VertexConsumer builder, PoseStack stack, Vector3f vec1, Vector3f vec2, int argb) {
+        buildLine(builder, stack, vec1.x(), vec1.y(), vec1.z(), vec2.x(), vec2.y(), vec2.z(), argb);
     }
 
     /**
-     * Adds line to renderToBuffer buffer.
+     * Adds line to provided buffer.
      * <p>
      * Provided builder should have {@link DefaultVertexFormat#POSITION_COLOR} mode and {@link GL11#GL_LINES} render type.
      *
@@ -532,8 +538,8 @@ public class DrawHelper {
      * @param z1      start z coord
      * @param argb    color
      */
-    public static void drawLine(VertexConsumer builder, PoseStack stack, float x0, float y0, float z0, float x1, float y1, float z1, int argb) {
-        drawLine(builder, stack, x0, y0, z0, x1, y1, z1, getRed(argb), getGreen(argb), getBlue(argb), getAlpha(argb));
+    public static void buildLine(VertexConsumer builder, PoseStack stack, float x0, float y0, float z0, float x1, float y1, float z1, int argb) {
+        buildLine(builder, stack, x0, y0, z0, x1, y1, z1, getRed(argb), getGreen(argb), getBlue(argb), getAlpha(argb));
     }
 
     /**
@@ -554,10 +560,40 @@ public class DrawHelper {
      * @param b       blue channel color. Range: [0, 255]
      * @param a       alpha channel color. Range: [0, 255]
      */
-    public static void drawLine(VertexConsumer builder, PoseStack stack, float x0, float y0, float z0, float x1, float y1, float z1, int r, int g, int b, int a) {
+    public static void buildLine(VertexConsumer builder, PoseStack stack, float x0, float y0, float z0, float x1, float y1, float z1, int r, int g, int b, int a) {
         Matrix4f pose = stack.last().pose();
         builder.vertex(pose, x0, y0, z0).color(r, g, b, a).endVertex();
         builder.vertex(pose, x1, y1, z1).color(r, g, b, a).endVertex();
+    }
+
+    //TODO javadoc
+    public static void drawBatched(Consumer<BufferBuilder> setupFunc, Consumer<BufferBuilder> drawBatchedFunc) {
+        BufferBuilder buffer = Tesselator.getInstance().getBuilder();
+        setupFunc.accept(buffer);
+        drawBatchedFunc.accept(buffer);
+
+        BufferUploader.drawWithShader(buffer.end());
+    }
+
+    /**
+     * Draws line, which starts from provided vector and goes up to 16 blocks.
+     */
+    public static void drawDebugBeacon(MultiBufferSource bufferIn, PoseStack stack, Vector3f vec, int argb) {
+        DrawHelper.buildLine(bufferIn.getBuffer(RenderType.lines()), stack, vec.x(), vec.y(), vec.z(), vec.x(), vec.y() + 16, vec.z(), argb);
+    }
+
+    /**
+     * Draws line, which starts from provided vector and goes up to 16 blocks.
+     */
+    public static void drawDebugBeacon(MultiBufferSource bufferIn, PoseStack stack, Vec3 vec, int argb) {
+        DrawHelper.buildLine(bufferIn.getBuffer(RenderType.lines()), stack, (float) vec.x(), (float) vec.y(), (float) vec.z(), (float) vec.x(), (float) vec.y() + 16, (float) vec.z(), argb);
+    }
+
+    /**
+     * Draws line, which starts from provided vector and goes up to 16 blocks.
+     */
+    public static void drawDebugBeacon(MultiBufferSource bufferIn, PoseStack stack, Vec3i vec, int argb) {
+        DrawHelper.buildLine(bufferIn.getBuffer(RenderType.lines()), stack, vec.getX(), vec.getY(), vec.getZ(), vec.getX(), vec.getY() + 16, vec.getZ(), argb);
     }
 
     public static class TexturedRect {
