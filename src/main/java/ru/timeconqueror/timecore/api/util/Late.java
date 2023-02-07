@@ -178,5 +178,9 @@ public abstract class Late<T> implements Supplier<T> {
         public void set(T value) {
             this.value = value;
         }
+
+        public static <T> Insertable<T> cast(Late<T> late) {
+            return (Insertable<T>) late;
+        }
     }
 }
