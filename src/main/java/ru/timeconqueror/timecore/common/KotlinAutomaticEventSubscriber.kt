@@ -1,4 +1,4 @@
-package ru.timeconqueror.timecore.api.devtools.kotlin
+package ru.timeconqueror.timecore.common
 
 import net.minecraftforge.api.distmarker.Dist
 import net.minecraftforge.common.MinecraftForge
