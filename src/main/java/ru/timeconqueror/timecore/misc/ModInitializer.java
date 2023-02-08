@@ -18,7 +18,6 @@ import org.jetbrains.annotations.Nullable;
 import org.objectweb.asm.Type;
 import ru.timeconqueror.timecore.TimeCore;
 import ru.timeconqueror.timecore.api.client.resource.GlobalResourceStorage;
-import ru.timeconqueror.timecore.api.devtools.kotlin.KotlinAutomaticEventSubscriber;
 import ru.timeconqueror.timecore.api.reflection.ReflectionHelper;
 import ru.timeconqueror.timecore.api.reflection.UnlockedField;
 import ru.timeconqueror.timecore.api.reflection.UnlockedMethod;
@@ -29,6 +28,7 @@ import ru.timeconqueror.timecore.api.registry.VanillaRegister;
 import ru.timeconqueror.timecore.api.registry.util.AutoRegistrable;
 import ru.timeconqueror.timecore.api.registry.util.AutoRegistrable.Entries;
 import ru.timeconqueror.timecore.api.util.EnvironmentUtils;
+import ru.timeconqueror.timecore.common.KotlinAutomaticEventSubscriber;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
