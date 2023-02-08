@@ -6,10 +6,10 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 import java.util.function.Consumer;
 
-public class CoffeeOnPlayerJoinedSendCapabilityListener {
+public class PlayerCapSyncOnJoinListener {
     private final Consumer<Player> onUpdate;
 
-    public CoffeeOnPlayerJoinedSendCapabilityListener(Consumer<Player> onUpdate) {
+    public PlayerCapSyncOnJoinListener(Consumer<Player> onUpdate) {
         this.onUpdate = onUpdate;
     }
 

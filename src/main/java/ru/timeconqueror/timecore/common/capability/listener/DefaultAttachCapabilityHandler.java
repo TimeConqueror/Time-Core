@@ -22,12 +22,12 @@ public class DefaultAttachCapabilityHandler {
 
     @SubscribeEvent
     public static void onTileAttachCapability(AttachCapabilitiesEvent<BlockEntity> event) {
-        tryAttachCapability(event, CapabilityOwner.TILE_ENTITY);
+        attachCaps(event, CapabilityOwner.TILE_ENTITY);
     }
 
     @SubscribeEvent
     public static void onEntityAttachCapability(AttachCapabilitiesEvent<Entity> event) {
-        tryAttachCapability(event, CapabilityOwner.ENTITY);
+        attachCaps(event, CapabilityOwner.ENTITY);
     }
 
     // TODO: Village capability
@@ -38,34 +38,34 @@ public class DefaultAttachCapabilityHandler {
 
     @SubscribeEvent
     public static void onWorldAttachCapability(AttachCapabilitiesEvent<Level> event) {
-        tryAttachCapability(event, CapabilityOwner.WORLD);
+        attachCaps(event, CapabilityOwner.WORLD);
     }
 
     @SubscribeEvent
     public static void onChunkAttachCapability(AttachCapabilitiesEvent<LevelChunk> event) {
-        tryAttachCapability(event, CapabilityOwner.CHUNK);
+        attachCaps(event, CapabilityOwner.CHUNK);
     }
 
     @SubscribeEvent
     public static void onItemStackAttachCapability(AttachCapabilitiesEvent<ItemStack> event) {
-        tryAttachCapability(event, CapabilityOwner.ITEM_STACK);
+        attachCaps(event, CapabilityOwner.ITEM_STACK);
     }
 
-    private static <T extends ICapabilityProvider> void tryAttachCapability(AttachCapabilitiesEvent<T> event, CapabilityOwner<T> owner) {
+    private static <T extends ICapabilityProvider> void attachCaps(AttachCapabilitiesEvent<T> event, CapabilityOwner<T> owner) {
         CoffeeCapabilityProvider<?> provider = new CoffeeCapabilityProvider<>(event.getObject());
         ArrayList<CoffeeCapabilityAttacher<T, ?>> attachers = owner.getAttachers();
 
-        boolean attach = false;
+        boolean attached = false;
         if (attachers != null) {
             for (CoffeeCapabilityAttacher<T, ?> attacher : attachers) {
                 if (attacher.predicate().test(event.getObject())) {
                     provider.addCapability(attacher.capability(), (CoffeeCapabilityGetter) attacher.getterFactory().get());
-                    attach = true;
+                    attached = true;
                 }
             }
         }
 
-        if (attach) {
+        if (attached) {
             event.addCapability(TimeCore.rl("capability-provider"), provider);
         }
     }

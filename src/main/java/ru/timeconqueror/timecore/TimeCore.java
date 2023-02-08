@@ -14,9 +14,8 @@ import ru.timeconqueror.timecore.animation.watcher.TransitionWatcher;
 import ru.timeconqueror.timecore.api.Markers;
 import ru.timeconqueror.timecore.api.TimeCoreAPI;
 import ru.timeconqueror.timecore.api.animation.Animation;
-import ru.timeconqueror.timecore.api.reflection.ReflectionHelper;
 import ru.timeconqueror.timecore.api.util.EnvironmentUtils;
-import ru.timeconqueror.timecore.common.capability.CoffeeCapabilityManager;
+import ru.timeconqueror.timecore.common.capability.CapabilityManager;
 
 @Mod(TimeCore.MODID)//todo add null check in ObjectHolder
 //TODO add readable exception when there's no animation file, for now it's just nullpointer
@@ -28,14 +27,14 @@ public final class TimeCore {
 
     private static final String MARKER_PROPERTY = "timecore.logging.markers";
 
-    private final CoffeeCapabilityManager capabilityManager;
+    private final CapabilityManager capabilityManager;
 
     public TimeCore() {
         INSTANCE = this;
 
         checkForMixinBootstrap();
 
-        capabilityManager = new CoffeeCapabilityManager();
+        capabilityManager = new CapabilityManager();
 
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
         modEventBus.addListener(this::setup);
@@ -73,7 +72,7 @@ public final class TimeCore {
         }
     }
 
-    public CoffeeCapabilityManager getCapabilityManager() {
+    public CapabilityManager getCapabilityManager() {
         return capabilityManager;
     }
 }
