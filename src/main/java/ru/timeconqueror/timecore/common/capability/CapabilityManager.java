@@ -60,13 +60,13 @@ public class CapabilityManager {
     }
 
     public void addDefaultAttachers() {
-        registerDynamicCapabilityAttacher(CapabilityOwner.TILE_ENTITY, ForgeCapabilities.ITEM_HANDLER, tile -> tile instanceof IItemHandlerProvider,
+        registerDynamicCapabilityAttacher(CapabilityOwner.BLOCK_ENTITY, ForgeCapabilities.ITEM_HANDLER, tile -> tile instanceof IItemHandlerProvider,
                 ((CoffeeCapabilityGetter<BlockEntity, IItemHandler>) (target, facing) -> ((IItemHandlerProvider) target).getItemHandler(facing)).supply());
 
-        registerDynamicCapabilityAttacher(CapabilityOwner.TILE_ENTITY, ForgeCapabilities.FLUID_HANDLER, tile -> tile instanceof IFluidHandlerProvider,
+        registerDynamicCapabilityAttacher(CapabilityOwner.BLOCK_ENTITY, ForgeCapabilities.FLUID_HANDLER, tile -> tile instanceof IFluidHandlerProvider,
                 ((CoffeeCapabilityGetter<BlockEntity, IFluidHandler>) (target, facing) -> ((IFluidHandlerProvider) target).getFluidHandler(facing)).supply());
 
-        registerDynamicCapabilityAttacher(CapabilityOwner.TILE_ENTITY, ForgeCapabilities.ENERGY, tile -> tile instanceof IEnergyStorageProvider,
+        registerDynamicCapabilityAttacher(CapabilityOwner.BLOCK_ENTITY, ForgeCapabilities.ENERGY, tile -> tile instanceof IEnergyStorageProvider,
                 ((CoffeeCapabilityGetter<BlockEntity, IEnergyStorage>) (target, facing) -> ((IEnergyStorageProvider) target).getEnergyStorage(facing)).supply());
     }
 

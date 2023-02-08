@@ -22,7 +22,7 @@ public class DefaultAttachCapabilityHandler {
 
     @SubscribeEvent
     public static void onTileAttachCapability(AttachCapabilitiesEvent<BlockEntity> event) {
-        attachCaps(event, CapabilityOwner.TILE_ENTITY);
+        attachCaps(event, CapabilityOwner.BLOCK_ENTITY);
     }
 
     @SubscribeEvent
@@ -38,7 +38,7 @@ public class DefaultAttachCapabilityHandler {
 
     @SubscribeEvent
     public static void onWorldAttachCapability(AttachCapabilitiesEvent<Level> event) {
-        attachCaps(event, CapabilityOwner.WORLD);
+        attachCaps(event, CapabilityOwner.LEVEL);
     }
 
     @SubscribeEvent

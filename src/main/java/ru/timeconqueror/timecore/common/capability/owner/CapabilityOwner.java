@@ -15,7 +15,7 @@ import java.util.ArrayList;
 
 public class CapabilityOwner<T extends ICapabilityProvider> {
 
-    public static final CapabilityOwner<BlockEntity> TILE_ENTITY = new CapabilityOwner<>(new CapabilityOwnerCodec<>() {
+    public static final CapabilityOwner<BlockEntity> BLOCK_ENTITY = new CapabilityOwner<>(new CapabilityOwnerCodec<>() {
         @Override
         public void serialize(Level world, BlockEntity owner, CompoundTag nbt) {
             nbt.putInt("x", owner.getBlockPos().getX());
@@ -34,7 +34,7 @@ public class CapabilityOwner<T extends ICapabilityProvider> {
         @Override
         public void serialize(Level world, Entity owner, CompoundTag nbt) {
             nbt.putInt("id", owner.getId());
-        }//FIXME not uuid?
+        }
 
         @Override
         public Entity deserialize(Level world, CompoundTag nbt) {
@@ -42,7 +42,7 @@ public class CapabilityOwner<T extends ICapabilityProvider> {
         }
     });
 
-    public static final CapabilityOwner<Level> WORLD = new CapabilityOwner<>(new CapabilityOwnerCodec<>() {
+    public static final CapabilityOwner<Level> LEVEL = new CapabilityOwner<>(new CapabilityOwnerCodec<>() {
 
         @Override
         public void serialize(Level world, Level owner, CompoundTag nbt) {
@@ -69,29 +69,6 @@ public class CapabilityOwner<T extends ICapabilityProvider> {
     });
 
     public static final CapabilityOwner<ItemStack> ITEM_STACK = new CapabilityOwner<>(null);
-
-    // TODO: Village capability
-//    public static final CapabilityOwner<VillagePieces.Village> VILLAGE = new CapabilityOwner<>(new CapabilityOwnerSerializer<VillagePieces.Village>() {
-//        @Override
-//        public void serializeOwner(World world, VillagePieces.Village owner, CompoundNBT nbt) {
-//            nbt.putInt("x", owner.getCenter().getX());
-//            nbt.putInt("y", owner.getCenter().getY());
-//            nbt.putInt("z", owner.getCenter().getZ());
-//        }
-//
-//        @Override
-//        public VillagePieces.Village deserializeOwner(World world, CompoundNBT nbt) {
-//            BlockPos pos = new BlockPos(nbt.getInt("x"), nbt.getInt("y"), nbt.getInt("z"));
-//
-//            for (VillagePieces.Village village : world.getVillageCollection().getVillageList()) {
-//                if (village.getCenter().equals(pos)) {
-//                    return village;
-//                }
-//            }
-//
-//            return null;
-//        }
-//    });
 
     private final ArrayList<CoffeeCapabilityAttacher<T, ?>> attachers = new ArrayList<>();
     private final CapabilityOwnerCodec<T> serializer;
