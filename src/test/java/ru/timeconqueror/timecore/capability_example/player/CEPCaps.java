@@ -7,6 +7,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import ru.timeconqueror.timecore.TimeCore;
+import ru.timeconqueror.timecore.api.CapabilityManagerAPI;
 import ru.timeconqueror.timecore.api.registry.CapabilityRegister;
 import ru.timeconqueror.timecore.api.registry.util.AutoRegistrable;
 import ru.timeconqueror.timecore.api.util.Hacks;
@@ -27,6 +28,6 @@ public class CEPCaps {
 
     @SubscribeEvent
     public static void onCommonSetup(FMLCommonSetupEvent event) {
-        event.enqueueWork(() -> TimeCore.INSTANCE.getCapabilityManager().attachStaticCoffeeCapability(CapabilityOwner.ENTITY, MY_CAPABILITY, entity -> entity instanceof PlayerEntity, entity -> new MyPlayerCapability(((PlayerEntity) entity))));
+        event.enqueueWork(() -> CapabilityManagerAPI.registerStaticCoffeeAttacher(CapabilityOwner.ENTITY, MY_CAPABILITY, entity -> entity instanceof PlayerEntity, entity -> new MyPlayerCapability(((PlayerEntity) entity))));
     }
 }
