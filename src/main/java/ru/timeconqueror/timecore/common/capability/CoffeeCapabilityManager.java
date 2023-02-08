@@ -13,8 +13,9 @@ import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
-import ru.timeconqueror.timecore.common.capability.listener.CoffeeKeepPlayerCapabilityListener;
-import ru.timeconqueror.timecore.common.capability.listener.CoffeeOnPlayerJoinedSendCapabilityListener;
+import ru.timeconqueror.timecore.common.capability.listener.EntityCapSyncOnStartTrackListener;
+import ru.timeconqueror.timecore.common.capability.listener.PlayerCapSyncOnJoinListener;
+import ru.timeconqueror.timecore.common.capability.listener.PlayerCapTransferOnCloneListener;
 import ru.timeconqueror.timecore.common.capability.owner.CapabilityOwner;
 import ru.timeconqueror.timecore.common.capability.owner.attach.AttachableCoffeeCapability;
 import ru.timeconqueror.timecore.common.capability.owner.attach.CoffeeCapabilityAttacher;
@@ -69,7 +70,7 @@ public class CoffeeCapabilityManager {
      * @param capabilityExtractor function, which should extract needed capability from the player
      */
     public <T extends INBT> void enableKeepingPlayerCapability(Function<PlayerEntity, INBTSerializable<T>> capabilityExtractor) {
-        MinecraftForge.EVENT_BUS.register(new CoffeeKeepPlayerCapabilityListener<>(capabilityExtractor));
+        MinecraftForge.EVENT_BUS.register(new PlayerCapTransferOnCloneListener<>(capabilityExtractor));
     }
 
     /**
@@ -83,7 +84,11 @@ public class CoffeeCapabilityManager {
      * @param onSyncRequest function, which should send needed data to the client
      */
     public void enableSyncingPlayerCapabilityOnJoin(Consumer<PlayerEntity> onSyncRequest) {
-        MinecraftForge.EVENT_BUS.register(new CoffeeOnPlayerJoinedSendCapabilityListener(onSyncRequest));
+        MinecraftForge.EVENT_BUS.register(new PlayerCapSyncOnJoinListener(onSyncRequest));
+    }
+
+    public void makeEntityCapSyncOnStartTracking(EntityCapSyncOnStartTrackListener.SyncFunction onSyncRequest) {
+        MinecraftForge.EVENT_BUS.register(new EntityCapSyncOnStartTrackListener(onSyncRequest));
     }
 
     public AttachableCoffeeCapability<? extends ICapabilityProvider, ? extends CoffeeCapability<?>> getAttachableCoffeeCapability(String name) {

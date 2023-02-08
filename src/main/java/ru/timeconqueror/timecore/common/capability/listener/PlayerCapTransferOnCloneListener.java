@@ -8,11 +8,11 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 import java.util.function.Function;
 
-public class CoffeeKeepPlayerCapabilityListener<T extends INBT> {
+public class PlayerCapTransferOnCloneListener<T extends INBT> {
 
     private final Function<PlayerEntity, INBTSerializable<T>> extractor;
 
-    public CoffeeKeepPlayerCapabilityListener(Function<PlayerEntity, INBTSerializable<T>> extractor) {
+    public PlayerCapTransferOnCloneListener(Function<PlayerEntity, INBTSerializable<T>> extractor) {
         this.extractor = extractor;
     }
 
