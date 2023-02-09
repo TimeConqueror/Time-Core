@@ -25,6 +25,11 @@ public class Vec2i {
         return y;
     }
 
+    @Override
+    public String toString() {
+        return "[" + x + ", " + y + ']';
+    }
+
     public static class JsonAdapter implements JsonSerializer<Vec2i>, JsonDeserializer<Vec2i> {
         @Override
         public Vec2i deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {

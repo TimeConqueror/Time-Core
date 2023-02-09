@@ -216,4 +216,76 @@ public class MathUtils {
     public static double toDegrees(double radians) {
         return Math.toDegrees(radians);
     }
+
+    public static class OutwardSquareSpiral {
+        public static int indexByOffset(Vec2i offset) {
+            //From SO, https://stackoverflow.com/a/9971465
+            int x = offset.x();
+            int y = offset.y();
+
+            int i;
+            if (y * y >= x * x) {
+                i = 4 * y * y - y - x;
+                if (y < x) {
+                    i = i - 2 * (y - x);
+                }
+            } else {
+                i = 4 * x * x - y - x;
+                if (y < x) {
+                    i = i + 2 * (y - x);
+                }
+            }
+
+            return i;
+        }
+
+        public static Vec2i offsetByIndex(int index) {
+            //based on https://stackoverflow.com/a/11551316
+
+            if (index == 0) {
+                return new Vec2i(0, 0);
+            }
+
+            int c = cycle(index);
+            int s = sector(index);
+            int offset = index - first(c) - Math.floorDiv(s * length(c), 4);
+            // s (sector) also controls the side where spiral will expand on next cycle
+            // so changing index-to-side relation will change the side of expanding
+            if (s == 0) {
+                return new Vec2i(c, -c + offset + 1);
+            } else if (s == 1) {
+                return new Vec2i(c - offset - 1, c);
+            } else if (s == 2) {
+                return new Vec2i(-c, c - offset - 1);
+            } else {
+                return new Vec2i(-c + offset + 1, -c);
+            }
+        }
+
+        private static int first(int cycle) {
+            int x = 2 * cycle - 1;
+            return x * x;
+        }
+
+        /**
+         * distance from center
+         */
+        private static int cycle(int index) {
+            return Math.floorDiv(((int) Math.sqrt(index) + 1), 2);
+        }
+
+        private static int length(int cycle) {
+            return 8 * cycle;
+        }
+
+        /**
+         * (north, east, south or west)
+         */
+        private static int sector(int index) {
+            int c = cycle(index);
+            int offset = index - first(c);
+            int n = length(c);
+            return 4 * offset / n;
+        }
+    }
 }
