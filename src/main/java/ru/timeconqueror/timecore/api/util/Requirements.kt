@@ -392,7 +392,7 @@ object Requirements {
      * Throws exception if this condition is not met.
      *
      * @param obj     object to check
-     * @param clazz   class, which the the provided object should extend
+     * @param clazz   class, which the provided object should extend
      * @param objName name of the object being checked. Used for more readable exception.
      * @throws IllegalArgumentException if the object doesn't extend the provided class.
      */
