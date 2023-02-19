@@ -18,11 +18,11 @@ public class BlockDeferredRegistryExample {
 
     public static Promised<TestCobbleBlock> TEST_COBBLE = REGISTER.register("test_cobble", () -> new TestCobbleBlock(BLOCK_PROPS_CREATOR.create()))
             .oneVarStateAndCubeAllModel(new TextureLocation("minecraft", "block/cobblestone"))
-            .defaultBlockItem(CreativeModeTabs.TOOLS_AND_UTILITIES)
+            .defaultBlockItem(() -> CreativeModeTabs.TOOLS_AND_UTILITIES)
 //          .genLangEntry("Test Cobble")
             .asPromised();
 
     public static Promised<Block> TEST_GRAVEL = REGISTER.register("test_gravel", () -> new Block(BLOCK_PROPS_CREATOR.create()))
-            .defaultBlockItem(CreativeModeTabs.TOOLS_AND_UTILITIES)
+            .defaultBlockItem(() -> CreativeModeTabs.TOOLS_AND_UTILITIES)
             .asPromised();
 }

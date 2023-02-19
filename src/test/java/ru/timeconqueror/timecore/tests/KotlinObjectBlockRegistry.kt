@@ -30,7 +30,7 @@ object KotlinObjectBlockRegistry {
                 Block(propsCreator.create())
             } with {
                 name("Kotlin Object Test")
-                defaultBlockItem(CreativeModeTabs.TOOLS_AND_UTILITIES)
+                defaultBlockItem { CreativeModeTabs.TOOLS_AND_UTILITIES }
                 state(BlockStateResource.fromBuilder(BlockStateResource.Builder.create()))
             }
         }
