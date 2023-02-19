@@ -217,28 +217,39 @@ public class MathUtils {
     }
 
     public static class OutwardSquareSpiral {
+        @SuppressWarnings("DuplicateExpressions")
         public static int indexByOffset(Vec2i offset) {
             //From SO, https://stackoverflow.com/a/9971465
-            int x = offset.x();
-            int y = offset.y();
+            long x = offset.x();
+            long y = offset.y();
 
-            int i;
+            long i;
+
             if (y * y >= x * x) {
-                i = 4 * y * y - y - x;
+                i = Math.subtractExact(Math.subtractExact(Math.multiplyExact(4, y * y), y), x);
                 if (y < x) {
-                    i = i - 2 * (y - x);
+                    i = Math.subtractExact(i, Math.multiplyExact(2L, Math.subtractExact(y, x)));
                 }
             } else {
-                i = 4 * x * x - y - x;
+                i = Math.subtractExact(Math.subtractExact(Math.multiplyExact(4, x * x), y), x);
                 if (y < x) {
-                    i = i + 2 * (y - x);
+                    i = Math.addExact(i, Math.multiplyExact(2L, Math.subtractExact(y, x)));
                 }
             }
 
-            return i;
+            return Math.toIntExact(i);
+        }
+
+        public static int softIndexByOffset(Vec2i offset) {
+            try {
+                return indexByOffset(offset);
+            } catch (ArithmeticException e) {
+                return -1;
+            }
         }
 
         public static Vec2i offsetByIndex(int index) {
+            Requirements.greaterOrEquals(index, 0);
             //based on https://stackoverflow.com/a/11551316
 
             if (index == 0) {
@@ -285,6 +296,16 @@ public class MathUtils {
             int offset = index - first(c);
             int n = length(c);
             return 4 * offset / n;
+        }
+
+        public static void main(String[] args) {
+            long index = OutwardSquareSpiral.indexByOffset(OutwardSquareSpiral.offsetByIndex(Integer.MAX_VALUE));
+
+            long y = Integer.MAX_VALUE;
+            System.out.println(y * y * 4);
+
+
+            System.out.println(index);
         }
     }
 }
