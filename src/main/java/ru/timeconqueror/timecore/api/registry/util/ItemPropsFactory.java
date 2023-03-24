@@ -35,6 +35,13 @@ public class ItemPropsFactory {
         return props;
     }
 
+    public ItemPropsFactory customized(Consumer<Item.Properties> customization) {
+        return new ItemPropsFactory((props) -> {
+            processor.accept(props);
+            customization.accept(props);
+        });
+    }
+
     /**
      * @param processor used to apply your options, like adding max damage for every properties object, created via {{@link #create()}}.
      */
