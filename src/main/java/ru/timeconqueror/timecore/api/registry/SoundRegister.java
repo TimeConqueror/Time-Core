@@ -108,6 +108,6 @@ public class SoundRegister extends VanillaRegister<SoundEvent> {
     public Promised<SoundEvent> register(String location) {
         ResourceLocation registryName = new ResourceLocation(getModId(), location);
 
-        return registerEntry(location, () -> SoundEvent.createVariableRangeEvent(registryName));
+        return registerEntry(location, () -> new SoundEvent(registryName));
     }
 }

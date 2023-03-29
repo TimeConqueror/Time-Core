@@ -1,8 +1,8 @@
 package ru.timeconqueror.timecore.client.render.model;
 
 import com.google.gson.*;
+import com.mojang.math.Vector3f;
 import net.minecraft.core.Direction;
-import org.joml.Vector3f;
 import ru.timeconqueror.timecore.api.util.Vec2i;
 import ru.timeconqueror.timecore.client.render.model.uv.BoxUVResolver;
 import ru.timeconqueror.timecore.client.render.model.uv.FacedUVResolver;

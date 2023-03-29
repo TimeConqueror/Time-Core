@@ -2,10 +2,9 @@ package ru.timeconqueror.timecore.client.render.model;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.math.Vector3f;
 import net.minecraft.client.model.geom.ModelPart;
 import org.jetbrains.annotations.NotNull;
-import org.joml.Quaternionf;
-import org.joml.Vector3f;
 import ru.timeconqueror.timecore.TimeCore;
 import ru.timeconqueror.timecore.api.client.render.model.ITimeModelPart;
 
@@ -29,8 +28,8 @@ public class TimeModelPart extends ModelPart implements ITimeModelPart {
 
     public TimeModelPart(Vector3f startRotRadians, @NotNull List<TimeModelCube> cubes, Map<String, TimeModelPart> children, boolean neverRender) {
         super(Collections.emptyList(), Collections.emptyMap());
-        startRotationRadians = startRotRadians;
-        this.rotation = new Vector3f(startRotRadians);
+        startRotationRadians = startRotRadians.copy();
+        this.rotation = startRotRadians;
         this.visible = !neverRender;
         this.children = children;
         this.cubes = cubes;
@@ -62,11 +61,19 @@ public class TimeModelPart extends ModelPart implements ITimeModelPart {
         matrixStackIn.translate(offset.x() / 16F, offset.y() / 16F, offset.z() / 16F);
         matrixStackIn.translate(this.x / 16.0F, this.y / 16.0F, this.z / 16.0F);
 
-        if (this.rotation.x != 0.0F || this.rotation.y != 0.0F || this.rotation.z != 0.0F) {
-            matrixStackIn.mulPose((new Quaternionf()).rotationZYX(rotation.z, rotation.y, rotation.x));
+        if (rotation.z() != 0.0F) {
+            matrixStackIn.mulPose(Vector3f.ZP.rotation(rotation.z()));
         }
 
-        if (this.scale.x != 1.0F || this.scale.y != 1.0F || this.scale.z != 1.0F) {
+        if (rotation.y() != 0.0F) {
+            matrixStackIn.mulPose(Vector3f.YP.rotation(rotation.y()));
+        }
+
+        if (rotation.x() != 0.0F) {
+            matrixStackIn.mulPose(Vector3f.XP.rotation(rotation.x()));
+        }
+
+        if (this.scale.x() != 1.0F || this.scale.y() != 1.0F || this.scale.z() != 1.0F) {
             matrixStackIn.scale(scale.x(), scale.y(), scale.z());
         }
     }
@@ -88,8 +95,8 @@ public class TimeModelPart extends ModelPart implements ITimeModelPart {
         }
 
         PoseStack.Pose last = stack.last();
-        last.pose().set(lastTransform.pose());
-        last.normal().set(lastTransform.normal());
+        last.pose().load(lastTransform.pose());
+        last.normal().load(lastTransform.normal());
     }
 
     @Override

@@ -1,6 +1,6 @@
 package ru.timeconqueror.timecore.animation.component;
 
-import org.joml.Vector3f;
+import com.mojang.math.Vector3f;
 import ru.timeconqueror.timecore.animation.calculation.KeyFrameInterpolator;
 import ru.timeconqueror.timecore.animation.util.AnimationUtils;
 import ru.timeconqueror.timecore.api.animation.Animation;

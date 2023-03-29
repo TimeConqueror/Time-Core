@@ -1,8 +1,8 @@
 package ru.timeconqueror.timecore.animation.loading;
 
 import com.google.gson.*;
+import com.mojang.math.Vector3f;
 import org.jetbrains.annotations.UnmodifiableView;
-import org.joml.Vector3f;
 import ru.timeconqueror.timecore.animation.component.BoneOption;
 import ru.timeconqueror.timecore.animation.component.IKeyFrame;
 import ru.timeconqueror.timecore.animation.component.KeyFrameState;

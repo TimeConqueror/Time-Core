@@ -1,6 +1,6 @@
 package ru.timeconqueror.timecore.client.render.model.loading;
 
-import org.joml.Vector3f;
+import com.mojang.math.Vector3f;
 import ru.timeconqueror.timecore.client.render.model.TimeModelCube;
 import ru.timeconqueror.timecore.client.render.model.UVDefinition;
 

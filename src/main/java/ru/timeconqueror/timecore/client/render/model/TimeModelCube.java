@@ -2,12 +2,13 @@ package ru.timeconqueror.timecore.client.render.model;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import net.minecraft.client.model.geom.ModelPart;
+import com.mojang.math.Matrix3f;
+import com.mojang.math.Matrix4f;
+import com.mojang.math.Vector3f;
+import com.mojang.math.Vector4f;
 import net.minecraft.core.Direction;
-import org.joml.*;
 import ru.timeconqueror.timecore.client.render.model.uv.UVResolver;
 
-import java.lang.Math;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -97,13 +98,15 @@ public class TimeModelCube {
         Matrix3f matrix3f = pose.normal();
 
         for (TimeQuad quad : quads) {
-            Vector3f normal = matrix3f.transform(new Vector3f(quad.normal));
+            Vector3f normal = quad.normal.copy();
+            normal.transform(matrix3f);
 
             for (TimeVertex vertex : quad.vertices) {
                 float x = vertex.getPos().x() / 16.0F;
                 float y = vertex.getPos().y() / 16.0F;
                 float z = vertex.getPos().z() / 16.0F;
-                Vector4f pos = matrix4f.transform(new Vector4f(x, y, z, 1.0F));
+                Vector4f pos = new Vector4f(x, y, z, 1.0F);
+                pos.transform(matrix4f);
                 vertexConsumer.vertex(pos.x(), pos.y(), pos.z(), red, green, blue, alpha, vertex.getU(), vertex.getV(), packedOverlay, packedLight, normal.x(), normal.y(), normal.z());
             }
         }

@@ -1,7 +1,7 @@
 package ru.timeconqueror.timecore.client.render.model.uv;
 
+import com.mojang.math.Vector3f;
 import net.minecraft.core.Direction;
-import org.joml.Vector3f;
 import ru.timeconqueror.timecore.api.util.Vec2i;
 
 public class BoxUVResolver implements UVResolver {

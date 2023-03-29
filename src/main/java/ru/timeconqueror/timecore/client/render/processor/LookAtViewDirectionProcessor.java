@@ -1,8 +1,8 @@
 package ru.timeconqueror.timecore.client.render.processor;
 
+import com.mojang.math.Vector3f;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
-import org.joml.Vector3f;
 import ru.timeconqueror.timecore.api.client.render.model.IModelProcessor;
 import ru.timeconqueror.timecore.api.client.render.model.ITimeModel;
 import ru.timeconqueror.timecore.api.util.MathUtils;

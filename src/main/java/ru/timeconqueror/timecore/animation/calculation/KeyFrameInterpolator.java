@@ -1,7 +1,7 @@
 package ru.timeconqueror.timecore.animation.calculation;
 
+import com.mojang.math.Vector3f;
 import org.jetbrains.annotations.Nullable;
-import org.joml.Vector3f;
 import ru.timeconqueror.timecore.animation.component.CatmullRomKeyFrame;
 import ru.timeconqueror.timecore.animation.component.IKeyFrame;
 import ru.timeconqueror.timecore.animation.component.KeyFrameState;
@@ -61,9 +61,9 @@ public class KeyFrameInterpolator {
         // because findIKeyFrames sets both of them
         if (next == null) {
             //noinspection ConstantConditions
-            return new Vector3f(prev.getVec(KeyFrameState.PREV));
+            return prev.getVec(KeyFrameState.PREV).copy();
         } else if (prev == null) {
-            return new Vector3f(next.getVec(KeyFrameState.NEXT));
+            return next.getVec(KeyFrameState.NEXT).copy();
         }
 
         if (prev instanceof CatmullRomKeyFrame || next instanceof CatmullRomKeyFrame) {

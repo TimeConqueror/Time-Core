@@ -2,8 +2,8 @@ package ru.timeconqueror.timecore.animation.loading;
 
 import com.google.common.reflect.TypeToken;
 import com.google.gson.*;
+import com.mojang.math.Vector3f;
 import net.minecraft.util.GsonHelper;
-import org.joml.Vector3f;
 import ru.timeconqueror.timecore.animation.component.CatmullRomKeyFrame;
 import ru.timeconqueror.timecore.animation.component.IKeyFrame;
 import ru.timeconqueror.timecore.animation.component.KeyFrame;

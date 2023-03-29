@@ -1,10 +1,10 @@
 package ru.timeconqueror.timecore.animation.loading;
 
 import com.google.gson.*;
+import com.mojang.math.Vector3f;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
 import org.jetbrains.annotations.NotNull;
-import org.joml.Vector3f;
 import ru.timeconqueror.timecore.animation.component.BasicAnimation;
 import ru.timeconqueror.timecore.animation.component.LoopMode;
 import ru.timeconqueror.timecore.api.animation.Animation;

@@ -4,45 +4,45 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.PackResources;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.metadata.MetadataSectionSerializer;
-import net.minecraft.server.packs.resources.IoSupplier;
 import org.jetbrains.annotations.NotNull;
 import ru.timeconqueror.timecore.api.client.resource.GlobalResourceStorage;
 
 import javax.annotation.Nullable;
-import javax.annotation.ParametersAreNonnullByDefault;
+import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
+import java.util.function.Predicate;
 
-@ParametersAreNonnullByDefault
 public class TimePackResources implements PackResources {
-    private final String packId;
-
-    public TimePackResources(String packId) {
-        this.packId = packId;
+    @NotNull
+    @Override
+    public InputStream getRootResource(@NotNull String fileName) {
+        throw new UnsupportedOperationException("TimeCore ResourcePacks can't have root resources.");
     }
 
-    @Nullable
     @Override
-    public IoSupplier<InputStream> getRootResource(String... pElements) {
-        return null;
-    }
-
-    @Nullable
-    @Override
-    public IoSupplier<InputStream> getResource(PackType type, ResourceLocation location) {
+    public InputStream getResource(PackType type, ResourceLocation location) throws IOException {
         if (type == PackType.CLIENT_RESOURCES) {
             return GlobalResourceStorage.INSTANCE.getResource(location);
+        } else {
+            throw new UnsupportedOperationException("TimeCore ResourcePacks supports only client resources.");
         }
-
-        return null;
     }
 
     @Override
-    public void listResources(PackType type, String pNamespace, String pPath, ResourceOutput pResourceOutput) {
+    public Collection<ResourceLocation> getResources(PackType type, String namespace, String path, Predicate<ResourceLocation> filter) {
         if (type == PackType.CLIENT_RESOURCES) {
-            GlobalResourceStorage.INSTANCE.listResources(pNamespace, pPath, pResourceOutput);
+            return GlobalResourceStorage.INSTANCE.getResources(namespace, path, filter);
         }
+
+        return Collections.emptyList();
+    }
+
+    @Override
+    public boolean hasResource(@NotNull PackType type, @NotNull ResourceLocation location) {
+        return type == PackType.CLIENT_RESOURCES && GlobalResourceStorage.INSTANCE.hasResource(location);
     }
 
     @NotNull
@@ -53,14 +53,14 @@ public class TimePackResources implements PackResources {
 
     @Nullable
     @Override
-    public <T> T getMetadataSection(@NotNull MetadataSectionSerializer<T> deserializer) {
+    public <T> T getMetadataSection(MetadataSectionSerializer<T> deserializer_) throws IOException {
         return null;
     }
 
-    @Override
     @NotNull
-    public String packId() {
-        return packId;
+    @Override
+    public String getName() {
+        return "TimeCore Special Resources";
     }
 
     @Override

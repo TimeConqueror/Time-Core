@@ -1,6 +1,6 @@
 package ru.timeconqueror.timecore.animation.util;
 
-import org.joml.Vector3f;
+import com.mojang.math.Vector3f;
 import ru.timeconqueror.timecore.api.animation.BlendType;
 import ru.timeconqueror.timecore.api.animation.ILayer;
 import ru.timeconqueror.timecore.api.util.VecUtils;
@@ -16,7 +16,7 @@ public class AnimationUtils {
         rotationIn.mul(layer.getWeight());
 
         if (blendType == BlendType.OVERWRITE) {
-            piece.getRotation().set(piece.startRotationRadians);
+            VecUtils.setFirst(piece.getRotation(), piece.startRotationRadians);
         } else if (blendType != BlendType.ADD) throw new UnsupportedOperationException();
 
         piece.getRotation().add(rotationIn);
@@ -27,7 +27,7 @@ public class AnimationUtils {
         offsetIn.mul(layer.getWeight());
 
         if (blendType == BlendType.OVERWRITE) {
-            piece.getTranslation().set(offsetIn);
+            VecUtils.setFirst(piece.getTranslation(), offsetIn);
         } else if (blendType == BlendType.ADD) {
             piece.getTranslation().add(offsetIn);
         } else throw new UnsupportedOperationException();
@@ -44,7 +44,7 @@ public class AnimationUtils {
         if (blendType == BlendType.OVERWRITE) {
             piece.getScale().set(scaleIn.x(), scaleIn.y(), scaleIn.z());
         } else if (blendType == BlendType.ADD) {
-            piece.getScale().mul(scaleIn);
+            VecUtils.scaleFirst(piece.getScale(), scaleIn);
         } else throw new UnsupportedOperationException();
     }
 

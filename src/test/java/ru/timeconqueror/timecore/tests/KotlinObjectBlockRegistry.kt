@@ -1,6 +1,6 @@
 package ru.timeconqueror.timecore.tests
 
-import net.minecraft.world.item.CreativeModeTabs
+import net.minecraft.world.item.CreativeModeTab
 import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.state.BlockBehaviour
 import net.minecraft.world.level.material.Material
@@ -30,7 +30,7 @@ object KotlinObjectBlockRegistry {
                 Block(propsCreator.create())
             } with {
                 name("Kotlin Object Test")
-                defaultBlockItem { CreativeModeTabs.TOOLS_AND_UTILITIES }
+                defaultBlockItem(CreativeModeTab.TAB_TOOLS)
                 state(BlockStateResource.fromBuilder(BlockStateResource.Builder.create()))
             }
         }

@@ -1,7 +1,7 @@
 package ru.timeconqueror.timecore.api.client.render.model;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import org.joml.Vector3f;
+import com.mojang.math.Vector3f;
 import ru.timeconqueror.timecore.client.render.model.TimeModelPart;
 
 import java.util.Map;

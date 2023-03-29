@@ -1,6 +1,6 @@
 package ru.timeconqueror.timecore.animation.component;
 
-import org.joml.Vector3f;
+import com.mojang.math.Vector3f;
 
 public class StepKeyFrame implements IKeyFrame {
     private final int time;

@@ -1,6 +1,6 @@
 package ru.timeconqueror.timecore.tests;
 
-import net.minecraft.world.item.CreativeModeTabs;
+import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.Material;
@@ -15,6 +15,6 @@ public class OneParameterBlockRegistry {
 
     @AutoRegistrable.Init
     private static void register(FMLConstructModEvent event) {
-        REGISTER.register("one_parameter_test", () -> new Block(BlockBehaviour.Properties.of(Material.AIR))).defaultBlockItem(() -> CreativeModeTabs.TOOLS_AND_UTILITIES).name("One Parameter Test");
+        REGISTER.register("one_parameter_test", () -> new Block(BlockBehaviour.Properties.of(Material.AIR))).defaultBlockItem(CreativeModeTab.TAB_TOOLS).name("One Parameter Test");
     }
 }

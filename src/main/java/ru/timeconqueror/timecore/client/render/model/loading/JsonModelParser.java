@@ -1,13 +1,13 @@
 package ru.timeconqueror.timecore.client.render.model.loading;
 
 import com.google.gson.*;
+import com.mojang.math.Vector3f;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.util.GsonHelper;
 import org.jetbrains.annotations.NotNull;
-import org.joml.Vector3f;
 import ru.timeconqueror.timecore.api.util.CollectionUtils;
 import ru.timeconqueror.timecore.api.util.Vec2i;
 import ru.timeconqueror.timecore.api.util.holder.Pair;

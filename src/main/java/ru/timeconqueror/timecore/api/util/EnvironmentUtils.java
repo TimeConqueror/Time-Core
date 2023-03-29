@@ -1,7 +1,7 @@
 package ru.timeconqueror.timecore.api.util;
 
 import net.minecraft.core.Registry;
-import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.data.BuiltinRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.api.distmarker.Dist;
@@ -140,7 +140,7 @@ public class EnvironmentUtils {
     }
 
     public static Registry<?> getVanillaRegistry(ResourceLocation registryName) {
-        return BuiltInRegistries.REGISTRY.get(registryName);
+        return BuiltinRegistries.REGISTRY.get(registryName);
     }
 
     public static boolean registryExists(ResourceLocation registryName) {

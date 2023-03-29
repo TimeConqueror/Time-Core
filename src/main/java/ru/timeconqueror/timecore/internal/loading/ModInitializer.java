@@ -97,7 +97,7 @@ public class ModInitializer {
                         if (type.equals(TIME_AUTO_REG_TYPE)) {
                             processAutoRegistrable(containerClass, annotationData, registers::add);
                         } else if (type.equals(TIME_AUTO_REG_INIT_TYPE)) {
-                            processTimeAutoRegInitMethod(containerClass, annotationData, initMethods::add);
+                            processTimeAutoRegInit(containerClass, annotationData, initMethods::add);
                         } else {
                             processEntries(containerClass, annotationData, holderFillers::put);
                         }
@@ -108,7 +108,7 @@ public class ModInitializer {
 
         FMLJavaModLoadingContext.get().getModEventBus().register(new EntryFiller(mod.getModId(), holderFillers));
         RegisterSubscriber.regToBus(registers, eventBus);
-        processInitMethods(initMethods);
+        processInits(initMethods);
     }
 
     private static void processEntries(Class<?> containerClass, ModFileScanData.AnnotationData annotationData, BiConsumer<ResourceKey<?>, Stream<ParentableField>> holderFillerAdder) {
@@ -175,7 +175,7 @@ public class ModInitializer {
         }
     }
 
-    private static void processTimeAutoRegInitMethod(Class<?> containerClass, ModFileScanData.AnnotationData annotationData, Consumer<Runnable> preConstructMethodRegistrator) throws ClassNotFoundException {
+    private static void processTimeAutoRegInit(Class<?> containerClass, ModFileScanData.AnnotationData annotationData, Consumer<Runnable> preConstructMethodRegistrator) throws ClassNotFoundException {
         String methodSignature = annotationData.memberName();
 
         ClassHandler handler = ClassHandlers.findHandler(containerClass);
@@ -198,7 +198,7 @@ public class ModInitializer {
         }
     }
 
-    private static void processInitMethods(List<Runnable> initMethods) {
+    private static void processInits(List<Runnable> initMethods) {
         initMethods.forEach(Runnable::run);
     }
 

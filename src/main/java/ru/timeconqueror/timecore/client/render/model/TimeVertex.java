@@ -1,6 +1,6 @@
 package ru.timeconqueror.timecore.client.render.model;
 
-import org.joml.Vector3f;
+import com.mojang.math.Vector3f;
 
 public class TimeVertex {
     private final Vector3f pos;

@@ -10,7 +10,6 @@ import net.minecraftforge.data.event.GatherDataEvent;
 import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.ForgeRegistries;
-import org.jetbrains.annotations.Nullable;
 import ru.timeconqueror.timecore.api.TimeCoreAPI;
 import ru.timeconqueror.timecore.api.client.resource.location.ItemModelLocation;
 import ru.timeconqueror.timecore.api.devtools.gen.lang.LangGeneratorFacade;
@@ -200,6 +199,8 @@ public class EntityRegister extends VanillaRegister<EntityType<?>> {
             return this;
         }
 
+        //TODO add enName for spawn eggs
+
         /**
          * Registers simple spawn egg ({@link ForgeSpawnEggItem}) with name {@code spawn_$entityName} with default properties.
          * Automatically adds default json model for it.
@@ -208,8 +209,8 @@ public class EntityRegister extends VanillaRegister<EntityType<?>> {
          * @param secondaryArgb secondary color
          * @param tab           creative tab where item will be placed
          */
-        public MobRegisterChain<T> spawnEgg(int primaryArgb, int secondaryArgb, Supplier<CreativeModeTab> tab) {
-            return spawnEgg(primaryArgb, secondaryArgb, tab, new Item.Properties());
+        public EntityRegisterChain<T> spawnEgg(int primaryArgb, int secondaryArgb, CreativeModeTab tab) {
+            return spawnEgg(primaryArgb, secondaryArgb, new Item.Properties().tab(tab));
         }
 
         /**
@@ -218,11 +219,10 @@ public class EntityRegister extends VanillaRegister<EntityType<?>> {
          *
          * @param primaryArgb   primary color
          * @param secondaryArgb secondary color
-         * @param tab           creative mod tab, which will hold the provided spawn egg.
          * @param properties    item properties
          */
-        public MobRegisterChain<T> spawnEgg(int primaryArgb, int secondaryArgb, @Nullable Supplier<CreativeModeTab> tab, Item.Properties properties) {
-            return spawnEgg(getName() + "_spawn_egg", primaryArgb, secondaryArgb, tab, properties);
+        public MobRegisterChain<T> spawnEgg(int primaryArgb, int secondaryArgb, Item.Properties properties) {
+            return spawnEgg(getName() + "_spawn_egg", primaryArgb, secondaryArgb, properties);
         }
 
         /**
@@ -231,18 +231,13 @@ public class EntityRegister extends VanillaRegister<EntityType<?>> {
          *
          * @param primaryArgb   primary color
          * @param secondaryArgb secondary color
-         * @param tab           creative mod tab, which will hold the provided spawn egg.
          * @param properties    item properties
          */
-        public MobRegisterChain<T> spawnEgg(String name, int primaryArgb, int secondaryArgb, @Nullable Supplier<CreativeModeTab> tab, Item.Properties properties) {
+        public MobRegisterChain<T> spawnEgg(String name, int primaryArgb, int secondaryArgb, Item.Properties properties) {
             //FIXME Forge, wtf, it's not threadsafe!
             ItemRegister.ItemRegisterChain<ForgeSpawnEggItem> chain = itemRegister
                     .register(name, () -> new ForgeSpawnEggItem(asPromised(), primaryArgb, secondaryArgb, properties))
                     .model(new ItemModelLocation("minecraft", "template_spawn_egg"));
-
-            if (tab != null) {
-                chain.tab(tab);
-            }
 
             return this;
         }

@@ -1,6 +1,6 @@
 package ru.timeconqueror.timecore.animation_example.block_example.registry;
 
-import net.minecraft.world.item.CreativeModeTabs;
+import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.material.Material;
 import ru.timeconqueror.timecore.TimeCore;
@@ -24,7 +24,7 @@ public class ABlockRegistry {
             BlockPropsFactory propsCreator = new BlockPropsFactory(() -> Block.Properties.of(Material.STONE));
 
             REGISTER.register("heat_cube", () -> new HeatCubeBlock(propsCreator.create()))
-                    .defaultBlockItem(() -> CreativeModeTabs.TOOLS_AND_UTILITIES);
+                    .defaultBlockItem(CreativeModeTab.TAB_TOOLS);
         }
     }
 }
