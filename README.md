@@ -1,6 +1,6 @@
 # TimeCore
 
-## Provided features (1.16.5):
+## Provided features (1.16.5+):
 
 * JSON-Based Bedrock Entity Animations - Easy-to-use system that allows you to play complex entity animations, which are
   parsed from JSON. More info here:(click)
@@ -37,7 +37,7 @@ buildscript {
 ```groovy
 apply plugin: 'kotlin'
 apply plugin: 'com.github.johnrengelman.shadow'
-apply from: 'https://raw.githubusercontent.com/TimeConqueror/Time-Core/1.18.2_port/gradle/scripts/timecore.gradle'
+apply from: 'https://raw.githubusercontent.com/TimeConqueror/Time-Core/1.19.2/gradle/scripts/timecore.gradle'
 ```
 
 3. Open file "gradle.properties" and place there a property, which defines the TimeCore version to be used in
@@ -50,7 +50,7 @@ timecore.version=<VERSION_PLACEHOLDER>
 Example:
 
 ```properties
-timecore.version=1.19.3-3.6.0.0
+timecore.version=1.19.2-3.6.0.0
 ```
 
 ## Contribution
