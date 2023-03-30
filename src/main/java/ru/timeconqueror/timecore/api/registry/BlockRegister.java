@@ -149,6 +149,12 @@ public class BlockRegister extends ForgeRegister<Block> {
     }
 
     @Override
+    public void setOwner(Class<?> owner) {
+        super.setOwner(owner);
+        itemRegister.setOwner(owner);
+    }
+
+    @Override
     public void regToBus(IEventBus modEventBus) {
         super.regToBus(modEventBus);
         itemRegister.regToBus(modEventBus);

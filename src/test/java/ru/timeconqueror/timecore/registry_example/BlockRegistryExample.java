@@ -4,7 +4,6 @@ import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.item.ItemGroup;
-import net.minecraftforge.registries.ObjectHolder;
 import ru.timeconqueror.timecore.TimeCore;
 import ru.timeconqueror.timecore.api.client.resource.BlockModels;
 import ru.timeconqueror.timecore.api.client.resource.location.BlockModelLocation;
@@ -17,12 +16,12 @@ import ru.timeconqueror.timecore.block.DummyBlockWithTileEntity;
 
 import static ru.timeconqueror.timecore.api.util.Hacks.promise;
 
-@ObjectHolder(TimeCore.MODID)
+@AutoRegistrable.Entries(value = TimeCore.MODID, registryKey = "block")
 public class BlockRegistryExample {
-    public static final Block TEST_SAND = promise();
-    public static final Block TEST_DIRT = promise();
-    public static final Block TEST_EMERALD_ORE = promise();
-    public static final Block TEST_BLOCK_WITH_TILE = promise();
+    public static Block TEST_SAND = promise();
+    public static Block TEST_DIRT = promise();
+    public static Block TEST_EMERALD_ORE = promise();
+    public static Block TEST_BLOCK_WITH_TILE = promise();
 
     private static class Init {
         @AutoRegistrable

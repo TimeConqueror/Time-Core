@@ -21,10 +21,23 @@ public @interface AutoRegistrable {
      * Registers method to the {@link FMLConstructModEvent}.
      * Can be applied to static methods with zero parameters or with one parameter with type {@link FMLConstructModEvent}.
      * <p>
-     * If method will have zero parameters, it will be called slightly before {@link FMLConstructModEvent}.
+     * If method has zero parameters, it will be called slightly before {@link FMLConstructModEvent}.
      */
     @Target({ElementType.METHOD})
     @Retention(RetentionPolicy.RUNTIME)
     @interface InitMethod {
+    }
+
+    @Target({ElementType.TYPE})
+    @Retention(RetentionPolicy.RUNTIME)
+    @interface Entries {
+        String value();
+
+        String registryKey();
+    }
+
+    @Target({ElementType.FIELD})
+    @Retention(RetentionPolicy.RUNTIME)
+    @interface Ignore {
     }
 }

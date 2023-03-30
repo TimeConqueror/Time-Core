@@ -1,16 +1,15 @@
 package ru.timeconqueror.timecore.registry_example;
 
 import net.minecraft.tileentity.TileEntityType;
-import net.minecraftforge.registries.ObjectHolder;
 import ru.timeconqueror.timecore.TimeCore;
 import ru.timeconqueror.timecore.api.registry.TileEntityRegister;
 import ru.timeconqueror.timecore.api.registry.util.AutoRegistrable;
 import ru.timeconqueror.timecore.api.util.Hacks;
 import ru.timeconqueror.timecore.block.tile.DummyTileEntity;
 
-@ObjectHolder(TimeCore.MODID)
+@AutoRegistrable.Entries(value = TimeCore.MODID, registryKey = "block_entity_type")
 public class TileEntityRegistryExample {
-    public static final TileEntityType<DummyTileEntity> TEST_TILE_1 = Hacks.promise();
+    public static TileEntityType<DummyTileEntity> TEST_TILE_1 = Hacks.promise();
 
     private static class Init {
         @AutoRegistrable

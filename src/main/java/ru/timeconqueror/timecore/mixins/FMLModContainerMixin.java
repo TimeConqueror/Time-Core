@@ -26,10 +26,9 @@ public abstract class FMLModContainerMixin {
     public void fmlModConstructingHook(CallbackInfo ci) {
         FMLModContainer modContainer = (FMLModContainer) (Object) this;
         Object mod = getMod();
-        String modId = modContainer.getModId();
 
         if (mod instanceof TimeMod) {
-            ModInitializer.run(modId, modContainer, scanResults, modClass);
+            ModInitializer.run(modContainer, scanResults, mod);
         }
     }
 

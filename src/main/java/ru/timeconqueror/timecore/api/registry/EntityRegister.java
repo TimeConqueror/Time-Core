@@ -148,6 +148,12 @@ public class EntityRegister extends ForgeRegister<EntityType<?>> {
         itemRegister.regToBus(modEventBus);
     }
 
+    @Override
+    public void setOwner(Class<?> owner) {
+        super.setOwner(owner);
+        itemRegister.setOwner(owner);
+    }
+
     public class EntityRegisterChain<T extends Entity> extends RegisterChain<EntityType<T>> {
         private final EntityType<T> type;
 
@@ -156,6 +162,7 @@ public class EntityRegister extends ForgeRegister<EntityType<?>> {
             this.type = type;
         }
 //TODO add enName for spawn eggs
+
         /**
          * Registers simple spawn egg ({@link SpawnEggItem}) with name {@code spawn_$entityName} with default properties.
          * Automatically adds default json model for it.
