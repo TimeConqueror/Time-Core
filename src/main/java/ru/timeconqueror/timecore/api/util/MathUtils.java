@@ -297,15 +297,5 @@ public class MathUtils {
             int n = length(c);
             return 4 * offset / n;
         }
-
-        public static void main(String[] args) {
-            long index = OutwardSquareSpiral.indexByOffset(OutwardSquareSpiral.offsetByIndex(Integer.MAX_VALUE));
-
-            long y = Integer.MAX_VALUE;
-            System.out.println(y * y * 4);
-
-
-            System.out.println(index);
-        }
     }
 }
