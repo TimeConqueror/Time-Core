@@ -2,6 +2,7 @@ package ru.timeconqueror.timecore.animation.watcher;
 
 import org.jetbrains.annotations.Nullable;
 import ru.timeconqueror.timecore.animation.AnimationStarter;
+import ru.timeconqueror.timecore.animation.component.LoopMode;
 import ru.timeconqueror.timecore.api.animation.Animation;
 import ru.timeconqueror.timecore.api.animation.IAnimationWatcherInfo;
 
@@ -19,6 +20,11 @@ public class EmptyAnimationWatcherInfo implements IAnimationWatcherInfo {
     @Override
     public int getLength() {
         return 0;
+    }
+
+    @Override
+    public LoopMode getLoopMode() {
+        return LoopMode.DO_NOT_LOOP;
     }
 
     @Override
