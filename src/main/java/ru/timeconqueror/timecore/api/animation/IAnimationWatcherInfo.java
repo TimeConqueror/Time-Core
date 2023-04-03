@@ -2,6 +2,7 @@ package ru.timeconqueror.timecore.api.animation;
 
 import org.jetbrains.annotations.Nullable;
 import ru.timeconqueror.timecore.animation.AnimationStarter;
+import ru.timeconqueror.timecore.animation.component.LoopMode;
 import ru.timeconqueror.timecore.animation.watcher.EmptyAnimationWatcherInfo;
 
 public interface IAnimationWatcherInfo {
@@ -41,6 +42,8 @@ public interface IAnimationWatcherInfo {
      * Returns the real length of the animation basing on given speed.
      */
     int getLength();
+
+    LoopMode getLoopMode();
 
     float getSpeed();
 
