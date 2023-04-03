@@ -2,6 +2,7 @@ package ru.timeconqueror.timecore.animation;
 
 import net.minecraft.network.FriendlyByteBuf;
 import org.jetbrains.annotations.Nullable;
+import ru.timeconqueror.timecore.animation.component.LoopMode;
 import ru.timeconqueror.timecore.api.animation.Animation;
 import ru.timeconqueror.timecore.api.animation.AnimationConstants;
 import ru.timeconqueror.timecore.api.animation.AnimationManager;
@@ -10,6 +11,7 @@ import java.util.Objects;
 
 //TODO changeable weight
 //TODO startFrom
+//TODO mod dependent config for default animation data
 public class AnimationStarter {
     private final AnimationData data;
 
@@ -28,12 +30,22 @@ public class AnimationStarter {
     }
 
     /**
-     * If set to false: when you start this animation on the layer, which is playing the same animation, it won't be re-started.
+     * If set to true: does not apply the animation if there's the same animation on the layer.
      * Useful for walking animations, so you don't need to worry how to control animation endings.
      * Default: true.
      */
     public AnimationStarter ignorable(boolean ignorable) {
         this.data.ignorable = ignorable;
+        return this;
+    }
+
+    /**
+     * When you start this animation on the layer, which is playing the same animation, it won't be re-started.
+     * This method forces the bound animation to be applied despite the animation which was played before.
+     * Default: true.
+     */
+    public AnimationStarter nonIgnorable() {
+        this.data.ignorable = false;
         return this;
     }
 
@@ -64,6 +76,8 @@ public class AnimationStarter {
      * Setting this, you can make a chain of played animations.
      * As soon as one ends, the next one will start immediately.
      * This setting will avoid unpleasant flickering when moving from one animation to another.
+     * <br>
+     * <b color=yellow>Makes the current animation, which will be played before nextAnimationStarter, have {@link LoopMode#DO_NOT_LOOP} loop mode.</b>
      * Default: null.
      */
     public AnimationStarter withNextAnimation(AnimationStarter nextAnimationStarter) {
@@ -71,8 +85,32 @@ public class AnimationStarter {
         return this;
     }
 
+    /**
+     * Make the animation go backwards
+     * Default: false
+     */
     public AnimationStarter reversed() {
         data.reversed = true;
+        return this;
+    }
+
+    /**
+     * Make the animation go backwards
+     * Default: false
+     */
+    public AnimationStarter reversed(boolean reversed) {
+        data.reversed = reversed;
+        return this;
+    }
+
+    /**
+     * Overrides the loop mode which is provided by animation file.
+     * <br>
+     * <b color=yellow>Doesn't take any effect, if {@link AnimationStarter#withNextAnimation(AnimationStarter)} is called in a chain with not null parameter.</b>
+     * Default: null
+     */
+    public AnimationStarter withLoopMode(@Nullable LoopMode loopMode) {
+        data.loopMode = loopMode;
         return this;
     }
 
@@ -98,6 +136,8 @@ public class AnimationStarter {
         private float speed = 1F;
         private boolean doNotTransitToNull;
         private boolean reversed;
+        @Nullable
+        private LoopMode loopMode = null;
 
         private AnimationData(Animation animation) {
             this.animation = animation;
@@ -110,6 +150,11 @@ public class AnimationStarter {
             buffer.writeBoolean(animationData.isIgnorable());
             buffer.writeBoolean(animationData.doNotTransitToNull);
             buffer.writeBoolean(animationData.reversed);
+
+            buffer.writeBoolean(animationData.loopMode != null);
+            if(animationData.loopMode != null) {
+                buffer.writeVarInt(LoopMode.ORDINAL_LOOKUP.from(animationData.loopMode));
+            }
 
             boolean hasNextAnim = animationData.nextAnimationData != null;
             buffer.writeBoolean(hasNextAnim);
@@ -128,6 +173,11 @@ public class AnimationStarter {
             animationData.ignorable = buffer.readBoolean();
             animationData.doNotTransitToNull = buffer.readBoolean();
             animationData.reversed = buffer.readBoolean();
+
+            boolean hasLoopMode = buffer.readBoolean();
+            if(hasLoopMode) {
+                animationData.loopMode = LoopMode.ORDINAL_LOOKUP.by(buffer.readVarInt());
+            }
 
             boolean hasNextAnim = buffer.readBoolean();
             if (hasNextAnim) {
@@ -161,6 +211,11 @@ public class AnimationStarter {
             return reversed;
         }
 
+        @Nullable
+        public LoopMode getLoopMode() {
+            return loopMode;
+        }
+
         public int getTransitionTime() {
             return transitionTime;
         }
@@ -174,6 +229,7 @@ public class AnimationStarter {
             animationData.nextAnimationData = this.nextAnimationData != null ? this.nextAnimationData.copy() : null;
             animationData.doNotTransitToNull = doNotTransitToNull;
             animationData.reversed = reversed;
+            animationData.loopMode = loopMode;
 
             return animationData;
         }
@@ -193,6 +249,7 @@ public class AnimationStarter {
             if (doNotTransitToNull != that.doNotTransitToNull) return false;
             if (reversed != that.reversed) return false;
             if (!animation.equals(that.animation)) return false;
+            if(!Objects.equals(loopMode, that.loopMode)) return false;
             return Objects.equals(nextAnimationData, that.nextAnimationData);
         }
 
@@ -205,6 +262,7 @@ public class AnimationStarter {
             result = 31 * result + (speed != +0.0f ? Float.floatToIntBits(speed) : 0);
             result = 31 * result + (doNotTransitToNull ? 1 : 0);
             result = 31 * result + (reversed ? 1 : 0);
+            result = 31 * result + (loopMode != null ? loopMode.hashCode() : 0);
             return result;
         }
 

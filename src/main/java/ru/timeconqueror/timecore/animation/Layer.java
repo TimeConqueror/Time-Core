@@ -97,14 +97,12 @@ public class Layer implements ILayer {
                 }
 
                 if (watcher.isAnimationEnded(currentTime)) {
-                    Animation animation = watcher.getAnimation();
-
                     if (watcher.getNextAnimation() == null) {
-                        if (animation.getLoopMode() == LoopMode.LOOP) {
+                        if (watcher.getLoopMode() == LoopMode.LOOP) {
                             watcher.resetTimer();
                             manager.onLoopedAnimationRestart(watcher);
                             return;
-                        } else if (animation.getLoopMode() == LoopMode.HOLD_ON_LAST_FRAME) {
+                        } else if (watcher.getLoopMode() == LoopMode.HOLD_ON_LAST_FRAME) {
                             return;
                         }
                     }
