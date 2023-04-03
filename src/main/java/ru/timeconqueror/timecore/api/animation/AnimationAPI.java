@@ -48,15 +48,6 @@ public class AnimationAPI {
 		return AnimationRegistry.registerAnimation(animation);
 	}
 
-	/**
-     * Returns the reversed version of this animation.
-     * This method is resource-intensive, so it's better to call this once and store the result somewhere.
-     * Don't forget about registering returned animation.
-     *///TODO fix
-    public static Animation reverse(Animation animation) {
-        return animation.reverse();
-    }
-
 	public static AnimationStarter createStarter(Animation animation) {
 		return new AnimationStarter(animation);
 	}

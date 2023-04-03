@@ -8,6 +8,8 @@ import ru.timeconqueror.timecore.api.animation.AnimationManager;
 
 import java.util.Objects;
 
+//TODO changeable weight
+//TODO startFrom
 public class AnimationStarter {
     private final AnimationData data;
 
@@ -54,7 +56,7 @@ public class AnimationStarter {
      * Default: 1F.
      */
     public AnimationStarter setSpeed(float speedFactor) {
-        data.speedFactor = Math.max(speedFactor, 0.0001F);
+        data.speed = Math.max(speedFactor, 0);
         return this;
     }
 
@@ -66,6 +68,11 @@ public class AnimationStarter {
      */
     public AnimationStarter setNextAnimation(AnimationStarter nextAnimationStarter) {
         data.nextAnimationData = nextAnimationStarter.getData();
+        return this;
+    }
+
+    public AnimationStarter reversed() {
+        data.reversed = true;
         return this;
     }
 
@@ -88,8 +95,9 @@ public class AnimationStarter {
         private AnimationData nextAnimationData;
         private boolean ignorable = true;
         private int transitionTime = AnimationConstants.BASIC_TRANSITION_TIME;
-        private float speedFactor = 1F;
+        private float speed = 1F;
         private boolean doNotTransitToNull;
+        private boolean reversed;
 
         private AnimationData(Animation animation) {
             this.animation = animation;
@@ -97,10 +105,11 @@ public class AnimationStarter {
 
         public static void encode(AnimationData animationData, PacketBuffer buffer) {
             buffer.writeResourceLocation(animationData.getAnimation().getId());
-            buffer.writeFloat(animationData.getSpeedFactor());
+            buffer.writeFloat(animationData.getSpeed());
             buffer.writeInt(animationData.getTransitionTime());
             buffer.writeBoolean(animationData.isIgnorable());
             buffer.writeBoolean(animationData.doNotTransitToNull);
+            buffer.writeBoolean(animationData.reversed);
 
             boolean hasNextAnim = animationData.nextAnimationData != null;
             buffer.writeBoolean(hasNextAnim);
@@ -114,10 +123,11 @@ public class AnimationStarter {
 
             AnimationData animationData = new AnimationData(animation);
 
-            animationData.speedFactor = buffer.readFloat();
+            animationData.speed = buffer.readFloat();
             animationData.transitionTime = buffer.readInt();
             animationData.ignorable = buffer.readBoolean();
             animationData.doNotTransitToNull = buffer.readBoolean();
+            animationData.reversed = buffer.readBoolean();
 
             boolean hasNextAnim = buffer.readBoolean();
             if (hasNextAnim) {
@@ -131,35 +141,44 @@ public class AnimationStarter {
             return animation;
         }
 
-        public float getSpeedFactor() {
-            return speedFactor;
+        public float getSpeed() {
+            return speed;
         }
 
-        public int getTransitionTime() {
-            return transitionTime;
+        public int getAnimationLength() {
+            return animation.getLength();
         }
 
         public boolean isIgnorable() {
             return ignorable;
         }
 
-        public boolean doNotTransitToNull() {
+        public boolean doesNotTransitToNull() {
             return doNotTransitToNull;
         }
 
+        public boolean isReversed() {
+            return reversed;
+        }
+
+        public int getTransitionTime() {
+            return transitionTime;
+        }
+
+        @Nullable
         public AnimationData copy() {
             AnimationData animationData = new AnimationData(animation);
-            animationData.speedFactor = this.speedFactor;
+            animationData.speed = this.speed;
             animationData.ignorable = this.ignorable;
             animationData.transitionTime = this.transitionTime;
             animationData.nextAnimationData = this.nextAnimationData != null ? this.nextAnimationData.copy() : null;
             animationData.doNotTransitToNull = doNotTransitToNull;
+            animationData.reversed = reversed;
 
             return animationData;
         }
 
-        @Nullable
-        public AnimationData getNextAnimationData() {
+        public @Nullable AnimationData getNextAnimation() {
             return nextAnimationData;
         }
 
@@ -172,8 +191,9 @@ public class AnimationStarter {
 
             if (ignorable != that.ignorable) return false;
             if (transitionTime != that.transitionTime) return false;
-            if (Float.compare(that.speedFactor, speedFactor) != 0) return false;
+            if (Float.compare(that.speed, speed) != 0) return false;
             if (doNotTransitToNull != that.doNotTransitToNull) return false;
+            if (reversed != that.reversed) return false;
             if (!animation.equals(that.animation)) return false;
             return Objects.equals(nextAnimationData, that.nextAnimationData);
         }
@@ -184,8 +204,9 @@ public class AnimationStarter {
             result = 31 * result + (nextAnimationData != null ? nextAnimationData.hashCode() : 0);
             result = 31 * result + (ignorable ? 1 : 0);
             result = 31 * result + transitionTime;
-            result = 31 * result + (speedFactor != +0.0f ? Float.floatToIntBits(speedFactor) : 0);
+            result = 31 * result + (speed != +0.0f ? Float.floatToIntBits(speed) : 0);
             result = 31 * result + (doNotTransitToNull ? 1 : 0);
+            result = 31 * result + (reversed ? 1 : 0);
             return result;
         }
 
@@ -196,8 +217,9 @@ public class AnimationStarter {
                     ", nextAnimationData=" + nextAnimationData +
                     ", ignorable=" + ignorable +
                     ", transitionTime=" + transitionTime +
-                    ", speedFactor=" + speedFactor +
+                    ", speed=" + speed +
                     ", doNotTransitToNull=" + doNotTransitToNull +
+                    ", reversed=" + reversed +
                     '}';
         }
     }

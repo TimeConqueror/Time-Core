@@ -56,7 +56,7 @@ public class FloroEntity extends MonsterEntity implements IRangedAttackMob, Anim
         REVEALING_ACTION = Lazy.of(() -> IDelayedAction.<FloroEntity, Void>builder("reveal", LAYER_SHOWING, new AnimationStarter(EntityAnimations.floroReveal).setTransitionTime(0))
                 .withSimpleHandler(StandardDelayPredicates.onEnd(), (floroEntity, o) -> floroEntity.setHidden(false))
                 .build());
-        HIDING_ACTION = Lazy.of(() -> IDelayedAction.<FloroEntity, Void>builder("hiding", LAYER_SHOWING, new AnimationStarter(EntityAnimations.floroReveal).setNextAnimation(AnimationAPI.createStarter(EntityAnimations.floroHidden).setTransitionTime(0)))
+        HIDING_ACTION = Lazy.of(() -> IDelayedAction.<FloroEntity, Void>builder("hiding", LAYER_SHOWING, new AnimationStarter(EntityAnimations.floroReveal).reversed().setNextAnimation(AnimationAPI.createStarter(EntityAnimations.floroHidden).setTransitionTime(0)))
                 .withSimpleHandler(StandardDelayPredicates.onEnd(), (floroEntity, o) -> floroEntity.setHidden(true))
                 .build());
     }
