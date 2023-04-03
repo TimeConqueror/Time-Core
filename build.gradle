@@ -23,7 +23,6 @@ apply plugin: 'org.spongepowered.mixin'
 
 apply from: 'gradle/scripts/configs.gradle'
 apply from: 'gradle/scripts/version_handler.gradle'
-apply from: 'gradle/scripts/updater.gradle'
 
 version = versionGetter.get()
 group = 'ru.timeconqueror'
