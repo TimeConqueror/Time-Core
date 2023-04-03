@@ -1,6 +1,7 @@
 package ru.timeconqueror.timecore.animation.component;
 
 import com.google.gson.*;
+import ru.timeconqueror.timecore.api.util.lookups.EnumLookup;
 
 import java.lang.reflect.Type;
 
@@ -8,6 +9,8 @@ public enum LoopMode {
     DO_NOT_LOOP,
     HOLD_ON_LAST_FRAME,
     LOOP;
+
+    public static final EnumLookup<LoopMode, Integer> ORDINAL_LOOKUP = EnumLookup.makeFromOrdinal(LoopMode.class);
 
     public static class Deserializer implements JsonDeserializer<LoopMode> {
 

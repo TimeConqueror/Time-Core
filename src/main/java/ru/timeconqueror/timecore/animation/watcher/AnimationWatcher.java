@@ -4,6 +4,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import org.jetbrains.annotations.Nullable;
 import ru.timeconqueror.timecore.animation.AnimationRegistry;
 import ru.timeconqueror.timecore.animation.AnimationStarter;
+import ru.timeconqueror.timecore.animation.component.LoopMode;
 import ru.timeconqueror.timecore.animation.util.WatcherSerializer;
 import ru.timeconqueror.timecore.api.animation.Animation;
 import ru.timeconqueror.timecore.api.animation.AnimationConstants;
@@ -17,21 +18,28 @@ import java.util.Objects;
 public class AnimationWatcher implements IAnimationWatcherInfo {
     private final Timeline timeline;
     private final boolean doNotTransitToNull;
+    private final LoopMode loopMode;
     @Nullable
     private final AnimationStarter.AnimationData nextAnimation;
     protected Animation animation;
     private boolean inited = false;
 
-    public AnimationWatcher(AnimationStarter.AnimationData animation) {
-        this(animation.getAnimation(), animation.getSpeed(), animation.doesNotTransitToNull(), animation.isReversed(), animation.getNextAnimation());
+    public AnimationWatcher(AnimationStarter.AnimationData data) {
+        this(data.getAnimation(),
+                data.getSpeed(),
+                data.doesNotTransitToNull(),
+                data.isReversed(),
+                data.getLoopMode() != null ? data.getLoopMode() : data.getAnimation().getLoopMode(),
+                data.getNextAnimation());
     }
 
-    public AnimationWatcher(Animation animation, float speed, boolean doNotTransitToNull, boolean reversed, @Nullable AnimationStarter.AnimationData nextAnimation) {
+    public AnimationWatcher(Animation animation, float speed, boolean doNotTransitToNull, boolean reversed, LoopMode loopMode, @Nullable AnimationStarter.AnimationData nextAnimation) {
         Requirements.greaterOrEquals(speed, 0);
         this.timeline = new Timeline(animation.getLength(), speed, reversed, System.currentTimeMillis());
         this.animation = animation;
         this.nextAnimation = nextAnimation;
         this.doNotTransitToNull = doNotTransitToNull;
+        this.loopMode = loopMode;
     }
 
 	public boolean requiresInit() {
@@ -87,6 +95,11 @@ public class AnimationWatcher implements IAnimationWatcherInfo {
     @Override
     public int getLength() {
         return timeline.getLength();
+    }
+
+    @Override
+    public LoopMode getLoopMode() {
+        return loopMode;
     }
 
     @Override
@@ -154,6 +167,7 @@ public class AnimationWatcher implements IAnimationWatcherInfo {
             buffer.writeFloat(watcher.timeline.getSpeed());
             buffer.writeBoolean(watcher.doNotTransitToNull);
             buffer.writeBoolean(watcher.timeline.isReversed());
+            buffer.writeVarInt(LoopMode.ORDINAL_LOOKUP.from(watcher.loopMode));
 
 			boolean hasNextAnimation = watcher.nextAnimation != null;
 			buffer.writeBoolean(watcher.nextAnimation != null);
@@ -168,6 +182,7 @@ public class AnimationWatcher implements IAnimationWatcherInfo {
             float speed = buffer.readFloat();
             boolean transitNo = buffer.readBoolean();
             boolean reversed = buffer.readBoolean();
+            LoopMode loopMode = LoopMode.ORDINAL_LOOKUP.by(buffer.readVarInt());
 
 			AnimationStarter.AnimationData nextAnimationData = null;
 			boolean hasNextAnimation = buffer.readBoolean();
@@ -175,7 +190,7 @@ public class AnimationWatcher implements IAnimationWatcherInfo {
 				nextAnimationData = AnimationStarter.AnimationData.decode(buffer);
 			}
 
-            AnimationWatcher watcher = new AnimationWatcher(animation, speed, transitNo, reversed, nextAnimationData);
+            AnimationWatcher watcher = new AnimationWatcher(animation, speed, transitNo, reversed, loopMode, nextAnimationData);
 			watcher.timeline.set(System.currentTimeMillis() - existingTime);
 
 			return watcher;
