@@ -89,27 +89,6 @@ public class BasicAnimation extends Animation {
         }
     }
 
-    @Override
-    public Animation reverse() {
-        Map<String, BoneOption> reversedOptions;
-
-        if (options == null) {
-            reversedOptions = null;
-        } else {
-            reversedOptions = new HashMap<>();
-
-            options.forEach((s, boneOption) -> {
-                List<IKeyFrame> rotations = reverseKeyFrames(boneOption.getKeyFrames(Channel.ROTATION));
-                List<IKeyFrame> translations = reverseKeyFrames(boneOption.getKeyFrames(Channel.TRANSLATION));
-                List<IKeyFrame> scales = reverseKeyFrames(boneOption.getKeyFrames(Channel.SCALE));
-
-                reversedOptions.put(boneOption.getName(), new BoneOption(boneOption.getName(), rotations, translations, scales));
-            });
-        }
-
-        return new BasicAnimation(loopMode, new ResourceLocation(id.getNamespace(), id.getPath() + "-reversed"), name + "-reversed", length, reversedOptions);
-    }
-
     private List<IKeyFrame> reverseKeyFrames(List<IKeyFrame> keyFrames) {
         if (keyFrames.isEmpty()) return Empty.list();
 

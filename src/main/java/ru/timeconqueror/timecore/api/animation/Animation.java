@@ -46,14 +46,6 @@ public abstract class Animation {
 	 */
 	public abstract void forEachBone(Consumer<String> action);
 
-	/**
-	 * Returns the reversed version of this animation.
-	 * It is slow, so you need to call this once.
-	 * Don't forget about registering returned animation.
-	 */
-    @Deprecated // FIXME doesn't work for now
-    public abstract Animation reverse();
-
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) return true;

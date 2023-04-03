@@ -11,7 +11,7 @@ public class StandardDelayPredicates {
     }
 
     public static Predicate<IAnimationWatcherInfo> onEnd() {
-        return watcher -> watcher.getExistingTime() == watcher.getLength();
+        return watcher -> watcher.getElapsedTime() == watcher.getLength();
     }
 
     /**
@@ -19,7 +19,7 @@ public class StandardDelayPredicates {
      * Animation time means the frame time for non sped up animation.
      */
     public static Predicate<IAnimationWatcherInfo> whenPassed(int animationTime) {
-        return info -> info.getCurrentAnimationTime() >= animationTime;
+        return info -> info.getAnimationTime() >= animationTime;
     }
 
     public static Predicate<IAnimationWatcherInfo> whenPassed(float percents) {
@@ -27,9 +27,9 @@ public class StandardDelayPredicates {
 
         return info -> {
             float length = info.getLength();
-            float existingTime = info.getExistingTime();
+            float elapsed = info.getElapsedTime();
 
-            return existingTime >= length * percents;
+            return elapsed >= length * percents;
         };
     }
 }

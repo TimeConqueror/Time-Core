@@ -59,10 +59,10 @@ public class FloroEntity extends Monster implements RangedAttackMob, AnimatedObj
         RANGED_ATTACK_ACTION = Lazy.of(() -> IDelayedAction.<FloroEntity, AnimatedRangedAttackGoal.ActionData>builder("shoot", LAYER_ATTACK, new AnimationStarter(EntityAnimations.floroShoot))
                 .withSimpleHandler(StandardDelayPredicates.whenPassed(0.5F), AnimatedRangedAttackGoal.STANDARD_RUNNER)
                 .build());
-        REVEALING_ACTION = Lazy.of(() -> IDelayedAction.<FloroEntity, Void>builder("reveal", LAYER_SHOWING, new AnimationStarter(EntityAnimations.floroReveal).setTransitionTime(0))
+        REVEALING_ACTION = Lazy.of(() -> IDelayedAction.<FloroEntity, Void>builder("reveal", LAYER_SHOWING, new AnimationStarter(EntityAnimations.floroReveal).withTransitionTime(0))
                 .withSimpleHandler(StandardDelayPredicates.onEnd(), (floroEntity, o) -> floroEntity.setHidden(false))
                 .build());
-        HIDING_ACTION = Lazy.of(() -> IDelayedAction.<FloroEntity, Void>builder("hiding", LAYER_SHOWING, new AnimationStarter(EntityAnimations.floroReveal).setNextAnimation(AnimationAPI.createStarter(EntityAnimations.floroHidden).setTransitionTime(0)))
+        HIDING_ACTION = Lazy.of(() -> IDelayedAction.<FloroEntity, Void>builder("hiding", LAYER_SHOWING, new AnimationStarter(EntityAnimations.floroReveal).reversed().withNextAnimation(AnimationAPI.createStarter(EntityAnimations.floroHidden).withTransitionTime(0)))
                 .withSimpleHandler(StandardDelayPredicates.onEnd(), (floroEntity, o) -> floroEntity.setHidden(true))
                 .build());
     }
@@ -89,7 +89,7 @@ public class FloroEntity extends Monster implements RangedAttackMob, AnimatedObj
             builder.addLayer(LAYER_WALKING, BlendType.ADD, 1F);
             builder.addLayer(LAYER_ATTACK, BlendType.ADD, 0.9F);
         }, predefinedAnimations -> {
-            predefinedAnimations.setWalkingAnimation(new AnimationStarter(EntityAnimations.floroWalk).setSpeed(3F), LAYER_WALKING);
+            predefinedAnimations.setWalkingAnimation(new AnimationStarter(EntityAnimations.floroWalk).withSpeed(3F), LAYER_WALKING);
         });
     }
 
@@ -188,7 +188,7 @@ public class FloroEntity extends Monster implements RangedAttackMob, AnimatedObj
     }
 
     private void startHiddenAnimation() {
-        AnimationAPI.createStarter(EntityAnimations.floroHidden).setTransitionTime(0)
+        AnimationAPI.createStarter(EntityAnimations.floroHidden).withTransitionTime(0)
                 .startAt(getActionManager().getAnimationManager(), LAYER_SHOWING);
     }
 
