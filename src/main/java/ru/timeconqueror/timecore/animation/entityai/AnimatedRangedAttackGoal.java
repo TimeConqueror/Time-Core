@@ -36,7 +36,7 @@ public class AnimatedRangedAttackGoal<T extends Mob & AnimatedObject<T>> extends
         this.setFlags(EnumSet.of(Flag.MOVE, Flag.LOOK));
 
         AnimationData data = attackAction.getStarter().getData();
-        this.attackInterval = AnimationUtils.milliSecondsToTicks(data.getAnimation().getLength()) * data.getSpeedFactor();
+        this.attackInterval = AnimationUtils.milliSecondsToTicks(data.getAnimation().getLength()) * data.getSpeed();
     }
 
     /**

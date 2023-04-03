@@ -1,16 +1,18 @@
 package ru.timeconqueror.timecore.animation.watcher;
 
+import org.jetbrains.annotations.Nullable;
+import ru.timeconqueror.timecore.animation.AnimationStarter;
 import ru.timeconqueror.timecore.api.animation.Animation;
 import ru.timeconqueror.timecore.api.animation.IAnimationWatcherInfo;
 
 public class EmptyAnimationWatcherInfo implements IAnimationWatcherInfo {
     @Override
-    public int getExistingTime(long currentMillis) {
+    public int getElapsedTime(long currentMillis) {
         return 0;
     }
 
     @Override
-    public int getCurrentAnimationTime(long currentMillis) {
+    public int getAnimationTime(long currentMillis) {
         return 0;
     }
 
@@ -47,5 +49,15 @@ public class EmptyAnimationWatcherInfo implements IAnimationWatcherInfo {
     @Override
     public float getSpeed() {
         return 0;
+    }
+
+    @Override
+    public boolean isReversed() {
+        return false;
+    }
+
+    @Override
+    public @Nullable AnimationStarter.AnimationData getNextAnimation() {
+        return null;
     }
 }

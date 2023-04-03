@@ -27,7 +27,7 @@ public class TransitionWatcher extends AnimationWatcher {
     private final int sourceExistingTime;
 
     private TransitionWatcher(Animation source, int sourceExistingTime, int transitionTime, @Nullable AnimationStarter.AnimationData destination) {
-        super(TRANSITION, 1.0F, false, destination);
+        super(TRANSITION, 1.0F, false, false, destination);
 
         Requirements.greaterOrEquals(transitionTime, 0);
 
@@ -42,11 +42,11 @@ public class TransitionWatcher extends AnimationWatcher {
     }
 
     public static TransitionWatcher from(AnimationWatcher source, AnimationStarter.AnimationData destination) {
-        return new TransitionWatcher(source.getAnimation(), source.getCurrentAnimationTime(), destination.getTransitionTime(), destination);
+        return new TransitionWatcher(source.getAnimation(), source.getAnimationTime(), destination.getTransitionTime(), destination);
     }
 
     public static TransitionWatcher toNullDestination(AnimationWatcher source, int transitionTime) {
-        return new TransitionWatcher(source.getAnimation(), source.getCurrentAnimationTime(), transitionTime, null);
+        return new TransitionWatcher(source.getAnimation(), source.getAnimationTime(), transitionTime, null);
     }
 
     @Override
@@ -94,8 +94,8 @@ public class TransitionWatcher extends AnimationWatcher {
     public String toString() {
         return "TransitionWatcher{" +
                 "animation=" + animation +
-                ", existingTime=" + getExistingTime() +
-                ", speed=" + speed +
+                ", elapsed=" + getElapsedTime() +
+                ", speed=" + getSpeed() +
                 ", transitionTime=" + transitionTime +
                 ", source=" + source +
                 ", sourceExistingTime=" + sourceExistingTime +
@@ -113,7 +113,7 @@ public class TransitionWatcher extends AnimationWatcher {
             destEquals = true;
         } else if (destination != null && that.destination != null) {
             if (destination.getAnimation().equals(that.destination.getAnimation())
-                    && Float.compare(destination.getSpeedFactor(), that.destination.getSpeedFactor()) == 0) {
+                    && Float.compare(destination.getSpeed(), that.destination.getSpeed()) == 0) {
                 destEquals = true;
             }
         }
@@ -126,7 +126,7 @@ public class TransitionWatcher extends AnimationWatcher {
     @Override
     public int hashCode() {
         Animation dest = getDestination();
-        float destSpeed = destination != null ? destination.getSpeedFactor() : 0;
+        float destSpeed = destination != null ? destination.getSpeed() : 0;
 
         return Objects.hash(super.hashCode(), transitionTime, dest, destSpeed, source);
     }
@@ -147,7 +147,7 @@ public class TransitionWatcher extends AnimationWatcher {
                 AnimationStarter.AnimationData.encode(watcher.destination, buffer);
             }
 
-            int transitionTime = Math.max(watcher.getLength() - watcher.getExistingTime(), 0);
+            int transitionTime = Math.max(watcher.getLength() - watcher.getElapsedTime(), 0);
             buffer.writeInt(transitionTime);
         }
 

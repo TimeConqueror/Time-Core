@@ -1,5 +1,6 @@
 package ru.timeconqueror.timecore.api.animation;
 
+import org.jetbrains.annotations.Nullable;
 import ru.timeconqueror.timecore.animation.AnimationStarter;
 import ru.timeconqueror.timecore.animation.watcher.EmptyAnimationWatcherInfo;
 
@@ -7,44 +8,52 @@ public interface IAnimationWatcherInfo {
     IAnimationWatcherInfo EMPTY = new EmptyAnimationWatcherInfo();
 
     /**
-     * Returns how much real time has been passed already for bound animation (in milliseconds).
-     * If you need to get animation frame time, use {@link #getCurrentAnimationTime()}
+     * Returns how much <b>real</b> time has been passed already for bound animation (in milliseconds).
+     * If you need to get animation frame time, use {@link #getAnimationTime()}
      */
-    int getExistingTime(long currentMillis);
+    default int getElapsedTime() {
+        return getElapsedTime(System.currentTimeMillis());
+    }
 
     /**
-     * Returns how much real time has been passed already for bound animation (in milliseconds).
-     * If you need to get animation frame time, use {@link #getCurrentAnimationTime()}
+     * Returns how much <b>real</b> time has been passed already for bound animation (in milliseconds).
+     * If you need to get animation frame time, use {@link #getAnimationTime()}
      */
-    default int getExistingTime() {
-        return getExistingTime(System.currentTimeMillis());
+    int getElapsedTime(long time);
+
+    /**
+     * Returns current animation time to be used in animation frame calculation.
+     * Animation time means the frame time for non <b>non sped up</b> animation.
+     * If you need how much real time (in milliseconds) has been passed already, use {@link #getElapsedTime()}
+     */
+    default int getAnimationTime() {
+        return getAnimationTime(System.currentTimeMillis());
     }
 
     /**
      * Returns current animation time to be used in animation frame calculation.
-     * Animation time means the frame time for non sped up animation.
-     * If you need how much real time (in milliseconds) has been passed already, use {@link #getExistingTime()}
+     * Animation time means the frame time for non <b>non sped up</b> animation.
+     * If you need how much real time (in milliseconds) has been passed already, use {@link #getElapsedTime()}
      */
-    int getCurrentAnimationTime(long currentMillis);
+    int getAnimationTime(long time);
 
     /**
-     * Returns current animation time to be used in animation frame calculation.
-     * Animation time means the frame time for non sped up animation.
-     * If you need how much real time (in milliseconds) has been passed already, use {@link #getExistingTime()}
+     * Returns the real length of the animation basing on given speed.
      */
-    default int getCurrentAnimationTime() {
-        return getCurrentAnimationTime(System.currentTimeMillis());
-    }
-
     int getLength();
 
     float getSpeed();
 
+    boolean isReversed();
+
     Animation getAnimation();
+
+    @Nullable
+    AnimationStarter.AnimationData getNextAnimation();
 
     /**
      * Returns true if this is a transition which was calculated automatically.
-     * (covers all cases except {@link AnimationStarter#setNextAnimation(AnimationStarter)})
+     * (covers all cases except {@link AnimationStarter#withNextAnimation(AnimationStarter)})
      */
     boolean isAutoTransition();
 

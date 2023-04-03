@@ -87,11 +87,6 @@ public class Transition extends Animation {
     }
 
     @Override
-    public Animation reverse() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
     public LoopMode getLoopMode() {
         return LoopMode.DO_NOT_LOOP;
     }

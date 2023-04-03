@@ -31,6 +31,6 @@ public class TileHeatCube extends BlockEntity implements AnimatedObject<TileHeat
     }
 
     public void clientTick(Level level_, BlockPos pos_, BlockState state_) {
-        new AnimationStarter(TileAnimations.heatCubeIdle).setIgnorable(true).startAt(getAnimationManager(), AnimationConstants.MAIN_LAYER_NAME);
+        new AnimationStarter(TileAnimations.heatCubeIdle).ignorable(true).startAt(getAnimationManager(), AnimationConstants.MAIN_LAYER_NAME);
     }
 }

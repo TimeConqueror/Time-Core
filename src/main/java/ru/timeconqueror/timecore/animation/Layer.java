@@ -3,6 +3,7 @@ package ru.timeconqueror.timecore.animation;
 import org.jetbrains.annotations.Nullable;
 import ru.timeconqueror.timecore.animation.component.LoopMode;
 import ru.timeconqueror.timecore.animation.watcher.AnimationWatcher;
+import ru.timeconqueror.timecore.animation.watcher.FreezableTime;
 import ru.timeconqueror.timecore.animation.watcher.TransitionWatcher;
 import ru.timeconqueror.timecore.api.animation.Animation;
 import ru.timeconqueror.timecore.api.animation.BlendType;
@@ -87,9 +88,9 @@ public class Layer implements ILayer {
 
         if (watcher != null) {
             if (paused) {
-                watcher.freeze();
+                watcher.freeze(FreezableTime.FreezeCause.BY_ESC);
             } else {
-                watcher.unfreeze();
+                watcher.unfreeze(FreezableTime.FreezeCause.BY_ESC);
 
                 if (watcher.requiresInit()) {
                     watcher.init(model);
@@ -98,7 +99,7 @@ public class Layer implements ILayer {
                 if (watcher.isAnimationEnded(currentTime)) {
                     Animation animation = watcher.getAnimation();
 
-                    if (watcher.getNextAnimationData() == null) {
+                    if (watcher.getNextAnimation() == null) {
                         if (animation.getLoopMode() == LoopMode.LOOP) {
                             watcher.resetTimer();
                             manager.onLoopedAnimationRestart(watcher);
