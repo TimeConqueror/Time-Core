@@ -12,6 +12,7 @@ import java.util.Objects;
 //TODO changeable weight
 //TODO startFrom
 //TODO mod dependent config for default animation data
+//TODO check if loop mode work with reversed
 public class AnimationStarter {
     private final AnimationData data;
 
