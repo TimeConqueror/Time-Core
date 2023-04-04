@@ -89,15 +89,6 @@ public class BasicAnimation extends Animation {
         }
     }
 
-    private List<IKeyFrame> reverseKeyFrames(List<IKeyFrame> keyFrames) {
-        if (keyFrames.isEmpty()) return Empty.list();
-
-        return keyFrames.stream()
-                .sorted(Collections.reverseOrder(Comparator.comparingInt(IKeyFrame::getTime)))
-                //  .map(keyFrame -> new KeyFrame(length - keyFrame.getTime(), keyFrame.getVec(zzz)))//FIXME
-                .collect(Collectors.toList());
-    }
-
     public static class AnimationTransitionFactory extends TransitionFactoryWithDestination {
         public AnimationTransitionFactory(BasicAnimation source) {
             super(source);
