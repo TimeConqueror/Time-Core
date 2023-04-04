@@ -116,25 +116,24 @@ public class BasicAnimation extends Animation {
 
             TransitionFactoryWithDestination destFactory = dest.getTransitionFactory().withRequiredDestination();
 
-            List<Transition.BoneOption> transitionBones = new ArrayList<>();
+            HashMap<String, Transition.BoneOption> transitionBones = new HashMap<>();
             source.getOptions().forEach((name, sourceBone) -> {
                 TimeModelPart part = model.tryGetPart(name);
                 if (part != null) {
                     Pair<IKeyFrame, IKeyFrame> rotations = makeTransitionPair(source, part, sourceBone, Channel.ROTATION, destFactory, existingTime, transitionTime);
                     Pair<IKeyFrame, IKeyFrame> translations = makeTransitionPair(source, part, sourceBone, Channel.TRANSLATION, destFactory, existingTime, transitionTime);
                     Pair<IKeyFrame, IKeyFrame> scales = makeTransitionPair(source, part, sourceBone, Channel.SCALE, destFactory, existingTime, transitionTime);
-                    transitionBones.add(new Transition.BoneOption(name, rotations, translations, scales));
+                    transitionBones.put(name, new Transition.BoneOption(name, rotations, translations, scales));
                 }
             });
 
+            ArrayList<Transition.BoneOption> resultBones = new ArrayList<>();
             Iterable<BoneOption> destBones = destFactory.getDestAnimationBones();
-            main:
+
             for (BoneOption destBone : destBones) {
                 String destBoneName = destBone.getName();
-                for (Transition.BoneOption bone : transitionBones) {
-                    if (bone.getName().equals(destBoneName)) {// TODO improve by checking for index, not for name
-                        continue main;
-                    }
+                if(transitionBones.containsKey(destBoneName)) {
+                    continue;
                 }
 
                 TimeModelPart part = model.tryGetPart(destBoneName);
@@ -142,11 +141,13 @@ public class BasicAnimation extends Animation {
                     Pair<IKeyFrame, IKeyFrame> rotations = makeTransitionPairFromIdle(part, destBoneName, Channel.ROTATION, destFactory, transitionTime);
                     Pair<IKeyFrame, IKeyFrame> translations = makeTransitionPairFromIdle(part, destBoneName, Channel.TRANSLATION, destFactory, transitionTime);
                     Pair<IKeyFrame, IKeyFrame> scales = makeTransitionPairFromIdle(part, destBoneName, Channel.SCALE, destFactory, transitionTime);
-                    transitionBones.add(new Transition.BoneOption(destBoneName, rotations, translations, scales));
+                    resultBones.add(new Transition.BoneOption(destBoneName, rotations, translations, scales));
                 }
             }
 
-            return transitionBones;
+            resultBones.addAll(transitionBones.values());
+
+            return resultBones;
         }
 
         @Override
