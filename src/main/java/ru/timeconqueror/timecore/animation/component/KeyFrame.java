@@ -32,4 +32,12 @@ public class KeyFrame implements IKeyFrame {
     public KeyFrame withNewTime(int time) {
         return new KeyFrame(time, vec);
     }
+
+    @Override
+    public String toString() {
+        return "KeyFrame{" +
+                "time=" + time +
+                ", vec=" + vec +
+                '}';
+    }
 }

@@ -11,7 +11,7 @@ public class StandardDelayPredicates {
     }
 
     public static Predicate<IAnimationWatcherInfo> onEnd() {
-        return watcher -> watcher.getElapsedTime() == watcher.getLength();
+        return watcher -> watcher.getElapsedTime() == watcher.getElapsedLength();
     }
 
     /**
@@ -26,7 +26,7 @@ public class StandardDelayPredicates {
         Requirements.inRangeInclusive(percents, 0, 1);
 
         return info -> {
-            float length = info.getLength();
+            float length = info.getElapsedLength();
             float elapsed = info.getElapsedTime();
 
             return elapsed >= length * percents;
