@@ -34,8 +34,14 @@ public class AnimationWatcher implements IAnimationWatcherInfo {
     }
 
     public AnimationWatcher(Animation animation, float speed, boolean doNotTransitToNull, boolean reversed, LoopMode loopMode, @Nullable AnimationStarter.AnimationData nextAnimation) {
+        this(animation, animation.getLength(), speed, doNotTransitToNull, reversed, loopMode, nextAnimation);
+    }
+
+    protected AnimationWatcher(Animation animation, int length, float speed, boolean doNotTransitToNull, boolean reversed, LoopMode loopMode, @Nullable AnimationStarter.AnimationData nextAnimation) {
+        Requirements.greaterOrEquals(length, 0);
         Requirements.greaterOrEquals(speed, 0);
-        this.timeline = new Timeline(animation.getLength(), speed, reversed, System.currentTimeMillis());
+
+        this.timeline = new Timeline(length, speed, reversed, System.currentTimeMillis());
         this.animation = animation;
         this.nextAnimation = nextAnimation;
         this.doNotTransitToNull = doNotTransitToNull;
@@ -93,8 +99,8 @@ public class AnimationWatcher implements IAnimationWatcherInfo {
     }
 
     @Override
-    public int getLength() {
-        return timeline.getLength();
+    public int getElapsedLength() {
+        return timeline.getElapsedLength();
     }
 
     @Override
@@ -104,7 +110,14 @@ public class AnimationWatcher implements IAnimationWatcherInfo {
 
     @Override
     public String toString() {
-        return String.format("AnimationWatcher {Animation: %s, Time Passed: %d / %d, Passed Animation Time: %d, Speed: %f, Initialized: %b}", animation, getElapsedTime(), getLength(), getAnimationTime(), getSpeed(), inited);
+        long time = System.currentTimeMillis();
+        return "Animation{" +
+                "Id: " + animation.getId() +
+                ", Progress Time: " + getAnimationTime(time) + "/" + animation.getLength() + " (" + getElapsedTime(time) + "/" + getElapsedLength() + "ms)" +
+                ", Speed: " + getSpeed() +
+                ", Reversed: " + isReversed() +
+                ", Initialized: " + inited +
+                '}';
     }
 
     @Override
@@ -179,7 +192,7 @@ public class AnimationWatcher implements IAnimationWatcherInfo {
 
 		public AnimationWatcher deserialize(PacketBuffer buffer) {
             Animation animation = AnimationRegistry.getAnimation(buffer.readResourceLocation());
-            int existingTime = buffer.readInt();
+            int elapsedTime = buffer.readInt();
             float speed = buffer.readFloat();
             boolean transitNo = buffer.readBoolean();
             boolean reversed = buffer.readBoolean();
@@ -192,7 +205,7 @@ public class AnimationWatcher implements IAnimationWatcherInfo {
             }
 
             AnimationWatcher watcher = new AnimationWatcher(animation, speed, transitNo, reversed, loopMode, nextAnimationData);
-            watcher.timeline.set(System.currentTimeMillis() - existingTime);
+            watcher.timeline.set(System.currentTimeMillis() - elapsedTime);
 
             return watcher;
         }

@@ -27,7 +27,7 @@ public class TransitionWatcher extends AnimationWatcher {
     private final int sourceExistingTime;
 
     private TransitionWatcher(Animation source, int sourceExistingTime, int transitionTime, @Nullable AnimationStarter.AnimationData destination) {
-        super(TRANSITION, 1.0F, false, false, LoopMode.DO_NOT_LOOP, destination);
+        super(TRANSITION, transitionTime, 1.0F, false, false, LoopMode.DO_NOT_LOOP, destination);
 
         Requirements.greaterOrEquals(transitionTime, 0);
 
@@ -54,7 +54,8 @@ public class TransitionWatcher extends AnimationWatcher {
         super.init(model);
 
         if (model != null) {
-            animation = Transition.create(source, getDestination(), model, sourceExistingTime, transitionTime);
+            AnimationStarter.AnimationData notNullDest = destination != null ? destination : new AnimationStarter(Animation.NULL).getData();//TODO remove nulls
+            animation = Transition.create(source, notNullDest, model, sourceExistingTime, transitionTime);
         } else {
             animation = Transition.createForServer(source, getDestination(), transitionTime);
         }
@@ -81,7 +82,7 @@ public class TransitionWatcher extends AnimationWatcher {
     }
 
     @Override
-    public int getLength() {
+    public int getElapsedLength() {
         return transitionTime;
     }
 
@@ -92,14 +93,11 @@ public class TransitionWatcher extends AnimationWatcher {
 
     @Override
     public String toString() {
-        return "TransitionWatcher{" +
-                "animation=" + animation +
-                ", elapsed=" + getElapsedTime() +
-                ", speed=" + getSpeed() +
-                ", transitionTime=" + transitionTime +
-                ", source=" + source +
-                ", sourceExistingTime=" + sourceExistingTime +
-                ", destination=" + destination +
+        long time = System.currentTimeMillis();
+        return "Transition{" +
+                "Progress Time: " + getAnimationTime(time) + " / " + transitionTime + " ms" +
+                ", From: " + source.getId() + "(" + sourceExistingTime + "/" + source.getLength() + ")" +
+                ", To: " + (destination != null ? destination.getAnimation().getId() : null) +
                 '}';
     }
 
@@ -148,7 +146,7 @@ public class TransitionWatcher extends AnimationWatcher {
                 AnimationStarter.AnimationData.encode(watcher.destination, buffer);
             }
 
-            int transitionTime = Math.max(watcher.getLength() - watcher.getElapsedTime(), 0);
+            int transitionTime = Math.max(watcher.getElapsedLength() - watcher.getElapsedTime(), 0);
             buffer.writeInt(transitionTime);
         }
 

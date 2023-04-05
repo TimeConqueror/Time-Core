@@ -18,7 +18,7 @@ public class EmptyAnimationWatcherInfo implements IAnimationWatcherInfo {
     }
 
     @Override
-    public int getLength() {
+    public int getElapsedLength() {
         return 0;
     }
 
@@ -65,5 +65,10 @@ public class EmptyAnimationWatcherInfo implements IAnimationWatcherInfo {
     @Override
     public @Nullable AnimationStarter.AnimationData getNextAnimation() {
         return null;
+    }
+
+    @Override
+    public String toString() {
+        return "No animation";
     }
 }

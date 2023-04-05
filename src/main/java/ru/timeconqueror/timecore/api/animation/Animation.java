@@ -11,7 +11,7 @@ import java.util.function.Consumer;
 
 public abstract class Animation {
 	@SuppressWarnings("StaticInitializerReferencesSubClass")
-	public static final Animation NULL = new BasicAnimation(LoopMode.DO_NOT_LOOP, TimeCore.rl("internal/null"), "null", 0, null);
+    public static final Animation NULL = new BasicAnimation(LoopMode.LOOP, TimeCore.rl("internal/null"), "null", Integer.MAX_VALUE, null);
 
 	public abstract void apply(ITimeModel model, AnimationLayer layer, int existingTime);
 

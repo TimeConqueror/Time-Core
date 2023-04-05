@@ -9,39 +9,45 @@ public interface IAnimationWatcherInfo {
     IAnimationWatcherInfo EMPTY = new EmptyAnimationWatcherInfo();
 
     /**
-     * Returns how much <b>real</b> time has been passed already for bound animation (in milliseconds).
-     * If you need to get animation frame time, use {@link #getAnimationTime()}
+     * Returns the amount of <b>real</b> time in milliseconds which is passed from the start of bound animation.
+     *
+     * @see #getAnimationTime(long)
      */
     default int getElapsedTime() {
         return getElapsedTime(System.currentTimeMillis());
     }
 
     /**
-     * Returns how much <b>real</b> time has been passed already for bound animation (in milliseconds).
-     * If you need to get animation frame time, use {@link #getAnimationTime()}
+     * Returns the amount of <b>real</b> time in milliseconds which is passed from the start of bound animation.
+     *
+     * @see #getAnimationTime(long)
      */
     int getElapsedTime(long time);
 
     /**
-     * Returns current animation time to be used in animation frame calculation.
-     * Animation time means the frame time for non <b>non sped up</b> animation.
-     * If you need how much real time (in milliseconds) has been passed already, use {@link #getElapsedTime()}
+     * Represents the progress within the animation length.
+     * Returns the progress time, which may vary from 0 to animation length.
+     * Being reversed, it goes backwards.
+     *
+     * @see #getElapsedTime(long)
      */
     default int getAnimationTime() {
         return getAnimationTime(System.currentTimeMillis());
     }
 
     /**
-     * Returns current animation time to be used in animation frame calculation.
-     * Animation time means the frame time for non <b>non sped up</b> animation.
-     * If you need how much real time (in milliseconds) has been passed already, use {@link #getElapsedTime()}
+     * Represents the progress within the animation length.
+     * Returns the progress time, which may vary from 0 to animation length.
+     * Being reversed, it goes backwards.
+     *
+     * @see #getElapsedTime(long)
      */
     int getAnimationTime(long time);
 
     /**
-     * Returns the real length of the animation basing on given speed.
+     * Returns the real length of the animation in milliseconds basing on given speed.
      */
-    int getLength();
+    int getElapsedLength();
 
     LoopMode getLoopMode();
 
