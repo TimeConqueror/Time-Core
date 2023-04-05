@@ -151,7 +151,7 @@ public class AnimationWatcher implements IAnimationWatcherInfo {
 
     @Override
     public boolean isNull() {
-        return false;
+        return getAnimation() == Animation.NULL;
     }
 
     @Override
