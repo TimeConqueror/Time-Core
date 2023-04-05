@@ -11,7 +11,7 @@ import ru.timeconqueror.timecore.api.util.MathUtils;
 import java.util.List;
 
 public class KeyFrameInterpolator {
-    private final Animation animation;
+    private final int animationLength;
     private final List<IKeyFrame> frames;
     private final int existingTime;
 
@@ -23,8 +23,8 @@ public class KeyFrameInterpolator {
     private int prevIndex = -1;
     private int nextIndex = -1;
 
-    private KeyFrameInterpolator(Animation animation, List<IKeyFrame> frames, int existingTime) {
-        this.animation = animation;
+    private KeyFrameInterpolator(int animationLength, List<IKeyFrame> frames, int existingTime) {
+        this.animationLength = animationLength;
         this.frames = frames;
         this.existingTime = existingTime;
     }
@@ -37,7 +37,7 @@ public class KeyFrameInterpolator {
     public static Vector3f findInterpolationVec(Animation animation, List<IKeyFrame> frames, int existingTime) {
         if (frames.isEmpty()) return null;
 
-        return new KeyFrameInterpolator(animation, frames, existingTime).findInterpolationVec();
+        return new KeyFrameInterpolator(animation.getLength(), frames, existingTime).findInterpolationVec();
     }
 
     public static Vector3f interpolateLinear(IKeyFrame prev, IKeyFrame next, int existingTime) {
@@ -110,7 +110,7 @@ public class KeyFrameInterpolator {
             afterPlus = frames.get(nextIndex + 1);
         }
 
-        return catmullRom(beforeMinus, prev, next, afterPlus, existingTime, animation.getLength());
+        return catmullRom(beforeMinus, prev, next, afterPlus, existingTime, animationLength);
     }
 
     private static Vector3f catmullRom(@Nullable IKeyFrame beforeMinus, @Nullable IKeyFrame before, @Nullable IKeyFrame after, @Nullable IKeyFrame afterPlus, int existedTime, int maxTime) {

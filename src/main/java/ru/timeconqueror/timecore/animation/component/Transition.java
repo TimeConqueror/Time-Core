@@ -5,8 +5,10 @@ import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ru.timeconqueror.timecore.TimeCore;
+import ru.timeconqueror.timecore.animation.AnimationStarter;
 import ru.timeconqueror.timecore.animation.calculation.KeyFrameInterpolator;
 import ru.timeconqueror.timecore.animation.util.AnimationUtils;
+import ru.timeconqueror.timecore.animation.watcher.TimelineSnapshot;
 import ru.timeconqueror.timecore.api.animation.*;
 import ru.timeconqueror.timecore.api.client.render.model.ITimeModel;
 import ru.timeconqueror.timecore.api.util.holder.Pair;
@@ -30,17 +32,19 @@ public class Transition extends Animation {
         this.destAnimation = destAnimation;
     }
 
-    private static Transition createFromIdleState(Animation dest, ITimeModel model, int transitionTime) {
+    private static Transition createFromIdleState(AnimationStarter.AnimationData destinationData, ITimeModel model, int transitionTime) {
+        Animation dest = destinationData.getAnimation();
         Transition transition = new Transition(transitionTime, "idle_to_" + dest.getName(), dest);
 
         TransitionFactoryWithDestination destFactory = dest.getTransitionFactory().withRequiredDestination();
+        TimelineSnapshot destinationStartTime = TimelineSnapshot.createForStartTime(destinationData);
 
         dest.forEachBone(name -> {
             TimeModelPart part = model.tryGetPart(name);
             if (part != null) {
-                Pair<IKeyFrame, IKeyFrame> rotations = TransitionFactory.makeTransitionPairFromIdle(part, name, Channel.ROTATION, destFactory, transitionTime);
-                Pair<IKeyFrame, IKeyFrame> translations = TransitionFactory.makeTransitionPairFromIdle(part, name, Channel.TRANSLATION, destFactory, transitionTime);
-                Pair<IKeyFrame, IKeyFrame> scales = TransitionFactory.makeTransitionPairFromIdle(part, name, Channel.SCALE, destFactory, transitionTime);
+                Pair<IKeyFrame, IKeyFrame> rotations = TransitionFactory.makeTransitionPairFromIdle(part, destinationStartTime, name, Channel.ROTATION, destFactory, transitionTime);
+                Pair<IKeyFrame, IKeyFrame> translations = TransitionFactory.makeTransitionPairFromIdle(part, destinationStartTime, name, Channel.TRANSLATION, destFactory, transitionTime);
+                Pair<IKeyFrame, IKeyFrame> scales = TransitionFactory.makeTransitionPairFromIdle(part, destinationStartTime, name, Channel.SCALE, destFactory, transitionTime);
                 transition.options.add(new BoneOption(name, rotations, translations, scales));
             }
         });
@@ -52,15 +56,16 @@ public class Transition extends Animation {
         return new Transition(transitionTime, source.getName() + "_to_" + dest.getName(), dest);
     }
 
-    public static Animation create(Animation source, Animation dest, ITimeModel model, int existingTime, int transitionTime) {
+    public static Animation create(Animation source, AnimationStarter.AnimationData dest, ITimeModel model, int existingTime, int transitionTime) {
         TransitionFactory sourceTFactory = source.getTransitionFactory();
 
-        List<BoneOption> options = sourceTFactory.createBoneOptions(dest, model, existingTime, transitionTime);
+        List<BoneOption> options = sourceTFactory.createTransitionBones(dest, model, existingTime, transitionTime);
         if (options == null) {
             return createFromIdleState(dest, model, transitionTime);
         }
 
-        Transition transition = new Transition(transitionTime, source.getName() + "_to_" + dest.getName(), dest);
+        Animation destAnimation = dest.getAnimation();
+        Transition transition = new Transition(transitionTime, source.getName() + "_to_" + destAnimation.getName(), destAnimation);
         transition.options = options;
 
         return transition;
@@ -140,28 +145,29 @@ public class Transition extends Animation {
             return KeyFrame.createIdleKeyFrame(0, modelIdleVec);
         }
 
-        private static Pair<IKeyFrame, IKeyFrame> makeTransitionPair(TimeModelPart part, BoneOption option, Channel channel, TransitionFactoryWithDestination destFactory, int existingTime, int transitionTime) {
+        private static Pair<IKeyFrame, IKeyFrame> makeTransitionPair(TimeModelPart part, TimelineSnapshot destinationStartTime, BoneOption option, Channel channel, TransitionFactoryWithDestination destFactory, int existingTime, int transitionTime) {
             IKeyFrame startKeyFrame = calcStartKeyFrame(option.getKeyFrames(channel), channel.getDefaultVector(part), existingTime);
-            IKeyFrame endKeyFrame = destFactory.getDestKeyFrame(part, option.getName(), channel, transitionTime);
+            IKeyFrame endKeyFrame = destFactory.getDestKeyFrame(part, destinationStartTime, option.getName(), channel, transitionTime);
             return Pair.of(startKeyFrame, endKeyFrame);
         }
 
         @Override
-        public @Nullable List<BoneOption> createBoneOptions(Animation dest, ITimeModel model, int existingTime, int transitionTime) {
+        public @Nullable List<BoneOption> createTransitionBones(AnimationStarter.AnimationData dest, ITimeModel model, int existingTime, int transitionTime) {
             Transition source = getSourceTyped();
             if (source.options == null || source.options.isEmpty()) {
                 return null;
             }
 
-            TransitionFactoryWithDestination destFactory = dest.getTransitionFactory().withRequiredDestination();
+            TransitionFactoryWithDestination destFactory = dest.getAnimation().getTransitionFactory().withRequiredDestination();
+            TimelineSnapshot destinationStartTime = TimelineSnapshot.createForStartTime(dest);
 
             List<BoneOption> transitionBones = new ArrayList<>();
             source.options.forEach(bone -> {
                 TimeModelPart part = model.tryGetPart(bone.name);
                 if (part != null) {
-                    Pair<IKeyFrame, IKeyFrame> rotations = makeTransitionPair(part, bone, Channel.ROTATION, destFactory, existingTime, transitionTime);
-                    Pair<IKeyFrame, IKeyFrame> translations = makeTransitionPair(part, bone, Channel.TRANSLATION, destFactory, existingTime, transitionTime);
-                    Pair<IKeyFrame, IKeyFrame> scales = makeTransitionPair(part, bone, Channel.SCALE, destFactory, existingTime, transitionTime);
+                    Pair<IKeyFrame, IKeyFrame> rotations = makeTransitionPair(part, destinationStartTime, bone, Channel.ROTATION, destFactory, existingTime, transitionTime);
+                    Pair<IKeyFrame, IKeyFrame> translations = makeTransitionPair(part, destinationStartTime, bone, Channel.TRANSLATION, destFactory, existingTime, transitionTime);
+                    Pair<IKeyFrame, IKeyFrame> scales = makeTransitionPair(part, destinationStartTime, bone, Channel.SCALE, destFactory, existingTime, transitionTime);
                     transitionBones.add(new BoneOption(bone.name, rotations, translations, scales));
                 }
             });
