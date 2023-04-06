@@ -17,7 +17,7 @@ public class Timeline {
     }
 
     public boolean isEnded(long currentTime) {
-        return currentTime > time.get() + length;
+        return currentTime > time.get() + getElapsedLength();
     }
 
     /**
