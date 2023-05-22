@@ -2,9 +2,11 @@ package ru.timeconqueror.timecore.common.capability.property.container
 
 import net.minecraft.nbt.CompoundTag
 import ru.timeconqueror.timecore.api.common.tile.SerializationType
+import ru.timeconqueror.timecore.common.capability.property.CoffeeObservableList
 import ru.timeconqueror.timecore.common.capability.property.CoffeeProperty
 import ru.timeconqueror.timecore.common.capability.property.serializer.*
 import java.util.function.Predicate
+import java.util.function.Supplier
 
 open class PropertyContainer {
     private val properties = mutableListOf<CoffeeProperty<*>>()
@@ -38,6 +40,17 @@ open class PropertyContainer {
 
     protected fun prop(name: String, value: String): CoffeeProperty<String> {
         return prop(name, value, StringPropertySerializer)
+    }
+
+    protected fun <T> prop(
+        name: String, listCreator: Supplier<List<T>>,
+        entrySerializer: IPropertySerializer<T>
+    ): CoffeeProperty<CoffeeObservableList<T>> {
+        return prop(
+            name,
+            CoffeeObservableList.observe(listCreator.get()),
+            ObservableListSerializer(listCreator, entrySerializer)
+        )
     }
 
     protected fun nullableProp(name: String, value: Int?): CoffeeProperty<Int?> {
