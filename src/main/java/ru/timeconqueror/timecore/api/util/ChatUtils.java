@@ -21,7 +21,7 @@ public class ChatUtils {
      * @param distanceIn distance from `fromPos`, in which players will be get a message.
      */
     public static void sendToAllNearby(BlockPos fromPos, Component msg, double distanceIn) {
-        for (ServerPlayer player : NetworkUtils.getPlayersNearby(fromPos, distanceIn)) {
+        for (ServerPlayer player : PlayerUtils.getPlayersNearby(fromPos, distanceIn)) {
             //FIXME port
            // player.sendMessage(msg, player.getUUID());
         }
@@ -56,8 +56,8 @@ public class ChatUtils {
      */
     @SafeVarargs
     public static void sendInformativeError(String modId, Player player, String msg, Exception exception, Pair<String, Object>... extraInfo) {
-        NetworkUtils.sendMessage(player, Component.translatable("msg.timecore.chat_error_header").withStyle(ChatFormatting.RED).append(msg));
-        NetworkUtils.sendMessage(player, Component.translatable("msg.timecore.chat_error_contact_us").withStyle(ChatFormatting.RED).append(modId));
+        PlayerUtils.sendMessage(player, Component.translatable("msg.timecore.chat_error_header").withStyle(ChatFormatting.RED).append(msg));
+        PlayerUtils.sendMessage(player, Component.translatable("msg.timecore.chat_error_contact_us").withStyle(ChatFormatting.RED).append(modId));
         LOGGER.error(msg);
         LOGGER.error("Extra information: " + Arrays.toString(extraInfo));
         LOGGER.error(exception);
