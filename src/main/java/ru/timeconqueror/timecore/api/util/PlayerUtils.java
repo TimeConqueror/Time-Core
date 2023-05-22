@@ -17,12 +17,16 @@ import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
-public class NetworkUtils {
+public class PlayerUtils {
+    public static List<ServerPlayer> getServerPlayers() {
+        return ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayers();
+    }
+
     /**
      * Returns all players who are in specific distance from given pos.//FIXME check for shouldn't be called on client?
      */
     public static List<ServerPlayer> getPlayersNearby(BlockPos fromPos, double distanceIn) {
-        return ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayers()
+        return getServerPlayers()
                 .stream()
                 .filter(player -> {
                     double distanceSq = player.distanceToSqr(fromPos.getX(), fromPos.getY(), fromPos.getZ());

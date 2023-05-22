@@ -3,6 +3,7 @@ package ru.timeconqueror.timecore.api.animation;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 import ru.timeconqueror.timecore.TimeCore;
+import ru.timeconqueror.timecore.animation.AnimationStarter;
 import ru.timeconqueror.timecore.animation.component.BasicAnimation;
 import ru.timeconqueror.timecore.animation.component.LoopMode;
 import ru.timeconqueror.timecore.api.client.render.model.ITimeModel;
@@ -45,6 +46,10 @@ public abstract class Animation {
 	 * @param action action to call for every bone. Consumes bone location.
 	 */
 	public abstract void forEachBone(Consumer<String> action);
+
+    public AnimationStarter starter() {
+        return new AnimationStarter(this);
+    }
 
 	@Override
 	public boolean equals(Object obj) {

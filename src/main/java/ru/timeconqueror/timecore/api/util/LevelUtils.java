@@ -22,7 +22,7 @@ public class LevelUtils {
 
     public static <T> void forTypedTileWithWarn(Player player, Level world, BlockPos pos, Class<T> clazz, Consumer<T> action) {
         forTypedTile(world, pos, clazz, action, message -> {
-            NetworkUtils.sendMessage(player, Component.literal(message).withStyle(ChatFormatting.RED));
+            PlayerUtils.sendMessage(player, Component.literal(message).withStyle(ChatFormatting.RED));
             TimeCore.LOGGER.warn(message, new IllegalAccessException());
         });
     }
