@@ -52,3 +52,9 @@ mandatory = true
 versionRange = "[1.19.2]"
 ordering = "NONE"
 side = "BOTH"
+[[dependencies.timecore]]
+modId = "kotlinforforge"
+mandatory = true
+versionRange = "${kff_version_range}"
+ordering = "NONE"
+side = "BOTH"

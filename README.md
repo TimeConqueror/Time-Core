@@ -19,38 +19,26 @@
 
 ## How to add TimeCore as a gradle dependency:
 
-1. Modify your buildscript section by adding extra classpath to the buildscript.dependencies closure:
+Add following to your `build.gradle` script.
 
 ```groovy
-buildscript {
-    ...
-    dependencies {
-        ...
-        classpath 'gradle.plugin.com.github.jengelman.gradle.plugins:shadow:7.0.0'
-        classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin:1.8.0'
-    }
+plugins {
+    // Adds the Kotlin Gradle plugin
+    id 'org.jetbrains.kotlin.jvm' version '1.8.22'
+    // OPTIONAL Kotlin Serialization plugin
+    id 'org.jetbrains.kotlin.plugin.serialization' version '1.8.22'
 }
-```
 
-2. Add a couple of plugins right after buildscript closure:
+repositories {
+    maven { url = "https://repo.repsy.io/mvn/timeconqueror/mc/" }
+    maven { url = 'https://thedarkcolour.github.io/KotlinForForge/' }
+}
 
-```groovy
-apply plugin: 'kotlin'
-apply plugin: 'com.github.johnrengelman.shadow'
-apply from: 'https://raw.githubusercontent.com/TimeConqueror/Time-Core/1.19.2/gradle/scripts/timecore.gradle'
-```
-
-3. Open file "gradle.properties" and place there a property, which defines the TimeCore version to be used in
-   project.
-
-```properties
-timecore.version=<VERSION_PLACEHOLDER>
-```
-
-Example:
-
-```properties
-timecore.version=1.19.2-3.6.0.0
+dependencies {
+    // Adds KFF as dependency and Kotlin libs
+    implementation 'thedarkcolour:kotlinforforge:3.12.0'
+    implementation fg.deobf('ru.timeconqueror:TimeCore:1.19.2-3.6.0.0')
+}
 ```
 
 ## Contribution
@@ -65,5 +53,5 @@ See [Mappificator Project](https://github.com/alcatrazEscapee/Mappificator) in o
 generate the mappings, using the command below, while you are in the root folder of that project.
 
 ```
-py src/mappificator.py -p -v 1 --mc-version 1.19.2 --providers yarn parchment --yarn-version 9 --parchment-version 2022.11.27-1.19.2
+py src/mappificator.py -p -v 1 --mc-version 1.20 --providers yarn --yarn-version 1 
 ```

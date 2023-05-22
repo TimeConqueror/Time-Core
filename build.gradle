@@ -11,12 +11,13 @@ buildscript {
 }
 
 plugins {
+    id 'idea'
     id 'eclipse'
     id 'maven-publish'
     id 'net.minecraftforge.gradle' version '5.1.+'
     id 'org.parchmentmc.librarian.forgegradle' version '1.+'
-    id 'com.github.johnrengelman.shadow' version '7.0.0'
-    id 'org.jetbrains.kotlin.jvm' version '1.8.0'
+    id 'org.jetbrains.kotlin.jvm' version '1.8.22'
+    id 'org.jetbrains.kotlin.plugin.serialization' version '1.8.22'
 }
 
 apply plugin: 'org.spongepowered.mixin'
@@ -56,6 +57,10 @@ repositories {
     maven {
         name = "TimeConqueror's Maven"
         url = "https://repo.repsy.io/mvn/timeconqueror/mc/"
+    }
+    maven {
+        name = 'Kotlin for Forge'
+        url = 'https://thedarkcolour.github.io/KotlinForForge/'
     }
 }
 
@@ -170,46 +175,16 @@ dependencies {
         }
     }
 
-    groovy.lang.Closure withoutAnnotations = { exclude group: 'org.jetbrains', module: 'annotations' }
-    shade "org.jetbrains.kotlin:kotlin-stdlib-jdk8", withoutAnnotations
-    shade "org.jetbrains.kotlin:kotlin-reflect", withoutAnnotations
+    implementation 'thedarkcolour:kotlinforforge:4.3.0'
 
     if (System.getProperty("idea.sync.active") != "true") {
         annotationProcessor("org.spongepowered:mixin:0.8.5:processor")
     }
 }
 
-shadowJar {
-    configurations = [project.configurations.shade]
-    archiveClassifier.set("")
-    archiveBaseName.set("TimeCore")
-
-    def shadowPackages = [
-            'kotlin',
-            'org.intellij',
-            'org.jetbrains'
-    ]
-
-    shadowPackages.forEach {
-        relocate(it, "tcrepack.$it")
-    }
-
-    mergeServiceFiles()
-    exclude '**/module-info.class'
-    finalizedBy('reobfShadowJar')
-}
-
-reobf {
-    jar {}
-    shadowJar {}
-}
-
 jar {
     archiveClassifier.set("")
     from sourceSets.main.output
-    exclude '**/module-info.class'
-
-    from { configurations.shade.collect { it.isDirectory() ? it : zipTree(it) } }
 
     manifest {
         attributes([
@@ -225,28 +200,6 @@ jar {
 
     finalizedBy('reobfJar')
 }
-
-task devJar(type: Jar) {
-    from sourceSets.main.output
-    exclude '**/module-info.class'
-
-    it.archiveClassifier = 'dev'
-
-    manifest {
-        attributes([
-                "Specification-Title"     : "timecore",
-                "Specification-Vendor"    : "Time_Conqueror",
-                "Specification-Version"   : "1", // We are version 1 of ourselves
-                "Implementation-Title"    : project.name,
-                "Implementation-Version"  : archiveVersion,
-                "Implementation-Vendor"   : "Time_Conqueror",
-                "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
-        ])
-    }
-
-    finalizedBy('reobfDevJar')
-}
-reobf.create("devJar")
 
 // Create source attachment for dev jar
 task sourcesJar(type: Jar) {
@@ -265,21 +218,22 @@ publishing {
     publications {
         maven(MavenPublication) { p ->
             artifactId archivesBaseName
-            artifact shadowJar
-            artifact devJar
+            artifact jar
             artifact sourcesJar
 
-//            pom.withXml {
-//                def dependenciesNode = asNode().appendNode('dependencies')
-//
-//                //Iterate over the compile dependencies (we don't want the test ones), adding a <dependency> node for each
-//                configurations.shade.allDependencies.each {
-//                    def dependencyNode = dependenciesNode.appendNode('dependency')
-//                    dependencyNode.appendNode('groupId', it.group)
-//                    dependencyNode.appendNode('artifactId', it.name)
-//                    dependencyNode.appendNode('version', it.version)
-//                }
-//            }
+            pom.withXml {
+                project.configurations.named('implementation') {
+                    for (final def dep in dependencies) {
+                        if (dep.name == 'kotlinforforge') {
+                            def dependenciesNode = asNode().appendNode('dependencies')
+                            def dependencyNode = dependenciesNode.appendNode('dependency')
+                            dependencyNode.appendNode('groupId', dep.group)
+                            dependencyNode.appendNode('artifactId', dep.name)
+                            dependencyNode.appendNode('version', dep.version)
+                        }
+                    }
+                }
+            }
         }
     }
     repositories {
