@@ -120,7 +120,7 @@ public class LangGeneratorFacade {
      */
     public void addArmorEntryByMaterial(ArmorItem item, String materialEnName) {
         if (shouldSave()) {
-            EquipmentSlot equipmentSlot = item.getSlot();
+            EquipmentSlot equipmentSlot = item.getEquipmentSlot();
 
             String fullLocalizedName;
             switch (equipmentSlot) {

@@ -50,7 +50,7 @@ timecore.version=<VERSION_PLACEHOLDER>
 Example:
 
 ```properties
-timecore.version=1.19.3-3.6.0.0
+timecore.version=1.19.4-3.6.0.0
 ```
 
 ## Contribution
@@ -65,5 +65,5 @@ See [Mappificator Project](https://github.com/alcatrazEscapee/Mappificator) in o
 generate the mappings, using the command below, while you are in the root folder of that project.
 
 ```
-py src/mappificator.py -p -v 1 --mc-version 1.19.3 --providers yarn parchment --yarn-version 5 --parchment-version 2022.12.18-1.19.3
+py src/mappificator.py -p -v 1 --mc-version 1.19.4 --providers yarn parchment --yarn-version 2 --parchment-version 2023.03.12-1.19.3
 ```

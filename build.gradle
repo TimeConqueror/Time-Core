@@ -67,7 +67,7 @@ minecraft.runs.all {
 }
 
 minecraft {
-    mappings channel: 'parchment', version: '1-1.19.3'
+    mappings channel: 'parchment', version: '1-1.19.4'
     accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
 
     def extraArgs = []
@@ -153,7 +153,7 @@ compileJava.options.encoding = "UTF-8"
 compileTestJava.options.encoding = "UTF-8"
 
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.19.3-44.1.5'
+    minecraft 'net.minecraftforge:forge:1.19.4-45.0.66'
 
     if (file("runtimeMods").exists()) {
         file("runtimeMods").eachFile { file ->

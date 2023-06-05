@@ -55,7 +55,7 @@ public class ParseUtils {
         try {
             return DataResult.success(new ResourceLocation(location));
         } catch (ResourceLocationException e) {
-            return DataResult.error(e.getMessage());
+            return DataResult.error(e::getMessage);
         }
     }
 }

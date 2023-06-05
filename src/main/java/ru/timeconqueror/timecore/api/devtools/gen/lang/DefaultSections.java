@@ -18,7 +18,7 @@ public class DefaultSections {
     public static final Supplier<LangSection<ArmorItem>> ARMOR = () -> new LangSection<ArmorItem>("Armor", Item::getDescriptionId)
             .setSortingComparator(Comparator.<Map.Entry<ArmorItem, String>, String>comparing(mapEntry -> mapEntry.getKey().getMaterial().getName())
                     .thenComparingInt((mapEntry) -> {
-                        EquipmentSlot armorType = mapEntry.getKey().getSlot();
+                        EquipmentSlot armorType = mapEntry.getKey().getEquipmentSlot();
                         if (armorType == EquipmentSlot.HEAD) return 1;
                         if (armorType == EquipmentSlot.CHEST) return 2;
                         if (armorType == EquipmentSlot.LEGS) return 3;

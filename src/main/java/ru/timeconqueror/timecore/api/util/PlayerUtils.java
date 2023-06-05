@@ -22,6 +22,10 @@ public class PlayerUtils {
         return ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayers();
     }
 
+    public static boolean isCreativeOrOp(Player player) {
+        return player.canUseGameMasterBlocks();
+    }
+
     /**
      * Returns all players who are in specific distance from given pos.//FIXME check for shouldn't be called on client?
      */

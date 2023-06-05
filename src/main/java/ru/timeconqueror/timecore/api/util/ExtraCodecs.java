@@ -3,7 +3,6 @@ package ru.timeconqueror.timecore.api.util;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import net.minecraft.core.Direction;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -36,7 +35,7 @@ public class ExtraCodecs {
         if (value != null) {
             return DataResult.success(value);
         } else {
-            return DataResult.error("Unknown " + clazz.getSimpleName() + " with '" + key + "' key");
+            return DataResult.error(() -> "Unknown " + clazz.getSimpleName() + " with '" + key + "' key");
         }
     }
 
