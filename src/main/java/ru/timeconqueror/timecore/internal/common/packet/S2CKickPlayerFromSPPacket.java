@@ -7,7 +7,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
-import ru.timeconqueror.timecore.api.common.packet.SimplePacketHandler;
+import ru.timeconqueror.timecore.api.common.packet.ITimePacketHandler;
 
 import java.io.IOException;
 import java.util.Objects;
@@ -19,7 +19,7 @@ public class S2CKickPlayerFromSPPacket {
         this.kickReason = kickReason;
     }
 
-    public static class Handler extends SimplePacketHandler<S2CKickPlayerFromSPPacket> {
+    public static class Handler implements ITimePacketHandler<S2CKickPlayerFromSPPacket> {
         @Override
         public void encode(S2CKickPlayerFromSPPacket packet, FriendlyByteBuf buffer) throws IOException {
             buffer.writeComponent(packet.kickReason);
@@ -32,7 +32,7 @@ public class S2CKickPlayerFromSPPacket {
 
         @Override
         @OnlyIn(Dist.CLIENT)
-        public void handleOnMainThread(S2CKickPlayerFromSPPacket packet, NetworkEvent.Context ctx) {
+        public void handle(S2CKickPlayerFromSPPacket packet, NetworkEvent.Context ctx) {
             Minecraft mc = Minecraft.getInstance();
 
             getWorld(ctx).disconnect();

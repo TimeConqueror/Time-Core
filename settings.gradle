@@ -8,3 +8,7 @@ pluginManagement {
         maven { url = "https://repo.repsy.io/mvn/timeconqueror/mc/" }
     }
 }
+
+plugins {
+    id 'org.gradle.toolchains.foojay-resolver-convention' version '0.5.0'
+}

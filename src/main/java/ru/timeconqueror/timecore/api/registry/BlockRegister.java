@@ -1,6 +1,7 @@
 package ru.timeconqueror.timecore.api.registry;
 
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
@@ -181,7 +182,7 @@ public class BlockRegister extends VanillaRegister<Block> {
          *
          * @param tab creative tab in which item will be placed. Can be null, which means that item will be placed nowhere.
          */
-        public BlockRegisterChain<B> defaultBlockItem(@Nullable Supplier<CreativeModeTab> tab) {
+        public BlockRegisterChain<B> defaultBlockItem(@Nullable ResourceKey<CreativeModeTab> tab) {
             return defaultBlockItem(tab, itemRegistrator -> itemRegistrator.modelFromBlockParent(new BlockModelLocation(getModId(), getName())));
         }
 
@@ -193,7 +194,7 @@ public class BlockRegister extends VanillaRegister<Block> {
          * @param tab                creative tab in which item will be placed. Can be null, which means that item will be placed nowhere.
          * @param blockModelLocation parent block model location for auto-generated item model based on block one.
          */
-        public BlockRegisterChain<B> defaultBlockItem(@Nullable Supplier<CreativeModeTab> tab, BlockModelLocation blockModelLocation) {
+        public BlockRegisterChain<B> defaultBlockItem(@Nullable ResourceKey<CreativeModeTab> tab, BlockModelLocation blockModelLocation) {
             return defaultBlockItem(tab, itemRegistrator -> itemRegistrator.modelFromBlockParent(blockModelLocation));
         }
 
@@ -205,7 +206,7 @@ public class BlockRegister extends VanillaRegister<Block> {
          * @param tab          creative tab in which item will be placed. Can be null, which means that item will be placed nowhere.
          * @param itemSettings extra stuff, that you can do for that item, like generating item model.
          */
-        public BlockRegisterChain<B> defaultBlockItem(@Nullable Supplier<CreativeModeTab> tab, Consumer<ItemRegisterChain<BlockItem>> itemSettings) {
+        public BlockRegisterChain<B> defaultBlockItem(@Nullable ResourceKey<CreativeModeTab> tab, Consumer<ItemRegisterChain<BlockItem>> itemSettings) {
             return defaultBlockItem(tab, new Item.Properties(), itemSettings);
         }
 
@@ -218,7 +219,7 @@ public class BlockRegister extends VanillaRegister<Block> {
          * @param props        properties, that will be inserted in the item. Can also be created with {@link ItemPropsFactory}
          * @param itemSettings extra stuff, that you can do for that item, like generating item model.
          */
-        public BlockRegisterChain<B> defaultBlockItem(@Nullable Supplier<CreativeModeTab> tab, Item.Properties props, Consumer<ItemRegisterChain<BlockItem>> itemSettings) {
+        public BlockRegisterChain<B> defaultBlockItem(@Nullable ResourceKey<CreativeModeTab> tab, Item.Properties props, Consumer<ItemRegisterChain<BlockItem>> itemSettings) {
             return item(() -> new BlockItem(asPromised().get(), props), chain -> {
                 if (tab != null) {
                     chain.tab(tab);

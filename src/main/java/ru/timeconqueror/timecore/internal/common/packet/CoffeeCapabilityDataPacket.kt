@@ -91,14 +91,9 @@ sealed class CoffeeCapabilityDataPacket(
             return create(sentFromClient, buf.readUtf(), buf.readNbt()!!, buf.readNbt()!!) as T
         }
 
-        final override fun handle(msg: T, ctx: NetworkEvent.Context): Boolean {
+        final override fun handle(msg: T, ctx: NetworkEvent.Context) {
             val sentFromClient = ctx.direction.receptionSide == LogicalSide.SERVER
-
-            ctx.enqueueWork {
-                handlePacket(msg, getWorld(ctx), sentFromClient)
-            }
-
-            return true
+            handlePacket(msg, getWorld(ctx), sentFromClient)
         }
 
         object ServerHandler : CoffeeCapabilityDataPacket.Handler<C2SCoffeeCapabilityDataPacket>()

@@ -30,15 +30,13 @@ public interface ITimePacketHandler<T> {
 
     /**
      * Handles received packet.
-     * Called from the network thread, so you should be careful about enqueueing stuff to the main thread using {@link NetworkEvent.Context#enqueueWork(Runnable)}.
-     *
-     * @return true if handled successfully. If the method returns false, client may or may not be disconnected from server
+     * Called from the <b>main</b> thread.
      */
-    boolean handle(T packet, NetworkEvent.Context ctx);
+    void handle(T packet, NetworkEvent.Context ctx);
 
     @NotNull
     @SuppressWarnings("ConstantConditions")
     default Level getWorld(NetworkEvent.Context ctx) {
-        return ctx.getDirection().getReceptionSide() == LogicalSide.CLIENT ? ClientProxy.world() : ctx.getSender().level;
+        return ctx.getDirection().getReceptionSide() == LogicalSide.CLIENT ? ClientProxy.world() : ctx.getSender().level();
     }
 }

@@ -3,7 +3,6 @@ package ru.timeconqueror.timecore.registry_example;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.material.Material;
 import ru.timeconqueror.timecore.TimeCore;
 import ru.timeconqueror.timecore.api.client.resource.BlockModels;
 import ru.timeconqueror.timecore.api.client.resource.location.BlockModelLocation;
@@ -29,10 +28,10 @@ public class BlockRegistryExample {
 
         @AutoRegistrable.Init
         private static void register() {
-            BlockPropsFactory propsCreator = new BlockPropsFactory(() -> Block.Properties.of(Material.STONE));
+            BlockPropsFactory propsCreator = new BlockPropsFactory(Block.Properties::of);
 
             REGISTER.register("test_sand", () -> new Block(propsCreator.create()))
-                    .defaultBlockItem(() -> CreativeModeTabs.TOOLS_AND_UTILITIES)
+                    .defaultBlockItem(CreativeModeTabs.TOOLS_AND_UTILITIES)
                     .also(chain -> {
                         BlockModelLocation modelLocation = new BlockModelLocation(chain.getModId(), "block/test_sand");
                         chain
@@ -45,11 +44,11 @@ public class BlockRegistryExample {
                     .oneVarStateAndCubeAllModel(new TextureLocation("minecraft", "block/dirt"));
 
             REGISTER.register("test_emerald_ore", () -> new Block(propsCreator.create()))
-                    .defaultBlockItem(() -> CreativeModeTabs.TOOLS_AND_UTILITIES)
+                    .defaultBlockItem(CreativeModeTabs.TOOLS_AND_UTILITIES)
                     .oneVarStateAndCubeAllModel(new TextureLocation("minecraft", "block/emerald_ore"));
 
             REGISTER.register("test_block_with_tile", () -> new DummyBlockWithTileEntity(propsCreator.create()))
-                    .defaultBlockItem(() -> CreativeModeTabs.TOOLS_AND_UTILITIES)
+                    .defaultBlockItem(CreativeModeTabs.TOOLS_AND_UTILITIES)
                     .oneVarStateAndCubeAllModel(new TextureLocation("minecraft", "block/furnace"));
         }
     }

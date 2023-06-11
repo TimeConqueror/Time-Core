@@ -24,7 +24,7 @@ public class AnimationEventHandler {
         LivingEntity entityLiving = event.getEntity();
 
         if (entityLiving instanceof AnimatedObject<?>) {
-            if (!entityLiving.level.isClientSide) {
+            if (!entityLiving.level().isClientSide) {
                 //needed for animation ticking on server side.
                 ((AnimatedObject<?>) entityLiving).getSystem().getAnimationManager().applyAnimations(null);
             }

@@ -44,11 +44,11 @@ public class MyPlayerCapability extends CoffeeCapabilityInstance<Entity> {
     }
 
     public void detectAndSendChanges() {
-        detectAndSendChanges(player.level, player);
+        detectAndSendChanges(player.level(), player);
     }
 
     public void sendAllData() {
-        sendAllData(player.level, player);
+        sendAllData(player.level(), player);
     }
 
     @Nullable

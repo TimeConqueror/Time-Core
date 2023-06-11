@@ -4,7 +4,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
 import ru.timeconqueror.timecore.api.animation.AnimatedObject;
-import ru.timeconqueror.timecore.api.common.packet.SimplePacketHandler;
+import ru.timeconqueror.timecore.api.common.packet.ITimePacketHandler;
 
 public abstract class S2CAnimationMsg {
     protected final String layerName;
@@ -15,7 +15,7 @@ public abstract class S2CAnimationMsg {
         this.layerName = layerName;
     }
 
-    public abstract static class Handler<T extends S2CAnimationMsg> extends SimplePacketHandler<T> {
+    public abstract static class Handler<T extends S2CAnimationMsg> implements ITimePacketHandler<T> {
         @Override
         public final void encode(T packet, FriendlyByteBuf buffer) {
             packet.codecSupplier.toBuffer(buffer);
@@ -41,7 +41,7 @@ public abstract class S2CAnimationMsg {
         public abstract void onPacket(T packet, AnimatedObject<?> provider, String layerName, NetworkEvent.Context ctx);
 
         @Override
-        public void handleOnMainThread(T packet, NetworkEvent.Context ctx) {
+        public void handle(T packet, NetworkEvent.Context ctx) {
             AnimatedObject<?> animatedObject = packet.codecSupplier.construct(getWorld(ctx));
 
             onPacket(packet, animatedObject, packet.layerName, ctx);

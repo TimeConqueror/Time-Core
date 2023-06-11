@@ -49,16 +49,16 @@ public class S2CSyncAnimationsMsg {
 		}
 
 		@Override
-		public boolean handle(S2CSyncAnimationsMsg packet, NetworkEvent.Context ctx) {
-			ctx.enqueueWork(() -> {
-				String errorMessage = null;
+        public void handle(S2CSyncAnimationsMsg packet, NetworkEvent.Context ctx) {
+            ctx.enqueueWork(() -> {
+                String errorMessage = null;
 
-				Entity entity = getWorld(ctx).getEntity(packet.entityId);
-				if (entity == null) {
-					errorMessage = "Client received an animation, but entity wasn't found on client.";
-				} else if (!(entity instanceof AnimatedObject<?>)) {
-					errorMessage = "Provided entity id belongs to entity, which is not an inheritor of " + AnimatedObject.class;
-				}
+                Entity entity = getWorld(ctx).getEntity(packet.entityId);
+                if (entity == null) {
+                    errorMessage = "Client received an animation, but entity wasn't found on client.";
+                } else if (!(entity instanceof AnimatedObject<?>)) {
+                    errorMessage = "Provided entity id belongs to entity, which is not an inheritor of " + AnimatedObject.class;
+                }
 
 				if (errorMessage == null) {
 					Map<String, AnimationWatcher> layerMap = packet.layerMap;
@@ -69,8 +69,6 @@ public class S2CSyncAnimationsMsg {
 					TimeCore.LOGGER.error(errorMessage);
 				}
 			});
-
-			return true;
 		}
 	}
 }

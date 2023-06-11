@@ -41,7 +41,7 @@ public class DamagingProjectileEntity extends ThrowableProjectile {
     public void tick() {
         super.tick();
 
-        if (!level.isClientSide) {
+        if (!level().isClientSide) {
             if (tickCount >= 20 * 10) {
                 remove(RemovalReason.DISCARDED);
             }
@@ -50,7 +50,7 @@ public class DamagingProjectileEntity extends ThrowableProjectile {
 
     @Override
     protected void onHit(HitResult result) {
-        if (!level.isClientSide) {
+        if (!level().isClientSide) {
             if (result.getType() == HitResult.Type.ENTITY) {
                 EntityHitResult entityHitResult = (EntityHitResult) result;
                 Entity target = entityHitResult.getEntity();

@@ -1,5 +1,6 @@
 package ru.timeconqueror.timecore.api.registry;
 
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.item.CreativeModeTab;
@@ -208,7 +209,7 @@ public class EntityRegister extends VanillaRegister<EntityType<?>> {
          * @param secondaryArgb secondary color
          * @param tab           creative tab where item will be placed
          */
-        public MobRegisterChain<T> spawnEgg(int primaryArgb, int secondaryArgb, Supplier<CreativeModeTab> tab) {
+        public MobRegisterChain<T> spawnEgg(int primaryArgb, int secondaryArgb, ResourceKey<CreativeModeTab> tab) {
             return spawnEgg(primaryArgb, secondaryArgb, tab, new Item.Properties());
         }
 
@@ -221,7 +222,7 @@ public class EntityRegister extends VanillaRegister<EntityType<?>> {
          * @param tab           creative mod tab, which will hold the provided spawn egg.
          * @param properties    item properties
          */
-        public MobRegisterChain<T> spawnEgg(int primaryArgb, int secondaryArgb, @Nullable Supplier<CreativeModeTab> tab, Item.Properties properties) {
+        public MobRegisterChain<T> spawnEgg(int primaryArgb, int secondaryArgb, @Nullable ResourceKey<CreativeModeTab> tab, Item.Properties properties) {
             return spawnEgg(getName() + "_spawn_egg", primaryArgb, secondaryArgb, tab, properties);
         }
 
@@ -234,7 +235,7 @@ public class EntityRegister extends VanillaRegister<EntityType<?>> {
          * @param tab           creative mod tab, which will hold the provided spawn egg.
          * @param properties    item properties
          */
-        public MobRegisterChain<T> spawnEgg(String name, int primaryArgb, int secondaryArgb, @Nullable Supplier<CreativeModeTab> tab, Item.Properties properties) {
+        public MobRegisterChain<T> spawnEgg(String name, int primaryArgb, int secondaryArgb, @Nullable ResourceKey<CreativeModeTab> tab, Item.Properties properties) {
             //FIXME Forge, wtf, it's not threadsafe!
             ItemRegister.ItemRegisterChain<ForgeSpawnEggItem> chain = itemRegister
                     .register(name, () -> new ForgeSpawnEggItem(asPromised(), primaryArgb, secondaryArgb, properties))

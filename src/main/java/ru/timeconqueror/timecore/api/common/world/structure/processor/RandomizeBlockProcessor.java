@@ -40,8 +40,8 @@ public class RandomizeBlockProcessor extends StructureProcessor {
     @Nullable
     @Override
     public StructureTemplate.StructureBlockInfo process(LevelReader world, BlockPos templatePosition, BlockPos pieceBottomCenter, StructureTemplate.StructureBlockInfo original, StructureTemplate.StructureBlockInfo modified, StructurePlaceSettings settings, @Nullable StructureTemplate template) {
-        if (modified.state.getBlock() == toReplace && RandHelper.chance(settings.getRandom(modified.pos), chance)) {
-            return new StructureTemplate.StructureBlockInfo(modified.pos, replacement.defaultBlockState(), modified.nbt);
+        if (modified.state().getBlock() == toReplace && RandHelper.chance(settings.getRandom(modified.pos()), chance)) {
+            return new StructureTemplate.StructureBlockInfo(modified.pos(), replacement.defaultBlockState(), modified.nbt());
         }
 
         return modified;

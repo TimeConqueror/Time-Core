@@ -127,6 +127,7 @@ public class PacketRegister extends RunnableStoringRegister {
 
     /**
      * Registers new packet.
+     * All packets will be handled on main thread.
      */
     public <T> void regPacket(SimpleChannel channel, Class<T> packetClass, ITimePacketHandler<T> packetHandler, NetworkDirection direction) {
         add(() -> channel.messageBuilder(packetClass, getAndIncreaseIndex(channel), direction)
@@ -143,10 +144,10 @@ public class PacketRegister extends RunnableStoringRegister {
                     } catch (IOException e) {
                         throw new RuntimeException("Can't decode packet: " + e.getMessage(), e);
                     }
-                })//FIXME port and add mein threading
-                .consumer((msg, contextSupplier) -> {
+                })
+                .consumerMainThread((msg, contextSupplier) -> {
                     NetworkEvent.Context ctx = contextSupplier.get();
-                    return packetHandler.handle(msg, ctx);
+                    packetHandler.handle(msg, ctx);
                 })
                 .add());
     }

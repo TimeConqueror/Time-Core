@@ -194,14 +194,14 @@ public class FloroEntity extends Monster implements RangedAttackMob, AnimatedObj
 
     @Override
     public void performRangedAttack(LivingEntity target, float distanceFactor) {
-        FloroMudEntity projectile = new FloroMudEntity(this.level, this, 0.5F);
+        FloroMudEntity projectile = new FloroMudEntity(this.level(), this, 0.5F);
         double dX = target.getX() - this.getX();
         double dY = target.getY(0.3333333333333333D) - projectile.getY();
         double dZ = target.getZ() - this.getZ();
         double distortion = Mth.sqrt((float) (dX * dX + dZ * dZ));
-        projectile.shoot(dX, dY + distortion * 0.20000000298023224D, dZ, 1.6F, (float) (7 - this.level.getDifficulty().getId()));
+        projectile.shoot(dX, dY + distortion * 0.20000000298023224D, dZ, 1.6F, (float) (7 - this.level().getDifficulty().getId()));
 
-        this.level.addFreshEntity(projectile);
+        this.level().addFreshEntity(projectile);
     }
 
     public boolean isHidden() {

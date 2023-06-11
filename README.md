@@ -37,7 +37,7 @@ buildscript {
 ```groovy
 apply plugin: 'kotlin'
 apply plugin: 'com.github.johnrengelman.shadow'
-apply from: 'https://raw.githubusercontent.com/TimeConqueror/Time-Core/1.18.2_port/gradle/scripts/timecore.gradle'
+apply from: 'https://raw.githubusercontent.com/TimeConqueror/Time-Core/1.20/gradle/scripts/timecore.gradle'
 ```
 
 3. Open file "gradle.properties" and place there a property, which defines the TimeCore version to be used in
@@ -50,7 +50,7 @@ timecore.version=<VERSION_PLACEHOLDER>
 Example:
 
 ```properties
-timecore.version=1.19.4-3.6.0.0
+timecore.version=1.20-3.8.0.0
 ```
 
 ## Contribution
@@ -65,5 +65,5 @@ See [Mappificator Project](https://github.com/alcatrazEscapee/Mappificator) in o
 generate the mappings, using the command below, while you are in the root folder of that project.
 
 ```
-py src/mappificator.py -p -v 1 --mc-version 1.19.4 --providers yarn parchment --yarn-version 2 --parchment-version 2023.03.12-1.19.3
+py src/mappificator.py -p -v 1 --mc-version 1.20 --providers yarn --yarn-version 1 
 ```

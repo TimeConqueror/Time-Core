@@ -14,7 +14,7 @@ public class EntityCapSyncOnStartTrackListener {
 
     @SubscribeEvent
     public void startTracking(PlayerEvent.StartTracking event) {
-        if (!event.getEntity().level.isClientSide) {
+        if (!event.getEntity().level().isClientSide) {
             syncFunction.onStartTracking(event.getEntity(), event.getTarget());
         }
     }

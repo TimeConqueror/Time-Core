@@ -2,7 +2,6 @@ package ru.timeconqueror.timecore.api.common.event;
 
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.event.entity.living.LivingEvent;
-import net.minecraftforge.event.entity.living.LivingEvent.LivingTickEvent;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.common.Mod;
@@ -23,7 +22,7 @@ public class LivingTickEndEvent extends LivingEvent {
     public LivingTickEndEvent(LivingEntity entity) {
         super(entity);
 
-        dist = entity.level.isClientSide ? LogicalSide.CLIENT : LogicalSide.SERVER;
+        dist = entity.level().isClientSide ? LogicalSide.CLIENT : LogicalSide.SERVER;
     }
 
     public LogicalSide getLogicalSide() {

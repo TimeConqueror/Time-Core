@@ -2,6 +2,7 @@ package ru.timeconqueror.timecore.api.util.client;
 
 import com.mojang.blaze3d.vertex.*;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.Vec3i;
@@ -369,8 +370,8 @@ public class DrawHelper {
      * @param y     start y-coordinate (top)
      * @param color HTML color. Example: 0xFF0000 -> red.
      */
-    public static void drawString(PoseStack stack, Font fontRendererIn, String text, float x, float y, int color) {
-        fontRendererIn.draw(stack, text, x, y, color);
+    public static void drawString(GuiGraphics graphics, Font fontRendererIn, String text, float x, float y, int color) {
+        graphics.drawString(fontRendererIn, text, x, y, color, false);
     }
 
     /**
@@ -381,8 +382,8 @@ public class DrawHelper {
      * @param y     start y-coordinate (top)
      * @param color HTML color. Example: 0xFF0000 -> red.
      */
-    public static void drawStringWithShadow(PoseStack stack, Font fontRendererIn, String text, float x, float y, int color) {
-        fontRendererIn.drawShadow(stack, text, x, y, color);
+    public static void drawStringWithShadow(GuiGraphics graphics, Font fontRendererIn, String text, float x, float y, int color) {
+        graphics.drawString(fontRendererIn, text, x, y, color, true);
     }
 
     /**
@@ -393,8 +394,8 @@ public class DrawHelper {
      * @param y     start y-coordinate (top)
      * @param color HTML color. Example: 0xFF0000 -> red.
      */
-    public static void drawXCenteredString(PoseStack stack, Font fontRendererIn, String text, float x, float y, int color) {
-        drawString(stack, fontRendererIn, text, x - fontRendererIn.width(text) / 2F, y, color);
+    public static void drawXCenteredString(GuiGraphics graphics, Font fontRendererIn, String text, float x, float y, int color) {
+        drawString(graphics, fontRendererIn, text, x - fontRendererIn.width(text) / 2F, y, color);
     }
 
     /**
@@ -405,8 +406,8 @@ public class DrawHelper {
      * @param y     start y-coordinate (top)
      * @param color HTML color. Example: 0xFF0000 -> red.
      */
-    public static void drawXCenteredStringWithShadow(PoseStack stack, Font fontRendererIn, String text, float x, float y, int color) {
-        drawStringWithShadow(stack, fontRendererIn, text, x - fontRendererIn.width(text) / 2F, y, color);
+    public static void drawXCenteredStringWithShadow(GuiGraphics graphics, Font fontRendererIn, String text, float x, float y, int color) {
+        drawStringWithShadow(graphics, fontRendererIn, text, x - fontRendererIn.width(text) / 2F, y, color);
     }
 
     /**
@@ -417,8 +418,8 @@ public class DrawHelper {
      * @param y     center y-coordinate
      * @param color HTML color. Example: 0xFF0000 -> red.
      */
-    public static void drawYCenteredString(PoseStack stack, Font fontRendererIn, String text, float x, float y, int color) {
-        drawString(stack, fontRendererIn, text, x, y - fontRendererIn.lineHeight / 2F, color);
+    public static void drawYCenteredString(GuiGraphics graphics, Font fontRendererIn, String text, float x, float y, int color) {
+        drawString(graphics, fontRendererIn, text, x, y - fontRendererIn.lineHeight / 2F, color);
     }
 
     /**
@@ -429,8 +430,8 @@ public class DrawHelper {
      * @param y     center y-coordinate
      * @param color HTML color. Example: 0xFF0000 -> red.
      */
-    public static void drawYCenteredStringWithShadow(PoseStack stack, Font fontRendererIn, String text, float x, float y, int color) {
-        drawStringWithShadow(stack, fontRendererIn, text, x, y - fontRendererIn.lineHeight / 2F, color);
+    public static void drawYCenteredStringWithShadow(GuiGraphics graphics, Font fontRendererIn, String text, float x, float y, int color) {
+        drawStringWithShadow(graphics, fontRendererIn, text, x, y - fontRendererIn.lineHeight / 2F, color);
     }
 
     /**
@@ -441,8 +442,8 @@ public class DrawHelper {
      * @param y     center y-coordinate
      * @param color HTML color. Example: 0xFF0000 -> red.
      */
-    public static void drawXYCenteredString(PoseStack stack, Font fontRendererIn, String text, float x, float y, int color) {
-        drawString(stack, fontRendererIn, text, x - fontRendererIn.width(text) / 2F, y - fontRendererIn.lineHeight / 2F, color);
+    public static void drawXYCenteredString(GuiGraphics graphics, Font fontRendererIn, String text, float x, float y, int color) {
+        drawString(graphics, fontRendererIn, text, x - fontRendererIn.width(text) / 2F, y - fontRendererIn.lineHeight / 2F, color);
     }
 
     /**
@@ -453,8 +454,8 @@ public class DrawHelper {
      * @param y     center y-coordinate
      * @param color HTML color. Example: 0xFF0000 -> red.
      */
-    public static void drawXYCenteredStringWithShadow(PoseStack stack, Font fontRendererIn, String text, float x, float y, int color) {
-        drawStringWithShadow(stack, fontRendererIn, text, x - fontRendererIn.width(text) / 2F, y - fontRendererIn.lineHeight / 2F, color);
+    public static void drawXYCenteredStringWithShadow(GuiGraphics graphics, Font fontRendererIn, String text, float x, float y, int color) {
+        drawStringWithShadow(graphics, fontRendererIn, text, x - fontRendererIn.width(text) / 2F, y - fontRendererIn.lineHeight / 2F, color);
     }
 
     /**

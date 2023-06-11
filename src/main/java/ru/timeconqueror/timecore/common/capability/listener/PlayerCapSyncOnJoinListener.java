@@ -25,7 +25,7 @@ public class PlayerCapSyncOnJoinListener {
 
     @SubscribeEvent
     public void onPlayerRespawn(PlayerEvent.PlayerRespawnEvent e) {
-        if (!e.getEntity().level.isClientSide()) {
+        if (!e.getEntity().level().isClientSide()) {
             onUpdate.accept(e.getEntity());
         }
     }

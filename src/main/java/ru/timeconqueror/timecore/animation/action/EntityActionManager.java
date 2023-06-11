@@ -16,7 +16,7 @@ public class EntityActionManager<T extends Entity> extends ActionManagerImpl<T> 
 
     public void onTick() {
         T entity = getBoundObject();
-        if (entity.level.isClientSide()) {
+        if (entity.level().isClientSide()) {
             BaseAnimationManager animationManager = getAnimationManager();
 
             PredefinedAnimation predefinedWalkingAnim = predefinedAnimations.getWalkingAnimation();
@@ -30,7 +30,7 @@ public class EntityActionManager<T extends Entity> extends ActionManagerImpl<T> 
 
             if (posChanged) {
                 // if there is no walking anim or the idle and walking anim's layers aren't the same
-                // we removes the idle animation
+                // we remove the idle animation
                 if (predefinedIdleAnim != null && (predefinedWalkingAnim == null || !PredefinedAnimations.areLayersEqual(predefinedIdleAnim, predefinedWalkingAnim))) {
                     animationManager.removeAnimation(predefinedIdleAnim.getLayerName());
                 }
