@@ -205,6 +205,7 @@ processResources {
     }
 }
 
+
 def inProjectMaven = "${project.projectDir.absolutePath.replace("\\", "/")}/maven"
 
 publishing {
@@ -213,6 +214,20 @@ publishing {
             artifactId archivesBaseName
             artifact jar
             artifact sourcesJar
+
+            pom.withXml {
+                project.configurations.named('implementation') {
+                    for (final def dep in dependencies) {
+                        if (dep.name == 'kotlinforforge') {
+                            def dependenciesNode = asNode().appendNode('dependencies')
+                            def dependencyNode = dependenciesNode.appendNode('dependency')
+                            dependencyNode.appendNode('groupId', dep.group)
+                            dependencyNode.appendNode('artifactId', dep.name)
+                            dependencyNode.appendNode('version', dep.version)
+                        }
+                    }
+                }
+            }
         }
     }
     repositories {
