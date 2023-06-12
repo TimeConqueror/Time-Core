@@ -5,7 +5,7 @@ apply from: 'gradle/scripts/configs.gradle'
 ext.versionGetter = new Supplier<String>() {
     @Override
     String get() {
-        def version = "${buildProps.mc_version}-${buildProps.timecore.release_version}"
+        def version = "${buildProps.timecore.release_version}"
 
         if (!buildProps.isRelease.toBoolean()) {
             version += ".build"
