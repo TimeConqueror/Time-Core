@@ -55,6 +55,6 @@ side = "BOTH"
 [[dependencies.timecore]]
 modId = "kotlinforforge"
 mandatory = true
-versionRange = "${kff_version_range}"
+versionRange = "[3.12.0,)"
 ordering = "NONE"
 side = "BOTH"
