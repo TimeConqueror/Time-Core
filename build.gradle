@@ -21,6 +21,7 @@ plugins {
     id 'org.jetbrains.kotlin.jvm' version '1.8.22'
     // OPTIONAL Kotlin Serialization plugin
     id 'org.jetbrains.kotlin.plugin.serialization' version '1.8.22'
+    id "io.freefair.lombok" version "8.0.1"
 }
 
 apply plugin: 'org.spongepowered.mixin'
@@ -159,6 +160,9 @@ dependencies {
     if (System.getProperty("idea.sync.active") != "true") {
         annotationProcessor("org.spongepowered:mixin:0.8.5:processor")
     }
+
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.7.1'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
 jar {
@@ -263,3 +267,7 @@ tasks.withType(JavaCompile).configureEach {
 }
 
 publish.finalizedBy(printVersion)
+
+test {
+    useJUnitPlatform()
+}
