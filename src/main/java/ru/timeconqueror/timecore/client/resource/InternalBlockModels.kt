@@ -16,9 +16,9 @@ object InternalBlockModels {
     ) = BlockModel(json {
         "parent" set "block/orientable"
         "textures" {
-            "top" set topBottomTexture.toString()
-            "front" set frontTexture.toString()
-            "side" set sideTexture.toString()
+            "top" set topBottomTexture
+            "front" set frontTexture
+            "side" set sideTexture
         }
     })
 
@@ -28,7 +28,7 @@ object InternalBlockModels {
     fun cubeAll(texture: TextureLocation) = BlockModel(json {
         "parent" set "block/cube_all"
         "textures" {
-            "all" set texture.toString()
+            "all" set texture
         }
     })
 
@@ -42,9 +42,9 @@ object InternalBlockModels {
     ) = BlockModel(json {
         "parent" set "block/cube_bottom_top"
         "textures" {
-            "top" set textureTop.toString()
-            "side" set textureSide.toString()
-            "bottom" set textureBottom.toString()
+            "top" set textureTop
+            "side" set textureSide
+            "bottom" set textureBottom
         }
     })
 
@@ -54,8 +54,8 @@ object InternalBlockModels {
     fun cubeTop(textureTop: TextureLocation, textureSideAndBottom: TextureLocation) = BlockModel(json {
         "parent" set "block/cube_top"
         "textures" {
-            "top" set textureTop.toString()
-            "side" set textureSideAndBottom.toString()
+            "top" set textureTop
+            "side" set textureSideAndBottom
         }
     })
 
@@ -65,8 +65,8 @@ object InternalBlockModels {
     fun cubeColumn(textureTopAndBottom: TextureLocation, textureSide: TextureLocation) = BlockModel(json {
         "parent" set "block/cube_column"
         "textures" {
-            "end" set textureTopAndBottom.toString()
-            "side" set textureSide.toString()
+            "end" set textureTopAndBottom
+            "side" set textureSide
         }
     })
 
@@ -76,7 +76,7 @@ object InternalBlockModels {
     fun cross(textureCross: TextureLocation) = BlockModel(json {
         "parent" set "block/cross"
         "textures" {
-            "cross" set textureCross.toString()
+            "cross" set textureCross
         }
     })
 
@@ -102,9 +102,16 @@ object InternalBlockModels {
         BlockModel(json {
             "parent" set parent
             "textures" {
-                "bottom" set bottom.toString()
-                "top" set top.toString()
-                "side" set side.toString()
+                "bottom" set bottom
+                "top" set top
+                "side" set side
+            }
+        })
+
+    fun particlesOnly(particleTexture: TextureLocation) =
+        BlockModel(json {
+            "textures" {
+                "particle" set particleTexture
             }
         })
 

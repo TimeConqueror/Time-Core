@@ -1,5 +1,6 @@
 package ru.timeconqueror.timecore.api.registry;
 
+import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.BlockItem;
@@ -170,8 +171,8 @@ public class BlockRegister extends VanillaRegister<Block> {
          * Sets render layer for this block.
          */
         public BlockRegisterChain<B> renderLayer(Supplier<RenderTypeWrapper> renderTypeSup) {
-            //FIXME port
-            //  runOnClientSetup(() -> ItemBlockRenderTypes.setRenderLayer(asRegistryObject().get(), renderTypeSup.get().renderType()));
+            //noinspection deprecation
+            runOnClientSetup(() -> ItemBlockRenderTypes.setRenderLayer(promise.get(), renderTypeSup.get().renderType()));
             return this;
         }
 

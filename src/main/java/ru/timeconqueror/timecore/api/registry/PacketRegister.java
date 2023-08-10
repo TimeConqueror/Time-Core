@@ -1,14 +1,18 @@
 package ru.timeconqueror.timecore.api.registry;
 
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent;
+import net.minecraftforge.fml.unsafe.UnsafeHacks;
 import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.NetworkEvent;
 import net.minecraftforge.network.NetworkRegistry;
 import net.minecraftforge.network.simple.SimpleChannel;
+import org.jetbrains.annotations.NotNull;
 import ru.timeconqueror.timecore.api.TimeCoreAPI;
+import ru.timeconqueror.timecore.api.common.packet.IPacket;
 import ru.timeconqueror.timecore.api.common.packet.ITimePacketHandler;
 import ru.timeconqueror.timecore.api.registry.base.RunnableStoringRegister;
 import ru.timeconqueror.timecore.api.registry.util.AutoRegistrable;
@@ -152,6 +156,16 @@ public class PacketRegister extends RunnableStoringRegister {
                 .add());
     }
 
+    /**
+     * Register method for {@link IPacket}
+     * Such packets do not require extra handler class, since all logic is done inside {@link IPacket} class itself.
+     * <br>
+     * Note: Deserialization is done without calling packet constructor.
+     */
+    public void regPacket(SimpleChannel channel, Class<? extends IPacket> packetClass) {
+        regPacket(channel, (Class<IPacket>) packetClass, new SimplePacketHandler(packetClass), null);
+    }
+
     @Override
     public void regToBus(IEventBus modEventBus) {
         super.regToBus(modEventBus);
@@ -175,6 +189,32 @@ public class PacketRegister extends RunnableStoringRegister {
         }
     }
 
+    private static class SimplePacketHandler implements ITimePacketHandler<IPacket> {
+        private final Class<? extends IPacket> packetClass;
+
+        public SimplePacketHandler(Class<? extends IPacket> packetClass) {
+            this.packetClass = packetClass;
+        }
+
+        @Override
+        public void encode(IPacket packet, FriendlyByteBuf buffer) throws IOException {
+            packet.write(buffer);
+        }
+
+        @NotNull
+        @Override
+        public IPacket decode(FriendlyByteBuf buffer) throws IOException {
+            IPacket packet = UnsafeHacks.newInstance(packetClass);
+            packet.read(buffer);
+            return packet;
+        }
+
+        @Override
+        public void handle(IPacket packet, NetworkEvent.Context ctx) {
+            packet.handle(ctx);
+        }
+    }
+
     public class PacketRegisterChain {
         private final SimpleChannel channel;
 
@@ -187,6 +227,14 @@ public class PacketRegister extends RunnableStoringRegister {
          */
         public <T> PacketRegisterChain regPacket(Class<T> packetClass, ITimePacketHandler<T> packetHandler, NetworkDirection direction) {
             PacketRegister.this.regPacket(channel, packetClass, packetHandler, direction);
+            return this;
+        }
+
+        /**
+         * @see PacketRegister#regPacket(SimpleChannel, Class)
+         */
+        public <T extends IPacket> PacketRegisterChain regPacket(Class<T> packetClass) {
+            PacketRegister.this.regPacket(channel, packetClass);
             return this;
         }
 

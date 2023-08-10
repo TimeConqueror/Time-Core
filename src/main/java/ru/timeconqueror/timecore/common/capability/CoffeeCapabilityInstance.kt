@@ -48,7 +48,7 @@ abstract class CoffeeCapabilityInstance<T : ICapabilityProvider> : PropertyConta
         sendData(level, owner) { true }
     }
 
-    abstract fun sendChangesToClients(channel: SimpleChannel, data: Any)
+    abstract fun sendChangesToClient(channel: SimpleChannel, data: Any);
 
     private fun sendData(level: Level, owner: T, predicate: Predicate<CoffeeProperty<*>>) {
         val clientSide = level.isClientSide()
@@ -59,7 +59,7 @@ abstract class CoffeeCapabilityInstance<T : ICapabilityProvider> : PropertyConta
             if (clientSide) {
                 InternalPacketManager.INSTANCE.sendToServer(message)
             } else {
-                sendChangesToClients(InternalPacketManager.INSTANCE, message)
+                sendChangesToClient(InternalPacketManager.INSTANCE, message)
             }
         }
     }

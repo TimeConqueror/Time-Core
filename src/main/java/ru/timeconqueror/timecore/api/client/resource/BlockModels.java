@@ -80,6 +80,10 @@ public class BlockModels {
         return InternalBlockModels.INSTANCE.stairsOuter(bottom, top, side);
     }
 
+    public static BlockModel particlesOnly(TextureLocation particleTexture) {
+        return InternalBlockModels.INSTANCE.particlesOnly(particleTexture);
+    }
+
     public static BlockModel empty() {
         return InternalBlockModels.INSTANCE.empty();
     }

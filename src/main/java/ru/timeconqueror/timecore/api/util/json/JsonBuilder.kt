@@ -2,6 +2,7 @@ package ru.timeconqueror.timecore.api.util.json
 
 import net.minecraft.resources.ResourceLocation
 import ru.timeconqueror.timecore.api.client.resource.location.BlockModelLocation
+import ru.timeconqueror.timecore.api.client.resource.location.TextureLocation
 
 /*
 * Code from CoffeeCore. Credits to Socolio and DreenDex
@@ -50,6 +51,10 @@ class JSONObject(builder: StringBuilder) : JsonElement(builder) {
     }
 
     infix fun String.set(value: BlockModelLocation) {
+        set(value.toString())
+    }
+
+    infix fun String.set(value: TextureLocation) {
         set(value.toString())
     }
 
