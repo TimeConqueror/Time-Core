@@ -1,6 +1,7 @@
 package ru.timeconqueror.timecore.animation.calculation;
 
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.VisibleForTesting;
 import org.joml.Vector3f;
 import ru.timeconqueror.timecore.animation.component.CatmullRomKeyFrame;
 import ru.timeconqueror.timecore.animation.component.IKeyFrame;
@@ -23,7 +24,8 @@ public class KeyFrameInterpolator {
     private int prevIndex = -1;
     private int nextIndex = -1;
 
-    private KeyFrameInterpolator(int animationLength, List<IKeyFrame> frames, int existingTime) {
+    @VisibleForTesting
+    KeyFrameInterpolator(int animationLength, List<IKeyFrame> frames, int existingTime) {
         this.animationLength = animationLength;
         this.frames = frames;
         this.existingTime = existingTime;
@@ -55,7 +57,7 @@ public class KeyFrameInterpolator {
     }
 
     private Vector3f findInterpolationVec() {
-        findKeyFrames(frames, existingTime);
+        findKeyFramesBinSearch();
 
         // at this point both after and before frames are not null!
         // because findIKeyFrames sets both of them
@@ -95,6 +97,45 @@ public class KeyFrameInterpolator {
                 nextIndex = i + 1;
                 next = frames.get(nextIndex);
                 break;
+            }
+        }
+    }
+
+    @VisibleForTesting
+    void findKeyFramesBinSearch() {
+        if (frames.isEmpty()) return;
+
+        int low = 0;
+        int high = frames.size() - 1;
+
+        IKeyFrame lastFrame = frames.get(high);
+        if (lastFrame.getTime() < existingTime) {
+            prev = lastFrame;
+            prevIndex = high;
+            return;
+        }
+
+        while (low <= high) {
+            int mid = low + (high - low) / 2;
+            IKeyFrame midFrame = frames.get(mid);
+
+            if (midFrame.getTime() < existingTime) {
+                low = mid + 1;
+            } else {
+                IKeyFrame prevFrame = null;
+                if (mid != 0) {
+                    prevFrame = frames.get(mid - 1);
+                }
+
+                if (mid == 0 || prevFrame.getTime() <= existingTime) {
+                    prev = prevFrame;
+                    prevIndex = mid - 1;
+                    next = midFrame;
+                    nextIndex = mid;
+                    break;
+                }
+
+                high = mid - 1;
             }
         }
     }
