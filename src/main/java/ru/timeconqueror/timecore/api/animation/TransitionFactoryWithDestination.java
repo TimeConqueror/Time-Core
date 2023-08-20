@@ -1,17 +1,18 @@
 package ru.timeconqueror.timecore.api.animation;
 
+import gg.moonflower.molangcompiler.api.MolangEnvironment;
 import org.jetbrains.annotations.NotNull;
-import ru.timeconqueror.timecore.animation.component.BoneOption;
+import ru.timeconqueror.timecore.animation.component.AnimationBone;
 import ru.timeconqueror.timecore.animation.component.IKeyFrame;
 import ru.timeconqueror.timecore.animation.watcher.TimelineSnapshot;
 import ru.timeconqueror.timecore.client.render.model.TimeModelPart;
 
 public abstract class TransitionFactoryWithDestination extends TransitionFactory {
-    public TransitionFactoryWithDestination(Animation source) {
-        super(source);
+    public TransitionFactoryWithDestination(MolangEnvironment env, Animation source) {
+        super(env, source);
     }
 
-    public abstract Iterable<BoneOption> getDestinationBones();
+    public abstract Iterable<AnimationBone> getDestinationBones();
 
     /**
      * Returns destination keyframe of provided type for transition animation.

@@ -1,5 +1,6 @@
 package ru.timeconqueror.timecore.animation;
 
+import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ru.timeconqueror.timecore.TimeCore;
@@ -10,6 +11,7 @@ import ru.timeconqueror.timecore.api.animation.AnimationConstants;
 import ru.timeconqueror.timecore.api.animation.AnimationManager;
 import ru.timeconqueror.timecore.api.animation.builders.LayerDefinition;
 import ru.timeconqueror.timecore.api.client.render.model.ITimeModel;
+import ru.timeconqueror.timecore.molang.MolangSharedObjects;
 
 import javax.annotation.OverridingMethodsMustInvokeSuper;
 import java.util.LinkedHashMap;
@@ -18,7 +20,13 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 public abstract class BaseAnimationManager implements AnimationManager {
+    @Getter
+    private final MolangSharedObjects molangSharedObjects;
     private Map<String, Layer> layerMap;
+
+    public BaseAnimationManager(MolangSharedObjects molangSharedObjects) {
+        this.molangSharedObjects = molangSharedObjects;
+    }
 
     @Override
     public boolean containsLayer(String name) {
@@ -86,8 +94,7 @@ public abstract class BaseAnimationManager implements AnimationManager {
         for (Layer layer : layerMap.values()) {
             layer.update(this, model, currentTime);
 
-            AnimationWatcher watcher = layer.getAnimationWatcher();
-
+            var watcher = layer.getAnimationWatcher();
             if (watcher != null) {
                 applyAnimation(model, layer, watcher, currentTime);
             }

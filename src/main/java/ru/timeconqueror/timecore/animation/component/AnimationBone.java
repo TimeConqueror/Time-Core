@@ -1,5 +1,6 @@
 package ru.timeconqueror.timecore.animation.component;
 
+import gg.moonflower.molangcompiler.api.MolangEnvironment;
 import org.joml.Vector3f;
 import ru.timeconqueror.timecore.animation.calculation.KeyFrameInterpolator;
 import ru.timeconqueror.timecore.animation.util.AnimationUtils;
@@ -10,7 +11,7 @@ import ru.timeconqueror.timecore.client.render.model.TimeModelPart;
 
 import java.util.List;
 
-public class BoneOption {
+public class AnimationBone {
     private final String boneName;
     /**
      * Immutable rotation keyframe list
@@ -25,25 +26,25 @@ public class BoneOption {
      */
     private final List<IKeyFrame> scales;
 
-    public BoneOption(String boneName, List<IKeyFrame> rotations, List<IKeyFrame> translations, List<IKeyFrame> scales) {
+    public AnimationBone(String boneName, List<IKeyFrame> rotations, List<IKeyFrame> translations, List<IKeyFrame> scales) {
         this.boneName = boneName;
         this.rotations = rotations;
         this.translations = translations;
         this.scales = scales;
     }
 
-    public void apply(Animation animation, ILayer layer, TimeModelPart piece, int existingTime) {
-        Vector3f rotateVec = KeyFrameInterpolator.findInterpolationVec(animation, rotations, existingTime);
+    public void apply(Animation animation, ILayer layer, TimeModelPart piece, MolangEnvironment env, int existingTime) {
+        Vector3f rotateVec = KeyFrameInterpolator.findInterpolationVec(animation, env, rotations, existingTime);
         if (rotateVec != null) {
             AnimationUtils.applyRotation(piece, layer, rotateVec);
         }
 
-        Vector3f posVec = KeyFrameInterpolator.findInterpolationVec(animation, translations, existingTime);
+        Vector3f posVec = KeyFrameInterpolator.findInterpolationVec(animation, env, translations, existingTime);
         if (posVec != null) {
             AnimationUtils.applyOffset(piece, layer, posVec);
         }
 
-        Vector3f scaleVec = KeyFrameInterpolator.findInterpolationVec(animation, scales, existingTime);
+        Vector3f scaleVec = KeyFrameInterpolator.findInterpolationVec(animation, env, scales, existingTime);
         if (scaleVec != null) {
             AnimationUtils.applyScale(piece, layer, scaleVec);
         }

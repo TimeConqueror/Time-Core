@@ -3,6 +3,7 @@ package ru.timeconqueror.timecore.api.animation;
 import org.jetbrains.annotations.NotNull;
 import ru.timeconqueror.timecore.animation.AnimationStarter;
 import ru.timeconqueror.timecore.api.client.render.model.ITimeModel;
+import ru.timeconqueror.timecore.molang.MolangSharedObjects;
 
 import java.util.Set;
 
@@ -54,14 +55,16 @@ public interface AnimationManager {
 	 *
 	 * @param layerName location of the layer, where you need to remove animation.
 	 */
-	void removeAnimation(String layerName);
+    void removeAnimation(String layerName);
 
-	/**
-	 * Removes animation from the layer with provided location.
-	 *
-	 * @param layerName      location of the layer, where you need to remove animation.
-	 * @param transitionTime time of transition to the idle state.
-	 *                       If this value is bigger than 0, then transition will be created, which will smoothly end current animation.
-	 */
-	void removeAnimation(String layerName, int transitionTime);
+    /**
+     * Removes animation from the layer with provided location.
+     *
+     * @param layerName      location of the layer, where you need to remove animation.
+     * @param transitionTime time of transition to the idle state.
+     *                       If this value is bigger than 0, then transition will be created, which will smoothly end current animation.
+     */
+    void removeAnimation(String layerName, int transitionTime);
+
+    MolangSharedObjects getMolangSharedObjects();
 }

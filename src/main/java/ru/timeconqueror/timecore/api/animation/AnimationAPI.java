@@ -4,10 +4,12 @@ import net.minecraft.resources.ResourceLocation;
 import ru.timeconqueror.timecore.animation.AnimationRegistry;
 import ru.timeconqueror.timecore.animation.AnimationStarter;
 import ru.timeconqueror.timecore.animation.loading.AnimationLoader;
+import ru.timeconqueror.timecore.api.molang.Molang;
 
 import java.util.Map;
 //ToDO make allbuilders with Entity generic type
 public class AnimationAPI {
+
     /**
      * Only for animation files with the single animation!!!
      * <p>
@@ -49,14 +51,18 @@ public class AnimationAPI {
 	}
 
 	public static AnimationStarter createStarter(Animation animation) {
-		return new AnimationStarter(animation);
-	}
+        return new AnimationStarter(animation);
+    }
 
-	public static void startAnimation(AnimationStarter animationStarter, AnimationManager animationManager, String layerName) {
-		animationStarter.startAt(animationManager, layerName);
-	}
+    public static void startAnimation(AnimationStarter animationStarter, AnimationManager animationManager, String layerName) {
+        animationStarter.startAt(animationManager, layerName);
+    }
 
-	public static void removeAnimation(AnimationManager animationManager, String layerName) {
-		animationManager.removeAnimation(layerName);
-	}
+    public static void removeAnimation(AnimationManager animationManager, String layerName) {
+        animationManager.removeAnimation(layerName);
+    }
+
+    public static void setMolangErrorResolving(Molang.OnErrorBehaviour behaviour) {
+        Molang.setErrorResolving(behaviour);
+    }
 }

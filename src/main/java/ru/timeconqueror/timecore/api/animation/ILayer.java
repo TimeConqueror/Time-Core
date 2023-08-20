@@ -1,5 +1,7 @@
 package ru.timeconqueror.timecore.api.animation;
 
+import gg.moonflower.molangcompiler.api.MolangEnvironment;
+
 public interface ILayer {
     float getWeight();
 
@@ -8,6 +10,8 @@ public interface ILayer {
     BlendType getBlendType();
 
     void setBlendType(BlendType type);
+
+    MolangEnvironment getEnvironment();
 
     /**
      * Returns layer name.

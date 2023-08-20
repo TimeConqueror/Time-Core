@@ -21,7 +21,9 @@ plugins {
     id 'org.jetbrains.kotlin.jvm' version '1.8.22'
     // OPTIONAL Kotlin Serialization plugin
     id 'org.jetbrains.kotlin.plugin.serialization' version '1.8.22'
+    id 'org.jetbrains.kotlin.plugin.lombok' version '1.8.22'
     id "io.freefair.lombok" version "8.0.1"
+    id 'com.github.johnrengelman.shadow' version "7.1.2"
 }
 
 apply plugin: 'org.spongepowered.mixin'
@@ -67,6 +69,11 @@ repositories {
         name = 'Kotlin for Forge'
         url = 'https://thedarkcolour.github.io/KotlinForForge/'
     }
+}
+
+configurations {
+    shade
+    implementation.extendsFrom(shade)
 }
 
 minecraft {
@@ -130,6 +137,12 @@ minecraft {
                 }
             }
         }
+
+        configureEach {
+            lazyToken('minecraft_classpath') {
+                configurations.shade.copyRecursive().resolve().collect { it.absolutePath }.join(File.pathSeparator)
+            }
+        }
     }
 }
 
@@ -155,7 +168,7 @@ dependencies {
     }
 
     implementation 'thedarkcolour:kotlinforforge:4.3.0'
-//    groovy.lang.Closure withoutAnnotations = { exclude group: 'org.jetbrains', module: 'annotations' }
+    shade 'gg.moonflower:molang-compiler:3.0.4-customized.3'
 
     if (System.getProperty("idea.sync.active") != "true") {
         annotationProcessor("org.spongepowered:mixin:0.8.5:processor")
@@ -190,6 +203,17 @@ task sourcesJar(type: Jar) {
     it.archiveClassifier = 'sources'
 }
 
+shadowJar {
+    configurations = [project.configurations.shade]
+    relocate 'gg.moonflower.molangcompiler', 'tcrepack.gg.moonflower.molangcompiler'
+    finalizedBy('reobfShadowJar')
+    archiveClassifier.set("")
+}
+
+reobf {
+    shadowJar {}
+}
+
 def resourceTargets = ['META-INF/mods.toml', 'pack.mcmeta']
 def replaceProperties = [
         minecraft_version   : minecraft_version, minecraft_version_range: minecraft_version_range,
@@ -218,14 +242,14 @@ publishing {
     publications {
         maven(MavenPublication) { p ->
             artifactId archivesBaseName
-            artifact jar
+            artifact shadowJar
             artifact sourcesJar
 
             pom.withXml {
                 project.configurations.named('implementation') {
+                    def dependenciesNode = asNode().appendNode('dependencies')
                     for (final def dep in dependencies) {
-                        if (dep.name == 'kotlinforforge') {
-                            def dependenciesNode = asNode().appendNode('dependencies')
+                        if (dep.name == 'kotlinforforge' || dep.name == 'molang-compiler') {
                             def dependencyNode = dependenciesNode.appendNode('dependency')
                             dependencyNode.appendNode('groupId', dep.group)
                             dependencyNode.appendNode('artifactId', dep.name)

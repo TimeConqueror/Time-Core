@@ -1,5 +1,8 @@
 package ru.timeconqueror.timecore.animation;
 
+import gg.moonflower.molangcompiler.api.MolangEnvironment;
+import gg.moonflower.molangcompiler.api.MolangRuntime;
+import lombok.Getter;
 import org.jetbrains.annotations.Nullable;
 import ru.timeconqueror.timecore.animation.component.LoopMode;
 import ru.timeconqueror.timecore.animation.watcher.AnimationWatcher;
@@ -11,6 +14,7 @@ import ru.timeconqueror.timecore.api.animation.IAnimationWatcherInfo;
 import ru.timeconqueror.timecore.api.animation.ILayer;
 import ru.timeconqueror.timecore.api.animation.builders.LayerDefinition;
 import ru.timeconqueror.timecore.api.client.render.model.ITimeModel;
+import ru.timeconqueror.timecore.api.molang.MolangFillers;
 
 public class Layer implements ILayer {
     private final BaseAnimationManager manager;
@@ -21,11 +25,25 @@ public class Layer implements ILayer {
     private BlendType blendType;
     private float weight;
 
+    @Getter
+    private final MolangEnvironment environment;
+
     public Layer(BaseAnimationManager manager, LayerDefinition layerDefinition) {
         this.manager = manager;
         this.name = layerDefinition.name();
         this.blendType = layerDefinition.blendType();
         this.weight = layerDefinition.weight();
+
+        environment = createMolangEnvironment();
+    }
+
+    private MolangEnvironment createMolangEnvironment() {
+        MolangRuntime.Builder builder = new MolangRuntime.Builder();
+        manager.getMolangSharedObjects().forEach(builder::loadLibrary);
+
+        MolangFillers.addAnimationBasedQueries(this, builder.getQuery());
+
+        return builder.create();
     }
 
     @Override
@@ -93,7 +111,7 @@ public class Layer implements ILayer {
                 watcher.unfreeze(FreezableTime.FreezeCause.BY_ESC);
 
                 if (watcher.requiresInit()) {
-                    watcher.init(model);
+                    watcher.init(this, model);
                 }
 
                 if (watcher.isAnimationEnded(currentTime)) {
@@ -112,12 +130,20 @@ public class Layer implements ILayer {
                     watcher = watcher.next();
 
                     if (watcher != null && watcher.requiresInit()) {
-                        watcher.init(model);
+                        watcher.init(this, model);
                     }
 
                     setAnimationWatcher(watcher);//here we update current watcher
                 }
             }
+        }
+    }
+
+    public void apply(ITimeModel model, long currentTime) {
+        AnimationWatcher watcher = getAnimationWatcher();
+        if (watcher != null) {
+            Animation animation = watcher.getAnimation();
+            animation.apply(model, this, environment, watcher.getAnimationTime(currentTime));
         }
     }
 

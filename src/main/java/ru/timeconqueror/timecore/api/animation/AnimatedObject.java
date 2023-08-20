@@ -45,4 +45,8 @@ public interface AnimatedObject<T extends AnimatedObject<T>> {
     default AnimationManager getAnimationManager() {
         return getSystem().getAnimationManager();
     }
+
+    default void populateMolangObjects(MolangObjectFiller molangObjectFiller) {
+
+    }
 }

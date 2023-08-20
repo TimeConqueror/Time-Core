@@ -1,5 +1,6 @@
 package ru.timeconqueror.timecore.animation.component;
 
+import gg.moonflower.molangcompiler.api.MolangEnvironment;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -16,7 +17,6 @@ import ru.timeconqueror.timecore.client.render.model.TimeModelPart;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.function.Consumer;
 
 public class Transition extends Animation {
@@ -24,7 +24,7 @@ public class Transition extends Animation {
     private final String name;
     private final Animation destAnimation;
     private final ResourceLocation id;
-    private List<BoneOption> options = new ArrayList<>();
+    private List<AnimationBone> options = new ArrayList<>();
 
     private Transition(int transitionLength, String name, Animation destAnimation) {
         this.transitionLength = transitionLength;
@@ -33,11 +33,11 @@ public class Transition extends Animation {
         this.destAnimation = destAnimation;
     }
 
-    private static Transition createFromIdleState(AnimationStarter.AnimationData destinationData, ITimeModel model, int transitionTime) {
+    private static Transition createFromIdleState(AnimationStarter.AnimationData destinationData, MolangEnvironment env, ITimeModel model, int transitionTime) {
         Animation dest = destinationData.getAnimation();
         Transition transition = new Transition(transitionTime, "idle_to_" + dest.getName(), dest);
 
-        TransitionFactoryWithDestination destFactory = dest.getTransitionFactory().withRequiredDestination();
+        TransitionFactoryWithDestination destFactory = dest.createTransitionFactory(env).withRequiredDestination();
         TimelineSnapshot destinationStartTime = TimelineSnapshot.createForStartTime(destinationData);
 
         dest.forEachBone(name -> {
@@ -46,7 +46,7 @@ public class Transition extends Animation {
                 Pair<IKeyFrame, IKeyFrame> rotations = TransitionFactory.makeTransitionPairFromIdle(part, destinationStartTime, name, Channel.ROTATION, destFactory, transitionTime);
                 Pair<IKeyFrame, IKeyFrame> translations = TransitionFactory.makeTransitionPairFromIdle(part, destinationStartTime,name, Channel.TRANSLATION, destFactory, transitionTime);
                 Pair<IKeyFrame, IKeyFrame> scales = TransitionFactory.makeTransitionPairFromIdle(part, destinationStartTime, name, Channel.SCALE, destFactory, transitionTime);
-                transition.options.add(new BoneOption(name, rotations, translations, scales));
+                transition.options.add(new AnimationBone(name, env, rotations, translations, scales));
             }
         });
 
@@ -57,12 +57,12 @@ public class Transition extends Animation {
         return new Transition(transitionTime, source.getName() + "_to_" + dest.getName(), dest);
     }
 
-    public static Animation create(Animation source, AnimationStarter.AnimationData dest, ITimeModel model, int existingTime, int transitionTime) {
-        TransitionFactory sourceTFactory = source.getTransitionFactory();
+    public static Animation create(Animation source, AnimationStarter.AnimationData dest, MolangEnvironment env, ITimeModel model, int existingTime, int transitionTime) {
+        TransitionFactory sourceTFactory = source.createTransitionFactory(env);
 
-        List<BoneOption> options = sourceTFactory.createTransitionBones(dest, model, existingTime, transitionTime);
+        List<AnimationBone> options = sourceTFactory.createTransitionBones(dest, model, existingTime, transitionTime);
         if (options == null) {
-            return createFromIdleState(dest, model, transitionTime);
+            return createFromIdleState(dest, env, model, transitionTime);
         }
 
         Animation destAnimation = dest.getAnimation();
@@ -73,14 +73,14 @@ public class Transition extends Animation {
     }
 
     @Override
-    public void apply(ITimeModel model, ILayer layer, int existingTime) {
+    public void apply(ITimeModel model, ILayer layer, MolangEnvironment env, int existingTime) {
         if (options != null) {
             if (existingTime <= transitionLength) {
-                options.forEach(boneOption -> {
-                    TimeModelPart piece = model.tryGetPart(boneOption.name);
+                options.forEach(animationBone -> {
+                    TimeModelPart piece = model.tryGetPart(animationBone.name);
 
                     if (piece != null) {
-                        boneOption.apply(piece, layer, existingTime);
+                        animationBone.apply(piece, layer, existingTime);
                     }
                 });
             }
@@ -89,7 +89,7 @@ public class Transition extends Animation {
 
     @Override
     public void forEachBone(Consumer<String> action) {
-        options.forEach(transitionBoneOption -> action.accept(transitionBoneOption.name));
+        options.forEach(transitionAnimationBone -> action.accept(transitionAnimationBone.name));
     }
 
     @Override
@@ -98,8 +98,8 @@ public class Transition extends Animation {
     }
 
     @Override
-    public @NotNull TransitionFactory getTransitionFactory() {
-        return new InternalTransitionFactory(this);
+    public @NotNull TransitionFactory createTransitionFactory(MolangEnvironment env) {
+        return new InternalTransitionFactory(env, this);
     }
 
     @Override
@@ -133,43 +133,43 @@ public class Transition extends Animation {
 
     private static class InternalTransitionFactory extends TransitionFactory {
 
-        public InternalTransitionFactory(Transition source) {
-            super(source);
+        public InternalTransitionFactory(MolangEnvironment env, Transition source) {
+            super(env, source);
         }
 
-        private static IKeyFrame calcStartKeyFrame(@Nullable Pair<IKeyFrame, IKeyFrame> sourceFrames, Vector3f modelIdleVec, int existingTime) {
+        private IKeyFrame calcStartKeyFrame(@Nullable Pair<IKeyFrame, IKeyFrame> sourceFrames, Vector3f modelIdleVec, int existingTime) {
             if (sourceFrames != null) {
-                Vector3f vec = KeyFrameInterpolator.interpolateLinear(sourceFrames.left(), sourceFrames.right(), existingTime);
-                return new KeyFrame(0, vec);
+                Vector3f vec = KeyFrameInterpolator.interpolateLinear(this.getEnv(), sourceFrames.left(), sourceFrames.right(), existingTime);
+                return KeyFrame.createSimple(0, vec);
             }
 
-            return KeyFrame.createIdleKeyFrame(0, modelIdleVec);
+            return KeyFrame.createSimple(0, modelIdleVec);
         }
 
-        private static Pair<IKeyFrame, IKeyFrame> makeTransitionPair(TimeModelPart part, TimelineSnapshot destinationStartTime, BoneOption option, Channel channel, TransitionFactoryWithDestination destFactory, int existingTime, int transitionTime) {
+        private Pair<IKeyFrame, IKeyFrame> makeTransitionPair(TimeModelPart part, TimelineSnapshot destinationStartTime, AnimationBone option, Channel channel, TransitionFactoryWithDestination destFactory, int existingTime, int transitionTime) {
             IKeyFrame startKeyFrame = calcStartKeyFrame(option.getKeyFrames(channel), channel.getDefaultVector(part), existingTime);
             IKeyFrame endKeyFrame = destFactory.getDestKeyFrame(part, destinationStartTime, option.getName(), channel, transitionTime);
             return Pair.of(startKeyFrame, endKeyFrame);
         }
 
         @Override
-        public @Nullable List<BoneOption> createTransitionBones(AnimationStarter.AnimationData dest, ITimeModel model, int existingTime, int transitionTime) {
+        public @Nullable List<AnimationBone> createTransitionBones(AnimationStarter.AnimationData dest, ITimeModel model, int existingTime, int transitionTime) {
             Transition source = getSourceTyped();
             if (source.options == null || source.options.isEmpty()) {
                 return null;
             }
 
-            TransitionFactoryWithDestination destFactory = dest.getAnimation().getTransitionFactory().withRequiredDestination();
+            TransitionFactoryWithDestination destFactory = dest.getAnimation().createTransitionFactory(getEnv()).withRequiredDestination();
             TimelineSnapshot destinationStartTime = TimelineSnapshot.createForStartTime(dest);
 
-            List<BoneOption> transitionBones = new ArrayList<>();
+            List<AnimationBone> transitionBones = new ArrayList<>();
             source.options.forEach(bone -> {
                 TimeModelPart part = model.tryGetPart(bone.name);
                 if (part != null) {
                     Pair<IKeyFrame, IKeyFrame> rotations = makeTransitionPair(part, destinationStartTime, bone, Channel.ROTATION, destFactory, existingTime, transitionTime);
                     Pair<IKeyFrame, IKeyFrame> translations = makeTransitionPair(part, destinationStartTime, bone, Channel.TRANSLATION, destFactory, existingTime, transitionTime);
                     Pair<IKeyFrame, IKeyFrame> scales = makeTransitionPair(part, destinationStartTime, bone, Channel.SCALE, destFactory, existingTime, transitionTime);
-                    transitionBones.add(new BoneOption(bone.name, rotations, translations, scales));
+                    transitionBones.add(new AnimationBone(bone.name, getEnv(), rotations, translations, scales));
                 }
             });
 
@@ -177,28 +177,30 @@ public class Transition extends Animation {
         }
     }
 
-    public static class BoneOption {
+    public static class AnimationBone {
+        private final MolangEnvironment env;
         private final String name;
 
         private final Pair<IKeyFrame, IKeyFrame> rotations;
         private final Pair<IKeyFrame, IKeyFrame> positions;
         private final Pair<IKeyFrame, IKeyFrame> scales;
 
-        public BoneOption(String boneName, Pair<IKeyFrame, IKeyFrame> rotations, Pair<IKeyFrame, IKeyFrame> positions, Pair<IKeyFrame, IKeyFrame> scales) {
+        public AnimationBone(String boneName, MolangEnvironment env, Pair<IKeyFrame, IKeyFrame> rotations, Pair<IKeyFrame, IKeyFrame> positions, Pair<IKeyFrame, IKeyFrame> scales) {
             this.name = boneName;
+            this.env = env;
             this.rotations = rotations;
             this.positions = positions;
             this.scales = scales;
         }
 
         public void apply(TimeModelPart piece, ILayer layer, int existingTime) {
-            Vector3f interpolated = KeyFrameInterpolator.interpolateLinear(rotations.left(), rotations.right(), existingTime);
+            Vector3f interpolated = KeyFrameInterpolator.interpolateLinear(env, rotations.left(), rotations.right(), existingTime);
             AnimationUtils.applyRotation(piece, layer, interpolated);
 
-            interpolated = KeyFrameInterpolator.interpolateLinear(positions.left(), positions.right(), existingTime);
+            interpolated = KeyFrameInterpolator.interpolateLinear(env, positions.left(), positions.right(), existingTime);
             AnimationUtils.applyOffset(piece, layer, interpolated);
 
-            interpolated = KeyFrameInterpolator.interpolateLinear(scales.left(), scales.right(), existingTime);
+            interpolated = KeyFrameInterpolator.interpolateLinear(env, scales.left(), scales.right(), existingTime);
             AnimationUtils.applyScale(piece, layer, interpolated);
         }
 

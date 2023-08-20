@@ -4,6 +4,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import org.jetbrains.annotations.Nullable;
 import ru.timeconqueror.timecore.animation.AnimationRegistry;
 import ru.timeconqueror.timecore.animation.AnimationStarter;
+import ru.timeconqueror.timecore.animation.Layer;
 import ru.timeconqueror.timecore.animation.component.LoopMode;
 import ru.timeconqueror.timecore.animation.util.WatcherSerializer;
 import ru.timeconqueror.timecore.api.animation.Animation;
@@ -52,10 +53,10 @@ public class AnimationWatcher implements IAnimationWatcherInfo {
 		return !inited;
 	}
 
-	@OverridingMethodsMustInvokeSuper
-	public void init(ITimeModel model) {
-		inited = true;
-	}
+    @OverridingMethodsMustInvokeSuper
+    public void init(Layer layer, ITimeModel model) {
+        inited = true;
+    }
 
 	@Nullable
 	public AnimationWatcher next() {//TODO make check for NULL instead

@@ -1,6 +1,9 @@
 package ru.timeconqueror.timecore;
 
+import gg.moonflower.molangcompiler.api.MolangCompiler;
+import lombok.Getter;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
@@ -27,13 +30,16 @@ public final class TimeCore {
 
     private static final String MARKER_PROPERTY = "timecore.logging.markers";
 
+    @Getter
     private final CapabilityManager capabilityManager;
+    @Getter
+    private final MolangCompiler molangCompiler;
 
     public TimeCore() {
         INSTANCE = this;
-
         checkForMixinBootstrap();
 
+        molangCompiler = MolangCompiler.create(MolangCompiler.DEFAULT_FLAGS, ForgeMod.class.getClassLoader());
         capabilityManager = new CapabilityManager();
 
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
@@ -70,9 +76,5 @@ public final class TimeCore {
         } catch (NoClassDefFoundError e) {
             throw new IllegalStateException("TimeCore requires MixinBootstrap Mod to be loaded.");
         }
-    }
-
-    public CapabilityManager getCapabilityManager() {
-        return capabilityManager;
     }
 }

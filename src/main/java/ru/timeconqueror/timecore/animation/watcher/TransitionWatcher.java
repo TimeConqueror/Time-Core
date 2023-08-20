@@ -6,6 +6,7 @@ import org.jetbrains.annotations.Nullable;
 import ru.timeconqueror.timecore.TimeCore;
 import ru.timeconqueror.timecore.animation.AnimationRegistry;
 import ru.timeconqueror.timecore.animation.AnimationStarter;
+import ru.timeconqueror.timecore.animation.Layer;
 import ru.timeconqueror.timecore.animation.component.BasicAnimation;
 import ru.timeconqueror.timecore.animation.component.LoopMode;
 import ru.timeconqueror.timecore.animation.component.Transition;
@@ -50,12 +51,12 @@ public class TransitionWatcher extends AnimationWatcher {
     }
 
     @Override
-    public void init(ITimeModel model) {
-        super.init(model);
+    public void init(Layer layer, ITimeModel model) {
+        super.init(layer, model);
 
         if (model != null) {
             AnimationStarter.AnimationData notNullDest = destination != null ? destination : new AnimationStarter(Animation.NULL).getData();//TODO remove nulls
-            animation = Transition.create(source, notNullDest, model, sourceExistingTime, transitionTime);
+            animation = Transition.create(source, notNullDest, layer.getEnvironment(),/*FIXME*/ model, sourceExistingTime, transitionTime);
         } else {
             animation = Transition.createForServer(source, getDestination(), transitionTime);
         }

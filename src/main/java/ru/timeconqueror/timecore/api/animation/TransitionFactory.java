@@ -1,5 +1,7 @@
 package ru.timeconqueror.timecore.api.animation;
 
+import gg.moonflower.molangcompiler.api.MolangEnvironment;
+import lombok.Getter;
 import org.jetbrains.annotations.Nullable;
 import ru.timeconqueror.timecore.animation.AnimationStarter;
 import ru.timeconqueror.timecore.animation.component.IKeyFrame;
@@ -16,15 +18,28 @@ public abstract class TransitionFactory {
     /**
      * Animation, from which transition will start.
      */
+    @Getter
+    private final MolangEnvironment env;
     protected Animation source;
 
-    public TransitionFactory(Animation source) {
+    public TransitionFactory(MolangEnvironment env, Animation source) {
+        this.env = env;
         this.source = source;
     }
 
     @SuppressWarnings("unchecked")
     public <T> T getSourceTyped() {
         return ((T) source);
+    }
+
+    public static Pair<IKeyFrame, IKeyFrame> makeTransitionPairFromIdle(TimeModelPart part, TimelineSnapshot destinationStartTime, String partName, Channel channel, TransitionFactoryWithDestination destFactory, int transitionTime) {
+        IKeyFrame startKeyFrame = KeyFrame.createSimple(0, channel.getDefaultVector(part));
+        IKeyFrame endKeyFrame = destFactory.getDestKeyFrame(part, destinationStartTime, partName, channel, transitionTime);
+        return Pair.of(startKeyFrame, endKeyFrame);
+    }
+
+    public TransitionFactoryWithDestination withRequiredDestination() {
+        throw new UnsupportedOperationException(String.format("This should never be reached. TransitionFactory with source '%s' unable to be transition destination", source));
     }
 
     /**
@@ -40,15 +55,5 @@ public abstract class TransitionFactory {
      * @param transitionTime time of transition between source and destination animations.
      */
     @Nullable
-    public abstract List<Transition.BoneOption> createTransitionBones(AnimationStarter.AnimationData dest, ITimeModel model, int existingTime, int transitionTime);
-
-    public TransitionFactoryWithDestination withRequiredDestination() {
-        throw new UnsupportedOperationException(String.format("This should never be reached. TransitionFactory with source '%s' unable to be transition destination", source));
-    }
-
-    public static Pair<IKeyFrame, IKeyFrame> makeTransitionPairFromIdle(TimeModelPart part, TimelineSnapshot destinationStartTime, String partName, Channel channel, TransitionFactoryWithDestination destFactory, int transitionTime) {
-        IKeyFrame startKeyFrame = KeyFrame.createIdleKeyFrame(0, channel.getDefaultVector(part));
-        IKeyFrame endKeyFrame = destFactory.getDestKeyFrame(part, destinationStartTime, partName, channel, transitionTime);
-        return Pair.of(startKeyFrame, endKeyFrame);
-    }
+    public abstract List<Transition.AnimationBone> createTransitionBones(AnimationStarter.AnimationData dest, ITimeModel model, int existingTime, int transitionTime);
 }

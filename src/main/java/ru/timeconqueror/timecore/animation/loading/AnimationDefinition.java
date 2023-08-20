@@ -1,10 +1,11 @@
 package ru.timeconqueror.timecore.animation.loading;
 
 import com.google.gson.*;
+import lombok.AllArgsConstructor;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
+import ru.timeconqueror.timecore.animation.component.AnimationBone;
 import ru.timeconqueror.timecore.animation.component.BasicAnimation;
-import ru.timeconqueror.timecore.animation.component.BoneOption;
 import ru.timeconqueror.timecore.animation.component.LoopMode;
 import ru.timeconqueror.timecore.animation.util.Empty;
 import ru.timeconqueror.timecore.api.util.EnvironmentUtils;
@@ -16,26 +17,21 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class RawAnimation {
+@AllArgsConstructor
+public class AnimationDefinition {
     private final LoopMode loopMode;
     private final int animationLength;
-    private final List<BoneOption> options;
-
-    public RawAnimation(LoopMode loopMode, int animationLength, List<BoneOption> options) {
-        this.loopMode = loopMode;
-        this.animationLength = animationLength;
-        this.options = options;
-    }
+    private final List<AnimationBone> options;
 
     public BasicAnimation bake(ResourceLocation id, String name) {
-        Map<String, BoneOption> bones = options.stream().collect(Collectors.toMap(BoneOption::getName, boneOption -> boneOption));
+        Map<String, AnimationBone> bones = options.stream().collect(Collectors.toMap(AnimationBone::getName, animationBone -> animationBone));
         return new BasicAnimation(loopMode, id, name, animationLength, Collections.unmodifiableMap(bones));
     }
 
-    public static class Deserializer implements JsonDeserializer<RawAnimation> {
+    public static class Deserializer implements JsonDeserializer<AnimationDefinition> {
 
         @Override
-        public RawAnimation deserialize(JsonElement jsonIn, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+        public AnimationDefinition deserialize(JsonElement jsonIn, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
             JsonObject json = jsonIn.getAsJsonObject();
 
             LoopMode loopMode = LoopMode.DO_NOT_LOOP;
@@ -45,20 +41,20 @@ public class RawAnimation {
 
             int animationLength = (int) (GsonHelper.getAsFloat(json, "animation_length", 0) * 1000);
 
-            List<BoneOption> boneOptions = new ArrayList<>();
+            List<AnimationBone> animationBones = new ArrayList<>();
 
             if (EnvironmentUtils.isOnPhysicalClient() && json.has("bones")) {
                 for (Map.Entry<String, JsonElement> boneEntryJson : GsonHelper.getAsJsonObject(json, "bones").entrySet()) {
                     String boneName = boneEntryJson.getKey();
                     JsonObject boneJson = GsonHelper.convertToJsonObject(boneEntryJson.getValue(), boneName);
 
-                    RawBoneOption rawOption = context.deserialize(boneJson, RawBoneOption.class);
-                    BoneOption option = rawOption.bake(boneName);
-                    boneOptions.add(option);
+                    AnimationBoneDefinition rawOption = context.deserialize(boneJson, AnimationBoneDefinition.class);
+                    AnimationBone option = rawOption.bake(boneName);
+                    animationBones.add(option);
                 }
             }
 
-            return new RawAnimation(loopMode, animationLength, !boneOptions.isEmpty() ? boneOptions : Empty.list());
+            return new AnimationDefinition(loopMode, animationLength, !animationBones.isEmpty() ? animationBones : Empty.list());
         }
     }
 }

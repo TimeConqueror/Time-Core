@@ -7,12 +7,14 @@ import ru.timeconqueror.timecore.animation.action.ActionManagerImpl;
 import ru.timeconqueror.timecore.animation.watcher.AnimationWatcher;
 import ru.timeconqueror.timecore.api.animation.AnimatedObject;
 import ru.timeconqueror.timecore.api.client.render.model.ITimeModel;
+import ru.timeconqueror.timecore.molang.MolangSharedObjects;
 
 public class ServerAnimationManager<T extends AnimatedObject<T>> extends BaseAnimationManager {
     private ActionManagerImpl<T> actionManager;
     private final NetworkDispatcher<T> networkDispatcher;
 
-    public ServerAnimationManager(NetworkDispatcher<T> networkDispatcher) {
+    public ServerAnimationManager(MolangSharedObjects molangSharedObjects, NetworkDispatcher<T> networkDispatcher) {
+        super(molangSharedObjects);
         this.networkDispatcher = networkDispatcher;
     }
 

@@ -1,13 +1,14 @@
 package ru.timeconqueror.timecore.animation.component;
 
+import gg.moonflower.molangcompiler.api.MolangEnvironment;
 import org.joml.Vector3f;
 
 public class StepKeyFrame implements IKeyFrame {
     private final int time;
-    private final Vector3f pre;
-    private final Vector3f post;
+    private final Vector pre;
+    private final Vector post;
 
-    public StepKeyFrame(int time, Vector3f pre, Vector3f post) {
+    public StepKeyFrame(int time, Vector pre, Vector post) {
         this.time = time;
         this.pre = pre;
         this.post = post;
@@ -19,12 +20,7 @@ public class StepKeyFrame implements IKeyFrame {
     }
 
     @Override
-    public Vector3f getVec(KeyFrameState state) {
-        return state == KeyFrameState.PREV ? post : pre;
-    }
-
-    @Override
-    public IKeyFrame withNewTime(int time) {
-        return new StepKeyFrame(time, pre, post);
+    public Vector3f getVec(MolangEnvironment env, KeyFrameState state) {
+        return state == KeyFrameState.PREV ? post.get(env) : pre.get(env);
     }
 }

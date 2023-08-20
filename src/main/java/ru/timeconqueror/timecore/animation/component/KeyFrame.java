@@ -1,5 +1,6 @@
 package ru.timeconqueror.timecore.animation.component;
 
+import gg.moonflower.molangcompiler.api.MolangEnvironment;
 import org.joml.Vector3f;
 
 public class KeyFrame implements IKeyFrame {
@@ -7,15 +8,19 @@ public class KeyFrame implements IKeyFrame {
      * in ms
      */
     private final int time;
-    private final Vector3f vec;
+    private final Vector vec;
 
-    public KeyFrame(int time, Vector3f vec) {
+    public KeyFrame(int time, Vector vec) {
         this.time = time;
         this.vec = vec;
     }
 
-    public static KeyFrame createIdleKeyFrame(int startTime, Vector3f modelIdleVec) {
-        return new KeyFrame(startTime, modelIdleVec);
+    public static KeyFrame create(int startTime, Vector vec) {
+        return new KeyFrame(startTime, vec);
+    }
+
+    public static KeyFrame createSimple(int startTime, Vector3f vec) {
+        return new KeyFrame(startTime, new ConstantVector(vec));
     }
 
     @Override
@@ -24,13 +29,8 @@ public class KeyFrame implements IKeyFrame {
     }
 
     @Override
-    public Vector3f getVec(KeyFrameState state) {
-        return vec;
-    }
-
-    @Override
-    public KeyFrame withNewTime(int time) {
-        return new KeyFrame(time, vec);
+    public Vector3f getVec(MolangEnvironment env, KeyFrameState state) {
+        return vec.get(env);
     }
 
     @Override

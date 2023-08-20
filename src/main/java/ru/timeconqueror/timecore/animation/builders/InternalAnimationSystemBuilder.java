@@ -12,9 +12,11 @@ import ru.timeconqueror.timecore.animation.action.TileEntityActionManager;
 import ru.timeconqueror.timecore.animation.builders.PredefinedAnimations.Builder;
 import ru.timeconqueror.timecore.animation.builders.PredefinedAnimations.EntityPredefinedAnimations;
 import ru.timeconqueror.timecore.api.animation.AnimatedObject;
+import ru.timeconqueror.timecore.api.animation.MolangObjectFiller;
 import ru.timeconqueror.timecore.api.animation.builders.IAnimationManagerBuilder;
 import ru.timeconqueror.timecore.api.animation.builders.IPredefinedAnimations;
 import ru.timeconqueror.timecore.api.animation.builders.IPredefinedAnimations.IEntityPredefinedAnimations;
+import ru.timeconqueror.timecore.molang.MolangSharedObjects;
 
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -26,7 +28,7 @@ public abstract class InternalAnimationSystemBuilder {
             Consumer<IAnimationManagerBuilder> animationManagerTuner,
             Consumer<IEntityPredefinedAnimations> predefinedAnimationsTuner
     ) {
-        return create(EnumAnimatedObjectType.ENTITY, world, animationManagerTuner, (animationManager) -> {
+        return create(entity, EnumAnimatedObjectType.ENTITY, world, animationManagerTuner, (animationManager) -> {
             Builder<EntityPredefinedAnimations> predefinedAnimsBuilder = Builder.of(new EntityPredefinedAnimations());
             predefinedAnimationsTuner.accept(predefinedAnimsBuilder.getInner());
             EntityPredefinedAnimations validatedPredefines = predefinedAnimsBuilder.validate(animationManager);
@@ -41,7 +43,7 @@ public abstract class InternalAnimationSystemBuilder {
             Consumer<IAnimationManagerBuilder> animationManagerTuner,
             Consumer<IPredefinedAnimations> predefinedAnimationsTuner
     ) {
-        return create(EnumAnimatedObjectType.TILE_ENTITY, world, animationManagerTuner, (animationManager) -> {
+        return create(tileEntity, EnumAnimatedObjectType.TILE_ENTITY, world, animationManagerTuner, (animationManager) -> {
             Builder<PredefinedAnimations> predefinedAnimsBuilder = Builder.of(new PredefinedAnimations());
             predefinedAnimationsTuner.accept(predefinedAnimsBuilder.getInner());
             PredefinedAnimations validatedPredefines = predefinedAnimsBuilder.validate(animationManager);
@@ -51,6 +53,7 @@ public abstract class InternalAnimationSystemBuilder {
     }
 
     private static <T extends AnimatedObject<T>> AnimationSystem<T> create(
+            AnimatedObject<T> object,
             EnumAnimatedObjectType type,
             Level world,
             Consumer<? super BaseAnimationManagerBuilder> animationManagerTuner,
@@ -59,7 +62,10 @@ public abstract class InternalAnimationSystemBuilder {
         BaseAnimationManagerBuilder animationManagerBuilder = new BaseAnimationManagerBuilder();
         animationManagerTuner.accept(animationManagerBuilder);
 
-        BaseAnimationManager animationManager = animationManagerBuilder.build(!world.isClientSide(), type);
+        MolangSharedObjects sharedObjects = new MolangSharedObjects();
+        object.populateMolangObjects(new MolangObjectFiller(sharedObjects));
+
+        BaseAnimationManager animationManager = animationManagerBuilder.build(!world.isClientSide(), type, sharedObjects);
 
         ActionManagerImpl<T> actionManager = actionManagerBuilderFactory.apply(animationManager);
 

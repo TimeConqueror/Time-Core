@@ -4,13 +4,11 @@ import com.google.gson.*;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
 import org.jetbrains.annotations.NotNull;
-import org.joml.Vector3f;
 import ru.timeconqueror.timecore.animation.component.BasicAnimation;
 import ru.timeconqueror.timecore.animation.component.LoopMode;
 import ru.timeconqueror.timecore.api.animation.Animation;
 import ru.timeconqueror.timecore.api.util.CollectionUtils;
 import ru.timeconqueror.timecore.api.util.ResourceUtils;
-import ru.timeconqueror.timecore.api.util.json.Vector3fJsonAdapter;
 import ru.timeconqueror.timecore.client.render.model.loading.JsonParsingException;
 
 import java.io.BufferedReader;
@@ -25,10 +23,9 @@ import java.util.Map;
 public class JsonAnimationParser {
     private static final String[] ACCEPTABLE_FORMAT_VERSIONS = new String[]{"1.8.0"};
     private static final Gson GSON = new GsonBuilder()
-            .registerTypeAdapter(Vector3f.class, new Vector3fJsonAdapter())
-            .registerTypeAdapter(KeyFrameListDeserializer.KEYFRAME_LIST_TYPE, new KeyFrameListDeserializer())
-            .registerTypeAdapter(RawBoneOption.class, new RawBoneOption.Deserializer())
-            .registerTypeAdapter(RawAnimation.class, new RawAnimation.Deserializer())
+            .registerTypeAdapter(VectorDefinition.class, new VectorDefinitionDeserializer())
+            .registerTypeAdapter(AnimationBoneDefinition.class, new AnimationBoneDefinition.Deserializer())
+            .registerTypeAdapter(AnimationDefinition.class, new AnimationDefinition.Deserializer())
             .registerTypeAdapter(LoopMode.class, new LoopMode.Deserializer())
             .create();
 
@@ -65,8 +62,8 @@ public class JsonAnimationParser {
             JsonObject animationJson = GsonHelper.convertToJsonObject(animationEntry.getValue(), name);
             name = name.toLowerCase(Locale.ROOT);
 
-            RawAnimation rawAnimation = GSON.fromJson(animationJson, RawAnimation.class);
-            BasicAnimation baked = rawAnimation.bake(new ResourceLocation(fileLocation.getNamespace(), fileLocation.getPath() + "/" + name), name);
+            AnimationDefinition animationDefinition = GSON.fromJson(animationJson, AnimationDefinition.class);
+            BasicAnimation baked = animationDefinition.bake(new ResourceLocation(fileLocation.getNamespace(), fileLocation.getPath() + "/" + name), name);
 
             animationMap.put(name, baked);
         }
