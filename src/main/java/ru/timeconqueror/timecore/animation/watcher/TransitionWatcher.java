@@ -1,5 +1,6 @@
 package ru.timeconqueror.timecore.animation.watcher;
 
+import lombok.Getter;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
@@ -18,17 +19,17 @@ import ru.timeconqueror.timecore.api.util.Requirements;
 import java.util.Objects;
 
 public class TransitionWatcher extends AnimationWatcher {
-    public static final Animation TRANSITION = new BasicAnimation(LoopMode.DO_NOT_LOOP, TimeCore.rl("internal/transition"), "transition", 0, null) {
-    };
+    public static final Animation TRANSITION = new BasicAnimation(LoopMode.DO_NOT_LOOP, TimeCore.rl("internal/transition"), "transition", 1, null);
 
     private final int transitionTime;
     @Nullable
+    @Getter
     private final AnimationStarter.AnimationData destination;
     private final Animation source;
     private final int sourceExistingTime;
 
     private TransitionWatcher(Animation source, int sourceExistingTime, int transitionTime, @Nullable AnimationStarter.AnimationData destination) {
-        super(TRANSITION, transitionTime, 1.0F, false, false, LoopMode.DO_NOT_LOOP, destination);
+        super(TRANSITION, transitionTime, 1.0F, 0, false, false, LoopMode.DO_NOT_LOOP, destination);
 
         Requirements.greaterOrEquals(transitionTime, 0);
 
@@ -39,7 +40,7 @@ public class TransitionWatcher extends AnimationWatcher {
     }
 
     public static TransitionWatcher fromNullSource(AnimationStarter.AnimationData destination) {
-        return new TransitionWatcher(TRANSITION, 0, destination.getTransitionTime(), destination);
+        return new TransitionWatcher(Animation.NULL, 0, destination.getTransitionTime(), destination);
     }
 
     public static TransitionWatcher from(AnimationWatcher source, AnimationStarter.AnimationData destination) {
@@ -56,10 +57,18 @@ public class TransitionWatcher extends AnimationWatcher {
 
         if (model != null) {
             AnimationStarter.AnimationData notNullDest = destination != null ? destination : new AnimationStarter(Animation.NULL).getData();//TODO remove nulls
-            animation = Transition.create(source, notNullDest, layer.getEnvironment(),/*FIXME*/ model, sourceExistingTime, transitionTime);
+            animation = Transition.create(source, notNullDest, layer.getEnvironment(), model, sourceExistingTime, transitionTime);
         } else {
-            animation = Transition.createForServer(source, getDestination(), transitionTime);
+            animation = Transition.createForServer(source, getDestinationAnimation(), transitionTime);
         }
+    }
+
+    @Override
+    //TODO bad way to do so
+    public boolean playsSame(AnimationStarter.AnimationData data) {
+        if (destination == null) return false;
+
+        return super.playsSame(destination);
     }
 
     @Override
@@ -68,7 +77,7 @@ public class TransitionWatcher extends AnimationWatcher {
         return destination != null ? new AnimationWatcher(destination) : null;
     }
 
-    public Animation getDestination() {
+    public Animation getDestinationAnimation() {
         return destination != null ? destination.getAnimation() : Animation.NULL;
     }
 
@@ -89,15 +98,15 @@ public class TransitionWatcher extends AnimationWatcher {
 
     @Override
     public boolean autoTransitsTo(Animation animation) {
-        return animation.equals(getDestination());
+        return animation.equals(getDestinationAnimation());
     }
 
     @Override
     public String toString() {
         long time = System.currentTimeMillis();
         return "Transition{" +
-                "Progress Time: " + getAnimationTime(time) + " / " + transitionTime + " ms" +
-                ", From: " + source.getId() + "(" + sourceExistingTime + "/" + source.getLength() + ")" +
+                "Progress Time: " + getElapsedTime(time) + " / " + getElapsedLength() + " ms" +
+                ", From: " + source.getId() + "(at " + sourceExistingTime + ")" +
                 ", To: " + (destination != null ? destination.getAnimation().getId() : null) +
                 '}';
     }
@@ -124,7 +133,7 @@ public class TransitionWatcher extends AnimationWatcher {
 
     @Override
     public int hashCode() {
-        Animation dest = getDestination();
+        Animation dest = getDestinationAnimation();
         float destSpeed = destination != null ? destination.getSpeed() : 0;
 
         return Objects.hash(super.hashCode(), transitionTime, dest, destSpeed, source);

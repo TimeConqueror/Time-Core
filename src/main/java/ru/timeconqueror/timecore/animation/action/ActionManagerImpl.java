@@ -9,7 +9,7 @@ import ru.timeconqueror.timecore.api.animation.action.IDelayedAction;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
-
+//FIXME TO MAKE IT NOT RUN ON ANY ANIMATION WITH SAME NAME
 public class ActionManagerImpl<T> implements ActionManager<T> {
     private final Set<ActionWatcher<T, ?>> actionWatchers = new HashSet<>();
     private final BaseAnimationManager animationManager;

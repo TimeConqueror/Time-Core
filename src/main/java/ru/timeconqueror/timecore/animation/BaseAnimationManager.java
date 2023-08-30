@@ -5,8 +5,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ru.timeconqueror.timecore.TimeCore;
 import ru.timeconqueror.timecore.animation.watcher.AnimationWatcher;
-import ru.timeconqueror.timecore.animation.watcher.TransitionWatcher;
-import ru.timeconqueror.timecore.api.animation.Animation;
 import ru.timeconqueror.timecore.api.animation.AnimationConstants;
 import ru.timeconqueror.timecore.api.animation.AnimationManager;
 import ru.timeconqueror.timecore.api.animation.builders.LayerDefinition;
@@ -54,12 +52,8 @@ public abstract class BaseAnimationManager implements AnimationManager {
 
             if (data.isIgnorable()) {
                 AnimationWatcher watcher = layer.getAnimationWatcher();
-                if (watcher != null) {
-                    Animation animationIn = data.getAnimation();
-
-                    if (animationIn.equals(watcher.getAnimation()) || (watcher instanceof TransitionWatcher && animationIn.equals(((TransitionWatcher) watcher).getDestination()))) {
-                        return;//TODO add check for speed
-                    }
+                if (watcher != null && watcher.playsSame(data)) {
+                    return;
                 }
             }
 

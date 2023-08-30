@@ -1,6 +1,8 @@
 package ru.timeconqueror.timecore.animation.component;
 
 import gg.moonflower.molangcompiler.api.MolangEnvironment;
+import lombok.Getter;
+import lombok.ToString;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -19,11 +21,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
+@ToString
 public class Transition extends Animation {
     private final int transitionLength;
+    @Getter
     private final String name;
     private final Animation destAnimation;
+    @Getter
     private final ResourceLocation id;
+    @ToString.Exclude
     private List<AnimationBone> options = new ArrayList<>();
 
     private Transition(int transitionLength, String name, Animation destAnimation) {
@@ -107,28 +113,8 @@ public class Transition extends Animation {
         return transitionLength;
     }
 
-    @Override
-    public String getName() {
-        return name;
-    }
-
-    @Override
-    public ResourceLocation getId() {
-        return id;
-    }
-
     public Animation getDestination() {
         return destAnimation;
-    }
-
-    @Override
-    public String toString() {
-        return "Transition{" +
-                "location='" + name + '\'' +
-                ", id=" + id +
-                ", transitionLength=" + transitionLength +
-                ", destAnimation=" + destAnimation +
-                '}';
     }
 
     private static class InternalTransitionFactory extends TransitionFactory {

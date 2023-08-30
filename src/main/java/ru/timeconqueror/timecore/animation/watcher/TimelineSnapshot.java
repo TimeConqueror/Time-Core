@@ -1,32 +1,23 @@
 package ru.timeconqueror.timecore.animation.watcher;
 
+import lombok.Getter;
 import ru.timeconqueror.timecore.animation.AnimationStarter;
 
+@Getter
 public class TimelineSnapshot {
-    private final long savedTimestamp;
-    private final int savedAnimationTime;
-    private final int savedElapsedTime;
-    private TimelineSnapshot(int length, float speed, boolean reversed, long startTimestamp, long savedTimestamp) {
-        Timeline timeline = new Timeline(length, speed, reversed, startTimestamp);
-        this.savedTimestamp = savedTimestamp;
-        this.savedAnimationTime = timeline.getAnimationTime(savedTimestamp);
-        this.savedElapsedTime = timeline.getElapsedTime(savedTimestamp);
+    private final long timestamp;
+    private final int animationTime;
+    private final int elapsedTime;
+
+    private TimelineSnapshot(int length, float speed, boolean reversed, long startTimestamp, long timestamp, int animationTimeStartFrom) {
+        Timeline timeline = new Timeline(length, speed, reversed, startTimestamp, animationTimeStartFrom);
+        this.timestamp = timestamp;
+        this.animationTime = timeline.getAnimationTime(timestamp);
+        this.elapsedTime = timeline.getElapsedTime(timestamp);
     }
 
     public static TimelineSnapshot createForStartTime(AnimationStarter.AnimationData data) {
         long time = System.currentTimeMillis();
-        return new TimelineSnapshot(data.getAnimationLength(), data.getSpeed(), data.isReversed(), time, time);
-    }
-
-    public int getSavedAnimationTime() {
-        return savedAnimationTime;
-    }
-
-    public int getSavedElapsedTime() {
-        return savedElapsedTime;
-    }
-
-    public long getSavedTimestamp() {
-        return savedTimestamp;
+        return new TimelineSnapshot(data.getAnimationLength(), data.getSpeed(), data.isReversed(), time, time, data.getStartAnimationTime());
     }
 }

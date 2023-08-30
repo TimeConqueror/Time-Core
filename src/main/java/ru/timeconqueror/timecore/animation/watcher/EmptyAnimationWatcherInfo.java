@@ -23,6 +23,11 @@ public class EmptyAnimationWatcherInfo implements IAnimationWatcherInfo {
     }
 
     @Override
+    public int getAnimationLength() {
+        return 0;
+    }
+
+    @Override
     public LoopMode getLoopMode() {
         return LoopMode.DO_NOT_LOOP;
     }
@@ -49,6 +54,11 @@ public class EmptyAnimationWatcherInfo implements IAnimationWatcherInfo {
 
     @Override
     public boolean autoTransitsFrom(Animation animation) {
+        return false;
+    }
+
+    @Override
+    public boolean playsSame(AnimationStarter.AnimationData data) {
         return false;
     }
 

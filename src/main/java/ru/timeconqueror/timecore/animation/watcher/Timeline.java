@@ -1,19 +1,28 @@
 package ru.timeconqueror.timecore.animation.watcher;
 
+import lombok.Getter;
 import ru.timeconqueror.timecore.api.util.MathUtils;
 
 public class Timeline {
+    @Getter
     private final float speed;
+    @Getter
     private final int length;
+    @Getter
     private final boolean reversed;
 
     private final FreezableTime time;
 
-    public Timeline(int length, float speed, boolean reversed, long startTime) {
-        time = new FreezableTime(startTime);
+    @Getter
+    private final int animationStartTime;
+
+    public Timeline(int length, float speed, boolean reversed, long startMillis, int animationStartTime) {
+        time = new FreezableTime(startMillis);
+        this.animationStartTime = animationStartTime;
         this.length = length;
         this.speed = speed;
         this.reversed = reversed;
+
     }
 
     public boolean isEnded(long currentTime) {
@@ -29,8 +38,11 @@ public class Timeline {
      */
     public int getAnimationTime(long currentTime) {
         long animationTime = Math.round((currentTime - time.get()) * speed);
-        if(reversed) {
-            animationTime = length - animationTime;
+
+        if (reversed) {
+            animationTime = animationStartTime - animationTime;
+        } else {
+            animationTime += animationStartTime;
         }
 
         return (int) MathUtils.coerceInRange(animationTime, 0, length);
@@ -56,19 +68,12 @@ public class Timeline {
     }
 
     public int getElapsedLength() {
-        return speed != 0 ? Math.round(length / speed) : 0;
+        int length = reversed ? animationStartTime : this.length - animationStartTime;
+        return speed != 0 ? Math.round(length / speed) : Integer.MAX_VALUE;
     }
 
     public void reset() {
         time.set(System.currentTimeMillis());
-    }
-
-    public float getSpeed() {
-        return speed;
-    }
-
-    public boolean isReversed() {
-        return reversed;
     }
 
     public void set(long time) {

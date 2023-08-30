@@ -1,8 +1,13 @@
 package ru.timeconqueror.timecore.animation.calculation;
 
+import gg.moonflower.molangcompiler.api.MolangEnvironment;
 import org.joml.Vector3f;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
+import ru.timeconqueror.timecore.animation.component.ConstantVector;
 import ru.timeconqueror.timecore.animation.component.IKeyFrame;
 import ru.timeconqueror.timecore.animation.component.KeyFrame;
 import ru.timeconqueror.timecore.api.reflection.ReflectionHelper;
@@ -13,24 +18,27 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
+@ExtendWith(MockitoExtension.class)
 public class KeyFrameInterpolatorTest {
     private final UnlockedField<KeyFrameInterpolator, IKeyFrame> prev = ReflectionHelper.findField(KeyFrameInterpolator.class, "prev");
     private final UnlockedField<KeyFrameInterpolator, IKeyFrame> next = ReflectionHelper.findField(KeyFrameInterpolator.class, "next");
     private final UnlockedField<KeyFrameInterpolator, Integer> prevIndex = ReflectionHelper.findField(KeyFrameInterpolator.class, "prevIndex");
     private final UnlockedField<KeyFrameInterpolator, Integer> nextIndex = ReflectionHelper.findField(KeyFrameInterpolator.class, "nextIndex");
 
+    private MolangEnvironment env;
+
     private static KeyFrame frame(int time) {
-        return new KeyFrame(time, new Vector3f());
+        return new KeyFrame(time, new ConstantVector(new Vector3f()));
     }
 
     @BeforeEach
     public void setup() {
-
+        env = Mockito.mock(MolangEnvironment.class);
     }
 
     @Test
     public void testSearchWhenNoFrames() {
-        var interpol = new KeyFrameInterpolator(1000, List.of(), 500);
+        var interpol = new KeyFrameInterpolator(1000, env, List.of(), 500);
         interpol.findKeyFramesBinSearch();
 
         assertNull(prev(interpol));
@@ -43,7 +51,7 @@ public class KeyFrameInterpolatorTest {
     public void testSearchBetweenTwo() {
         KeyFrame frame = frame(0);
         KeyFrame frame1 = frame(1000);
-        var interpol = new KeyFrameInterpolator(1000, List.of(frame, frame1), 500);
+        var interpol = new KeyFrameInterpolator(1000, env, List.of(frame, frame1), 500);
         interpol.findKeyFramesBinSearch();
 
         assertEquals(frame, prev(interpol));
@@ -57,7 +65,7 @@ public class KeyFrameInterpolatorTest {
         KeyFrame frame = frame(0);
         KeyFrame frame1 = frame(500);
         KeyFrame frame2 = frame(1000);
-        var interpol = new KeyFrameInterpolator(1000, List.of(frame, frame1, frame2), 600);
+        var interpol = new KeyFrameInterpolator(1000, env, List.of(frame, frame1, frame2), 600);
         interpol.findKeyFramesBinSearch();
 
         assertEquals(frame1, prev(interpol));
@@ -70,7 +78,7 @@ public class KeyFrameInterpolatorTest {
     public void testSearchWhenHigherThenBothTwoHold() {
         KeyFrame frame = frame(0);
         KeyFrame frame1 = frame(500);
-        var interpol = new KeyFrameInterpolator(1000, List.of(frame, frame1), 1000);
+        var interpol = new KeyFrameInterpolator(1000, env, List.of(frame, frame1), 1000);
         interpol.findKeyFramesBinSearch();
 
         assertEquals(frame1, prev(interpol));
@@ -84,7 +92,7 @@ public class KeyFrameInterpolatorTest {
         KeyFrame frame = frame(0);
         KeyFrame frame1 = frame(500);
         KeyFrame frame2 = frame(900);
-        var interpol = new KeyFrameInterpolator(1000, List.of(frame, frame1, frame2), 1000);
+        var interpol = new KeyFrameInterpolator(1000, env, List.of(frame, frame1, frame2), 1000);
         interpol.findKeyFramesBinSearch();
 
         assertEquals(frame2, prev(interpol));
@@ -96,7 +104,7 @@ public class KeyFrameInterpolatorTest {
     @Test
     public void testSearchWhenHigherThenSingleHold() {
         KeyFrame frame = frame(0);
-        var interpol = new KeyFrameInterpolator(1000, List.of(frame), 1000);
+        var interpol = new KeyFrameInterpolator(1000, env, List.of(frame), 1000);
         interpol.findKeyFramesBinSearch();
 
         assertEquals(frame, prev(interpol));
@@ -109,7 +117,7 @@ public class KeyFrameInterpolatorTest {
     public void testSearchWhenLowerThenBothTwoHold() {
         KeyFrame frame = frame(100);
         KeyFrame frame1 = frame(500);
-        var interpol = new KeyFrameInterpolator(1000, List.of(frame, frame1), 50);
+        var interpol = new KeyFrameInterpolator(1000, env, List.of(frame, frame1), 50);
         interpol.findKeyFramesBinSearch();
 
         assertNull(prev(interpol));
@@ -123,7 +131,7 @@ public class KeyFrameInterpolatorTest {
         KeyFrame frame = frame(100);
         KeyFrame frame1 = frame(500);
         KeyFrame frame2 = frame(900);
-        var interpol = new KeyFrameInterpolator(1000, List.of(frame, frame1, frame2), 50);
+        var interpol = new KeyFrameInterpolator(1000, env, List.of(frame, frame1, frame2), 50);
         interpol.findKeyFramesBinSearch();
 
         assertNull(prev(interpol));
@@ -135,7 +143,7 @@ public class KeyFrameInterpolatorTest {
     @Test
     public void testSearchWhenLowerThenSingleHold() {
         KeyFrame frame = frame(100);
-        var interpol = new KeyFrameInterpolator(1000, List.of(frame), 50);
+        var interpol = new KeyFrameInterpolator(1000, env, List.of(frame), 50);
         interpol.findKeyFramesBinSearch();
 
         assertNull(prev(interpol));
@@ -148,7 +156,7 @@ public class KeyFrameInterpolatorTest {
     public void testSearchWhenEqualsToFirstOfTwo() {
         KeyFrame frame = frame(100);
         KeyFrame frame1 = frame(500);
-        var interpol = new KeyFrameInterpolator(1000, List.of(frame, frame1), 100);
+        var interpol = new KeyFrameInterpolator(1000, env, List.of(frame, frame1), 100);
         interpol.findKeyFramesBinSearch();
 
         assertNull(prev(interpol));
@@ -161,7 +169,7 @@ public class KeyFrameInterpolatorTest {
     public void testSearchWhenEqualsToSecondOfTwo() {
         KeyFrame frame = frame(100);
         KeyFrame frame1 = frame(500);
-        var interpol = new KeyFrameInterpolator(1000, List.of(frame, frame1), 500);
+        var interpol = new KeyFrameInterpolator(1000, env, List.of(frame, frame1), 500);
         interpol.findKeyFramesBinSearch();
 
         assertEquals(frame, prev(interpol));
@@ -175,7 +183,7 @@ public class KeyFrameInterpolatorTest {
         KeyFrame frame = frame(100);
         KeyFrame frame1 = frame(500);
         KeyFrame frame2 = frame(900);
-        var interpol = new KeyFrameInterpolator(1000, List.of(frame, frame1, frame2), 100);
+        var interpol = new KeyFrameInterpolator(1000, env, List.of(frame, frame1, frame2), 100);
         interpol.findKeyFramesBinSearch();
 
         assertEquals(frame, prev(interpol));
@@ -189,7 +197,7 @@ public class KeyFrameInterpolatorTest {
         KeyFrame frame = frame(100);
         KeyFrame frame1 = frame(500);
         KeyFrame frame2 = frame(900);
-        var interpol = new KeyFrameInterpolator(1000, List.of(frame, frame1, frame2), 500);
+        var interpol = new KeyFrameInterpolator(1000, env, List.of(frame, frame1, frame2), 500);
         interpol.findKeyFramesBinSearch();
 
         assertEquals(frame, prev(interpol));
@@ -203,7 +211,7 @@ public class KeyFrameInterpolatorTest {
         KeyFrame frame = frame(100);
         KeyFrame frame1 = frame(500);
         KeyFrame frame2 = frame(900);
-        var interpol = new KeyFrameInterpolator(1000, List.of(frame, frame1, frame2), 900);
+        var interpol = new KeyFrameInterpolator(1000, env, List.of(frame, frame1, frame2), 900);
         interpol.findKeyFramesBinSearch();
 
         assertEquals(frame1, prev(interpol));
@@ -215,7 +223,7 @@ public class KeyFrameInterpolatorTest {
     @Test
     public void testSearchWhenEqualsToSingle() {
         KeyFrame frame = frame(100);
-        var interpol = new KeyFrameInterpolator(1000, List.of(frame), 100);
+        var interpol = new KeyFrameInterpolator(1000, env, List.of(frame), 100);
         interpol.findKeyFramesBinSearch();
 
         assertNull(prev(interpol));

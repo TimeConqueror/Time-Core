@@ -149,11 +149,11 @@ public class BasicAnimation extends Animation {
 
         @Override
         public @NotNull IKeyFrame getDestKeyFrame(TimeModelPart part, TimelineSnapshot snapshot, String boneName, Channel channel, int transitionTime) {
-            BasicAnimation dest = getSourceTyped();
+            BasicAnimation meAsDestination = getSourceTyped();
 
-            AnimationBone destBone = dest.getOptions() != null ? dest.getOptions().get(boneName) : null;
+            AnimationBone destBone = meAsDestination.getOptions() != null ? meAsDestination.getOptions().get(boneName) : null;
             if(destBone != null) {
-                Vector3f interpolationVec = KeyFrameInterpolator.findInterpolationVec(dest, this.getEnv(), destBone.getKeyFrames(channel), snapshot.getSavedAnimationTime());
+                Vector3f interpolationVec = KeyFrameInterpolator.findInterpolationVec(meAsDestination, this.getEnv()/*TODO destination environment*/, destBone.getKeyFrames(channel), snapshot.getAnimationTime());
                 if(interpolationVec != null) {
                     return KeyFrame.createSimple(transitionTime, interpolationVec);
                 }

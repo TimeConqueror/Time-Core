@@ -1,11 +1,13 @@
 package ru.timeconqueror.timecore.animation;
 
+import lombok.*;
 import net.minecraft.network.FriendlyByteBuf;
 import org.jetbrains.annotations.Nullable;
 import ru.timeconqueror.timecore.animation.component.LoopMode;
 import ru.timeconqueror.timecore.api.animation.Animation;
 import ru.timeconqueror.timecore.api.animation.AnimationConstants;
 import ru.timeconqueror.timecore.api.animation.AnimationManager;
+import ru.timeconqueror.timecore.api.util.MathUtils;
 
 import java.util.Objects;
 
@@ -25,7 +27,7 @@ public class AnimationStarter {
         this.data = animationData.copy();
     }
 
-    public static AnimationStarter fromAnimationData(AnimationData data) {
+    public static AnimationStarter from(AnimationData data) {
         Objects.requireNonNull(data);
         return new AnimationStarter(data);
     }
@@ -50,8 +52,13 @@ public class AnimationStarter {
         return this;
     }
 
-    public AnimationStarter doNotTransitToNull(boolean doNotTransitToNull) {
-        this.data.doNotTransitToNull = doNotTransitToNull;
+    /**
+     * In case the animation is ended and no any other animation come in its place, it will be transitioned to empty animation
+     * within some time. This method allows to disable this automatic transition.
+     * Default: false.
+     */
+    public AnimationStarter withNoTransitionToNone() {
+        this.data.noTransitionToNone = true;
         return this;
     }
 
@@ -70,6 +77,26 @@ public class AnimationStarter {
      */
     public AnimationStarter withSpeed(float speedFactor) {
         data.speed = Math.max(speedFactor, 0);
+        return this;
+    }
+
+    /**
+     * Allows to run animation not from start, but from specific animation time (in milliseconds).
+     * Default: 0.
+     */
+    public AnimationStarter startingFrom(int animationTime) {
+        data.startAnimationTime = MathUtils.coerceInRange(animationTime, 0, data.animation.getLength());
+        return this;
+    }
+
+    /**
+     * Allows to run animation not from start, but from specific animation time.
+     * As a parameter you need to present the percent [0.0; 1.0] of the animation to start from.
+     * Default: 0.
+     */
+    public AnimationStarter startingFrom(float animationTimePercentage) {
+        animationTimePercentage = MathUtils.coerceInRange(animationTimePercentage, 0, 1);
+        data.startAnimationTime = MathUtils.coerceInRange(Math.round(animationTimePercentage * data.animation.getLength()), 0, data.animation.getLength());
         return this;
     }
 
@@ -128,32 +155,44 @@ public class AnimationStarter {
         return data.toString();
     }
 
+    @EqualsAndHashCode
+    @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+    @ToString(doNotUseGetters = true)
     public static class AnimationData {
+        @Getter
         private final Animation animation;
         @Nullable
+        @Getter
         private AnimationData nextAnimationData;
+        @Getter
         private boolean ignorable = true;
+        private Integer startAnimationTime = null;
+        @Getter
         private int transitionTime = AnimationConstants.BASIC_TRANSITION_TIME;
+        @Getter
         private float speed = 1F;
-        private boolean doNotTransitToNull;
+        @Getter
+        private boolean noTransitionToNone;
+        @Getter
         private boolean reversed;
         @Nullable
         private LoopMode loopMode = null;
-
-        private AnimationData(Animation animation) {
-            this.animation = animation;
-        }
 
         public static void encode(AnimationData animationData, FriendlyByteBuf buffer) {
             buffer.writeResourceLocation(animationData.getAnimation().getId());
             buffer.writeFloat(animationData.getSpeed());
             buffer.writeInt(animationData.getTransitionTime());
+
+            buffer.writeBoolean(animationData.startAnimationTime != null);
+            if (animationData.startAnimationTime != null) {
+                buffer.writeVarInt(animationData.startAnimationTime);
+            }
             buffer.writeBoolean(animationData.isIgnorable());
-            buffer.writeBoolean(animationData.doNotTransitToNull);
+            buffer.writeBoolean(animationData.noTransitionToNone);
             buffer.writeBoolean(animationData.reversed);
 
             buffer.writeBoolean(animationData.loopMode != null);
-            if(animationData.loopMode != null) {
+            if (animationData.loopMode != null) {
                 buffer.writeVarInt(LoopMode.ORDINAL_LOOKUP.from(animationData.loopMode));
             }
 
@@ -171,12 +210,15 @@ public class AnimationStarter {
 
             animationData.speed = buffer.readFloat();
             animationData.transitionTime = buffer.readInt();
+            if (buffer.readBoolean()) {
+                animationData.startAnimationTime = buffer.readVarInt();
+            }
             animationData.ignorable = buffer.readBoolean();
-            animationData.doNotTransitToNull = buffer.readBoolean();
+            animationData.noTransitionToNone = buffer.readBoolean();
             animationData.reversed = buffer.readBoolean();
 
             boolean hasLoopMode = buffer.readBoolean();
-            if(hasLoopMode) {
+            if (hasLoopMode) {
                 animationData.loopMode = LoopMode.ORDINAL_LOOKUP.by(buffer.readVarInt());
             }
 
@@ -188,37 +230,17 @@ public class AnimationStarter {
             return animationData;
         }
 
-        public Animation getAnimation() {
-            return animation;
-        }
-
-        public float getSpeed() {
-            return speed;
-        }
 
         public int getAnimationLength() {
             return animation.getLength();
         }
 
-        public boolean isIgnorable() {
-            return ignorable;
+        public int getStartAnimationTime() {
+            return startAnimationTime != null ? startAnimationTime : isReversed() ? this.getAnimationLength() : 0;
         }
 
-        public boolean doesNotTransitToNull() {
-            return doNotTransitToNull;
-        }
-
-        public boolean isReversed() {
-            return reversed;
-        }
-
-        @Nullable
         public LoopMode getLoopMode() {
-            return loopMode;
-        }
-
-        public int getTransitionTime() {
-            return transitionTime;
+            return loopMode != null ? loopMode : animation.getLoopMode();
         }
 
         @Nullable
@@ -226,9 +248,10 @@ public class AnimationStarter {
             AnimationData animationData = new AnimationData(animation);
             animationData.speed = this.speed;
             animationData.ignorable = this.ignorable;
+            animationData.startAnimationTime = startAnimationTime;
             animationData.transitionTime = this.transitionTime;
             animationData.nextAnimationData = this.nextAnimationData != null ? this.nextAnimationData.copy() : null;
-            animationData.doNotTransitToNull = doNotTransitToNull;
+            animationData.noTransitionToNone = noTransitionToNone;
             animationData.reversed = reversed;
             animationData.loopMode = loopMode;
 
@@ -237,47 +260,6 @@ public class AnimationStarter {
 
         public @Nullable AnimationData getNextAnimation() {
             return nextAnimationData;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (!(o instanceof AnimationData that)) return false;
-
-            if (ignorable != that.ignorable) return false;
-            if (transitionTime != that.transitionTime) return false;
-            if (Float.compare(that.speed, speed) != 0) return false;
-            if (doNotTransitToNull != that.doNotTransitToNull) return false;
-            if (reversed != that.reversed) return false;
-            if (!animation.equals(that.animation)) return false;
-            if(!Objects.equals(loopMode, that.loopMode)) return false;
-            return Objects.equals(nextAnimationData, that.nextAnimationData);
-        }
-
-        @Override
-        public int hashCode() {
-            int result = animation.hashCode();
-            result = 31 * result + (nextAnimationData != null ? nextAnimationData.hashCode() : 0);
-            result = 31 * result + (ignorable ? 1 : 0);
-            result = 31 * result + transitionTime;
-            result = 31 * result + (speed != +0.0f ? Float.floatToIntBits(speed) : 0);
-            result = 31 * result + (doNotTransitToNull ? 1 : 0);
-            result = 31 * result + (reversed ? 1 : 0);
-            result = 31 * result + (loopMode != null ? loopMode.hashCode() : 0);
-            return result;
-        }
-
-        @Override
-        public String toString() {
-            return "AnimationData{" +
-                    "animation=" + animation +
-                    ", nextAnimationData=" + nextAnimationData +
-                    ", ignorable=" + ignorable +
-                    ", transitionTime=" + transitionTime +
-                    ", speed=" + speed +
-                    ", doNotTransitToNull=" + doNotTransitToNull +
-                    ", reversed=" + reversed +
-                    '}';
         }
     }
 }

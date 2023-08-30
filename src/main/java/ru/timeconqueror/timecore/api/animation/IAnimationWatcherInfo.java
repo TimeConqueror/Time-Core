@@ -49,6 +49,8 @@ public interface IAnimationWatcherInfo {
      */
     int getElapsedLength();
 
+    int getAnimationLength();
+
     LoopMode getLoopMode();
 
     float getSpeed();
@@ -80,4 +82,6 @@ public interface IAnimationWatcherInfo {
      * Returns true if this is an automatic transition, and it goes from provided animation.
      */
     boolean autoTransitsFrom(Animation animation);
+
+    boolean playsSame(AnimationStarter.AnimationData data);
 }

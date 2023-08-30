@@ -91,7 +91,7 @@ public class Layer implements ILayer {
             if (transitionTime == 0) {
                 animationWatcher = null;
             } else {
-                if (!(animationWatcher instanceof TransitionWatcher && ((TransitionWatcher) animationWatcher).getDestination() == Animation.NULL)) {
+                if (!(animationWatcher instanceof TransitionWatcher && ((TransitionWatcher) animationWatcher).getDestinationAnimation() == Animation.NULL)) {
                     animationWatcher = TransitionWatcher.toNullDestination(animationWatcher, transitionTime);
                 }
             }

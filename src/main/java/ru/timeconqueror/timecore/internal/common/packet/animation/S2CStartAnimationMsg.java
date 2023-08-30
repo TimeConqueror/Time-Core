@@ -30,7 +30,7 @@ public class S2CStartAnimationMsg extends S2CAnimationMsg {
 
         @Override
         public void onPacket(S2CStartAnimationMsg packet, AnimatedObject<?> provider, String layerName, NetworkEvent.Context ctx) {
-            AnimationStarter animationStarter = AnimationStarter.fromAnimationData(packet.animationData);
+            AnimationStarter animationStarter = AnimationStarter.from(packet.animationData);
             Animation animation = animationStarter.getData().getAnimation();
 
             String errorMessage = null;

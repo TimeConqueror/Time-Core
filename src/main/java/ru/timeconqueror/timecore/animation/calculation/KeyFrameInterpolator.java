@@ -19,7 +19,7 @@ public class KeyFrameInterpolator {
     private final int animationLength;
     private final MolangEnvironment env;
     private final List<IKeyFrame> frames;
-    private final int existingTime;
+    private final int animationTime;
 
     @Nullable
     private IKeyFrame prev;
@@ -34,18 +34,18 @@ public class KeyFrameInterpolator {
      * Always return a new vector.
      */
     @Nullable
-    public static Vector3f findInterpolationVec(Animation animation, MolangEnvironment env, List<IKeyFrame> frames, int existingTime) {
+    public static Vector3f findInterpolationVec(Animation animation, MolangEnvironment env, List<IKeyFrame> frames, int animationTime) {
         if (frames.isEmpty()) return null;
 
-        return new KeyFrameInterpolator(animation.getLength(), env, frames, existingTime).findInterpolationVec();
+        return new KeyFrameInterpolator(animation.getLength(), env, frames, animationTime).findInterpolationVec();
     }
 
-    public static Vector3f interpolateLinear(MolangEnvironment env, IKeyFrame prev, IKeyFrame next, int existingTime) {
-        return lerp(prev.getVec(env, KeyFrameState.PREV), next.getVec(env, KeyFrameState.NEXT), prev.getTime(), next.getTime(), existingTime);
+    public static Vector3f interpolateLinear(MolangEnvironment env, IKeyFrame prev, IKeyFrame next, int animationTime) {
+        return lerp(prev.getVec(env, KeyFrameState.PREV), next.getVec(env, KeyFrameState.NEXT), prev.getTime(), next.getTime(), animationTime);
     }
 
-    private static Vector3f lerp(Vector3f start, Vector3f end, int startTime, int endTime, int existingTime) {
-        float factor = MathUtils.percentage(existingTime, startTime, endTime);
+    private static Vector3f lerp(Vector3f start, Vector3f end, int startTime, int endTime, int animationTime) {
+        float factor = MathUtils.percentage(animationTime, startTime, endTime);
 
         float outX = MathUtils.lerp(factor, start.x(), end.x());
         float outY = MathUtils.lerp(factor, start.y(), end.y());
@@ -69,7 +69,7 @@ public class KeyFrameInterpolator {
         if (prev instanceof CatmullRomKeyFrame || next instanceof CatmullRomKeyFrame) {
             return interpolateSmoothly();
         } else {
-            return interpolateLinear(env, prev, next, existingTime);
+            return interpolateLinear(env, prev, next, animationTime);
         }
     }
 
@@ -81,7 +81,7 @@ public class KeyFrameInterpolator {
         int high = frames.size() - 1;
 
         IKeyFrame lastFrame = frames.get(high);
-        if (lastFrame.getTime() < existingTime) {
+        if (lastFrame.getTime() < animationTime) {
             prev = lastFrame;
             prevIndex = high;
             return;
@@ -91,7 +91,7 @@ public class KeyFrameInterpolator {
             int mid = low + (high - low) / 2;
             IKeyFrame midFrame = frames.get(mid);
 
-            if (midFrame.getTime() < existingTime) {
+            if (midFrame.getTime() < animationTime) {
                 low = mid + 1;
             } else {
                 IKeyFrame prevFrame = null;
@@ -99,7 +99,7 @@ public class KeyFrameInterpolator {
                     prevFrame = frames.get(mid - 1);
                 }
 
-                if (mid == 0 || prevFrame.getTime() <= existingTime) {
+                if (mid == 0 || prevFrame.getTime() <= animationTime) {
                     prev = prevFrame;
                     prevIndex = mid - 1;
                     next = midFrame;
@@ -123,7 +123,7 @@ public class KeyFrameInterpolator {
             afterPlus = frames.get(nextIndex + 1);
         }
 
-        return catmullRom(beforeMinus, prev, next, afterPlus, existingTime, animationLength);
+        return catmullRom(beforeMinus, prev, next, afterPlus, animationTime, animationLength);
     }
 
     private Vector3f catmullRom(@Nullable IKeyFrame beforeMinus, @Nullable IKeyFrame before, @Nullable IKeyFrame after, @Nullable IKeyFrame afterPlus, int existedTime, int maxTime) {
