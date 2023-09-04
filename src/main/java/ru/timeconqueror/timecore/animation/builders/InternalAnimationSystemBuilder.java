@@ -3,12 +3,8 @@ package ru.timeconqueror.timecore.animation.builders;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import ru.timeconqueror.timecore.animation.AnimationSystem;
-import ru.timeconqueror.timecore.animation.BaseAnimationManager;
-import ru.timeconqueror.timecore.animation.EnumAnimatedObjectType;
-import ru.timeconqueror.timecore.animation.action.ActionManagerImpl;
-import ru.timeconqueror.timecore.animation.action.EntityActionManager;
-import ru.timeconqueror.timecore.animation.action.TileEntityActionManager;
+import ru.timeconqueror.timecore.animation.*;
+import ru.timeconqueror.timecore.animation.action.DummyActionManager;
 import ru.timeconqueror.timecore.animation.builders.PredefinedAnimations.Builder;
 import ru.timeconqueror.timecore.animation.builders.PredefinedAnimations.EntityPredefinedAnimations;
 import ru.timeconqueror.timecore.api.animation.AnimatedObject;
@@ -28,12 +24,12 @@ public abstract class InternalAnimationSystemBuilder {
             Consumer<IAnimationManagerBuilder> animationManagerTuner,
             Consumer<IEntityPredefinedAnimations> predefinedAnimationsTuner
     ) {
-        return create(entity, EnumAnimatedObjectType.ENTITY, world, animationManagerTuner, (animationManager) -> {
+        return create(entity, AnimatedObjectType.ENTITY, world, animationManagerTuner, (animationManager) -> {
             Builder<EntityPredefinedAnimations> predefinedAnimsBuilder = Builder.of(new EntityPredefinedAnimations());
             predefinedAnimationsTuner.accept(predefinedAnimsBuilder.getInner());
             EntityPredefinedAnimations validatedPredefines = predefinedAnimsBuilder.validate(animationManager);
 
-            return new EntityActionManager<>(animationManager, entity, validatedPredefines);
+            return new DummyActionManager<>(animationManager, entity, validatedPredefines);
         });
     }
 
@@ -43,21 +39,21 @@ public abstract class InternalAnimationSystemBuilder {
             Consumer<IAnimationManagerBuilder> animationManagerTuner,
             Consumer<IPredefinedAnimations> predefinedAnimationsTuner
     ) {
-        return create(tileEntity, EnumAnimatedObjectType.TILE_ENTITY, world, animationManagerTuner, (animationManager) -> {
+        return create(tileEntity, AnimatedObjectType.TILE_ENTITY, world, animationManagerTuner, (animationManager) -> {
             Builder<PredefinedAnimations> predefinedAnimsBuilder = Builder.of(new PredefinedAnimations());
             predefinedAnimationsTuner.accept(predefinedAnimsBuilder.getInner());
             PredefinedAnimations validatedPredefines = predefinedAnimsBuilder.validate(animationManager);
 
-            return new TileEntityActionManager<>(animationManager, tileEntity, validatedPredefines);
+            return new DummyActionManager<>(animationManager, tileEntity, validatedPredefines);
         });
     }
 
     private static <T extends AnimatedObject<T>> AnimationSystem<T> create(
-            AnimatedObject<T> object,
-            EnumAnimatedObjectType type,
+            T object,
+            AnimatedObjectType type,
             Level world,
             Consumer<? super BaseAnimationManagerBuilder> animationManagerTuner,
-            Function<BaseAnimationManager, ? extends ActionManagerImpl<T>> actionManagerBuilderFactory
+            Function<BaseAnimationManager, ? extends DummyActionManager<T>> actionManagerBuilderFactory
     ) {
         BaseAnimationManagerBuilder animationManagerBuilder = new BaseAnimationManagerBuilder();
         animationManagerTuner.accept(animationManagerBuilder);
@@ -65,12 +61,13 @@ public abstract class InternalAnimationSystemBuilder {
         MolangSharedObjects sharedObjects = new MolangSharedObjects();
         object.populateMolangObjects(new MolangObjectFiller(sharedObjects));
 
-        BaseAnimationManager animationManager = animationManagerBuilder.build(!world.isClientSide(), type, sharedObjects);
+        @SuppressWarnings({"unchecked", "rawtypes"})
+        var networkDispatcher = new NetworkDispatcherInstance<T>((NetworkDispatcher) type.getNetworkDispatcher(), object);
 
-        ActionManagerImpl<T> actionManager = actionManagerBuilderFactory.apply(animationManager);
+        BaseAnimationManager animationManager = animationManagerBuilder.build(!world.isClientSide(), type, sharedObjects, networkDispatcher);
 
-        animationManagerBuilder.init(animationManager, actionManager);
+        DummyActionManager<T> actionManager = actionManagerBuilderFactory.apply(animationManager);
 
-        return new AnimationSystem<>(actionManager, animationManager);
+        return new AnimationSystem<>(actionManager, animationManager, networkDispatcher);
     }
 }

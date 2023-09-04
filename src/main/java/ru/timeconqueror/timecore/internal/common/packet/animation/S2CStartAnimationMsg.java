@@ -9,9 +9,11 @@ import ru.timeconqueror.timecore.api.animation.Animation;
 
 public class S2CStartAnimationMsg extends S2CAnimationMsg {
     private final AnimationStarter.AnimationData animationData;
+    private final String layerName;
 
     public S2CStartAnimationMsg(CodecSupplier codecSupplier, String layerName, AnimationStarter.AnimationData animationData) {
-        super(codecSupplier, layerName);
+        super(codecSupplier);
+        this.layerName = layerName;
         this.animationData = animationData;
     }
 
@@ -19,17 +21,19 @@ public class S2CStartAnimationMsg extends S2CAnimationMsg {
         @Override
         public void encodeExtra(S2CStartAnimationMsg packet, FriendlyByteBuf buffer) {
             AnimationStarter.AnimationData.encode(packet.animationData, buffer);
+            buffer.writeUtf(packet.layerName);
         }
 
         @Override
-        public S2CStartAnimationMsg decodeWithExtraData(CodecSupplier codecSupplier, String layerName, FriendlyByteBuf buffer) {
+        public S2CStartAnimationMsg decodeWithExtraData(CodecSupplier codecSupplier, FriendlyByteBuf buffer) {
             AnimationStarter.AnimationData animationData = AnimationStarter.AnimationData.decode(buffer);
+            String layerName = buffer.readUtf();
 
             return new S2CStartAnimationMsg(codecSupplier, layerName, animationData);
         }
 
         @Override
-        public void onPacket(S2CStartAnimationMsg packet, AnimatedObject<?> provider, String layerName, NetworkEvent.Context ctx) {
+        public void onPacket(S2CStartAnimationMsg packet, AnimatedObject<?> provider, NetworkEvent.Context ctx) {
             AnimationStarter animationStarter = AnimationStarter.from(packet.animationData);
             Animation animation = animationStarter.getData().getAnimation();
 

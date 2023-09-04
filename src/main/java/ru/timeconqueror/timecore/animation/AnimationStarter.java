@@ -161,9 +161,6 @@ public class AnimationStarter {
     public static class AnimationData {
         @Getter
         private final Animation animation;
-        @Nullable
-        @Getter
-        private AnimationData nextAnimationData;
         @Getter
         private boolean ignorable = true;
         private Integer startAnimationTime = null;
@@ -172,11 +169,14 @@ public class AnimationStarter {
         @Getter
         private float speed = 1F;
         @Getter
-        private boolean noTransitionToNone;
+        private boolean noTransitionToNone;//FIXME do in version 2
         @Getter
         private boolean reversed;
         @Nullable
         private LoopMode loopMode = null;
+        @Nullable
+        @Getter
+        private AnimationData nextAnimationData;
 
         public static void encode(AnimationData animationData, FriendlyByteBuf buffer) {
             buffer.writeResourceLocation(animationData.getAnimation().getId());

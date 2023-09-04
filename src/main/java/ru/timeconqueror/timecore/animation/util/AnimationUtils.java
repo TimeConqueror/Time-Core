@@ -2,7 +2,6 @@ package ru.timeconqueror.timecore.animation.util;
 
 import org.joml.Vector3f;
 import ru.timeconqueror.timecore.api.animation.BlendType;
-import ru.timeconqueror.timecore.api.animation.ILayer;
 import ru.timeconqueror.timecore.client.render.model.TimeModelPart;
 
 public class AnimationUtils {
@@ -10,9 +9,8 @@ public class AnimationUtils {
         return milliSeconds / 1000F * 20;
     }
 
-    public static void applyRotation(TimeModelPart piece, ILayer layer, Vector3f rotationIn) {
-        BlendType blendType = layer.getBlendType();
-        rotationIn.mul(layer.getWeight());
+    public static void applyRotation(TimeModelPart piece, BlendType blendType, float weight, Vector3f rotationIn) {
+        rotationIn.mul(weight);
 
         if (blendType == BlendType.OVERWRITE) {
             piece.getRotation().set(piece.startRotationRadians);
@@ -21,9 +19,8 @@ public class AnimationUtils {
         piece.getRotation().add(rotationIn);
     }
 
-    public static void applyOffset(TimeModelPart piece, ILayer layer, Vector3f offsetIn) {
-        BlendType blendType = layer.getBlendType();
-        offsetIn.mul(layer.getWeight());
+    public static void applyOffset(TimeModelPart piece, BlendType blendType, float weight, Vector3f offsetIn) {
+        offsetIn.mul(weight);
 
         if (blendType == BlendType.OVERWRITE) {
             piece.getTranslation().set(offsetIn);
@@ -32,10 +29,7 @@ public class AnimationUtils {
         } else throw new UnsupportedOperationException();
     }
 
-    public static void applyScale(TimeModelPart piece, ILayer layer, Vector3f scaleIn) {
-        BlendType blendType = layer.getBlendType();
-        float weight = layer.getWeight();
-
+    public static void applyScale(TimeModelPart piece, BlendType blendType, float weight, Vector3f scaleIn) {
         scaleIn.set(calcWeightedScale(scaleIn.x(), weight),
                 calcWeightedScale(scaleIn.y(), weight),
                 calcWeightedScale(scaleIn.z(), weight));

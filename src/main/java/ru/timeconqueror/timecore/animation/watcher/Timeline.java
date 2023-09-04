@@ -25,8 +25,8 @@ public class Timeline {
 
     }
 
-    public boolean isEnded(long currentTime) {
-        return currentTime > time.get() + getElapsedLength();
+    public boolean isEnded(long systemTime) {
+        return systemTime > time.get() + getElapsedLength();
     }
 
     /**
@@ -36,8 +36,8 @@ public class Timeline {
      *
      * @see #getElapsedTime(long)
      */
-    public int getAnimationTime(long currentTime) {
-        long animationTime = Math.round((currentTime - time.get()) * speed);
+    public int getAnimationTime(long systemTime) {
+        long animationTime = Math.round((systemTime - time.get()) * speed);
 
         if (reversed) {
             animationTime = animationStartTime - animationTime;
@@ -53,8 +53,8 @@ public class Timeline {
      *
      * @see #getAnimationTime(long)
      */
-    public int getElapsedTime(long currentTime) {
-        long elapsed = currentTime - time.get();
+    public int getElapsedTime(long systemTime) {
+        long elapsed = systemTime - time.get();
 
         return (int) MathUtils.coerceInRange(elapsed, 0, getElapsedLength());
     }
@@ -76,7 +76,7 @@ public class Timeline {
         time.set(System.currentTimeMillis());
     }
 
-    public void set(long time) {
-        this.time.set(time);
+    public void setFromElapsed(int elapsedTime) {
+        this.time.set(System.currentTimeMillis() - elapsedTime);
     }
 }

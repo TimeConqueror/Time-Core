@@ -1,17 +1,15 @@
 package ru.timeconqueror.timecore.animation;
 
+import lombok.AccessLevel;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import ru.timeconqueror.timecore.TimeCore;
-import ru.timeconqueror.timecore.animation.watcher.AnimationWatcher;
 import ru.timeconqueror.timecore.api.animation.AnimationConstants;
 import ru.timeconqueror.timecore.api.animation.AnimationManager;
 import ru.timeconqueror.timecore.api.animation.builders.LayerDefinition;
 import ru.timeconqueror.timecore.api.client.render.model.ITimeModel;
 import ru.timeconqueror.timecore.molang.MolangSharedObjects;
 
-import javax.annotation.OverridingMethodsMustInvokeSuper;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
@@ -20,7 +18,8 @@ import java.util.stream.Collectors;
 public abstract class BaseAnimationManager implements AnimationManager {
     @Getter
     private final MolangSharedObjects molangSharedObjects;
-    private Map<String, Layer> layerMap;
+    @Getter(AccessLevel.PROTECTED)
+    private Map<String, LayerImpl> layerMap;
 
     public BaseAnimationManager(MolangSharedObjects molangSharedObjects) {
         this.molangSharedObjects = molangSharedObjects;
@@ -33,8 +32,8 @@ public abstract class BaseAnimationManager implements AnimationManager {
 
     @NotNull
     @Override
-    public Layer getLayer(String name) {
-        Layer layer = layerMap.get(name);
+    public LayerImpl getLayer(String name) {
+        LayerImpl layer = layerMap.get(name);
         if (layer == null) throw new RuntimeException("There is no layer with location " + name);
         return layer;
     }
@@ -45,26 +44,15 @@ public abstract class BaseAnimationManager implements AnimationManager {
     }
 
     @Override
-    public void setAnimation(AnimationStarter animationStarter, String layerName) {
-        AnimationStarter.AnimationData data = animationStarter.getData();
+    public boolean setAnimation(AnimationStarter animationStarter, String layerName) {
         if (containsLayer(layerName)) {
-            Layer layer = getLayer(layerName);
-
-            if (data.isIgnorable()) {
-                AnimationWatcher watcher = layer.getAnimationWatcher();
-                if (watcher != null && watcher.playsSame(data)) {
-                    return;
-                }
-            }
-
-            layer.setAnimation(data);
-        } else {
-            TimeCore.LOGGER.error("Can't start animation: layer with location " + layerName + " doesn't exist in provided animation manager.");
+            LayerImpl layer = getLayer(layerName);
+            AnimationStarter.AnimationData data = animationStarter.getData();
+            return layer.start(data);
         }
-    }
 
-    protected void onAnimationStart(Layer layer, AnimationStarter.AnimationData data, AnimationWatcher watcher) {
-
+        TimeCore.LOGGER.error("Can't start animation: layer with location " + layerName + " doesn't exist in provided animation manager.");
+        return false;
     }
 
     @Override
@@ -75,8 +63,7 @@ public abstract class BaseAnimationManager implements AnimationManager {
     @Override
     public void removeAnimation(String layerName, int transitionTime) {
         if (containsLayer(layerName)) {
-            Layer layer = getLayer(layerName);
-            layer.removeAnimation(transitionTime);
+            getLayer(layerName).removeAnimation(transitionTime);
         } else {
             TimeCore.LOGGER.error("Can't find layer with location " + layerName);
         }
@@ -84,47 +71,20 @@ public abstract class BaseAnimationManager implements AnimationManager {
 
     @Override
     public void applyAnimations(ITimeModel model) {
-        long currentTime = System.currentTimeMillis();
-        for (Layer layer : layerMap.values()) {
-            layer.update(this, model, currentTime);
-
-            var watcher = layer.getAnimationWatcher();
-            if (watcher != null) {
-                applyAnimation(model, layer, watcher, currentTime);
-            }
+        long systemTime = System.currentTimeMillis();
+        for (LayerImpl layer : layerMap.values()) {
+            layer.update(this, systemTime);
+            applyAnimation(model, layer, systemTime);
         }
     }
 
-    protected abstract void applyAnimation(ITimeModel model, Layer layer, AnimationWatcher watcher, long currentTime);
+    protected abstract void applyAnimation(ITimeModel model, LayerImpl layer, long systemTime);
 
     protected abstract boolean isGamePaused();
 
-    /**
-     * Called when the animation was removed or ended.
-     *
-     * @param watcher
-     */
-    @OverridingMethodsMustInvokeSuper
-    protected void onAnimationEnd(@Nullable ITimeModel model, Layer layer, AnimationWatcher watcher) {
-        onAnimationStop(watcher);
-    }
-
     public void buildLayers(LinkedHashMap<String, LayerDefinition> layers) {
         layerMap = layers.values().stream()
-                .map(layerDefinition -> new Layer(this, layerDefinition))
-                .collect(Collectors.toMap(Layer::getName, layer -> layer, (o, o2) -> o, LinkedHashMap::new));
-    }
-
-    /**
-     * Called on every animation stop like removing animation or replacing it.
-     *
-     * @param watcher
-     */
-    protected void onAnimationStop(AnimationWatcher watcher) {
-
-    }
-
-    public void onLoopedAnimationRestart(AnimationWatcher watcher) {
-
+                .map(layerDefinition -> new LayerImpl(this, layerDefinition))
+                .collect(Collectors.toMap(LayerImpl::getName, layer -> layer, (o, o2) -> o, LinkedHashMap::new));
     }
 }

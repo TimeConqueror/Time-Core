@@ -22,7 +22,7 @@ public interface AnimationManager {
      *                          so you should check existing of the layer in {@link #containsLayer(String)} firstly.
      */
     @NotNull
-    ILayer getLayer(String name);
+    Layer getLayer(String name);
 
 	/**
 	 * Returns all layer names.
@@ -42,12 +42,12 @@ public interface AnimationManager {
 	 */
 	void applyAnimations(ITimeModel model);
 
-	/**
-	 * Sets animation data to start new animation in the layer with provided location.
-	 *
-	 * @see AnimationStarter#startAt(AnimationManager, String)
-	 */
-	void setAnimation(AnimationStarter animationStarter, String layerName);
+    /**
+     * Sets animation data to start new animation in the layer with provided location.
+     *
+     * @see AnimationStarter#startAt(AnimationManager, String)
+     */
+    boolean setAnimation(AnimationStarter animationStarter, String layerName);
 
 	/**
 	 * Removes animation from the layer with provided location.

@@ -51,7 +51,8 @@ public class FreezableTime {
     }
 
     public enum FreezeCause {
-        BY_ESC,
+        GAME_PAUSED,
+        IN_TRANSITION,
         MANUAL
     }
 }

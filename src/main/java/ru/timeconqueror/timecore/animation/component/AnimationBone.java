@@ -5,8 +5,8 @@ import org.joml.Vector3f;
 import ru.timeconqueror.timecore.animation.calculation.KeyFrameInterpolator;
 import ru.timeconqueror.timecore.animation.util.AnimationUtils;
 import ru.timeconqueror.timecore.api.animation.Animation;
+import ru.timeconqueror.timecore.api.animation.BlendType;
 import ru.timeconqueror.timecore.api.animation.Channel;
-import ru.timeconqueror.timecore.api.animation.ILayer;
 import ru.timeconqueror.timecore.client.render.model.TimeModelPart;
 
 import java.util.List;
@@ -33,20 +33,20 @@ public class AnimationBone {
         this.scales = scales;
     }
 
-    public void apply(Animation animation, ILayer layer, TimeModelPart piece, MolangEnvironment env, int existingTime) {
+    public void apply(Animation animation, BlendType blendType, float weight, TimeModelPart piece, MolangEnvironment env, int existingTime) {
         Vector3f rotateVec = KeyFrameInterpolator.findInterpolationVec(animation, env, rotations, existingTime);
         if (rotateVec != null) {
-            AnimationUtils.applyRotation(piece, layer, rotateVec);
+            AnimationUtils.applyRotation(piece, blendType, weight, rotateVec);
         }
 
         Vector3f posVec = KeyFrameInterpolator.findInterpolationVec(animation, env, translations, existingTime);
         if (posVec != null) {
-            AnimationUtils.applyOffset(piece, layer, posVec);
+            AnimationUtils.applyOffset(piece, blendType, weight, posVec);
         }
 
         Vector3f scaleVec = KeyFrameInterpolator.findInterpolationVec(animation, env, scales, existingTime);
         if (scaleVec != null) {
-            AnimationUtils.applyScale(piece, layer, scaleVec);
+            AnimationUtils.applyScale(piece, blendType, weight, scaleVec);
         }
     }
 

@@ -2,7 +2,6 @@ package ru.timeconqueror.timecore.api.animation;
 
 import gg.moonflower.molangcompiler.api.MolangEnvironment;
 import net.minecraft.resources.ResourceLocation;
-import org.jetbrains.annotations.NotNull;
 import ru.timeconqueror.timecore.TimeCore;
 import ru.timeconqueror.timecore.animation.AnimationStarter;
 import ru.timeconqueror.timecore.animation.component.BasicAnimation;
@@ -15,7 +14,7 @@ public abstract class Animation {
 	@SuppressWarnings("StaticInitializerReferencesSubClass")
 	public static final Animation NULL = new BasicAnimation(LoopMode.LOOP, TimeCore.rl("internal/null"), "null", Integer.MAX_VALUE, null);
 
-    public abstract void apply(ITimeModel model, ILayer layer, MolangEnvironment env, int existingTime);
+    public abstract void apply(ITimeModel model, BlendType blendType, float weight, MolangEnvironment env, int existingTime);
 
 	/**
 	 * Name of the animation, that is indicated in animation file.
@@ -34,12 +33,6 @@ public abstract class Animation {
 	public abstract int getLength();
 
 	public abstract LoopMode getLoopMode();
-
-    /**
-     * Should return the factory, that can handle your IAnimation implementation class
-     */
-    @NotNull
-    public abstract TransitionFactory createTransitionFactory(MolangEnvironment env);
 
 	/**
 	 * Proceeds some action for each bone.

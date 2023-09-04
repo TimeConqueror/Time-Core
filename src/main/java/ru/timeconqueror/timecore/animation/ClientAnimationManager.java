@@ -1,7 +1,6 @@
 package ru.timeconqueror.timecore.animation;
 
 import net.minecraft.client.Minecraft;
-import ru.timeconqueror.timecore.animation.watcher.AnimationWatcher;
 import ru.timeconqueror.timecore.api.client.render.model.ITimeModel;
 import ru.timeconqueror.timecore.molang.MolangSharedObjects;
 
@@ -12,8 +11,8 @@ public class ClientAnimationManager extends BaseAnimationManager {
     }
 
     @Override
-    protected void applyAnimation(ITimeModel model, Layer layer, AnimationWatcher watcher, long currentTime) {
-        layer.apply(model, currentTime);
+    protected void applyAnimation(ITimeModel model, LayerImpl layer, long systemTime) {
+        layer.apply(model, systemTime);
     }
 
     @Override

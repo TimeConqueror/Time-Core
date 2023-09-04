@@ -3,7 +3,6 @@ package ru.timeconqueror.timecore.animation.builders;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ru.timeconqueror.timecore.animation.AnimationStarter;
-import ru.timeconqueror.timecore.animation.Layer;
 import ru.timeconqueror.timecore.animation.PredefinedAnimation;
 import ru.timeconqueror.timecore.api.animation.AnimationManager;
 import ru.timeconqueror.timecore.api.animation.builders.IPredefinedAnimations;
@@ -20,9 +19,10 @@ public class PredefinedAnimations implements IPredefinedAnimations {
         return anim1.getLayerName().equals(anim2.getLayerName());
     }
 
-    public static boolean areAnimationsEqual(@NotNull PredefinedAnimation anim, Layer layer) {
-        return anim.getAnimationStarter().getData().getAnimation().equals(layer.getWatcherInfo().getAnimation());
-    }
+    //FIXME
+//    public static boolean areAnimationsEqual(@NotNull PredefinedAnimation anim, Layer layer) {
+//        return anim.getAnimationStarter().getData().getAnimation().equals(layer.getWatcherInfo().getAnimation());
+//    }
 
     public static class EntityPredefinedAnimations extends PredefinedAnimations implements IEntityPredefinedAnimations {
         @Nullable

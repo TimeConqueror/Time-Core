@@ -1,19 +1,15 @@
 package ru.timeconqueror.timecore.animation.internal;
 
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import ru.timeconqueror.timecore.animation.ServerAnimationManager;
-import ru.timeconqueror.timecore.animation.action.EntityActionManager;
 import ru.timeconqueror.timecore.api.animation.AnimatedObject;
 import ru.timeconqueror.timecore.api.animation.AnimationManager;
 import ru.timeconqueror.timecore.api.common.event.LivingTickEndEvent;
-import ru.timeconqueror.timecore.internal.common.packet.InternalPacketManager;
-import ru.timeconqueror.timecore.internal.common.packet.animation.S2CSyncAnimationsMsg;
+import ru.timeconqueror.timecore.api.util.holder.Pair;
 
 //TODO add tickers for tile entities
 @Mod.EventBusSubscriber
@@ -33,20 +29,23 @@ public class AnimationEventHandler {
 
     public static void onEntityTickEnd(LivingTickEndEvent event) {
         LivingEntity entityLiving = event.getEntity();
-
-        if (entityLiving instanceof AnimatedObject<?>) {
-            EntityActionManager<?> actionManager = (EntityActionManager<?>) (((AnimatedObject<?>) entityLiving).getSystem().getActionManager());
-            actionManager.onTick();
-        }
+        //FIXME
+//        if (entityLiving instanceof AnimatedObject<?>) {
+//            EntityActionManager<?> actionManager = (EntityActionManager<?>) (((AnimatedObject<?>) entityLiving).getSystem().getActionManager());
+//            actionManager.onTick();
+//        }
     }
 
     @SubscribeEvent
     public static void onPlayerStartTracking(PlayerEvent.StartTracking event) {
         Entity target = event.getTarget();
-        if (target instanceof AnimatedObject<?>) {
-            AnimationManager animationManager = ((AnimatedObject<?>) target).getSystem().getActionManager().getAnimationManager();
-            ServerAnimationManager<?> serverAnimationManager = (ServerAnimationManager<?>) animationManager;
-            InternalPacketManager.sendToPlayer(((ServerPlayer) event.getEntity()), new S2CSyncAnimationsMsg(serverAnimationManager, target));
+        if (target instanceof AnimatedObject<?> animatedObj) {
+            AnimationManager animationManager = animatedObj.getAnimationManager();
+            var tickersByLayer = animationManager.getLayerNames().stream()
+                    .map(animationManager::getLayer)
+                    .map(layer -> Pair.of(layer.getName(), layer.getCurrentTicker()))
+                    .toList();
+            animatedObj.getSystem().getNetworkDispatcher().sendSyncAnimationsPacket(tickersByLayer);
         }
     }
 }

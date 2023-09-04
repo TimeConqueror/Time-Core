@@ -1,7 +1,7 @@
 package ru.timeconqueror.timecore.api.animation.action;
 
 import ru.timeconqueror.timecore.animation.AnimationStarter;
-import ru.timeconqueror.timecore.animation.watcher.AnimationWatcher;
+import ru.timeconqueror.timecore.animation.watcher.AnimationTicker;
 import ru.timeconqueror.timecore.api.animation.Animation;
 
 public interface IDelayedAction<T, EXTRA_DATA> {
@@ -26,17 +26,17 @@ public interface IDelayedAction<T, EXTRA_DATA> {
          * @param extraData user data to be read or write
          * @return true if the action is done
          */
-        boolean onUpdate(AnimationWatcher watcher, T object, EXTRA_DATA extraData);
+        boolean onUpdate(AnimationTicker watcher, T object, EXTRA_DATA extraData);
     }
 
-    /**
-     * Creates builder for Delayed actions.
-     *
-     * @param id      ID of action. By this ID they will be compared for deletion and addition.
-     * @param starter animation starter, which will be played when action is started.
-     * @param layer   layer, where animation will be played.
-     */
-    static <T, EXTRA_DATA> Builder<T, EXTRA_DATA> builder(String id, String layer, AnimationStarter starter) {
-        return new Builder<>(id, layer, starter);
-    }
+//    /**
+//     * Creates builder for Delayed actions.
+//     *
+//     * @param id      ID of action. By this ID they will be compared for deletion and addition.
+//     * @param starter animation starter, which will be played when action is started.
+//     * @param layer   layer, where animation will be played.
+//     */
+//    static <T, EXTRA_DATA> Builder<T, EXTRA_DATA> builder(String id, String layer, AnimationStarter starter) {
+//        return new Builder<>(id, layer, starter);
+//    }
 }

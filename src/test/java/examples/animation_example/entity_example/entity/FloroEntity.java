@@ -16,16 +16,15 @@ import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.monster.RangedAttackMob;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.common.util.Lazy;
 import org.jetbrains.annotations.NotNull;
 import ru.timeconqueror.timecore.animation.AnimationStarter;
 import ru.timeconqueror.timecore.animation.AnimationSystem;
 import ru.timeconqueror.timecore.animation.component.LoopMode;
-import ru.timeconqueror.timecore.animation.entityai.AnimatedRangedAttackGoal;
-import ru.timeconqueror.timecore.animation.util.StandardDelayPredicates;
-import ru.timeconqueror.timecore.animation.watcher.TransitionWatcher;
-import ru.timeconqueror.timecore.api.animation.*;
-import ru.timeconqueror.timecore.api.animation.action.IDelayedAction;
+import ru.timeconqueror.timecore.animation.watcher.AnimationTicker;
+import ru.timeconqueror.timecore.api.animation.ActionManager;
+import ru.timeconqueror.timecore.api.animation.AnimatedObject;
+import ru.timeconqueror.timecore.api.animation.BlendType;
+import ru.timeconqueror.timecore.api.animation.Layer;
 import ru.timeconqueror.timecore.api.animation.builders.AnimationSystemBuilder;
 
 import java.util.EnumSet;
@@ -39,27 +38,28 @@ import java.util.EnumSet;
  * <p>
  * If task has a lower priority (higher number), it's checked by system if it can work in parallel (if mutex isn't the same).
  */
+//FIXME restore actions
 public class FloroEntity extends Monster implements RangedAttackMob, AnimatedObject<FloroEntity> {
     private static final EntityDataAccessor<Boolean> HIDDEN = SynchedEntityData.defineId(FloroEntity.class, EntityDataSerializers.BOOLEAN);
 
-    private static final Lazy<IDelayedAction<FloroEntity, AnimatedRangedAttackGoal.ActionData>> RANGED_ATTACK_ACTION;
-    private static final Lazy<IDelayedAction<FloroEntity, Void>> REVEALING_ACTION;
-    private static final Lazy<IDelayedAction<FloroEntity, Void>> HIDING_ACTION;
+//    private static final Lazy<IDelayedAction<FloroEntity, AnimatedRangedAttackGoal.ActionData>> RANGED_ATTACK_ACTION;
+//    private static final Lazy<IDelayedAction<FloroEntity, Void>> REVEALING_ACTION;
+//    private static final Lazy<IDelayedAction<FloroEntity, Void>> HIDING_ACTION;
 
     private static final String LAYER_SHOWING = "showing";
     private static final String LAYER_WALKING = "walking";
     private static final String LAYER_ATTACK = "attack";
 
     static {
-        RANGED_ATTACK_ACTION = Lazy.of(() -> IDelayedAction.<FloroEntity, AnimatedRangedAttackGoal.ActionData>builder("shoot", LAYER_ATTACK, new AnimationStarter(EntityAnimations.floroShoot))
-                .withSimpleHandler(StandardDelayPredicates.whenPassed(0.5F), AnimatedRangedAttackGoal.STANDARD_RUNNER)
-                .build());
-        REVEALING_ACTION = Lazy.of(() -> IDelayedAction.<FloroEntity, Void>builder("reveal", LAYER_SHOWING, new AnimationStarter(EntityAnimations.floroReveal).withTransitionTime(5000).startingFrom(0.75F).withSpeed(0.25F))
-                .withSimpleHandler(StandardDelayPredicates.onEnd(), (floroEntity, o) -> floroEntity.setHidden(false))
-                .build());
-        HIDING_ACTION = Lazy.of(() -> IDelayedAction.<FloroEntity, Void>builder("hiding", LAYER_SHOWING, new AnimationStarter(EntityAnimations.floroReveal).reversed().withLoopMode(LoopMode.HOLD_ON_LAST_FRAME))
-                .withSimpleHandler(StandardDelayPredicates.onEnd(), (floroEntity, o) -> floroEntity.setHidden(true))
-                .build());
+//        RANGED_ATTACK_ACTION = Lazy.of(() -> IDelayedAction.<FloroEntity, AnimatedRangedAttackGoal.ActionData>builder("shoot", LAYER_ATTACK, new AnimationStarter(EntityAnimations.floroShoot))
+//                .withSimpleHandler(StandardDelayPredicates.whenPassed(0.5F), AnimatedRangedAttackGoal.STANDARD_RUNNER)
+//                .build());
+//        REVEALING_ACTION = Lazy.of(() -> IDelayedAction.<FloroEntity, Void>builder("reveal", LAYER_SHOWING, new AnimationStarter(EntityAnimations.floroReveal).withTransitionTime(5000).startingFrom(0.75F).withSpeed(0.25F))
+//                .withSimpleHandler(StandardDelayPredicates.onEnd(), (floroEntity, o) -> floroEntity.setHidden(false))
+//                .build());
+//        HIDING_ACTION = Lazy.of(() -> IDelayedAction.<FloroEntity, Void>builder("hiding", LAYER_SHOWING, new AnimationStarter(EntityAnimations.floroReveal).reversed().withLoopMode(LoopMode.HOLD_ON_LAST_FRAME))
+//                .withSimpleHandler(StandardDelayPredicates.onEnd(), (floroEntity, o) -> floroEntity.setHidden(true))
+//                .build());
     }
 
     private final AnimationSystem<FloroEntity> animationSystem;
@@ -149,19 +149,14 @@ public class FloroEntity extends Monster implements RangedAttackMob, AnimatedObj
         super.tick();
 
         if (level().isClientSide) {
-            ILayer layer = getAnimationManager().getLayer("test");
-            IAnimationWatcherInfo watcherInfo = layer.getWatcherInfo();
+            Layer layer = getAnimationManager().getLayer("test");
+            AnimationTicker currentTicker = layer.getCurrentTicker();
 
-            var showing = new AnimationStarter(EntityAnimations.floroReveal).withTransitionTime(10000).startingFrom(0.75F).withSpeed(0.25F);
-            var hiding = AnimationStarter.from(showing.getData()).reversed();
+            if (currentTicker == AnimationTicker.empty()) {
+                var showing = new AnimationStarter(EntityAnimations.floroReveal).withTransitionTime(2000).startingFrom(0.75F).withSpeed(0.25F);
+                var walking = EntityAnimations.floroWalk.starter().withLoopMode(LoopMode.DO_NOT_LOOP).withSpeed(0.3F);
+                var chain = AnimationStarter.from(showing.getData()).withNextAnimation(walking);
 
-            var chain = AnimationStarter.from(showing.getData()).withNextAnimation(hiding);
-
-            if (!(watcherInfo instanceof TransitionWatcher) && watcherInfo.playsSame(hiding.getData()) && StandardDelayPredicates.onEnd().test(watcherInfo)) {
-                getAnimationManager().setAnimation(Animation.NULL.starter(), "test");
-            }
-
-            if (watcherInfo.isNull()) {
                 getAnimationManager().setAnimation(chain, "test");
             }
         }
@@ -203,7 +198,8 @@ public class FloroEntity extends Monster implements RangedAttackMob, AnimatedObj
     }
 
     private boolean canMove() {
-        return !isHidden() && !getActionManager().isActionEnabled(REVEALING_ACTION.get()) && !isHiding;
+//        return !isHidden() && !getActionManager().isActionEnabled(REVEALING_ACTION.get()) && !isHiding;
+        return true;
     }
 
     private void startHiddenAnimation() {
@@ -212,7 +208,7 @@ public class FloroEntity extends Monster implements RangedAttackMob, AnimatedObj
                 .startingFrom(0)
                 .withLoopMode(LoopMode.HOLD_ON_LAST_FRAME)
                 .withTransitionTime(0)
-                .startAt(getActionManager().getAnimationManager(), LAYER_SHOWING);
+                .startAt(getAnimationManager(), LAYER_SHOWING);
     }
 
     @Override
@@ -259,9 +255,9 @@ public class FloroEntity extends Monster implements RangedAttackMob, AnimatedObj
         public void start() {
             ActionManager<FloroEntity> actionManager = getActionManager();
             if (isHidden()) {
-                actionManager.enableAction(REVEALING_ACTION.get(), null);
+//                actionManager.enableAction(REVEALING_ACTION.get(), null);
             } else {
-                actionManager.disableAction(HIDING_ACTION.get());
+//                actionManager.disableAction(HIDING_ACTION.get());
             }
         }
 
@@ -305,9 +301,9 @@ public class FloroEntity extends Monster implements RangedAttackMob, AnimatedObj
         @Override
         public void tick() {
             ActionManager<FloroEntity> actionManager = getActionManager();
-            if (!actionManager.isActionEnabled(HIDING_ACTION.get()) && tickCount % (12 * 20) == 0) {
-                actionManager.enableAction(HIDING_ACTION.get(), null);
-            }
+//            if (!actionManager.isActionEnabled(HIDING_ACTION.get()) && tickCount % (12 * 20) == 0) {
+//                actionManager.enableAction(HIDING_ACTION.get(), null);
+//            }
         }
 
         @Override

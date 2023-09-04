@@ -13,7 +13,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.spongepowered.asm.mixin.MixinEnvironment;
 import ru.timeconqueror.timecore.animation.AnimationRegistry;
-import ru.timeconqueror.timecore.animation.watcher.TransitionWatcher;
 import ru.timeconqueror.timecore.api.Markers;
 import ru.timeconqueror.timecore.api.TimeCoreAPI;
 import ru.timeconqueror.timecore.api.animation.Animation;
@@ -65,7 +64,6 @@ public final class TimeCore {
         event.enqueueWork(capabilityManager::addDefaultAttachers);
 
         AnimationRegistry.registerAnimation(Animation.NULL);
-        AnimationRegistry.registerAnimation(TransitionWatcher.TRANSITION);
     }
 
     private static void checkForMixinBootstrap() {

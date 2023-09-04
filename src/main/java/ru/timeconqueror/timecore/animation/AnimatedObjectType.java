@@ -7,14 +7,14 @@ import ru.timeconqueror.timecore.internal.common.packet.animation.CodecSupplier.
 
 import java.util.function.Function;
 
-public enum EnumAnimatedObjectType {
+public enum AnimatedObjectType {
     TILE_ENTITY(TileEntityCodecSupplier::new, NetworkDispatcher.forTileEntity()),
     ENTITY(EntityCodecSupplier::new, NetworkDispatcher.forEntity());
 
     private final Function<FriendlyByteBuf, CodecSupplier> codecFactory;
     private final NetworkDispatcher<?> networkDispatcher;
 
-    EnumAnimatedObjectType(Function<FriendlyByteBuf, CodecSupplier> codecFactory, NetworkDispatcher<?> networkDispatcher) {
+    AnimatedObjectType(Function<FriendlyByteBuf, CodecSupplier> codecFactory, NetworkDispatcher<?> networkDispatcher) {
         this.codecFactory = codecFactory;
         this.networkDispatcher = networkDispatcher;
     }

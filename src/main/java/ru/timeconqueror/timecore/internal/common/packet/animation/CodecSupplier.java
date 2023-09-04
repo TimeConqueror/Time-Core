@@ -5,12 +5,12 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import ru.timeconqueror.timecore.animation.EnumAnimatedObjectType;
+import ru.timeconqueror.timecore.animation.AnimatedObjectType;
 import ru.timeconqueror.timecore.api.animation.AnimatedObject;
 
 public abstract class CodecSupplier {
     public static CodecSupplier fromBuffer(FriendlyByteBuf packetBuffer) {
-        return EnumAnimatedObjectType.values()[packetBuffer.readInt()].getCodec(packetBuffer);
+        return AnimatedObjectType.values()[packetBuffer.readInt()].getCodec(packetBuffer);
     }
 
     public void toBuffer(FriendlyByteBuf buffer) {
@@ -18,7 +18,7 @@ public abstract class CodecSupplier {
         encode(buffer);
     }
 
-    protected abstract EnumAnimatedObjectType getType();
+    protected abstract AnimatedObjectType getType();
 
     protected abstract void encode(FriendlyByteBuf buffer);
 
@@ -41,8 +41,8 @@ public abstract class CodecSupplier {
         }
 
         @Override
-        protected EnumAnimatedObjectType getType() {
-            return EnumAnimatedObjectType.ENTITY;
+        protected AnimatedObjectType getType() {
+            return AnimatedObjectType.ENTITY;
         }
 
         @Override
@@ -73,8 +73,8 @@ public abstract class CodecSupplier {
         }
 
         @Override
-        protected EnumAnimatedObjectType getType() {
-            return EnumAnimatedObjectType.TILE_ENTITY;
+        protected AnimatedObjectType getType() {
+            return AnimatedObjectType.TILE_ENTITY;
         }
     }
 }
