@@ -19,10 +19,6 @@ public abstract class AnimationTicker implements TickerInfo {
 
     private boolean inited;
 
-    public static AnimationTicker empty() {
-        return EmptyAnimationTicker.INSTANCE;
-    }
-
     public boolean isAnimationEnded(long systemTime) {
         return timeline.isEnded(systemTime);
     }

@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 import ru.timeconqueror.timecore.animation.watcher.AnimationTicker;
 import ru.timeconqueror.timecore.animation.watcher.AnimationTickerImpl;
+import ru.timeconqueror.timecore.animation.watcher.EmptyAnimationTicker;
 import ru.timeconqueror.timecore.animation.watcher.FreezableTime.FreezeCause;
 import ru.timeconqueror.timecore.animation.watcher.TransitionTicker;
 import ru.timeconqueror.timecore.api.animation.BlendType;
@@ -25,7 +26,7 @@ public class LayerImpl implements Layer {
     private final MolangEnvironment environment;
     @Getter
     @Setter
-    private AnimationTicker currentTicker = AnimationTicker.empty();
+    private AnimationTicker currentTicker = EmptyAnimationTicker.INSTANCE;
 
     public LayerImpl(BaseAnimationManager animationManager, LayerDefinition layerDefinition) {
         this.name = layerDefinition.name();
@@ -76,7 +77,6 @@ public class LayerImpl implements Layer {
         }
 
         AnimationTickerImpl animationTicker = new AnimationTickerImpl(data);
-        removeAnimation(data.getTransitionTime());
         if (data.getTransitionTime() == 0) {
             currentTicker = animationTicker;
         } else {
@@ -87,8 +87,8 @@ public class LayerImpl implements Layer {
     }
 
     public void removeAnimation(int transitionTime) {
-        if (currentTicker == AnimationTicker.empty()) return;
+        if (currentTicker.isEmpty()) return;
 
-        currentTicker = new TransitionTicker(currentTicker, AnimationTicker.empty(), transitionTime);
+        currentTicker = new TransitionTicker(currentTicker, EmptyAnimationTicker.INSTANCE, transitionTime);
     }
 }
