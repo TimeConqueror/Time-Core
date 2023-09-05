@@ -3,7 +3,7 @@ package ru.timeconqueror.timecore.api.animation;
 import org.jetbrains.annotations.NotNull;
 import ru.timeconqueror.timecore.animation.AnimationStarter;
 import ru.timeconqueror.timecore.api.client.render.model.ITimeModel;
-import ru.timeconqueror.timecore.molang.MolangSharedObjects;
+import ru.timeconqueror.timecore.molang.SharedMolangObject;
 
 import java.util.Set;
 
@@ -66,5 +66,5 @@ public interface AnimationManager {
      */
     void removeAnimation(String layerName, int transitionTime);
 
-    MolangSharedObjects getMolangSharedObjects();
+	SharedMolangObject getSharedMolangObjects();
 }

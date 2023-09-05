@@ -5,13 +5,13 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 import ru.timeconqueror.timecore.api.animation.AnimatedObject;
 import ru.timeconqueror.timecore.api.client.render.model.ITimeModel;
-import ru.timeconqueror.timecore.molang.MolangSharedObjects;
+import ru.timeconqueror.timecore.molang.SharedMolangObject;
 
 public class ServerAnimationManager<T extends AnimatedObject<T>> extends BaseAnimationManager {
     private final NetworkDispatcherInstance<T> networkDispatcher;
 
-    public ServerAnimationManager(MolangSharedObjects molangSharedObjects, NetworkDispatcherInstance<T> networkDispatcher) {
-        super(molangSharedObjects);
+    public ServerAnimationManager(SharedMolangObject sharedMolangObject, NetworkDispatcherInstance<T> networkDispatcher) {
+        super(sharedMolangObject);
         this.networkDispatcher = networkDispatcher;
     }
 

@@ -8,7 +8,7 @@ import ru.timeconqueror.timecore.api.animation.AnimationConstants;
 import ru.timeconqueror.timecore.api.animation.AnimationManager;
 import ru.timeconqueror.timecore.api.animation.builders.LayerDefinition;
 import ru.timeconqueror.timecore.api.client.render.model.ITimeModel;
-import ru.timeconqueror.timecore.molang.MolangSharedObjects;
+import ru.timeconqueror.timecore.molang.SharedMolangObject;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -17,12 +17,12 @@ import java.util.stream.Collectors;
 
 public abstract class BaseAnimationManager implements AnimationManager {
     @Getter
-    private final MolangSharedObjects molangSharedObjects;
+    private final SharedMolangObject sharedMolangObjects;
     @Getter(AccessLevel.PROTECTED)
     private Map<String, LayerImpl> layerMap;
 
-    public BaseAnimationManager(MolangSharedObjects molangSharedObjects) {
-        this.molangSharedObjects = molangSharedObjects;
+    public BaseAnimationManager(SharedMolangObject sharedMolangObjects) {
+        this.sharedMolangObjects = sharedMolangObjects;
     }
 
     @Override

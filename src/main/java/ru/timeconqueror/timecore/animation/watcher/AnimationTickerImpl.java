@@ -1,6 +1,7 @@
 package ru.timeconqueror.timecore.animation.watcher;
 
 import gg.moonflower.molangcompiler.api.MolangEnvironment;
+import gg.moonflower.molangcompiler.api.object.MolangLibrary;
 import lombok.Getter;
 import net.minecraft.network.FriendlyByteBuf;
 import ru.timeconqueror.timecore.animation.AnimationStarter;
@@ -11,15 +12,19 @@ import ru.timeconqueror.timecore.api.animation.Animation;
 import ru.timeconqueror.timecore.api.animation.AnimationConstants;
 import ru.timeconqueror.timecore.api.animation.BlendType;
 import ru.timeconqueror.timecore.api.client.render.model.ITimeModel;
+import ru.timeconqueror.timecore.api.molang.Molang;
+import ru.timeconqueror.timecore.molang.MolangObjects;
 
 public class AnimationTickerImpl extends AnimationTicker {
-
     @Getter
     private final AnimationStarter.AnimationData animationData;
+    @Getter
+    private final MolangLibrary tickerQuery;
 
     public AnimationTickerImpl(AnimationStarter.AnimationData animationData) {
         super(new Timeline(animationData.getAnimationLength(), animationData.getSpeed(), animationData.isReversed(), System.currentTimeMillis(), animationData.getStartAnimationTime()));
         this.animationData = animationData;
+        this.tickerQuery = MolangObjects.queriesForTicker(this);
     }
 
     @Override
@@ -47,7 +52,10 @@ public class AnimationTickerImpl extends AnimationTicker {
         //TODO custom weight
 
         int animationTime = getTimeline().getAnimationTime(systemTime);
+
+        env.loadLibrary(Molang.Query.Domains.ANIMATION, tickerQuery);
         animation.apply(model, blendType, outerWeight, env, animationTime);
+        env.unloadLibrary(Molang.Query.Domains.ANIMATION);
     }
 
     @Override

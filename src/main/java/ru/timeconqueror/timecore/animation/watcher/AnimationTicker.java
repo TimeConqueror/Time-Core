@@ -52,4 +52,24 @@ public abstract class AnimationTicker implements TickerInfo {
     public boolean isEmpty() {
         return this.getAnimationData().getAnimation() == Animation.NULL;
     }
+
+    @Override
+    public int getAnimationTime(long systemTime) {
+        return timeline.getAnimationTime(systemTime);
+    }
+
+    @Override
+    public int getAnimationLength() {
+        return timeline.getLength();
+    }
+
+    @Override
+    public int getElapsedTime(long systemTime) {
+        return timeline.getElapsedTime(systemTime);
+    }
+
+    @Override
+    public int getElapsedLength() {
+        return timeline.getElapsedLength();
+    }
 }

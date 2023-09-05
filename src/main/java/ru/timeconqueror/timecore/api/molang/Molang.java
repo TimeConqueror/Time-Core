@@ -34,13 +34,20 @@ public class Molang {
     }
 
     public static class Query {
-        /**
-         * <b>Bedrock Wiki</b>: Time in seconds since the current animation started, else 0.0 if not called within an animation.
-         * <br>
-         * <b>In TimeCore</b>: Time in seconds from the declared (by file) start of the animation.
-         * The max value is the animation length.
-         * If the animation is reversed, the anim_time will also go backwards, from 1.0 to 0.0.
-         */
-        public static final String ANIM_TIME = "anim_time";
+        public static class Domains {
+            public static final String ANIMATION = "animation";
+        }
+
+        @MolangQueryDomain(Domains.ANIMATION)
+        public static class Animation {
+            /**
+             * <b>Bedrock Wiki</b>: Time in seconds since the current animation started, else 0.0 if not called within an animation.
+             * <br>
+             * <b>TimeCore clarifies</b>: Time in seconds from the start of the animation declared by its file.
+             * The max value is the animation length.
+             * If the animation is reversed, the anim_time will also go backwards.
+             */
+            public static final String ANIM_TIME = "anim_time";
+        }
     }
 }

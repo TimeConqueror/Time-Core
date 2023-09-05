@@ -2,12 +2,12 @@ package ru.timeconqueror.timecore.animation;
 
 import net.minecraft.client.Minecraft;
 import ru.timeconqueror.timecore.api.client.render.model.ITimeModel;
-import ru.timeconqueror.timecore.molang.MolangSharedObjects;
+import ru.timeconqueror.timecore.molang.SharedMolangObject;
 
 public class ClientAnimationManager extends BaseAnimationManager {
 
-    public ClientAnimationManager(MolangSharedObjects molangSharedObjects) {
-        super(molangSharedObjects);
+    public ClientAnimationManager(SharedMolangObject sharedMolangObject) {
+        super(sharedMolangObject);
     }
 
     @Override

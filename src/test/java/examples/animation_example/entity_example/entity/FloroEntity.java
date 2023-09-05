@@ -21,6 +21,7 @@ import ru.timeconqueror.timecore.animation.AnimationStarter;
 import ru.timeconqueror.timecore.animation.AnimationSystem;
 import ru.timeconqueror.timecore.animation.component.LoopMode;
 import ru.timeconqueror.timecore.animation.watcher.AnimationTicker;
+import ru.timeconqueror.timecore.animation.watcher.EmptyAnimationTicker;
 import ru.timeconqueror.timecore.api.animation.ActionManager;
 import ru.timeconqueror.timecore.api.animation.AnimatedObject;
 import ru.timeconqueror.timecore.api.animation.BlendType;
@@ -152,9 +153,9 @@ public class FloroEntity extends Monster implements RangedAttackMob, AnimatedObj
             Layer layer = getAnimationManager().getLayer("test");
             AnimationTicker currentTicker = layer.getCurrentTicker();
 
-            if (currentTicker == AnimationTicker.empty()) {
+            if (currentTicker == EmptyAnimationTicker.INSTANCE) {
                 var showing = new AnimationStarter(EntityAnimations.floroReveal).withTransitionTime(2000).startingFrom(0.75F).withSpeed(0.25F);
-                var walking = EntityAnimations.floroWalk.starter().withLoopMode(LoopMode.DO_NOT_LOOP).withSpeed(0.3F);
+                var walking = EntityAnimations.floroWalk.starter().reversed().withLoopMode(LoopMode.DO_NOT_LOOP).withSpeed(0.3F);
                 var chain = AnimationStarter.from(showing.getData()).withNextAnimation(walking);
 
                 getAnimationManager().setAnimation(chain, "test");

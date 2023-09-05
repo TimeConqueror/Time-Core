@@ -1,7 +1,6 @@
 package ru.timeconqueror.timecore.animation;
 
 import gg.moonflower.molangcompiler.api.MolangEnvironment;
-import gg.moonflower.molangcompiler.api.MolangRuntime;
 import lombok.Getter;
 import lombok.Setter;
 import ru.timeconqueror.timecore.animation.watcher.AnimationTicker;
@@ -13,7 +12,7 @@ import ru.timeconqueror.timecore.api.animation.BlendType;
 import ru.timeconqueror.timecore.api.animation.Layer;
 import ru.timeconqueror.timecore.api.animation.builders.LayerDefinition;
 import ru.timeconqueror.timecore.api.client.render.model.ITimeModel;
-import ru.timeconqueror.timecore.api.molang.MolangFillers;
+import ru.timeconqueror.timecore.molang.CustomMolangRuntime;
 
 public class LayerImpl implements Layer {
     @Getter
@@ -36,13 +35,10 @@ public class LayerImpl implements Layer {
         environment = createMolangEnvironment(animationManager);
     }
 
-    private MolangEnvironment createMolangEnvironment(BaseAnimationManager animationManager) {
-        MolangRuntime.Builder builder = new MolangRuntime.Builder();
-        animationManager.getMolangSharedObjects().forEach(builder::loadLibrary);
-
-        MolangFillers.addAnimationBasedQueries(this, builder.getQuery());
-
-        return builder.create();
+    private CustomMolangRuntime createMolangEnvironment(BaseAnimationManager animationManager) {
+        CustomMolangRuntime runtime = new CustomMolangRuntime();
+        animationManager.getSharedMolangObjects().forEach(runtime::loadLibrary);
+        return runtime;
     }
 
     public void update(BaseAnimationManager manager, long systemTime) {

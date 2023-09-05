@@ -87,6 +87,7 @@ minecraft {
             workingDirectory project.file('run')
 
 //            property 'forge.logging.markers', 'REGISTRIES'
+            property 'timecore.logging.markers', 'ANIMATION'
 
             property 'forge.logging.console.level', 'debug'
 
@@ -168,7 +169,7 @@ dependencies {
     }
 
     implementation 'thedarkcolour:kotlinforforge:4.3.0'
-    shade 'gg.moonflower:molang-compiler:3.0.4-customized.3'
+    shade 'gg.moonflower:molang-compiler:3.0.4-customized.7'
 
     if (System.getProperty("idea.sync.active") != "true") {
         annotationProcessor("org.spongepowered:mixin:0.8.5:processor")

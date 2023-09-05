@@ -12,7 +12,7 @@ import ru.timeconqueror.timecore.api.animation.MolangObjectFiller;
 import ru.timeconqueror.timecore.api.animation.builders.IAnimationManagerBuilder;
 import ru.timeconqueror.timecore.api.animation.builders.IPredefinedAnimations;
 import ru.timeconqueror.timecore.api.animation.builders.IPredefinedAnimations.IEntityPredefinedAnimations;
-import ru.timeconqueror.timecore.molang.MolangSharedObjects;
+import ru.timeconqueror.timecore.molang.SharedMolangObject;
 
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -58,7 +58,7 @@ public abstract class InternalAnimationSystemBuilder {
         BaseAnimationManagerBuilder animationManagerBuilder = new BaseAnimationManagerBuilder();
         animationManagerTuner.accept(animationManagerBuilder);
 
-        MolangSharedObjects sharedObjects = new MolangSharedObjects();
+        SharedMolangObject sharedObjects = new SharedMolangObject();
         object.populateMolangObjects(new MolangObjectFiller(sharedObjects));
 
         @SuppressWarnings({"unchecked", "rawtypes"})

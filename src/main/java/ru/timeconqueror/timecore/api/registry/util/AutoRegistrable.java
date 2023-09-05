@@ -15,8 +15,8 @@ import java.lang.annotation.Target;
  */
 @Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
-//ToDO add option to make nullable entries, otherwise all should be not null
-//todo automatic unfinalizing static fields
+// ToDO add option to make nullable entries, otherwise all should be not null
+// todo automatic unfinalizing static fields
 public @interface AutoRegistrable {
 
     /**

@@ -7,7 +7,7 @@ import ru.timeconqueror.timecore.api.animation.BlendType;
 import ru.timeconqueror.timecore.api.animation.builders.IAnimationManagerBuilder;
 import ru.timeconqueror.timecore.api.animation.builders.LayerDefinition;
 import ru.timeconqueror.timecore.api.util.SingleUseBuilder;
-import ru.timeconqueror.timecore.molang.MolangSharedObjects;
+import ru.timeconqueror.timecore.molang.SharedMolangObject;
 
 import java.util.LinkedHashMap;
 
@@ -33,12 +33,12 @@ public class BaseAnimationManagerBuilder extends SingleUseBuilder implements IAn
         }
     }
 
-    <T extends AnimatedObject<T>> BaseAnimationManager build(boolean serverSide, AnimatedObjectType type, MolangSharedObjects molangSharedObjects, NetworkDispatcherInstance<T> networkDispatcherInstance) {
+    <T extends AnimatedObject<T>> BaseAnimationManager build(boolean serverSide, AnimatedObjectType type, SharedMolangObject sharedMolangObject, NetworkDispatcherInstance<T> networkDispatcherInstance) {
         BaseAnimationManager manager;
         if (serverSide) {
-            manager = new ServerAnimationManager<>(molangSharedObjects, networkDispatcherInstance);
+            manager = new ServerAnimationManager<>(sharedMolangObject, networkDispatcherInstance);
         } else {
-            manager = new ClientAnimationManager(molangSharedObjects);
+            manager = new ClientAnimationManager(sharedMolangObject);
         }
 
         if (layerDefinitions.isEmpty()) {

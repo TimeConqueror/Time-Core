@@ -25,6 +25,14 @@ public class ReflectionHelper {
         return Modifier.isStatic(m.getModifiers());
     }
 
+    public static boolean isPublic(Field f) {
+        return Modifier.isPublic(f.getModifiers());
+    }
+
+    public static boolean isPublic(Method m) {
+        return Modifier.isPublic(m.getModifiers());
+    }
+
     /**
      * Creates class from given location.
      *

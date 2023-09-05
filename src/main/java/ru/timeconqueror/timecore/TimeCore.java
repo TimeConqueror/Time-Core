@@ -18,6 +18,7 @@ import ru.timeconqueror.timecore.api.TimeCoreAPI;
 import ru.timeconqueror.timecore.api.animation.Animation;
 import ru.timeconqueror.timecore.api.util.EnvironmentUtils;
 import ru.timeconqueror.timecore.common.capability.CapabilityManager;
+import ru.timeconqueror.timecore.molang.MolangLoader;
 
 @Mod(TimeCore.MODID)//todo add null check in ObjectHolder
 //TODO add readable exception when there's no animation file, for now it's just nullpointer
@@ -38,7 +39,7 @@ public final class TimeCore {
         INSTANCE = this;
         checkForMixinBootstrap();
 
-        molangCompiler = MolangCompiler.create(MolangCompiler.DEFAULT_FLAGS, ForgeMod.class.getClassLoader());
+        molangCompiler = MolangLoader.load(ForgeMod.class.getClassLoader());
         capabilityManager = new CapabilityManager();
 
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();

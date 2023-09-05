@@ -30,6 +30,8 @@ import ru.timeconqueror.timecore.api.registry.util.AutoRegistrable.Entries;
 import ru.timeconqueror.timecore.api.registry.util.AutoRegistrable.Init;
 import ru.timeconqueror.timecore.api.util.EnvironmentUtils;
 import ru.timeconqueror.timecore.common.KotlinAutomaticEventSubscriber;
+import ru.timeconqueror.timecore.molang.MolangLoader;
+import ru.timeconqueror.timecore.util.AnnoScanningHelper;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -65,6 +67,7 @@ public class ModInitializer {
         setupAutoRegistries(scanResults, modContainer, modEventBus);
 
         GlobalResourceStorage.INSTANCE.setup(modId);
+        MolangLoader.handleQueryDomainAnnotations(scanResults);
     }
 
     private static void runKotlinAutomaticEventSubscriber(String modId, ModContainer modContainer, ModFileScanData scanResults, Class<?> modClass) {
@@ -84,14 +87,7 @@ public class ModInitializer {
                         || annotationData.annotationType().equals(TIME_AUTO_ENTRIES_TYPE))
                 .forEach(annotationData -> {
                     try {
-                        String containerClassName = annotationData.clazz().getClassName();
-                        Class<?> containerClass;
-                        try {
-                            containerClass = Class.forName(containerClassName);
-                        } catch (Throwable e) {
-                            throw new RuntimeException(String.format("There was an exception while trying to load %s", containerClassName), e);
-                        }
-
+                        Class<?> containerClass = AnnoScanningHelper.getClass(annotationData);
                         Type type = annotationData.annotationType();
 
                         if (type.equals(TIME_AUTO_REG_TYPE)) {
@@ -113,7 +109,7 @@ public class ModInitializer {
 
     private static void processEntries(Class<?> containerClass, ModFileScanData.AnnotationData annotationData, BiConsumer<ResourceKey<?>, Stream<ParentableField>> holderFillerAdder) {
         String registryKeyName = "value";
-        String registryKeyStr = (String) annotationData.annotationData().get(registryKeyName);
+        String registryKeyStr = AnnoScanningHelper.getData(annotationData, registryKeyName);
 
         if (!ResourceLocation.isValidResourceLocation(registryKeyStr)) {
             throw new IllegalArgumentException(String.format("Class %s is annotated with invalid %s: '%s'", containerClass.getSimpleName(), registryKeyName, registryKeyStr));
