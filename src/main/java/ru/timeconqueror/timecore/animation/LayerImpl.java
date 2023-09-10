@@ -2,8 +2,8 @@ package ru.timeconqueror.timecore.animation;
 
 import gg.moonflower.molangcompiler.api.MolangEnvironment;
 import lombok.Getter;
-import lombok.Setter;
-import ru.timeconqueror.timecore.animation.watcher.AnimationTicker;
+import ru.timeconqueror.timecore.animation.action.AnimationEventListener;
+import ru.timeconqueror.timecore.animation.watcher.AbstractAnimationTicker;
 import ru.timeconqueror.timecore.animation.watcher.AnimationTickerImpl;
 import ru.timeconqueror.timecore.animation.watcher.EmptyAnimationTicker;
 import ru.timeconqueror.timecore.animation.watcher.FreezableTime.FreezeCause;
@@ -14,6 +14,9 @@ import ru.timeconqueror.timecore.api.animation.builders.LayerDefinition;
 import ru.timeconqueror.timecore.api.client.render.model.ITimeModel;
 import ru.timeconqueror.timecore.molang.CustomMolangRuntime;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class LayerImpl implements Layer {
     @Getter
     private final String name;
@@ -23,9 +26,9 @@ public class LayerImpl implements Layer {
     private final float weight;
     @Getter
     private final MolangEnvironment environment;
+    private final List<AnimationEventListener> eventListeners;
     @Getter
-    @Setter
-    private AnimationTicker currentTicker = EmptyAnimationTicker.INSTANCE;
+    private AbstractAnimationTicker currentTicker = EmptyAnimationTicker.INSTANCE;
 
     public LayerImpl(BaseAnimationManager animationManager, LayerDefinition layerDefinition) {
         this.name = layerDefinition.name();
@@ -33,6 +36,7 @@ public class LayerImpl implements Layer {
         this.weight = layerDefinition.weight();
 
         environment = createMolangEnvironment(animationManager);
+        this.eventListeners = new ArrayList<>();
     }
 
     private CustomMolangRuntime createMolangEnvironment(BaseAnimationManager animationManager) {
@@ -52,39 +56,56 @@ public class LayerImpl implements Layer {
 
         current.unfreeze(FreezeCause.GAME_PAUSED);
 
-        current.initIfNeedsTo();
-
+        // may be called multiple times for one animation
         if (current.isAnimationEnded(systemTime)) {
-            // may be called multiple times for one animation
-            current.handleEndOnLayer(this);
+            eventListeners.forEach(listener -> listener.onAnimationEnded(current));
+            current.handleEndOnLayer(this, eventListeners);
+        } else {
+            eventListeners.forEach(listener -> listener.onAnimationUpdate(current));
         }
-
-        current = getCurrentTicker();
-        current.initIfNeedsTo();
     }
 
     public void apply(ITimeModel model, long systemTime) {
         getCurrentTicker().apply(model, getBlendType(), getWeight(), getEnvironment(), systemTime);
     }
 
-    public boolean start(AnimationStarter.AnimationData data) {
-        if (data.isIgnorable() && currentTicker.canIgnore(data)) {
+    public boolean start(AnimationData data) {
+        return start(data, AnimationCompanionData.EMPTY);
+    }
+
+    public boolean start(AnimationData data, AnimationCompanionData companionData) {
+        if (data.isIgnorable() && getCurrentTicker().canIgnore(data)) {
             return false;
         }
 
-        AnimationTickerImpl animationTicker = new AnimationTickerImpl(data);
+        AnimationTickerImpl animationTicker = new AnimationTickerImpl(data, companionData);
         if (data.getTransitionTime() == 0) {
-            currentTicker = animationTicker;
+            setCurrentTicker(animationTicker);
         } else {
-            currentTicker = new TransitionTicker(currentTicker, animationTicker, data.getTransitionTime());
+            setCurrentTicker(new TransitionTicker(getCurrentTicker(), animationTicker, data.getTransitionTime()));
         }
 
         return true;
     }
 
     public void removeAnimation(int transitionTime) {
-        if (currentTicker.isEmpty()) return;
+        if (getName().isEmpty()) return;
 
-        currentTicker = new TransitionTicker(currentTicker, EmptyAnimationTicker.INSTANCE, transitionTime);
+        setCurrentTicker(new TransitionTicker(getCurrentTicker(), EmptyAnimationTicker.INSTANCE, transitionTime));
+    }
+
+    @Override
+    public void setCurrentTicker(AbstractAnimationTicker ticker) {
+        eventListeners.forEach(listener -> listener.onAnimationStopped(getCurrentTicker()));
+
+
+        this.currentTicker = ticker;
+
+        eventListeners.forEach(listener -> listener.onAnimationStarted(getCurrentTicker()));
+    }
+
+    @Override
+    public void addAnimationEventListener(AnimationEventListener listener) {
+        this.eventListeners.add(listener);
     }
 }

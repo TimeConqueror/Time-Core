@@ -4,10 +4,11 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import net.minecraft.network.FriendlyByteBuf;
 import org.jetbrains.annotations.NotNull;
-import ru.timeconqueror.timecore.animation.watcher.AnimationTicker;
+import ru.timeconqueror.timecore.animation.watcher.AbstractAnimationTicker;
 import ru.timeconqueror.timecore.animation.watcher.AnimationTickerImpl;
 import ru.timeconqueror.timecore.animation.watcher.EmptyAnimationTicker;
 import ru.timeconqueror.timecore.animation.watcher.TransitionTicker;
+import ru.timeconqueror.timecore.api.animation.AnimationTickerInfo;
 import ru.timeconqueror.timecore.api.util.holder.Pair;
 
 import java.util.ArrayList;
@@ -16,23 +17,23 @@ import java.util.List;
 
 public class TickerSerializers {
 
-    public static void serializeTickers(List<Pair<String, AnimationTicker>> tickersByLayer, FriendlyByteBuf buffer) {
-        buffer.writeInt(tickersByLayer.size());
+    public static void serializeTickers(List<Pair<String, AbstractAnimationTicker>> tickersByLayer, FriendlyByteBuf buffer) {
+        buffer.writeVarInt(tickersByLayer.size());
 
-        for (Pair<String, AnimationTicker> pair : tickersByLayer) {
+        for (Pair<String, AbstractAnimationTicker> pair : tickersByLayer) {
             buffer.writeUtf(pair.left());
             serializeTicker(pair.right(), buffer);
         }
     }
 
-    public static List<Pair<String, AnimationTicker>> deserializeTickers(FriendlyByteBuf buffer) {
-        int layerCount = buffer.readInt();
+    public static List<Pair<String, AbstractAnimationTicker>> deserializeTickers(FriendlyByteBuf buffer) {
+        int layerCount = buffer.readVarInt();
 
-        List<Pair<String, AnimationTicker>> tickersByLayer = new ArrayList<>(layerCount);
+        List<Pair<String, AbstractAnimationTicker>> tickersByLayer = new ArrayList<>(layerCount);
 
         for (int i = 0; i < layerCount; i++) {
             String layerName = buffer.readUtf();
-            AnimationTicker ticker = deserializeTicker(buffer);
+            AbstractAnimationTicker ticker = deserializeTicker(buffer);
             tickersByLayer.add(Pair.of(layerName, ticker));
         }
 
@@ -40,7 +41,7 @@ public class TickerSerializers {
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})
-    public static void serializeTicker(@NotNull AnimationTicker ticker, FriendlyByteBuf buffer) {
+    public static void serializeTicker(@NotNull AbstractAnimationTicker ticker, FriendlyByteBuf buffer) {
         TickerType type = getType(ticker);
         if (type == TickerType.UNKNOWN) throw new IllegalArgumentException("No ticker type for: " + ticker.getClass());
 
@@ -49,12 +50,12 @@ public class TickerSerializers {
         serializer.serialize(ticker, buffer);
     }
 
-    public static AnimationTicker deserializeTicker(FriendlyByteBuf buffer) {
+    public static AbstractAnimationTicker deserializeTicker(FriendlyByteBuf buffer) {
         TickerType type = TickerType.VALID[buffer.readVarInt()];
         return type.serializer.deserialize(buffer);
     }
 
-    private static TickerType getType(AnimationTicker ticker) {
+    private static TickerType getType(AnimationTickerInfo ticker) {
         for (TickerType type : TickerType.VALID) {
             if (type.getTickerClass().isInstance(ticker)) {
                 return type;

@@ -7,7 +7,7 @@ import net.minecraft.util.GsonHelper;
 import ru.timeconqueror.timecore.animation.component.AnimationBone;
 import ru.timeconqueror.timecore.animation.component.BasicAnimation;
 import ru.timeconqueror.timecore.animation.component.LoopMode;
-import ru.timeconqueror.timecore.animation.util.Empty;
+import ru.timeconqueror.timecore.api.util.Empty;
 import ru.timeconqueror.timecore.api.util.EnvironmentUtils;
 
 import java.lang.reflect.Type;

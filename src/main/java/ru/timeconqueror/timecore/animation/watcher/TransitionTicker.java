@@ -3,21 +3,24 @@ package ru.timeconqueror.timecore.animation.watcher;
 import gg.moonflower.molangcompiler.api.MolangEnvironment;
 import lombok.Getter;
 import net.minecraft.network.FriendlyByteBuf;
-import ru.timeconqueror.timecore.animation.AnimationStarter;
+import ru.timeconqueror.timecore.animation.AnimationData;
 import ru.timeconqueror.timecore.animation.LayerImpl;
+import ru.timeconqueror.timecore.animation.action.AnimationEventListener;
 import ru.timeconqueror.timecore.animation.util.AnimationTickerSerializer;
 import ru.timeconqueror.timecore.animation.util.TickerSerializers;
 import ru.timeconqueror.timecore.api.animation.BlendType;
 import ru.timeconqueror.timecore.api.client.render.model.ITimeModel;
 import ru.timeconqueror.timecore.api.util.MathUtils;
 
-public class TransitionTicker extends AnimationTicker {
-    @Getter
-    private final AnimationTicker source;
-    @Getter
-    private final AnimationTicker destination;
+import java.util.List;
 
-    public TransitionTicker(AnimationTicker source, AnimationTicker destination, int transitionTime) {
+public class TransitionTicker extends AbstractAnimationTicker {
+    @Getter
+    private final AbstractAnimationTicker source;
+    @Getter
+    private final AbstractAnimationTicker destination;
+
+    public TransitionTicker(AbstractAnimationTicker source, AbstractAnimationTicker destination, int transitionTime) {
         super(new Timeline(transitionTime, 1.0F, false, System.currentTimeMillis(), 0));
         this.source = source;
         this.destination = destination;
@@ -40,12 +43,6 @@ public class TransitionTicker extends AnimationTicker {
     }
 
     @Override
-    public void init() {
-        source.init();
-        destination.init();
-    }
-
-    @Override
     public void apply(ITimeModel model, BlendType blendType, float outerWeight, MolangEnvironment environment, long systemTime) {
         Timeline timeline = getTimeline();
 
@@ -58,13 +55,13 @@ public class TransitionTicker extends AnimationTicker {
     }
 
     @Override
-    public void handleEndOnLayer(LayerImpl layer) {
+    public void handleEndOnLayer(LayerImpl layer, List<AnimationEventListener> eventListeners) {
         destination.unfreeze(FreezableTime.FreezeCause.IN_TRANSITION);
         layer.setCurrentTicker(destination);
     }
 
     @Override
-    public boolean canIgnore(AnimationStarter.AnimationData data) {
+    public boolean canIgnore(AnimationData data) {
         return source.canIgnore(data) || destination.canIgnore(data);
     }
 
@@ -74,7 +71,7 @@ public class TransitionTicker extends AnimationTicker {
     }
 
     @Override
-    public AnimationStarter.AnimationData getAnimationData() {
+    public AnimationData getAnimationData() {
         return destination.getAnimationData();
     }
 
@@ -90,8 +87,8 @@ public class TransitionTicker extends AnimationTicker {
 
         @Override
         public TransitionTicker deserialize(FriendlyByteBuf buffer) {
-            AnimationTicker source = TickerSerializers.deserializeTicker(buffer);
-            AnimationTicker destination = TickerSerializers.deserializeTicker(buffer);
+            var source = TickerSerializers.deserializeTicker(buffer);
+            var destination = TickerSerializers.deserializeTicker(buffer);
             int transitionTime = buffer.readVarInt();
             int elapsedTime = buffer.readVarInt();
 

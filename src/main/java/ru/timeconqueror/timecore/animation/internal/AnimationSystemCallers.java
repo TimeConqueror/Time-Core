@@ -13,7 +13,7 @@ import ru.timeconqueror.timecore.api.util.holder.Pair;
 
 //TODO add tickers for tile entities
 @Mod.EventBusSubscriber
-public class AnimationEventHandler {
+public class AnimationSystemCallers {
 
     @SubscribeEvent
     public static void onEntityTick(LivingEvent.LivingTickEvent event) {
@@ -40,7 +40,7 @@ public class AnimationEventHandler {
     public static void onPlayerStartTracking(PlayerEvent.StartTracking event) {
         Entity target = event.getTarget();
         if (target instanceof AnimatedObject<?> animatedObj) {
-            AnimationManager animationManager = animatedObj.getAnimationManager();
+            AnimationManager animationManager = animatedObj.getSystem().getAnimationManager();
             var tickersByLayer = animationManager.getLayerNames().stream()
                     .map(animationManager::getLayer)
                     .map(layer -> Pair.of(layer.getName(), layer.getCurrentTicker()))

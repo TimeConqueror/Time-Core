@@ -4,21 +4,23 @@ import gg.moonflower.molangcompiler.api.MolangEnvironment;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import ru.timeconqueror.timecore.animation.AnimationStarter;
+import ru.timeconqueror.timecore.animation.AnimationData;
 import ru.timeconqueror.timecore.animation.LayerImpl;
+import ru.timeconqueror.timecore.animation.action.AnimationEventListener;
 import ru.timeconqueror.timecore.api.animation.Animation;
+import ru.timeconqueror.timecore.api.animation.AnimationTickerInfo;
 import ru.timeconqueror.timecore.api.animation.BlendType;
-import ru.timeconqueror.timecore.api.animation.TickerInfo;
 import ru.timeconqueror.timecore.api.client.render.model.ITimeModel;
 
+import java.util.List;
+
 @RequiredArgsConstructor
-public abstract class AnimationTicker implements TickerInfo {
+public abstract class AbstractAnimationTicker implements AnimationTickerInfo {
 
     @Getter(value = AccessLevel.PROTECTED)
     private final Timeline timeline;
 
-    private boolean inited;
-
+    @Override
     public boolean isAnimationEnded(long systemTime) {
         return timeline.isEnded(systemTime);
     }
@@ -33,24 +35,18 @@ public abstract class AnimationTicker implements TickerInfo {
 
     public abstract void apply(ITimeModel model, BlendType blendType, float outerWeight, MolangEnvironment environment, long systemTime);
 
-    public abstract void handleEndOnLayer(LayerImpl layer);
+    public abstract void handleEndOnLayer(LayerImpl layer, List<AnimationEventListener> eventListeners);
 
-    public final void initIfNeedsTo() {
-        if (!inited) {
-            inited = true;
-            init();
-        }
-    }
-
-    protected void init() {
-        //TODo is it really needed? maybe for init molangenv?
-    }
-
-    public abstract boolean canIgnore(AnimationStarter.AnimationData data);
+    public abstract boolean canIgnore(AnimationData data);
 
     @Override
     public boolean isEmpty() {
         return this.getAnimationData().getAnimation() == Animation.NULL;
+    }
+
+    @Override
+    public boolean isReversed() {
+        return timeline.isReversed();
     }
 
     @Override

@@ -2,16 +2,20 @@ package ru.timeconqueror.timecore.animation.watcher;
 
 import gg.moonflower.molangcompiler.api.MolangEnvironment;
 import net.minecraft.network.FriendlyByteBuf;
-import ru.timeconqueror.timecore.animation.AnimationStarter;
+import ru.timeconqueror.timecore.animation.AnimationData;
+import ru.timeconqueror.timecore.animation.AnimationStarterImpl;
 import ru.timeconqueror.timecore.animation.LayerImpl;
+import ru.timeconqueror.timecore.animation.action.AnimationEventListener;
 import ru.timeconqueror.timecore.animation.util.AnimationTickerSerializer;
 import ru.timeconqueror.timecore.api.animation.Animation;
 import ru.timeconqueror.timecore.api.animation.BlendType;
 import ru.timeconqueror.timecore.api.client.render.model.ITimeModel;
 
-public class EmptyAnimationTicker extends AnimationTicker {
+import java.util.List;
+
+public class EmptyAnimationTicker extends AbstractAnimationTicker {
     public static final EmptyAnimationTicker INSTANCE = new EmptyAnimationTicker();
-    private static final AnimationStarter.AnimationData EMPTY = new AnimationStarter(Animation.NULL).getData();
+    private static final AnimationData EMPTY = new AnimationStarterImpl(Animation.NULL).getData();
 
     private EmptyAnimationTicker() {
         super(new Timeline(0, 1, false, 0L, 0));
@@ -23,12 +27,12 @@ public class EmptyAnimationTicker extends AnimationTicker {
     }
 
     @Override
-    public void handleEndOnLayer(LayerImpl layer) {
+    public void handleEndOnLayer(LayerImpl layer, List<AnimationEventListener> eventListeners) {
 
     }
 
     @Override
-    public boolean canIgnore(AnimationStarter.AnimationData data) {
+    public boolean canIgnore(AnimationData data) {
         return data == EMPTY;
     }
 
@@ -43,7 +47,7 @@ public class EmptyAnimationTicker extends AnimationTicker {
     }
 
     @Override
-    public AnimationStarter.AnimationData getAnimationData() {
+    public AnimationData getAnimationData() {
         return EMPTY;
     }
 

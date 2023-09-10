@@ -2,9 +2,9 @@ package ru.timeconqueror.timecore.animation.builders;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import ru.timeconqueror.timecore.animation.AnimationStarter;
 import ru.timeconqueror.timecore.animation.PredefinedAnimation;
 import ru.timeconqueror.timecore.api.animation.AnimationManager;
+import ru.timeconqueror.timecore.api.animation.AnimationStarter;
 import ru.timeconqueror.timecore.api.animation.builders.IPredefinedAnimations;
 
 import java.util.HashSet;

@@ -2,7 +2,6 @@ package ru.timeconqueror.timecore.api.animation;
 
 import net.minecraft.resources.ResourceLocation;
 import ru.timeconqueror.timecore.animation.AnimationRegistry;
-import ru.timeconqueror.timecore.animation.AnimationStarter;
 import ru.timeconqueror.timecore.animation.loading.AnimationLoader;
 import ru.timeconqueror.timecore.api.molang.Molang;
 
@@ -49,18 +48,6 @@ public class AnimationAPI {
 	public static Animation register(Animation animation) {
 		return AnimationRegistry.registerAnimation(animation);
 	}
-
-	public static AnimationStarter createStarter(Animation animation) {
-        return new AnimationStarter(animation);
-    }
-
-    public static void startAnimation(AnimationStarter animationStarter, AnimationManager animationManager, String layerName) {
-        animationStarter.startAt(animationManager, layerName);
-    }
-
-    public static void removeAnimation(AnimationManager animationManager, String layerName) {
-        animationManager.removeAnimation(layerName);
-    }
 
     public static void setMolangErrorResolving(Molang.OnErrorBehaviour behaviour) {
         Molang.setErrorResolving(behaviour);

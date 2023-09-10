@@ -1,4 +1,4 @@
-package ru.timeconqueror.timecore.animation.util;
+package ru.timeconqueror.timecore.api.util;
 
 import java.util.Collections;
 import java.util.List;

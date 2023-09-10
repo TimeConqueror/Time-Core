@@ -1,5 +1,6 @@
 package ru.timeconqueror.timecore.api.registry;
 
+import lombok.extern.log4j.Log4j2;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -90,6 +91,7 @@ import java.util.function.Supplier;
  * <p>
  * Examples can be seen at {@link InternalPacketManager}
  */
+@Log4j2
 public class PacketRegister extends RunnableStoringRegister {
     private HashMap<SimpleChannel, Integer> lastIndexes = new HashMap<>();
 
@@ -138,14 +140,16 @@ public class PacketRegister extends RunnableStoringRegister {
                 .encoder((msg, buffer) -> {
                     try {
                         packetHandler.encode(msg, buffer);
-                    } catch (IOException e) {
+                    } catch (Exception e) {
+                        log.error("Can't encode packet " + msg.getClass() + " with packet handler" + packetHandler.getClass(), e);
                         throw new RuntimeException("Can't encode packet: " + e.getMessage(), e);
                     }
                 })
                 .decoder(buffer -> {
                     try {
                         return packetHandler.decode(buffer);
-                    } catch (IOException e) {
+                    } catch (Exception e) {
+                        log.error("Can't decode packet with packet handler " + packetHandler.getClass(), e);
                         throw new RuntimeException("Can't decode packet: " + e.getMessage(), e);
                     }
                 })

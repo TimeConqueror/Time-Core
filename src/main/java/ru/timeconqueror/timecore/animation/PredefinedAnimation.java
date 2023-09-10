@@ -1,6 +1,6 @@
 package ru.timeconqueror.timecore.animation;
 
-import ru.timeconqueror.timecore.api.animation.AnimationManager;
+import ru.timeconqueror.timecore.api.animation.AnimationStarter;
 
 /**
  * Used in animation manager builder to determine in which layer animation will be played
@@ -20,9 +20,5 @@ public class PredefinedAnimation {
 
     public AnimationStarter getAnimationStarter() {
         return animationStarter;
-    }
-
-    public void startAt(AnimationManager manager) {
-        animationStarter.startAt(manager, layerName);
     }
 }

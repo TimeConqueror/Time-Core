@@ -17,16 +17,16 @@ import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.monster.RangedAttackMob;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
-import ru.timeconqueror.timecore.animation.AnimationStarter;
+import ru.timeconqueror.timecore.animation.AnimationStarterImpl;
 import ru.timeconqueror.timecore.animation.AnimationSystem;
 import ru.timeconqueror.timecore.animation.component.LoopMode;
-import ru.timeconqueror.timecore.animation.watcher.AnimationTicker;
+import ru.timeconqueror.timecore.animation.network.EntityNetworkDispatcher;
+import ru.timeconqueror.timecore.animation.watcher.AbstractAnimationTicker;
 import ru.timeconqueror.timecore.animation.watcher.EmptyAnimationTicker;
-import ru.timeconqueror.timecore.api.animation.ActionManager;
 import ru.timeconqueror.timecore.api.animation.AnimatedObject;
+import ru.timeconqueror.timecore.api.animation.AnimationStarter;
+import ru.timeconqueror.timecore.api.animation.AnimationSystems;
 import ru.timeconqueror.timecore.api.animation.BlendType;
-import ru.timeconqueror.timecore.api.animation.Layer;
-import ru.timeconqueror.timecore.api.animation.builders.AnimationSystemBuilder;
 
 import java.util.EnumSet;
 
@@ -80,14 +80,22 @@ public class FloroEntity extends Monster implements RangedAttackMob, AnimatedObj
 //            predefinedAnimations.setIdleAnimation(new AnimationStarter(EntityAnimations.floroIdle), LAYER_WALKING);
 //        });
 
-        animationSystem = AnimationSystemBuilder.forEntity(this, level, builder -> {
+//        animationSystem = AnimationSystems.forEntity(this, builder -> {
+//                    builder.addLayer(LAYER_SHOWING, BlendType.OVERWRITE, 0);
+//                    builder.addLayer(LAYER_WALKING, BlendType.ADD, 0);
+//                    builder.addLayer("test", BlendType.ADD, 1);
+//                    builder.addLayer(LAYER_ATTACK, BlendType.ADD, 0F);
+//                }
+        animationSystem = AnimationSystems.custom(this, new EntityNetworkDispatcher<>(), level.isClientSide, builder -> {
             builder.addLayer(LAYER_SHOWING, BlendType.OVERWRITE, 0);
             builder.addLayer(LAYER_WALKING, BlendType.ADD, 0);
             builder.addLayer("test", BlendType.ADD, 1);
             builder.addLayer(LAYER_ATTACK, BlendType.ADD, 0F);
-        }, predefinedAnimations -> {
-            predefinedAnimations.setWalkingAnimation(new AnimationStarter(EntityAnimations.floroWalk).withSpeed(3F), LAYER_WALKING);
         });
+//        , predefinedAnimations -> {
+//            predefinedAnimations.setWalkingAnimation(new AnimationStarterImpl(EntityAnimations.floroWalk).withSpeed(3F), LAYER_WALKING);
+//        }
+//        );
     }
 
     @Override
@@ -149,16 +157,16 @@ public class FloroEntity extends Monster implements RangedAttackMob, AnimatedObj
     public void tick() {
         super.tick();
 
-        if (level().isClientSide) {
-            Layer layer = getAnimationManager().getLayer("test");
-            AnimationTicker currentTicker = layer.getCurrentTicker();
+        if (!level().isClientSide) {
+            var layer = getSystem().getAnimationManager().getLayer("test");
+            AbstractAnimationTicker currentTicker = layer.getCurrentTicker();
 
             if (currentTicker == EmptyAnimationTicker.INSTANCE) {
-                var showing = new AnimationStarter(EntityAnimations.floroReveal).withTransitionTime(2000).startingFrom(0.75F).withSpeed(0.25F);
+                var showing = new AnimationStarterImpl(EntityAnimations.floroReveal).withTransitionTime(2000).startingFrom(0.75F).withSpeed(0.25F);
                 var walking = EntityAnimations.floroWalk.starter().reversed().withLoopMode(LoopMode.DO_NOT_LOOP).withSpeed(0.3F);
-                var chain = AnimationStarter.from(showing.getData()).withNextAnimation(walking);
+                var chain = AnimationStarter.copy(showing).withNextAnimation(walking);
 
-                getAnimationManager().setAnimation(chain, "test");
+                getAnimationSystemApi().startAnimation(chain, "test");
             }
         }
     }
@@ -204,12 +212,12 @@ public class FloroEntity extends Monster implements RangedAttackMob, AnimatedObj
     }
 
     private void startHiddenAnimation() {
-        EntityAnimations.floroReveal.starter()
-                .reversed()
-                .startingFrom(0)
-                .withLoopMode(LoopMode.HOLD_ON_LAST_FRAME)
-                .withTransitionTime(0)
-                .startAt(getAnimationManager(), LAYER_SHOWING);
+//        EntityAnimations.floroReveal.starter()
+//                .reversed()
+//                .startingFrom(0)
+//                .withLoopMode(LoopMode.HOLD_ON_LAST_FRAME)
+//                .withTransitionTime(0)
+//                .startAt(getAnimationManager(), LAYER_SHOWING);
     }
 
     @Override
@@ -254,7 +262,7 @@ public class FloroEntity extends Monster implements RangedAttackMob, AnimatedObj
 
         @Override
         public void start() {
-            ActionManager<FloroEntity> actionManager = getActionManager();
+//            ActionManager<FloroEntity> actionManager = getActionManager();
             if (isHidden()) {
 //                actionManager.enableAction(REVEALING_ACTION.get(), null);
             } else {
@@ -301,7 +309,7 @@ public class FloroEntity extends Monster implements RangedAttackMob, AnimatedObj
 
         @Override
         public void tick() {
-            ActionManager<FloroEntity> actionManager = getActionManager();
+//            ActionManager<FloroEntity> actionManager = getActionManager();
 //            if (!actionManager.isActionEnabled(HIDING_ACTION.get()) && tickCount % (12 * 20) == 0) {
 //                actionManager.enableAction(HIDING_ACTION.get(), null);
 //            }

@@ -7,11 +7,11 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
-import ru.timeconqueror.timecore.animation.AnimationStarter;
 import ru.timeconqueror.timecore.animation.AnimationSystem;
 import ru.timeconqueror.timecore.api.animation.AnimatedObject;
 import ru.timeconqueror.timecore.api.animation.AnimationConstants;
-import ru.timeconqueror.timecore.api.animation.builders.AnimationSystemBuilder;
+import ru.timeconqueror.timecore.api.animation.AnimationStarter;
+import ru.timeconqueror.timecore.api.animation.AnimationSystems;
 
 public class TileHeatCube extends BlockEntity implements AnimatedObject<TileHeatCube> {
     private AnimationSystem<TileHeatCube> animationSystem;
@@ -22,7 +22,8 @@ public class TileHeatCube extends BlockEntity implements AnimatedObject<TileHeat
 
     @Override
     public void onLoad() {
-        animationSystem = AnimationSystemBuilder.forTileEntity(this, level);
+        animationSystem = AnimationSystems.forBlockEntity(this, animationManagerBuilder -> {
+        });
     }
 
     @Override
@@ -31,6 +32,6 @@ public class TileHeatCube extends BlockEntity implements AnimatedObject<TileHeat
     }
 
     public void clientTick(Level level_, BlockPos pos_, BlockState state_) {
-        new AnimationStarter(TileAnimations.heatCubeIdle).ignorable(true).startAt(getAnimationManager(), AnimationConstants.MAIN_LAYER_NAME);
+        getAnimationSystemApi().startAnimation(AnimationStarter.of(TileAnimations.heatCubeIdle).ignorable(true), AnimationConstants.MAIN_LAYER_NAME);
     }
 }

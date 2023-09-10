@@ -5,8 +5,8 @@ import lombok.AllArgsConstructor;
 import org.jetbrains.annotations.UnmodifiableView;
 import ru.timeconqueror.timecore.animation.component.AnimationBone;
 import ru.timeconqueror.timecore.animation.component.IKeyFrame;
-import ru.timeconqueror.timecore.animation.util.Empty;
 import ru.timeconqueror.timecore.api.animation.Channel;
+import ru.timeconqueror.timecore.api.util.Empty;
 
 import java.lang.reflect.Type;
 import java.util.Collections;

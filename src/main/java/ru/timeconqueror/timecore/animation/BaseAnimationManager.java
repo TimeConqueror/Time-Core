@@ -4,7 +4,6 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 import ru.timeconqueror.timecore.TimeCore;
-import ru.timeconqueror.timecore.api.animation.AnimationConstants;
 import ru.timeconqueror.timecore.api.animation.AnimationManager;
 import ru.timeconqueror.timecore.api.animation.builders.LayerDefinition;
 import ru.timeconqueror.timecore.api.client.render.model.ITimeModel;
@@ -23,6 +22,12 @@ public abstract class BaseAnimationManager implements AnimationManager {
 
     public BaseAnimationManager(SharedMolangObject sharedMolangObjects) {
         this.sharedMolangObjects = sharedMolangObjects;
+    }
+
+    public void init(LinkedHashMap<String, LayerDefinition> layers) {
+        layerMap = layers.values().stream()
+                .map(layerDefinition -> new LayerImpl(this, layerDefinition))
+                .collect(Collectors.toMap(LayerImpl::getName, layer -> layer, (o, o2) -> o, LinkedHashMap::new));
     }
 
     @Override
@@ -44,11 +49,10 @@ public abstract class BaseAnimationManager implements AnimationManager {
     }
 
     @Override
-    public boolean setAnimation(AnimationStarter animationStarter, String layerName) {
+    public boolean startAnimation(AnimationData data, String layerName, AnimationCompanionData companionData) {
         if (containsLayer(layerName)) {
             LayerImpl layer = getLayer(layerName);
-            AnimationStarter.AnimationData data = animationStarter.getData();
-            return layer.start(data);
+            return layer.start(data, companionData);
         }
 
         TimeCore.LOGGER.error("Can't start animation: layer with location " + layerName + " doesn't exist in provided animation manager.");
@@ -56,12 +60,7 @@ public abstract class BaseAnimationManager implements AnimationManager {
     }
 
     @Override
-    public void removeAnimation(String layerName) {
-        removeAnimation(layerName, AnimationConstants.BASIC_TRANSITION_TIME);
-    }
-
-    @Override
-    public void removeAnimation(String layerName, int transitionTime) {
+    public void stopAnimation(String layerName, int transitionTime) {
         if (containsLayer(layerName)) {
             getLayer(layerName).removeAnimation(transitionTime);
         } else {
@@ -81,10 +80,4 @@ public abstract class BaseAnimationManager implements AnimationManager {
     protected abstract void applyAnimation(ITimeModel model, LayerImpl layer, long systemTime);
 
     protected abstract boolean isGamePaused();
-
-    public void buildLayers(LinkedHashMap<String, LayerDefinition> layers) {
-        layerMap = layers.values().stream()
-                .map(layerDefinition -> new LayerImpl(this, layerDefinition))
-                .collect(Collectors.toMap(LayerImpl::getName, layer -> layer, (o, o2) -> o, LinkedHashMap::new));
-    }
 }

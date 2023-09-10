@@ -5,6 +5,7 @@ import ru.timeconqueror.timecore.animation.AnimationSystem;
 import ru.timeconqueror.timecore.animation.renderer.AnimatedLivingEntityRenderer;
 
 /**
+ * //FIXME WRONG docu
  * An interface for entities to provide animation stuff.
  * You also need to use {@link AnimatedLivingEntityRenderer} for animations to work.
  * <br>
@@ -38,12 +39,8 @@ public interface AnimatedObject<T extends AnimatedObject<T>> {
     @NotNull
     AnimationSystem<T> getSystem();
 
-    default ActionManager<T> getActionManager() {
-        return getSystem().getActionManager();
-    }
-
-    default AnimationManager getAnimationManager() {
-        return getSystem().getAnimationManager();
+    default AnimationSystemAPI<T> getAnimationSystemApi() {
+        return getSystem().api();
     }
 
     default void populateMolangObjects(MolangObjectFiller molangObjectFiller) {

@@ -1,6 +1,6 @@
 package ru.timeconqueror.timecore.api.animation.builders;
 
-import ru.timeconqueror.timecore.animation.AnimationStarter;
+import ru.timeconqueror.timecore.api.animation.AnimationStarter;
 
 public interface IPredefinedAnimations {
     interface IEntityPredefinedAnimations extends IPredefinedAnimations {

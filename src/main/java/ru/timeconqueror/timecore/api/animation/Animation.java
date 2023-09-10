@@ -3,7 +3,7 @@ package ru.timeconqueror.timecore.api.animation;
 import gg.moonflower.molangcompiler.api.MolangEnvironment;
 import net.minecraft.resources.ResourceLocation;
 import ru.timeconqueror.timecore.TimeCore;
-import ru.timeconqueror.timecore.animation.AnimationStarter;
+import ru.timeconqueror.timecore.animation.AnimationStarterImpl;
 import ru.timeconqueror.timecore.animation.component.BasicAnimation;
 import ru.timeconqueror.timecore.animation.component.LoopMode;
 import ru.timeconqueror.timecore.api.client.render.model.ITimeModel;
@@ -42,7 +42,7 @@ public abstract class Animation {
 	public abstract void forEachBone(Consumer<String> action);
 
     public AnimationStarter starter() {
-        return new AnimationStarter(this);
+        return new AnimationStarterImpl(this);
     }
 
 	@Override

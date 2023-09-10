@@ -1,7 +1,10 @@
 package ru.timeconqueror.timecore.api.animation;
 
 import gg.moonflower.molangcompiler.api.MolangEnvironment;
-import ru.timeconqueror.timecore.animation.watcher.AnimationTicker;
+import ru.timeconqueror.timecore.animation.AnimationCompanionData;
+import ru.timeconqueror.timecore.animation.AnimationData;
+import ru.timeconqueror.timecore.animation.action.AnimationEventListener;
+import ru.timeconqueror.timecore.animation.watcher.AbstractAnimationTicker;
 
 //TODO setWeight/setBlendType be synced
 public interface Layer {
@@ -16,9 +19,13 @@ public interface Layer {
      */
     String getName();
 
-    AnimationTicker getCurrentTicker();
+    AbstractAnimationTicker getCurrentTicker();
 
-    void setCurrentTicker(AnimationTicker ticker);
+    void setCurrentTicker(AbstractAnimationTicker ticker);
+
+    boolean start(AnimationData data, AnimationCompanionData companionData);
+
+    void addAnimationEventListener(AnimationEventListener listener);
 
 //    /**
 //     * Pauses the layer as well as the played animation.

@@ -7,8 +7,8 @@ import net.minecraftforge.network.simple.SimpleChannel;
 import ru.timeconqueror.timecore.TimeCore;
 import ru.timeconqueror.timecore.api.registry.PacketRegister;
 import ru.timeconqueror.timecore.api.registry.util.AutoRegistrable;
-import ru.timeconqueror.timecore.internal.common.packet.animation.S2CEndAnimationMsg;
 import ru.timeconqueror.timecore.internal.common.packet.animation.S2CStartAnimationMsg;
+import ru.timeconqueror.timecore.internal.common.packet.animation.S2CStopAnimationMsg;
 import ru.timeconqueror.timecore.internal.common.packet.animation.S2CSyncAnimationsMsg;
 
 public class InternalPacketManager {
@@ -18,11 +18,11 @@ public class InternalPacketManager {
     private static final String PROTOCOL_STRING = "1";
 
     public static final SimpleChannel INSTANCE = REGISTER.createChannel("main", () -> PROTOCOL_STRING, PROTOCOL_STRING::equals, PROTOCOL_STRING::equals)
-          //  .regPacket(S2CSRSendSinglePiecePacket.class, new S2CSRSendSinglePiecePacket.Handler(), NetworkDirection.PLAY_TO_CLIENT)
-          //  .regPacket(S2CSRClearPiecesPacket.class, new S2CSRClearPiecesPacket.Handler(), NetworkDirection.PLAY_TO_CLIENT)
+            //  .regPacket(S2CSRSendSinglePiecePacket.class, new S2CSRSendSinglePiecePacket.Handler(), NetworkDirection.PLAY_TO_CLIENT)
+            //  .regPacket(S2CSRClearPiecesPacket.class, new S2CSRClearPiecesPacket.Handler(), NetworkDirection.PLAY_TO_CLIENT)
             //todo port?
             .regPacket(S2CStartAnimationMsg.class, new S2CStartAnimationMsg.Handler(), NetworkDirection.PLAY_TO_CLIENT)
-            .regPacket(S2CEndAnimationMsg.class, new S2CEndAnimationMsg.Handler(), NetworkDirection.PLAY_TO_CLIENT)
+            .regPacket(S2CStopAnimationMsg.class, new S2CStopAnimationMsg.Handler(), NetworkDirection.PLAY_TO_CLIENT)
             .regPacket(S2CSyncAnimationsMsg.class, new S2CSyncAnimationsMsg.Handler(), NetworkDirection.PLAY_TO_CLIENT)
             .regPacket(S2CCoffeeCapabilityDataPacket.class, CoffeeCapabilityDataPacket.Handler.ClientHandler.INSTANCE, NetworkDirection.PLAY_TO_CLIENT)
             .regPacket(C2SCoffeeCapabilityDataPacket.class, CoffeeCapabilityDataPacket.Handler.ServerHandler.INSTANCE, NetworkDirection.PLAY_TO_SERVER)

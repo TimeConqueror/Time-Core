@@ -1,7 +1,8 @@
 package ru.timeconqueror.timecore.api.animation;
 
 import org.jetbrains.annotations.NotNull;
-import ru.timeconqueror.timecore.animation.AnimationStarter;
+import ru.timeconqueror.timecore.animation.AnimationCompanionData;
+import ru.timeconqueror.timecore.animation.AnimationData;
 import ru.timeconqueror.timecore.api.client.render.model.ITimeModel;
 import ru.timeconqueror.timecore.molang.SharedMolangObject;
 
@@ -42,29 +43,9 @@ public interface AnimationManager {
 	 */
 	void applyAnimations(ITimeModel model);
 
-    /**
-     * Sets animation data to start new animation in the layer with provided location.
-     *
-     * @see AnimationStarter#startAt(AnimationManager, String)
-     */
-    boolean setAnimation(AnimationStarter animationStarter, String layerName);
+    boolean startAnimation(AnimationData animationData, String layerName, AnimationCompanionData companion);
 
-	/**
-	 * Removes animation from the layer with provided location.
-	 * Transition location is default here: {@link AnimationConstants#BASIC_TRANSITION_TIME}
-	 *
-	 * @param layerName location of the layer, where you need to remove animation.
-	 */
-    void removeAnimation(String layerName);
-
-    /**
-     * Removes animation from the layer with provided location.
-     *
-     * @param layerName      location of the layer, where you need to remove animation.
-     * @param transitionTime time of transition to the idle state.
-     *                       If this value is bigger than 0, then transition will be created, which will smoothly end current animation.
-     */
-    void removeAnimation(String layerName, int transitionTime);
+    void stopAnimation(String layerName, int transitionTime);
 
 	SharedMolangObject getSharedMolangObjects();
 }

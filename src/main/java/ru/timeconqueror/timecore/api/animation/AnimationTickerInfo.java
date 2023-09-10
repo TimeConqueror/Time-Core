@@ -1,13 +1,21 @@
 package ru.timeconqueror.timecore.api.animation;
 
-import ru.timeconqueror.timecore.animation.AnimationStarter;
+import ru.timeconqueror.timecore.animation.AnimationData;
 
-public interface TickerInfo {
+public interface AnimationTickerInfo {
+    default boolean isAnimationEnded() {
+        return isAnimationEnded(System.currentTimeMillis());
+    }
+
+    boolean isAnimationEnded(long systemTime);
+
     boolean isEmpty();
 
     boolean isTransition();
 
-    AnimationStarter.AnimationData getAnimationData();
+    boolean isReversed();
+
+    AnimationData getAnimationData();
 
     /**
      * Represents the progress within the animation length.

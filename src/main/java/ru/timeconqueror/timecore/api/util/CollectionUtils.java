@@ -81,4 +81,12 @@ public class CollectionUtils {
 
         return mapped;
     }
+
+    public static <T, R> List<R> mapList(List<T> source, Function<T, R> mapper) {
+        var newList = new ArrayList<R>(source.size());
+        for (T value : source) {
+            newList.add(mapper.apply(value));
+        }
+        return newList;
+    }
 }
