@@ -1,8 +1,6 @@
 package ru.timeconqueror.timecore.api.animation;
 
-import ru.timeconqueror.timecore.animation.AnimationData;
-
-public interface AnimationTickerInfo {
+public interface AnimationTickerInfo extends PlayingAnimationInfo {
     default boolean isAnimationEnded() {
         return isAnimationEnded(System.currentTimeMillis());
     }
@@ -12,10 +10,6 @@ public interface AnimationTickerInfo {
     boolean isEmpty();
 
     boolean isTransition();
-
-    boolean isReversed();
-
-    AnimationData getAnimationData();
 
     /**
      * Represents the progress within the animation length.
@@ -37,8 +31,6 @@ public interface AnimationTickerInfo {
      */
     int getAnimationTime(long systemTime);
 
-    int getAnimationLength();
-
     /**
      * Returns the amount of <b>real</b> time in milliseconds which is passed from the start of bound animation.
      *
@@ -54,6 +46,4 @@ public interface AnimationTickerInfo {
      * @see #getAnimationTime(long)
      */
     int getElapsedTime(long systemTime);
-
-    int getElapsedLength();
 }

@@ -2,6 +2,7 @@ package ru.timeconqueror.timecore.internal.common.packet.animation;
 
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.network.NetworkEvent;
+import ru.timeconqueror.timecore.animation.LayerImpl;
 import ru.timeconqueror.timecore.animation.network.codec.LevelObjectCodec;
 import ru.timeconqueror.timecore.animation.util.TickerSerializers;
 import ru.timeconqueror.timecore.animation.watcher.AbstractAnimationTicker;
@@ -33,7 +34,7 @@ public class S2CSyncAnimationsMsg extends S2CAnimationMsg {
         @Override
         public void onPacket(S2CSyncAnimationsMsg packet, AnimatedObject<?> owner, NetworkEvent.Context ctx) {
             for (Pair<String, AbstractAnimationTicker> pair : packet.tickersByLayer) {
-                owner.getSystem().getAnimationManager().getLayer(pair.left()).setCurrentTicker(pair.right());
+                ((LayerImpl) owner.getSystem().getAnimationManager().getLayer(pair.left())).setCurrentTicker(pair.right());
             }
         }
     }

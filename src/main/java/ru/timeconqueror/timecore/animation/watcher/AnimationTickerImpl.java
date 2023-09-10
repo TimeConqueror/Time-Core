@@ -76,6 +76,12 @@ public class AnimationTickerImpl extends AbstractAnimationTicker {
         return false;
     }
 
+    @Override
+    public String toString() {
+        long systemTime = System.currentTimeMillis();
+        return String.format("Animation: Progress Time: %d/%d, Elapsed: %d/%dms, Data: %s", getAnimationTime(systemTime), getAnimationLength(), getElapsedTime(systemTime), getElapsedLength(), getAnimationData());
+    }
+
     public static class Serializer implements AnimationTickerSerializer<AnimationTickerImpl> {
         @Override
         public void serialize(AnimationTickerImpl ticker, FriendlyByteBuf buffer) {

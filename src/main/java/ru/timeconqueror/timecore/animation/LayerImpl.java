@@ -94,7 +94,6 @@ public class LayerImpl implements Layer {
         setCurrentTicker(new TransitionTicker(getCurrentTicker(), EmptyAnimationTicker.INSTANCE, transitionTime));
     }
 
-    @Override
     public void setCurrentTicker(AbstractAnimationTicker ticker) {
         eventListeners.forEach(listener -> listener.onAnimationStopped(getCurrentTicker()));
 

@@ -36,7 +36,7 @@ public class Action<T extends AnimatedObject<T>, DATA> {
         private AnimationTickListener<T, DATA> listener;
         private boolean repeatedOnLoop;
 
-        public ActionBuilder<T, DATA> onceRunListener(Predicate<AnimationTickerInfo> predicate, BiConsumer<? super T, ? super DATA> listener) {
+        public ActionBuilder<T, DATA> onceRunListener(Predicate<AnimationTickerInfo> predicate, BiConsumer<? super T, DATA> listener) {
             this.listener = (ticker, owner, extraData) -> {
                 if (predicate.test(ticker)) {
                     listener.accept(owner, extraData);

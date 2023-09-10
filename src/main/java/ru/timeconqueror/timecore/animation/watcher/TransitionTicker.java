@@ -75,6 +75,11 @@ public class TransitionTicker extends AbstractAnimationTicker {
         return destination.getAnimationData();
     }
 
+    @Override
+    public String toString() {
+        return String.format("Transition: Elapsed: %d/%dms, \n\tSource: %s, \n\tDestination: %s", getElapsedTime(), getElapsedLength(), source, destination);
+    }
+
     public static class Serializer implements AnimationTickerSerializer<TransitionTicker> {
         @Override
         public void serialize(TransitionTicker ticker, FriendlyByteBuf buffer) {

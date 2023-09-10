@@ -1,8 +1,6 @@
 package ru.timeconqueror.timecore.api.animation;
 
 import gg.moonflower.molangcompiler.api.MolangEnvironment;
-import ru.timeconqueror.timecore.animation.AnimationCompanionData;
-import ru.timeconqueror.timecore.animation.AnimationData;
 import ru.timeconqueror.timecore.animation.action.AnimationEventListener;
 import ru.timeconqueror.timecore.animation.watcher.AbstractAnimationTicker;
 
@@ -20,10 +18,6 @@ public interface Layer {
     String getName();
 
     AbstractAnimationTicker getCurrentTicker();
-
-    void setCurrentTicker(AbstractAnimationTicker ticker);
-
-    boolean start(AnimationData data, AnimationCompanionData companionData);
 
     void addAnimationEventListener(AnimationEventListener listener);
 

@@ -13,14 +13,18 @@ public class AnimationSystemAPI<T extends AnimatedObject<T>> {
     @ApiStatus.Internal
     private AnimationSystem<T> system;
 
-    public <DATA> boolean startAnimation(AnimationStarter animationStarter, String layerName, List<ActionInstance<? super T, ? super DATA>> actionList) {
-        @SuppressWarnings("unchecked")
+    public boolean startAnimation(AnimationStarter animationStarter, String layerName) {
+        return system.getAnimationManager().startAnimation(animationStarter.getData(), layerName, AnimationCompanionData.EMPTY);
+    }
+
+    public <DATA> boolean startAnimation(AnimationStarter animationStarter, String layerName, List<ActionInstance<? super T, DATA>> actionList) {
+        @SuppressWarnings({"unchecked", "rawtypes"})
         var companion = new AnimationCompanionData((List) actionList);
         return system.getAnimationManager().startAnimation(animationStarter.getData(), layerName, companion);
     }
 
-    public boolean startAnimation(AnimationStarter animationStarter, String layerName) {
-        return system.getAnimationManager().startAnimation(animationStarter.getData(), layerName, AnimationCompanionData.EMPTY);
+    public <DATA> boolean startAnimation(AnimationBundle<T, DATA> animationBundle, DATA action) {
+        return startAnimation(animationBundle.getStarter(), animationBundle.getLayerName(), animationBundle.mapActionsToInstances(action));
     }
 
     /**
