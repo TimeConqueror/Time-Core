@@ -30,9 +30,9 @@ public class FreezableTime {
         }
     }
 
-    public long get() {
+    public long get(long systemTime) {
         if (freezingTime != -1) {
-            return time + (System.currentTimeMillis() - freezingTime);
+            return time + (systemTime - freezingTime);
         } else {
             return time;
         }

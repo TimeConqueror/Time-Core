@@ -11,13 +11,13 @@ public class Timeline {
     @Getter
     private final boolean reversed;
 
-    private final FreezableTime time;
+    private final FreezableTime startTime;
 
     @Getter
     private final int animationStartTime;
 
     public Timeline(int length, float speed, boolean reversed, long startMillis, int animationStartTime) {
-        time = new FreezableTime(startMillis);
+        startTime = new FreezableTime(startMillis);
         this.animationStartTime = animationStartTime;
         this.length = length;
         this.speed = speed;
@@ -26,7 +26,7 @@ public class Timeline {
     }
 
     public boolean isEnded(long systemTime) {
-        return systemTime > time.get() + getElapsedLength();
+        return systemTime > startTime.get(systemTime) + getElapsedLength();
     }
 
     /**
@@ -37,7 +37,7 @@ public class Timeline {
      * @see #getElapsedTime(long)
      */
     public int getAnimationTime(long systemTime) {
-        long animationTime = Math.round((systemTime - time.get()) * speed);
+        long animationTime = Math.round((systemTime - startTime.get(systemTime)) * speed);
 
         if (reversed) {
             animationTime = animationStartTime - animationTime;
@@ -54,17 +54,17 @@ public class Timeline {
      * @see #getAnimationTime(long)
      */
     public int getElapsedTime(long systemTime) {
-        long elapsed = systemTime - time.get();
+        long elapsed = systemTime - startTime.get(systemTime);
 
         return (int) MathUtils.coerceInRange(elapsed, 0, getElapsedLength());
     }
 
     public void freeze(FreezableTime.FreezeCause cause) {
-        time.freeze(cause);
+        startTime.freeze(cause);
     }
 
     public void unfreeze(FreezableTime.FreezeCause cause) {
-        time.unfreeze(cause);
+        startTime.unfreeze(cause);
     }
 
     public int getElapsedLength() {
@@ -73,10 +73,10 @@ public class Timeline {
     }
 
     public void reset() {
-        time.set(System.currentTimeMillis());
+        startTime.set(System.currentTimeMillis());
     }
 
     public void setFromElapsed(int elapsedTime) {
-        this.time.set(System.currentTimeMillis() - elapsedTime);
+        this.startTime.set(System.currentTimeMillis() - elapsedTime);
     }
 }

@@ -7,9 +7,9 @@ import ru.timeconqueror.timecore.animation.component.LoopMode;
 import ru.timeconqueror.timecore.api.animation.Animation;
 import ru.timeconqueror.timecore.api.animation.AnimationConstants;
 
-@EqualsAndHashCode
 @RequiredArgsConstructor(access = AccessLevel.PACKAGE)
-@ToString(doNotUseGetters = true)
+@ToString
+@EqualsAndHashCode
 public class AnimationData {
     @Getter
     final Animation animation;

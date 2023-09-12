@@ -45,31 +45,11 @@ import java.util.EnumSet;
 //FIXME restore actions
 public class FloroEntity extends Monster implements RangedAttackMob, AnimatedObject<FloroEntity> {
     private static final EntityDataAccessor<Boolean> HIDDEN = SynchedEntityData.defineId(FloroEntity.class, EntityDataSerializers.BOOLEAN);
-
-    private static final Lazy<AnimationBundle<FloroEntity, Void>> REVEALING_ANIM_BUNDLE;
-    private static final Lazy<AnimationBundle<FloroEntity, Void>> HIDING_ANIM_BUNDLE;
     private static final String LAYER_SHOWING = "showing";
     private static final String LAYER_WALKING = "walking";
     private static final String LAYER_ATTACK = "attack";
 
     private static final Lazy<AnimationStarter> REVEALING_ACTION_STARTER = Lazy.of(() -> EntityAnimations.floroReveal.starter());
-
-    static {
-        REVEALING_ANIM_BUNDLE = Lazy.of(() -> AnimationBundle.<FloroEntity, Void>builder()
-                .starter(REVEALING_ACTION_STARTER.get())
-                .layerName(LAYER_SHOWING)
-                .action(Action.<FloroEntity, Void>builder()
-                        .onceRunListener(StandardDelayPredicates.onEnd(), (floroEntity, data) -> floroEntity.setHidden(false))
-                        .build())
-                .build());
-        HIDING_ANIM_BUNDLE = Lazy.of(() -> AnimationBundle.<FloroEntity, Void>builder()
-                .starter(EntityAnimations.floroReveal.starter().reversed().withLoopMode(LoopMode.HOLD_ON_LAST_FRAME))
-                .layerName(LAYER_SHOWING)
-                .action(Action.<FloroEntity, Void>builder()
-                        .onceRunListener(StandardDelayPredicates.onEnd(), (floroEntity, data) -> floroEntity.setHidden(true))
-                        .build())
-                .build());
-    }
 
     private final AnimationSystem<FloroEntity> animationSystem;
     //server side only
@@ -268,7 +248,14 @@ public class FloroEntity extends Monster implements RangedAttackMob, AnimatedObj
 
         @Override
         public void start() {
-            getAnimationSystemApi().startAnimation(REVEALING_ANIM_BUNDLE.get(), null);
+            getAnimationSystemApi().startAnimation(AnimationBundle.<FloroEntity, Void>builder()
+                            .starter(REVEALING_ACTION_STARTER.get())
+                            .layerName(LAYER_SHOWING)
+                            .action(Action.<FloroEntity, Void>builder()
+                                    .onceRunListener(StandardDelayPredicates.onEnd(), (floroEntity, data) -> floroEntity.setHidden(false))
+                                    .build())
+                            .build(),
+                    null);
         }
 
         @Override
@@ -306,7 +293,14 @@ public class FloroEntity extends Monster implements RangedAttackMob, AnimatedObj
         @Override
         public void start() {
             isHiding = true;
-            getAnimationSystemApi().startAnimation(HIDING_ANIM_BUNDLE.get(), null);
+            getAnimationSystemApi().startAnimation(AnimationBundle.<FloroEntity, Void>builder()
+                            .starter(EntityAnimations.floroReveal.starter().reversed().withLoopMode(LoopMode.HOLD_ON_LAST_FRAME))
+                            .layerName(LAYER_SHOWING)
+                            .action(Action.<FloroEntity, Void>builder()
+                                    .onceRunListener(StandardDelayPredicates.onEnd(), (floroEntity, data) -> floroEntity.setHidden(true))
+                                    .build())
+                            .build(),
+                    null);
         }
 
         @Override

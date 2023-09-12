@@ -51,7 +51,7 @@ public class TransitionTicker extends AbstractAnimationTicker {
         transitionWeight = MathUtils.coerceInRange(transitionWeight, 0, 1);
 
         source.apply(model, blendType, outerWeight * (1 - transitionWeight), environment, systemTime);
-        destination.apply(model, blendType, outerWeight * transitionWeight, environment, systemTime);
+        destination.apply(model, BlendType.ADD, outerWeight * transitionWeight, environment, systemTime);
     }
 
     @Override
