@@ -55,3 +55,7 @@ generate the mappings, using the command below, while you are in the root folder
 ```
 py src/mappificator.py -p -v 1 --mc-version 1.20 --providers yarn --yarn-version 1 
 ```
+
+# Credits
+
+Thanks to [Moonflower Team](https://github.com/MoonflowerTeam/) for their Molang compiler!

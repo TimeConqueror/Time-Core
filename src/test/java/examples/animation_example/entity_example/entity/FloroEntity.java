@@ -27,6 +27,8 @@ import ru.timeconqueror.timecore.animation.AnimationSystem;
 import ru.timeconqueror.timecore.animation.action.AnimationEventListener;
 import ru.timeconqueror.timecore.animation.component.LoopMode;
 import ru.timeconqueror.timecore.animation.entityai.AnimatedRangedAttackGoal;
+import ru.timeconqueror.timecore.animation.predefined.EntityPredefinedAnimations;
+import ru.timeconqueror.timecore.animation.predefined.PredefinedAnimation;
 import ru.timeconqueror.timecore.api.animation.*;
 import ru.timeconqueror.timecore.api.animation.action.Action;
 import ru.timeconqueror.timecore.api.animation.action.StandardDelayPredicates;
@@ -42,7 +44,6 @@ import java.util.EnumSet;
  * <p>
  * If task has a lower priority (higher number), it's checked by system if it can work in parallel (if mutex isn't the same).
  */
-//FIXME restore actions
 public class FloroEntity extends Monster implements RangedAttackMob, AnimatedObject<FloroEntity> {
     private static final EntityDataAccessor<Boolean> HIDDEN = SynchedEntityData.defineId(FloroEntity.class, EntityDataSerializers.BOOLEAN);
     private static final String LAYER_SHOWING = "showing";
@@ -58,17 +59,12 @@ public class FloroEntity extends Monster implements RangedAttackMob, AnimatedObj
     public FloroEntity(EntityType<? extends FloroEntity> type, Level level) {
         super(type, level);
 
-        // For testing idle animations
-//        animationSystem = AnimationSystemBuilder.forEntity(this, world, builder -> {
-//            builder.addLayer(LAYER_SHOWING, BlendType.OVERWRITE, 0F);
-//            builder.addLayer(LAYER_WALKING, BlendType.ADD, 1F);
-//            builder.addLayer(LAYER_ATTACK, BlendType.ADD, 0.9F);
-//        }, predefinedAnimations -> {
-//            predefinedAnimations.setWalkingAnimation(new AnimationStarter(EntityAnimations.floroWalk).setSpeed(3F), LAYER_WALKING);
-//            predefinedAnimations.setIdleAnimation(new AnimationStarter(EntityAnimations.floroIdle), LAYER_WALKING);
-//        });
+        EntityPredefinedAnimations predefined = EntityPredefinedAnimations.builder()
+                .walkingAnimation(new PredefinedAnimation(LAYER_WALKING, EntityAnimations.floroWalk.starter().withSpeed(3F)))
+                .idleAnimation(new PredefinedAnimation(LAYER_WALKING, EntityAnimations.floroIdle.starter()))
+                .build();
 
-        animationSystem = AnimationSystems.forEntity(this, builder -> {
+        animationSystem = AnimationSystems.forEntity(this, predefined, builder -> {
                     builder.addLayer(LAYER_SHOWING, BlendType.OVERWRITE, 1);
                     builder.addLayer(LAYER_WALKING, BlendType.ADD, 1);
                     builder.addLayer(LAYER_ATTACK, BlendType.ADD, 1);
@@ -83,10 +79,6 @@ public class FloroEntity extends Monster implements RangedAttackMob, AnimatedObj
                 }
             });
         }
-//        , predefinedAnimations -> {
-//            predefinedAnimations.setWalkingAnimation(new AnimationStarterImpl(EntityAnimations.floroWalk).withSpeed(3F), LAYER_WALKING);
-//        }
-//        );
     }
 
     @Override
@@ -135,7 +127,7 @@ public class FloroEntity extends Monster implements RangedAttackMob, AnimatedObj
                         .build())
                 .build();
 
-        goalSelector.addGoal(5, new AnimatedRangedAttackGoal<>(this, rangedAttackBundle, 1.0F, 16.0F));//mutex 3
+//        goalSelector.addGoal(5, new AnimatedRangedAttackGoal<>(this, rangedAttackBundle, 1.0F, 16.0F));//mutex 3
 
         goalSelector.addGoal(6, new WaterAvoidingRandomStrollGoal(this, 1.0D));//mutex 1
         goalSelector.addGoal(7, new LookAtPlayerGoal(this, Player.class, 8.0F));//mutex 2

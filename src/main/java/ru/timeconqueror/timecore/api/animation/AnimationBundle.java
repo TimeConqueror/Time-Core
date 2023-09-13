@@ -11,7 +11,7 @@ import java.util.Objects;
 
 @Getter
 public class AnimationBundle<T extends AnimatedObject<T>, DATA> {
-    private final List<Action<? super T, DATA>> actionList = new ArrayList<>();
+    private final List<Action<? super T, DATA>> actionList = new ArrayList<>(0);
     private AnimationStarter starter;
     private String layerName;
 
