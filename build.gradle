@@ -215,8 +215,7 @@ def replaceProperties = [
         loader_version_range: loader_version_range,
         mod_id              : mod_id, mod_name: mod_name, mod_license: mod_license, mod_version: mod_version,
         mod_authors         : mod_authors,
-        kff_version_range : kff_version_range,
-        pack_format_number: pack_format_number
+        kff_version_range: kff_version_range
 ]
 
 processResources {
