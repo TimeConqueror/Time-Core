@@ -30,12 +30,6 @@ public class DefaultAttachCapabilityHandler {
         attachCaps(event, CapabilityOwner.ENTITY);
     }
 
-    // TODO: Village capability
-//    @SubscribeEvent
-//    public void onVillageAttachCapability(AttachCapabilitiesEvent<VillagePieces.Village> event) {
-//        tryAttachCapability(event, CapabilityOwner.VILLAGE);
-//    }
-
     @SubscribeEvent
     public static void onWorldAttachCapability(AttachCapabilitiesEvent<Level> event) {
         attachCaps(event, CapabilityOwner.LEVEL);

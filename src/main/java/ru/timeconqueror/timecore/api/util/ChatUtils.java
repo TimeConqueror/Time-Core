@@ -1,10 +1,8 @@
 package ru.timeconqueror.timecore.api.util;
 
 import net.minecraft.ChatFormatting;
-import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -14,18 +12,6 @@ import java.util.Arrays;
 
 public class ChatUtils {
     private static final Logger LOGGER = LogManager.getLogger();
-
-    /**
-     * Sends message to all players in given distance.
-     *
-     * @param distanceIn distance from `fromPos`, in which players will be get a message.
-     */
-    public static void sendToAllNearby(BlockPos fromPos, Component msg, double distanceIn) {
-        for (ServerPlayer player : PlayerUtils.getPlayersNearby(fromPos, distanceIn)) {
-            //FIXME port
-           // player.sendMessage(msg, player.getUUID());
-        }
-    }
 
     /**
      * Changes format (usually color) of provided message.
