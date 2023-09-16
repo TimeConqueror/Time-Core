@@ -1,22 +1,11 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 
-buildscript {
-    repositories {
-        maven {
-            url = 'https://repo.spongepowered.org/repository/maven-public/'
-            content { includeGroup "org.spongepowered" }
-        }
-    }
-    dependencies {
-        classpath 'org.spongepowered:mixingradle:0.7-SNAPSHOT'
-    }
-}
-
 plugins {
     id 'eclipse'
     id 'idea'
     id 'maven-publish'
-    id 'net.minecraftforge.gradle' version '[6.0,6.2)'
+    id 'net.neoforged.gradle' version '[6.0.18,6.2)'
+    id 'org.spongepowered.mixin' version '0.7.+'
     id 'org.parchmentmc.librarian.forgegradle' version '1.+'
     id 'org.jetbrains.kotlin.jvm' version '1.8.22'
     // OPTIONAL Kotlin Serialization plugin
@@ -151,7 +140,7 @@ minecraft {
 sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 dependencies {
-    minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
+    minecraft "net.neoforged:forge:${minecraft_version}-${forge_version}"
 
     if (file("runtimeMods").exists()) {
         file("runtimeMods").eachFile { file ->
@@ -168,7 +157,7 @@ dependencies {
         }
     }
 
-    implementation 'thedarkcolour:kotlinforforge:4.3.0'
+    implementation 'thedarkcolour:kotlinforforge:4.4.0'
     shade('gg.moonflower:molang-compiler:3.0.4-customized.7') {
         exclude group: "org.ow2.asm", module: "asm-tree"
     }
@@ -226,7 +215,8 @@ def replaceProperties = [
         loader_version_range: loader_version_range,
         mod_id              : mod_id, mod_name: mod_name, mod_license: mod_license, mod_version: mod_version,
         mod_authors         : mod_authors,
-        kff_version_range   : kff_version_range
+        kff_version_range : kff_version_range,
+        pack_format_number: pack_format_number
 ]
 
 processResources {
