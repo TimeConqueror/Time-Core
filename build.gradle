@@ -169,7 +169,9 @@ dependencies {
     }
 
     implementation 'thedarkcolour:kotlinforforge:4.3.0'
-    shade 'gg.moonflower:molang-compiler:3.0.4-customized.7'
+    shade('gg.moonflower:molang-compiler:3.0.4-customized.7') {
+        exclude group: "org.ow2.asm", module: "asm-tree"
+    }
 
     if (System.getProperty("idea.sync.active") != "true") {
         annotationProcessor("org.spongepowered:mixin:0.8.5:processor")
