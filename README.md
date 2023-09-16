@@ -8,14 +8,15 @@
   Blockbench for creating them.
 * On-Fly Blockstate/Model Generator - Allows you to generate simple item/block models and blockstates, so you don't need
   place them in resources now!
-* Structure Revealer - Can be used for debug purposes, shows bounding box of the every subscribed structure piece.
+* Porting...~~* Structure Revealer - Can be used for debug purposes, shows bounding box of the every subscribed
+  structure piece.~~
 * Comfortable system for Block/Item/TileEntity/Packet/Config Registering - Provides a simple way of creating and
   registering all specified stuff.
 * Improved Config-Building System - More comfortable way of creating configs.
 * Safe Network System - No more exploits of sending packets to the wrong side.
 * Simple-to-use Reflection system - automatically unlocks fields, methods and constructors, when you're accessing them
   via Reflection.
-* Client-side Commands - provides the way of creating commands, that exist only on client side.
+* Porting... ~~Client-side Commands - provides the way of creating commands, that exist only on client side.~~
 
 ## How to add TimeCore as a gradle dependency:
 
@@ -36,8 +37,8 @@ repositories {
 
 dependencies {
     // Adds KFF as dependency and Kotlin libs
-    implementation 'thedarkcolour:kotlinforforge:4.3.0'
-    implementation fg.deobf('ru.timeconqueror:TimeCore:1.20-3.8.0.0')
+    implementation 'thedarkcolour:kotlinforforge:4.4.0'
+    implementation fg.deobf('ru.timeconqueror:TimeCore:1.20.1-3.10.0.0')
 }
 ```
 
