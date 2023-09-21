@@ -2,6 +2,7 @@ package ru.timeconqueror.timecore.client.render.model.loading;
 
 import com.google.common.collect.ImmutableList;
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
+import lombok.Getter;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
 import ru.timeconqueror.timecore.api.util.MathUtils;
@@ -12,15 +13,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TimePartDefinition {
+    public static final String INTERNAL_ROOT_NAME = "i$root";
+
     private final List<TimeCubeDefinition> cubes;
     private final List<TimePartDefinition> children = new ArrayList<>();
+    @Getter
     private final Vector3f pivot;
     private final Vector3f rotationDegrees;
     private final boolean neverRender;
+    @Getter
     private final String name;
+    @Getter
+    @Nullable
     private final String parentName;
 
-    public TimePartDefinition(List<TimeCubeDefinition> cubes, Vector3f pivot, Vector3f rotationDegrees, boolean neverRender, String name, String parentName) {
+    public TimePartDefinition(List<TimeCubeDefinition> cubes, Vector3f pivot, Vector3f rotationDegrees, boolean neverRender, String name, @Nullable String parentName) {
         this.cubes = cubes;
         this.pivot = pivot;
         this.rotationDegrees = rotationDegrees;
@@ -30,7 +37,7 @@ public class TimePartDefinition {
     }
 
     public static TimePartDefinition makeRoot() {
-        return new TimePartDefinition(ImmutableList.of(), new Vector3f(0, 0, 0), new Vector3f(0, 0, 0), false, "root", null);
+        return new TimePartDefinition(ImmutableList.of(), new Vector3f(0, 0, 0), new Vector3f(0, 0, 0), false, INTERNAL_ROOT_NAME, null);
     }
 
     public void addChild(TimePartDefinition child) {
@@ -68,15 +75,4 @@ public class TimePartDefinition {
         return part;
     }
 
-    public Vector3f getPivot() {
-        return pivot;
-    }
-
-    public String getParentName() {
-        return parentName;
-    }
-
-    public String getName() {
-        return name;
-    }
 }

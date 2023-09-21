@@ -86,21 +86,16 @@ public class JsonModelParser {
         }
 
         List<TimePartDefinition> rootChildren = new ArrayList<>();
-        for (TimePartDefinition value : parts.values()) {
-            if (!value.getParentName().equals("root")) {
-                TimePartDefinition parent = parts.get(value.getParentName());
-                if (parent != null) {
-                    parent.addChild(value);
-                } else {
-                    throw new JsonSyntaxException(String.format("Can't find parent node '%s' for node '%s'", value.getParentName(), value.getName()));
-                }
+        for (TimePartDefinition part : parts.values()) {
+            TimePartDefinition parent = parts.get(part.getParentName());
+            if (parent != null) {
+                parent.addChild(part);
             } else {
-                rootChildren.add(value);
+                rootChildren.add(part);
             }
         }
 
         return Pair.of(new InFileLocation(fileLocation, identifier), makeDefinition(material, rootChildren));
-
     }
 
     private TimeModelDefinition makeDefinition(MaterialDefinition material, List<TimePartDefinition> roots) {
@@ -117,7 +112,7 @@ public class JsonModelParser {
         boolean mirror = GsonHelper.getAsBoolean(bone, "mirror", false);
         boolean neverRender = GsonHelper.getAsBoolean(bone, "neverRender", false);
         String name = GsonHelper.getAsString(bone, "name");
-        String parentName = GsonHelper.getAsString(bone, "parent", "root");
+        String parentName = GsonHelper.getAsString(bone, "parent", null);
 
         List<TimePartDefinition> children = new ArrayList<>();
 

@@ -13,7 +13,6 @@ import java.util.Map;
 
 
 public class TimeModel extends Model implements ITimeModel {
-    public static final String INTERNAL_ROOT_NAME = "i$root";
     private final InFileLocation location;
     private final ReloadableContainer container = new ReloadableContainer();
 
@@ -50,6 +49,8 @@ public class TimeModel extends Model implements ITimeModel {
      * Should be called before animation applying & render.
      */
     public void reset() {
+        getRoot().reset();
+
         for (TimeModelPart part : container.getPartMap().values()) {
             part.reset();
         }
@@ -89,7 +90,10 @@ public class TimeModel extends Model implements ITimeModel {
         private void buildPartMap() {
             ImmutableMap.Builder<String, TimeModelPart> builder = ImmutableMap.builder();
 
-            addPartToMap(builder, INTERNAL_ROOT_NAME, root);
+            // root itself is not placed to part map, because it is made by TimeCore itself and has i$root name
+            for (Map.Entry<String, TimeModelPart> e : root.getChildren().entrySet()) {
+                addPartToMap(builder, e.getKey(), e.getValue());
+            }
 
             this.partMap = builder.build();
         }
