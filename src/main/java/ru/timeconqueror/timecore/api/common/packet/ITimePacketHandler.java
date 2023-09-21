@@ -37,6 +37,6 @@ public interface ITimePacketHandler<T> {
     @NotNull
     @SuppressWarnings("ConstantConditions")
     default Level getWorld(NetworkEvent.Context ctx) {
-        return ctx.getDirection().getReceptionSide() == LogicalSide.CLIENT ? ClientProxy.world() : ctx.getSender().level();
+        return ctx.getDirection().getReceptionSide() == LogicalSide.CLIENT ? ClientProxy.level() : ctx.getSender().level();
     }
 }

@@ -11,7 +11,7 @@ import java.util.function.Function;
 
 public class ObjectUtils {
     @Contract("null,_ -> false")
-    public static boolean checkIfNotNull(Object object, String errorMessage) {
+    public static boolean checkNotNull(Object object, String errorMessage) {
         if (object == null) {
             TimeCore.LOGGER.error(errorMessage, new NullPointerException());
             return false;

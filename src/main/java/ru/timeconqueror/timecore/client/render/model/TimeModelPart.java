@@ -2,6 +2,7 @@ package ru.timeconqueror.timecore.client.render.model;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import lombok.Getter;
 import net.minecraft.client.model.geom.ModelPart;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Quaternionf;
@@ -14,12 +15,15 @@ import java.util.List;
 import java.util.Map;
 
 public class TimeModelPart extends ModelPart implements ITimeModelPart {
-    private final Vector3f scale = new Vector3f(1, 1, 1);
-    private final Vector3f offset = new Vector3f();
+    @Getter
+    private final Vector3f translation = new Vector3f();
     /**
      * in radians
      */
+    @Getter
     private final Vector3f rotation;
+    @Getter
+    private final Vector3f scale = new Vector3f(1, 1, 1);
     public Vector3f startRotationRadians;
     private final Map<String, TimeModelPart> children;
     private final List<TimeModelCube> cubes;
@@ -59,7 +63,7 @@ public class TimeModelPart extends ModelPart implements ITimeModelPart {
 
     @Override
     public void translateAndRotate(PoseStack matrixStackIn) {
-        matrixStackIn.translate(offset.x() / 16F, offset.y() / 16F, offset.z() / 16F);
+        matrixStackIn.translate(translation.x() / 16F, translation.y() / 16F, translation.z() / 16F);
         matrixStackIn.translate(this.x / 16.0F, this.y / 16.0F, this.z / 16.0F);
 
         if (this.rotation.x != 0.0F || this.rotation.y != 0.0F || this.rotation.z != 0.0F) {
@@ -94,17 +98,7 @@ public class TimeModelPart extends ModelPart implements ITimeModelPart {
 
     @Override
     public Vector3f getTranslation() {
-        return offset;
-    }
-
-    @Override
-    public Vector3f getRotation() {
-        return rotation;
-    }
-
-    @Override
-    public Vector3f getScale() {
-        return scale;
+        return translation;
     }
 
     @Override
@@ -116,7 +110,7 @@ public class TimeModelPart extends ModelPart implements ITimeModelPart {
     public void reset() {
         transformValid = false;
         rotation.set(startRotationRadians.x(), startRotationRadians.y(), startRotationRadians.z());
-        offset.set(0, 0, 0);
+        translation.set(0, 0, 0);
         scale.set(1, 1, 1);
     }
 }

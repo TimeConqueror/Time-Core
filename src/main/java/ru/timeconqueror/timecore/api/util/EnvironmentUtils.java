@@ -16,6 +16,8 @@ import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.core.Filter;
 import org.apache.logging.log4j.core.LoggerContext;
 import org.apache.logging.log4j.core.filter.MarkerFilter;
+import org.apache.logging.log4j.message.Message;
+import org.apache.logging.log4j.message.ParameterizedMessage;
 import ru.timeconqueror.timecore.TimeCore;
 import ru.timeconqueror.timecore.mixins.accessor.MinecraftServerAccessor;
 
@@ -135,6 +137,10 @@ public class EnvironmentUtils {
         EnvironmentUtils.disableLogMarkers(disabledMarkers);
     }
 
+    public static Message makeLogMessage(String message, Object... arguments) {
+        return new ParameterizedMessage(message, arguments);
+    }
+
     public static <E> ForgeRegistry<E> getForgeRegistry(ResourceLocation registryName) {
         return RegistryManager.ACTIVE.getRegistry(registryName);
     }
@@ -144,10 +150,6 @@ public class EnvironmentUtils {
     }
 
     public static boolean registryExists(ResourceLocation registryName) {
-        if (getForgeRegistry(registryName) != null) {
-            return true;
-        }
-
-        return getVanillaRegistry(registryName) != null;
+        return getForgeRegistry(registryName) != null || getVanillaRegistry(registryName) != null;
     }
 }

@@ -27,7 +27,7 @@ public class TimeResourceHolder {
      * @param model        resource that will be available on created path.
      */
     public void addItemModel(ResourceLocation registryName, ItemModel model) {
-        if (!ObjectUtils.checkIfNotNull(registryName, "Can't register model location for the item without a registry location.")) {
+        if (!ObjectUtils.checkNotNull(registryName, "Can't register model location for the item without a registry location.")) {
             return;
         }
 
@@ -42,7 +42,7 @@ public class TimeResourceHolder {
      * @param blockStateResource resource that will be available on created path.
      */
     public void addBlockStateResource(ResourceLocation registryName, BlockStateResource blockStateResource) {
-        if (!ObjectUtils.checkIfNotNull(registryName, "Can't register blockstate location for the block without a registry location.")) {
+        if (!ObjectUtils.checkNotNull(registryName, "Can't register blockstate location for the block without a registry location.")) {
             return;
         }
 
@@ -57,7 +57,7 @@ public class TimeResourceHolder {
      * @param model        resource that will be available on created path.
      */
     public void addBlockModel(ResourceLocation registryName, BlockModel model) {
-        if (!ObjectUtils.checkIfNotNull(registryName, "Can't register model location for the block without a registry location.")) {
+        if (!ObjectUtils.checkNotNull(registryName, "Can't register model location for the block without a registry location.")) {
             return;
         }
 

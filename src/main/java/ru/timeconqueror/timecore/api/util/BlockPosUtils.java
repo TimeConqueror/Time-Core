@@ -11,7 +11,7 @@ public class BlockPosUtils {
      * Positions with {@code xSize}, {@code ySize} or {@code zSize} coords are excluded.
      */
     public static Iterable<BlockPos> between(BlockPos startPos, int xSize, int ySize, int zSize) {
-        return () -> new Iterator<BlockPos>() {
+        return () -> new Iterator<>() {
 
             long xyz;
             final BlockPos.MutableBlockPos pos = startPos.mutable();

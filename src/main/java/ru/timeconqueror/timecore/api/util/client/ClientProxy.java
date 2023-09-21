@@ -14,7 +14,7 @@ public class ClientProxy {
         return Hacks.safeCast(Minecraft.getInstance().player);
     }
 
-    public static Level world() {
+    public static Level level() {
         return Hacks.safeCast(Minecraft.getInstance().level);
     }
 }
