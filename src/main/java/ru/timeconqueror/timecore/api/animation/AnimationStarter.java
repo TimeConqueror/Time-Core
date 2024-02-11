@@ -7,11 +7,15 @@ import ru.timeconqueror.timecore.animation.component.LoopMode;
 
 public interface AnimationStarter {
     static AnimationStarter copy(AnimationStarter starter) {
-        return new AnimationStarterImpl(starter.getData().copy());
+        return new AnimationStarterImpl(starter.getData());
     }
 
     static AnimationStarter of(Animation animation) {
         return new AnimationStarterImpl(animation);
+    }
+
+    static AnimationStarter of(AnimationData animationData) {
+        return new AnimationStarterImpl(animationData);
     }
 
     /**

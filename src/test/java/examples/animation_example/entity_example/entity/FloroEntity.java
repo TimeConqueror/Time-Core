@@ -30,8 +30,7 @@ import ru.timeconqueror.timecore.animation.entityai.AnimatedRangedAttackGoal;
 import ru.timeconqueror.timecore.animation.predefined.EntityPredefinedAnimations;
 import ru.timeconqueror.timecore.animation.predefined.PredefinedAnimation;
 import ru.timeconqueror.timecore.api.animation.*;
-import ru.timeconqueror.timecore.api.animation.action.Action;
-import ru.timeconqueror.timecore.api.animation.action.StandardDelayPredicates;
+import ru.timeconqueror.timecore.api.animation.action.Actions;
 
 import java.util.EnumSet;
 
@@ -74,7 +73,7 @@ public class FloroEntity extends Monster implements RangedAttackMob, AnimatedObj
         if (level.isClientSide) {
             animationSystem.getAnimationManager().getLayer(LAYER_SHOWING).addAnimationEventListener(new AnimationEventListener() {
                 @Override
-                public void onAnimationStarted(AnimationTickerInfo ticker) {
+                public void onAnimationStarted(AnimationTicker ticker) {
                     System.out.println("Started: " + ticker);
                 }
             });
@@ -122,12 +121,10 @@ public class FloroEntity extends Monster implements RangedAttackMob, AnimatedObj
         var rangedAttackBundle = AnimationBundle.<FloroEntity, AnimatedRangedAttackGoal.ActionData>builder()
                 .starter(EntityAnimations.floroShoot.starter())
                 .layerName(LAYER_ATTACK)
-                .action(Action.<FloroEntity, AnimatedRangedAttackGoal.ActionData>builder()
-                        .onceRunListener(StandardDelayPredicates.whenPassesPercents(0.5F), AnimatedRangedAttackGoal.STANDARD_RUNNER)
-                        .build())
+                .action(Actions.everyCycleAtPercents(0.5F, AnimatedRangedAttackGoal.STANDARD_RUNNER))
                 .build();
 
-//        goalSelector.addGoal(5, new AnimatedRangedAttackGoal<>(this, rangedAttackBundle, 1.0F, 16.0F));//mutex 3
+        goalSelector.addGoal(5, new AnimatedRangedAttackGoal<>(this, rangedAttackBundle, 1.0F, 16.0F));//mutex 3
 
         goalSelector.addGoal(6, new WaterAvoidingRandomStrollGoal(this, 1.0D));//mutex 1
         goalSelector.addGoal(7, new LookAtPlayerGoal(this, Player.class, 8.0F));//mutex 2
@@ -243,9 +240,7 @@ public class FloroEntity extends Monster implements RangedAttackMob, AnimatedObj
             getAnimationSystemApi().startAnimation(AnimationBundle.<FloroEntity, Void>builder()
                             .starter(REVEALING_ACTION_STARTER.get())
                             .layerName(LAYER_SHOWING)
-                            .action(Action.<FloroEntity, Void>builder()
-                                    .onceRunListener(StandardDelayPredicates.onEnd(), (floroEntity, data) -> floroEntity.setHidden(false))
-                                    .build())
+                            .action(Actions.onBoundaryEnd((floroEntity, data) -> floroEntity.setHidden(false)))
                             .build(),
                     null);
         }
@@ -285,12 +280,11 @@ public class FloroEntity extends Monster implements RangedAttackMob, AnimatedObj
         @Override
         public void start() {
             isHiding = true;
+
             getAnimationSystemApi().startAnimation(AnimationBundle.<FloroEntity, Void>builder()
                             .starter(EntityAnimations.floroReveal.starter().reversed().withLoopMode(LoopMode.HOLD_ON_LAST_FRAME))
                             .layerName(LAYER_SHOWING)
-                            .action(Action.<FloroEntity, Void>builder()
-                                    .onceRunListener(StandardDelayPredicates.onEnd(), (floroEntity, data) -> floroEntity.setHidden(true))
-                                    .build())
+                            .action(Actions.onBoundaryEnd((floroEntity, data) -> floroEntity.setHidden(true)))
                             .build(),
                     null);
         }

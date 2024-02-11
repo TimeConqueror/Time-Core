@@ -216,11 +216,11 @@ public class MathUtils {
         return Math.toDegrees(radians);
     }
 
-    public static boolean equals(float f1, float f2) {
+    public static boolean almostEqual(float f1, float f2) {
         return Math.abs(f1 - f2) < 0.001F;
     }
 
-    public static boolean equals(double d1, double d2) {
+    public static boolean almostEqual(double d1, double d2) {
         return Math.abs(d1 - d2) < 0.001D;
     }
 

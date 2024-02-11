@@ -3,10 +3,10 @@ package ru.timeconqueror.timecore.animation;
 import gg.moonflower.molangcompiler.api.MolangEnvironment;
 import lombok.Getter;
 import ru.timeconqueror.timecore.animation.action.AnimationEventListener;
+import ru.timeconqueror.timecore.animation.network.AnimationState;
 import ru.timeconqueror.timecore.animation.watcher.AbstractAnimationTicker;
 import ru.timeconqueror.timecore.animation.watcher.AnimationTickerImpl;
 import ru.timeconqueror.timecore.animation.watcher.EmptyAnimationTicker;
-import ru.timeconqueror.timecore.animation.watcher.FreezableTime.FreezeCause;
 import ru.timeconqueror.timecore.animation.watcher.TransitionTicker;
 import ru.timeconqueror.timecore.api.animation.BlendType;
 import ru.timeconqueror.timecore.api.animation.Layer;
@@ -17,7 +17,7 @@ import ru.timeconqueror.timecore.molang.CustomMolangRuntime;
 import java.util.ArrayList;
 import java.util.List;
 
-public class LayerImpl implements Layer {
+public class LayerImpl implements Layer, AnimationController {
     @Getter
     private final String name;
     @Getter
@@ -45,58 +45,54 @@ public class LayerImpl implements Layer {
         return runtime;
     }
 
-    public void update(BaseAnimationManager manager, long systemTime) {
-        boolean paused = manager.isGamePaused();
-        var current = getCurrentTicker();
+    public void update(long clockTime) {
+        while (true) {
+            AbstractAnimationTicker currentTicker = getCurrentTicker();
 
-        if (paused) {
-            current.freeze(FreezeCause.GAME_PAUSED);
-            return;
-        }
+            eventListeners.forEach(listener -> listener.onAnimationUpdate(currentTicker, clockTime));
+            currentTicker.update(this, clockTime);
 
-        current.unfreeze(FreezeCause.GAME_PAUSED);
-
-        // may be called multiple times for one animation
-        if (current.isAnimationEnded(systemTime)) {
-            eventListeners.forEach(listener -> listener.onAnimationEnded(current));
-            current.handleEndOnLayer(this, eventListeners);
-        } else {
-            eventListeners.forEach(listener -> listener.onAnimationUpdate(current));
+            AbstractAnimationTicker newTicker = getCurrentTicker();
+            if (newTicker == currentTicker) {
+                break;
+            }
         }
     }
 
-    public void apply(ITimeModel model, long systemTime) {
-        getCurrentTicker().apply(model, getBlendType(), getWeight(), getEnvironment(), systemTime);
+    public void apply(ITimeModel model, long clockTime) {
+        getCurrentTicker().apply(model, getBlendType(), getWeight(), getEnvironment(), clockTime);
     }
 
-    public boolean start(AnimationData data) {
-        return start(data, AnimationCompanionData.EMPTY);
-    }
-
-    public boolean start(AnimationData data, AnimationCompanionData companionData) {
+    @Override
+    public boolean startAnimation(AnimationData data, long clockTime, AnimationCompanionData companionData) {
         if (data.isIgnorable() && getCurrentTicker().canIgnore(data)) {
             return false;
         }
 
-        AnimationTickerImpl animationTicker = new AnimationTickerImpl(data, companionData);
+        AnimationTickerImpl animationTicker = new AnimationTickerImpl(data, clockTime, companionData);
         if (data.getTransitionTime() == 0) {
             setCurrentTicker(animationTicker);
         } else {
-            setCurrentTicker(new TransitionTicker(getCurrentTicker(), animationTicker, data.getTransitionTime()));
+            setCurrentTicker(new TransitionTicker(getCurrentTicker(), data, companionData, clockTime, data.getTransitionTime()));
         }
 
         return true;
     }
 
-    public void removeAnimation(int transitionTime) {
+    @Override
+    public void removeAnimation(long clockTime, int transitionTime) {
         if (getName().isEmpty()) return;
 
-        setCurrentTicker(new TransitionTicker(getCurrentTicker(), EmptyAnimationTicker.INSTANCE, transitionTime));
+        if (transitionTime == 0) {
+            setCurrentTicker(EmptyAnimationTicker.INSTANCE);
+            return;
+        }
+
+        setCurrentTicker(new TransitionTicker(getCurrentTicker(), null, AnimationCompanionData.EMPTY, clockTime, transitionTime));
     }
 
     public void setCurrentTicker(AbstractAnimationTicker ticker) {
         eventListeners.forEach(listener -> listener.onAnimationStopped(getCurrentTicker()));
-
 
         this.currentTicker = ticker;
 
@@ -106,5 +102,13 @@ public class LayerImpl implements Layer {
     @Override
     public void addAnimationEventListener(AnimationEventListener listener) {
         this.eventListeners.add(listener);
+    }
+
+    public AnimationState getAnimationState(long clockTime) {
+        return getCurrentTicker().getState(clockTime);
+    }
+
+    public void setAnimationState(AnimationState state, long clockTime) {
+        setCurrentTicker(AbstractAnimationTicker.fromState(state, clockTime));
     }
 }

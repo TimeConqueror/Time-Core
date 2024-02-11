@@ -41,7 +41,7 @@ public class LayerImplTest {
     public void shouldStartNewAnimationInstantlyIfTransitionTimeIsZero() {
         AnimationData data = new AnimationStarterImpl(animation).withTransitionTime(0).getData();
 
-        basicLayer.start(data);
+        basicLayer.startAnimation(data, 0);
 
         verify(basicLayer).setCurrentTicker(argThat(argument -> argument instanceof AnimationTickerImpl && argument.getAnimationData() == data));
     }

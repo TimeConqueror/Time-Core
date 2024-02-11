@@ -12,6 +12,10 @@ public enum LoopMode {
 
     public static final EnumLookup<LoopMode, Integer> ORDINAL_LOOKUP = EnumLookup.makeFromOrdinal(LoopMode.class);
 
+    public boolean isLooped() {
+        return this == LOOP;
+    }
+
     public static class Deserializer implements JsonDeserializer<LoopMode> {
 
         @Override
@@ -19,17 +23,12 @@ public enum LoopMode {
             JsonPrimitive primitive = jsonElement.getAsJsonPrimitive();
 
             String loopMode = primitive.getAsString();
-            switch (loopMode) {
-                case "false":
-                    return LoopMode.DO_NOT_LOOP;
-                case "true":
-                    return LoopMode.LOOP;
-                case "hold_on_last_frame":
-                    return LoopMode.HOLD_ON_LAST_FRAME;
-                default: {
-                    throw new JsonSyntaxException("Unknown loop mode type: " + loopMode);
-                }
-            }
+            return switch (loopMode) {
+                case "false" -> LoopMode.DO_NOT_LOOP;
+                case "true" -> LoopMode.LOOP;
+                case "hold_on_last_frame" -> LoopMode.HOLD_ON_LAST_FRAME;
+                default -> throw new JsonSyntaxException("Unknown loop mode type: " + loopMode);
+            };
         }
     }
 }

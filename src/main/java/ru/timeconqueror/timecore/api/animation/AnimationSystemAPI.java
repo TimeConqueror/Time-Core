@@ -1,17 +1,15 @@
 package ru.timeconqueror.timecore.api.animation;
 
-import lombok.Setter;
-import org.jetbrains.annotations.ApiStatus;
+import lombok.AllArgsConstructor;
 import ru.timeconqueror.timecore.animation.AnimationCompanionData;
 import ru.timeconqueror.timecore.animation.AnimationSystem;
 import ru.timeconqueror.timecore.api.animation.action.ActionInstance;
 
 import java.util.List;
 
+@AllArgsConstructor
 public class AnimationSystemAPI<T extends AnimatedObject<T>> {
-    @Setter
-    @ApiStatus.Internal
-    private AnimationSystem<T> system;
+    private final AnimationSystem<T> system;
 
     public boolean startAnimation(AnimationStarter animationStarter, String layerName) {
         return system.getAnimationManager().startAnimation(animationStarter.getData(), layerName, AnimationCompanionData.EMPTY);

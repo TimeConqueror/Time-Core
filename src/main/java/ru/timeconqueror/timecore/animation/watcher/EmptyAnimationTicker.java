@@ -1,17 +1,13 @@
 package ru.timeconqueror.timecore.animation.watcher;
 
 import gg.moonflower.molangcompiler.api.MolangEnvironment;
-import net.minecraft.network.FriendlyByteBuf;
+import ru.timeconqueror.timecore.animation.AnimationController;
 import ru.timeconqueror.timecore.animation.AnimationData;
 import ru.timeconqueror.timecore.animation.AnimationStarterImpl;
-import ru.timeconqueror.timecore.animation.LayerImpl;
-import ru.timeconqueror.timecore.animation.action.AnimationEventListener;
-import ru.timeconqueror.timecore.animation.util.AnimationTickerSerializer;
+import ru.timeconqueror.timecore.animation.network.AnimationState;
 import ru.timeconqueror.timecore.api.animation.Animation;
 import ru.timeconqueror.timecore.api.animation.BlendType;
 import ru.timeconqueror.timecore.api.client.render.model.ITimeModel;
-
-import java.util.List;
 
 public class EmptyAnimationTicker extends AbstractAnimationTicker {
     public static final EmptyAnimationTicker INSTANCE = new EmptyAnimationTicker();
@@ -27,7 +23,7 @@ public class EmptyAnimationTicker extends AbstractAnimationTicker {
     }
 
     @Override
-    public void handleEndOnLayer(LayerImpl layer, List<AnimationEventListener> eventListeners) {
+    public void update(AnimationController animationController, long clockTime) {
 
     }
 
@@ -51,16 +47,18 @@ public class EmptyAnimationTicker extends AbstractAnimationTicker {
         return EMPTY;
     }
 
-    public static class Serializer implements AnimationTickerSerializer<EmptyAnimationTicker> {
+    @Override
+    public AnimationState getState(long clockTime) {
+        return AnimationState.EmptyState.INSTANCE;
+    }
 
-        @Override
-        public void serialize(EmptyAnimationTicker ticker, FriendlyByteBuf buffer) {
+    @Override
+    public int getAnimationTimeAt(long clockTime) {
+        return 0;
+    }
 
-        }
-
-        @Override
-        public EmptyAnimationTicker deserialize(FriendlyByteBuf buffer) {
-            return INSTANCE;
-        }
+    @Override
+    public String print(long clockTime) {
+        return "Empty Animation";
     }
 }

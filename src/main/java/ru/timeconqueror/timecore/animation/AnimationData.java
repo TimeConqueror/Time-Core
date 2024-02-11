@@ -4,6 +4,7 @@ import lombok.*;
 import net.minecraft.network.FriendlyByteBuf;
 import org.jetbrains.annotations.Nullable;
 import ru.timeconqueror.timecore.animation.component.LoopMode;
+import ru.timeconqueror.timecore.animation.watcher.Timeline;
 import ru.timeconqueror.timecore.api.animation.Animation;
 import ru.timeconqueror.timecore.api.animation.AnimationConstants;
 
@@ -111,5 +112,9 @@ public class AnimationData {
 
     public @Nullable AnimationData getNextAnimation() {
         return nextAnimationData;
+    }
+
+    public int getElapsedLengthTillFirstBoundary() {
+        return Timeline.getFirstBoundaryElapsedLength(getAnimationLength(), getStartAnimationTime(), getSpeed(), isReversed());
     }
 }

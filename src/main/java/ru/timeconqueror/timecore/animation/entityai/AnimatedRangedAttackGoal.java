@@ -5,10 +5,8 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.monster.RangedAttackMob;
-import ru.timeconqueror.timecore.animation.util.AnimationUtils;
 import ru.timeconqueror.timecore.api.animation.AnimatedObject;
 import ru.timeconqueror.timecore.api.animation.AnimationBundle;
-import ru.timeconqueror.timecore.api.animation.PlayingAnimationInfo;
 
 import java.util.EnumSet;
 import java.util.function.BiConsumer;
@@ -35,8 +33,7 @@ public class AnimatedRangedAttackGoal<T extends Mob & AnimatedObject<T>> extends
         this.animationBundle = animationBundle;
         this.setFlags(EnumSet.of(Flag.MOVE, Flag.LOOK));
 
-        PlayingAnimationInfo playingAnimationInfo = PlayingAnimationInfo.of(animationBundle.getStarter());
-        this.attackInterval = AnimationUtils.milliSecondsToTicks(playingAnimationInfo.getElapsedLength());
+        this.attackInterval = animationBundle.getStarter().getData().getElapsedLengthTillFirstBoundary();
     }
 
     /**
@@ -102,7 +99,6 @@ public class AnimatedRangedAttackGoal<T extends Mob & AnimatedObject<T>> extends
 
             ActionData actionData = new ActionData(distanceFactor, attackTarget);
             entity.getAnimationSystemApi().startAnimation(animationBundle, actionData);
-            System.out.println(actionData);
 
             this.rangedAttackTime = Mth.ceil(this.attackInterval);
         } else if (this.rangedAttackTime < 0) {

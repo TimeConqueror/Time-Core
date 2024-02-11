@@ -3,13 +3,11 @@ package ru.timeconqueror.timecore.animation.watcher;
 import gg.moonflower.molangcompiler.api.MolangEnvironment;
 import gg.moonflower.molangcompiler.api.object.MolangLibrary;
 import lombok.Getter;
-import net.minecraft.network.FriendlyByteBuf;
 import ru.timeconqueror.timecore.animation.AnimationCompanionData;
+import ru.timeconqueror.timecore.animation.AnimationController;
 import ru.timeconqueror.timecore.animation.AnimationData;
-import ru.timeconqueror.timecore.animation.LayerImpl;
-import ru.timeconqueror.timecore.animation.action.AnimationEventListener;
 import ru.timeconqueror.timecore.animation.component.LoopMode;
-import ru.timeconqueror.timecore.animation.util.AnimationTickerSerializer;
+import ru.timeconqueror.timecore.animation.network.AnimationState;
 import ru.timeconqueror.timecore.api.animation.Animation;
 import ru.timeconqueror.timecore.api.animation.AnimationConstants;
 import ru.timeconqueror.timecore.api.animation.BlendType;
@@ -17,49 +15,47 @@ import ru.timeconqueror.timecore.api.client.render.model.ITimeModel;
 import ru.timeconqueror.timecore.api.molang.Molang;
 import ru.timeconqueror.timecore.molang.MolangObjects;
 
-import java.util.List;
-
+@Getter
 public class AnimationTickerImpl extends AbstractAnimationTicker {
-    @Getter
     private final AnimationData animationData;
-    @Getter
     private final AnimationCompanionData companionData;
-    @Getter
     private final MolangLibrary tickerQuery;
 
-    public AnimationTickerImpl(AnimationData animationData, AnimationCompanionData companionData) {
-        super(new Timeline(animationData.getAnimationLength(), animationData.getSpeed(), animationData.isReversed(), System.currentTimeMillis(), animationData.getStartAnimationTime()));
+    public AnimationTickerImpl(AnimationData animationData, long clockTime, AnimationCompanionData companionData) {
+        super(new Timeline(animationData.getAnimationLength(), animationData.getSpeed(), animationData.isReversed(), clockTime, animationData.getStartAnimationTime()));
         this.animationData = animationData;
         this.companionData = companionData;
         this.tickerQuery = MolangObjects.queriesForTicker(this);
     }
 
-    @Override
-    public void handleEndOnLayer(LayerImpl layer, List<AnimationEventListener> eventListeners) {
-        AnimationData data = getAnimationData();
-        AnimationData nextData = data.getNextAnimation();
-        if (nextData != null) {
-            layer.start(nextData);
-            return;
-        }
-
-        if (data.getLoopMode() == LoopMode.HOLD_ON_LAST_FRAME) {
-            return;
-        } else if (data.getLoopMode() == LoopMode.LOOP) {
-            getTimeline().reset();
-            eventListeners.forEach(listener -> listener.onAnimationRestarted(this));
-            return;
-        }
-
-        layer.removeAnimation(data.isNoTransitionToNone() ? 0 : AnimationConstants.BASIC_TRANSITION_TIME);
+    public AnimationTickerImpl(AnimationState.ActiveState state, long clockTime) {
+        this(state.getData(), clockTime - state.getElapsedTime(), AnimationCompanionData.EMPTY);
     }
 
     @Override
-    public void apply(ITimeModel model, BlendType blendType, float outerWeight, MolangEnvironment env, long systemTime) {
+    public void update(AnimationController animationController, long clockTime) {
+        long elapsedTimeTillFirstBoundary = getTimeline().getElapsedTimeTillFirstBoundary(clockTime);
+        // if still playing the zero cycle and hasn't achieved the first boundary
+        if (elapsedTimeTillFirstBoundary > 0) return;
+
+        AnimationData data = getAnimationData();
+        AnimationData nextData = data.getNextAnimation();
+        if (nextData != null) {
+            animationController.startAnimation(nextData, clockTime + elapsedTimeTillFirstBoundary);
+            return;
+        }
+
+        if (data.getLoopMode() == LoopMode.DO_NOT_LOOP) {
+            animationController.removeAnimation(clockTime + elapsedTimeTillFirstBoundary, data.isNoTransitionToNone() ? 0 : AnimationConstants.BASIC_TRANSITION_TIME);
+        }
+    }
+
+    @Override
+    public void apply(ITimeModel model, BlendType blendType, float outerWeight, MolangEnvironment env, long clockTime) {
         Animation animation = animationData.getAnimation();
         //TODO custom weight
 
-        int animationTime = getTimeline().getAnimationTime(systemTime);
+        int animationTime = getTimeline().getAnimationTime(clockTime, isLooped());
 
         env.loadLibrary(Molang.Query.Domains.ANIMATION, tickerQuery);
         animation.apply(model, blendType, outerWeight, env, animationTime);
@@ -77,25 +73,17 @@ public class AnimationTickerImpl extends AbstractAnimationTicker {
     }
 
     @Override
-    public String toString() {
-        long systemTime = System.currentTimeMillis();
-        return String.format("Animation: Progress Time: %d/%d, Elapsed: %d/%dms, Data: %s", getAnimationTime(systemTime), getAnimationLength(), getElapsedTime(systemTime), getElapsedLength(), getAnimationData());
+    public int getAnimationTimeAt(long clockTime) {
+        return getTimeline().getAnimationTime(clockTime, isLooped());
     }
 
-    public static class Serializer implements AnimationTickerSerializer<AnimationTickerImpl> {
-        @Override
-        public void serialize(AnimationTickerImpl ticker, FriendlyByteBuf buffer) {
-            AnimationData.encode(ticker.getAnimationData(), buffer);
-            buffer.writeVarInt(ticker.getTimeline().getElapsedTime(System.currentTimeMillis()));
-        }
+    public String print(long clockTime) {
+        return String.format("Animation: Progress Time: %d/%d, Elapsed: %d/%dms, Data: %s", getAnimationTimeAt(clockTime), getAnimationLength(), getElapsedTimeAt(clockTime), getTimeline().getElapsedTimeTillFirstBoundary(clockTime), getAnimationData());
+    }
 
-        @Override
-        public AnimationTickerImpl deserialize(FriendlyByteBuf buffer) {
-            AnimationData data = AnimationData.decode(buffer);
-            int elapsedTime = buffer.readVarInt();
-            AnimationTickerImpl ticker = new AnimationTickerImpl(data, AnimationCompanionData.EMPTY);
-            ticker.getTimeline().setFromElapsed(elapsedTime);
-            return ticker;
-        }
+    @Override
+    public AnimationState getState(long clockTime) {
+        return new AnimationState.ActiveState(getAnimationData(),
+                getTimeline().getElapsedTime(clockTime));
     }
 }

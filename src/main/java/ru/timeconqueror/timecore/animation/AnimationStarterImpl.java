@@ -1,5 +1,6 @@
 package ru.timeconqueror.timecore.animation;
 
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 import ru.timeconqueror.timecore.animation.component.LoopMode;
 import ru.timeconqueror.timecore.api.animation.Animation;
@@ -14,11 +15,13 @@ import java.util.Objects;
 public class AnimationStarterImpl implements AnimationStarter {
     private final AnimationData data;
 
+    @ApiStatus.Internal
     public AnimationStarterImpl(Animation animation) {
         Objects.requireNonNull(animation);
         this.data = new AnimationData(animation);
     }
 
+    @ApiStatus.Internal
     public AnimationStarterImpl(AnimationData animationData) {
         this.data = animationData.copy();
     }

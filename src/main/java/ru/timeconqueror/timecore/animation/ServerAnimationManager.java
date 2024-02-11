@@ -1,13 +1,10 @@
 package ru.timeconqueror.timecore.animation;
 
-import net.minecraft.client.Minecraft;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.fml.loading.FMLEnvironment;
 import ru.timeconqueror.timecore.animation.action.ActionManager;
 import ru.timeconqueror.timecore.animation.network.NetworkDispatcherInstance;
 import ru.timeconqueror.timecore.api.animation.AnimatedObject;
+import ru.timeconqueror.timecore.api.animation.Clock;
 import ru.timeconqueror.timecore.api.animation.builders.LayerDefinition;
-import ru.timeconqueror.timecore.api.client.render.model.ITimeModel;
 import ru.timeconqueror.timecore.molang.SharedMolangObject;
 
 import java.util.LinkedHashMap;
@@ -15,8 +12,8 @@ import java.util.LinkedHashMap;
 public class ServerAnimationManager<T extends AnimatedObject<T>> extends BaseAnimationManager {
     private final NetworkDispatcherInstance<T> networkDispatcher;
 
-    public ServerAnimationManager(SharedMolangObject sharedMolangObject, NetworkDispatcherInstance<T> networkDispatcher) {
-        super(sharedMolangObject);
+    public ServerAnimationManager(Clock clock, SharedMolangObject sharedMolangObject, NetworkDispatcherInstance<T> networkDispatcher) {
+        super(clock, sharedMolangObject);
         this.networkDispatcher = networkDispatcher;
     }
 
@@ -42,15 +39,5 @@ public class ServerAnimationManager<T extends AnimatedObject<T>> extends BaseAni
         super.stopAnimation(layerName, transitionTime);
 
         networkDispatcher.sendStopAnimationPacket(layerName, transitionTime);
-    }
-
-    @Override
-    public boolean isGamePaused() {
-        return FMLEnvironment.dist == Dist.CLIENT && Minecraft.getInstance().isPaused();
-    }
-
-    @Override
-    protected void applyAnimation(ITimeModel model, LayerImpl layer, long systemTime) {
-
     }
 }

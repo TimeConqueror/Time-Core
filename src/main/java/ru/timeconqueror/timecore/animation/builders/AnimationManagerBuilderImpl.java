@@ -8,6 +8,7 @@ import ru.timeconqueror.timecore.animation.network.NetworkDispatcherInstance;
 import ru.timeconqueror.timecore.api.animation.AnimatedObject;
 import ru.timeconqueror.timecore.api.animation.AnimationConstants;
 import ru.timeconqueror.timecore.api.animation.BlendType;
+import ru.timeconqueror.timecore.api.animation.Clock;
 import ru.timeconqueror.timecore.api.animation.builders.AnimationManagerBuilder;
 import ru.timeconqueror.timecore.api.animation.builders.LayerDefinition;
 import ru.timeconqueror.timecore.api.util.SingleUseBuilder;
@@ -38,12 +39,12 @@ public class AnimationManagerBuilderImpl extends SingleUseBuilder implements Ani
     }
 
     @ApiStatus.Internal
-    public <T extends AnimatedObject<T>> BaseAnimationManager build(boolean clientSide, SharedMolangObject sharedMolangObject, NetworkDispatcherInstance<T> networkDispatcherInstance) {
+    public <T extends AnimatedObject<T>> BaseAnimationManager build(boolean clientSide, Clock clock, SharedMolangObject sharedMolangObject, NetworkDispatcherInstance<T> networkDispatcherInstance) {
         BaseAnimationManager manager;
         if (!clientSide) {
-            manager = new ServerAnimationManager<>(sharedMolangObject, networkDispatcherInstance);
+            manager = new ServerAnimationManager<>(clock, sharedMolangObject, networkDispatcherInstance);
         } else {
-            manager = new ClientAnimationManager(sharedMolangObject);
+            manager = new ClientAnimationManager(clock, sharedMolangObject);
         }
 
         if (layerDefinitions.isEmpty()) {

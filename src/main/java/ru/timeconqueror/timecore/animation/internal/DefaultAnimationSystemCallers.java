@@ -5,10 +5,10 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import ru.timeconqueror.timecore.animation.BaseAnimationManager;
 import ru.timeconqueror.timecore.api.animation.AnimatedObject;
 import ru.timeconqueror.timecore.api.animation.AnimationManager;
 import ru.timeconqueror.timecore.api.common.event.LivingTickEndEvent;
-import ru.timeconqueror.timecore.api.util.holder.Pair;
 
 //TODO add tickers for tile entities
 @Mod.EventBusSubscriber
@@ -27,11 +27,8 @@ public class DefaultAnimationSystemCallers {
         Entity target = event.getTarget();
         if (target instanceof AnimatedObject<?> animatedObj) {
             AnimationManager animationManager = animatedObj.getSystem().getAnimationManager();
-            var tickersByLayer = animationManager.getLayerNames().stream()
-                    .map(animationManager::getLayer)
-                    .map(layer -> Pair.of(layer.getName(), layer.getCurrentTicker()))
-                    .toList();
-            animatedObj.getSystem().getNetworkDispatcher().sendSyncAnimationsPacket(tickersByLayer);
+            var statesByLayer = ((BaseAnimationManager) animationManager).getLayerStates();
+            animatedObj.getSystem().getNetworkDispatcher().sendSyncAnimationsPacket(statesByLayer);
         }
     }
 }

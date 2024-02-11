@@ -1,8 +1,8 @@
 package ru.timeconqueror.timecore.api.animation;
 
 import lombok.Getter;
-import ru.timeconqueror.timecore.api.animation.action.Action;
 import ru.timeconqueror.timecore.api.animation.action.ActionInstance;
+import ru.timeconqueror.timecore.api.animation.action.AnimationUpdateListener;
 import ru.timeconqueror.timecore.api.util.CollectionUtils;
 
 import java.util.ArrayList;
@@ -11,7 +11,7 @@ import java.util.Objects;
 
 @Getter
 public class AnimationBundle<T extends AnimatedObject<T>, DATA> {
-    private final List<Action<? super T, DATA>> actionList = new ArrayList<>(0);
+    private final List<AnimationUpdateListener<? super T, DATA>> actionList = new ArrayList<>(0);
     private AnimationStarter starter;
     private String layerName;
 
@@ -36,12 +36,12 @@ public class AnimationBundle<T extends AnimatedObject<T>, DATA> {
             return this;
         }
 
-        public AnimationBundleBuilder<T, DATA> action(Action<? super T, DATA> action) {
+        public AnimationBundleBuilder<T, DATA> action(AnimationUpdateListener<? super T, DATA> action) {
             bundle.actionList.add(action);
             return this;
         }
 
-        public AnimationBundleBuilder<T, DATA> actions(List<Action<? super T, DATA>> actions) {
+        public AnimationBundleBuilder<T, DATA> actions(List<AnimationUpdateListener<? super T, DATA>> actions) {
             bundle.actionList.addAll(actions);
             return this;
         }
