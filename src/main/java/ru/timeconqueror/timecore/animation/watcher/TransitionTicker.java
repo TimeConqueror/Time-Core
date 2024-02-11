@@ -71,7 +71,7 @@ public class TransitionTicker extends AbstractAnimationTicker {
 
     @Override
     public String print(long clockTime) {
-        return String.format("Transition: Elapsed: %d/%dms, \n\tSource: %s, \n\tDestination: %s", getElapsedTimeAt(clockTime), getAnimationLength(), source, destination);
+        return String.format("Transition: Elapsed: %d/%dms, \n\tSource: %s, \n\tDestination: %s", getElapsedTimeAt(clockTime), getAnimationLength(), source.print(clockTime), destination.print(clockTime));
     }
 
     @Override

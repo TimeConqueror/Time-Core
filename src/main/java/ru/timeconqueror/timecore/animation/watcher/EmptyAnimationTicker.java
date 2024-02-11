@@ -59,6 +59,6 @@ public class EmptyAnimationTicker extends AbstractAnimationTicker {
 
     @Override
     public String print(long clockTime) {
-        return "Empty Animation";
+        return "Empty";
     }
 }

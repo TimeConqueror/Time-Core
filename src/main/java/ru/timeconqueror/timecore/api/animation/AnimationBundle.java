@@ -1,17 +1,19 @@
 package ru.timeconqueror.timecore.api.animation;
 
 import lombok.Getter;
+import lombok.extern.log4j.Log4j2;
 import ru.timeconqueror.timecore.api.animation.action.ActionInstance;
 import ru.timeconqueror.timecore.api.animation.action.AnimationUpdateListener;
-import ru.timeconqueror.timecore.api.util.CollectionUtils;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Getter
 public class AnimationBundle<T extends AnimatedObject<T>, DATA> {
-    private final List<AnimationUpdateListener<? super T, DATA>> actionList = new ArrayList<>(0);
+    private final Map<String, AnimationUpdateListener<? super T, DATA>> actions = new HashMap<>(0);
     private AnimationStarter starter;
     private String layerName;
 
@@ -20,9 +22,12 @@ public class AnimationBundle<T extends AnimatedObject<T>, DATA> {
     }
 
     public List<ActionInstance<? super T, DATA>> mapActionsToInstances(DATA data) {
-        return CollectionUtils.mapList(getActionList(), action -> ActionInstance.<T, DATA>of(action, data));
+        return getActions().entrySet().stream()
+                .map(e -> ActionInstance.<T, DATA>of(e.getKey(), e.getValue(), data))
+                .collect(Collectors.toList());
     }
 
+    @Log4j2
     public static class AnimationBundleBuilder<T extends AnimatedObject<T>, DATA> {
         private final AnimationBundle<T, DATA> bundle = new AnimationBundle<>();
 
@@ -36,13 +41,10 @@ public class AnimationBundle<T extends AnimatedObject<T>, DATA> {
             return this;
         }
 
-        public AnimationBundleBuilder<T, DATA> action(AnimationUpdateListener<? super T, DATA> action) {
-            bundle.actionList.add(action);
-            return this;
-        }
-
-        public AnimationBundleBuilder<T, DATA> actions(List<AnimationUpdateListener<? super T, DATA>> actions) {
-            bundle.actionList.addAll(actions);
+        public AnimationBundleBuilder<T, DATA> action(String id, AnimationUpdateListener<? super T, DATA> action) {
+            if (bundle.actions.put(id, action) != null) {
+                log.error("Action with id {} was placed to the action map twice, using the last one...", id);
+            }
             return this;
         }
 

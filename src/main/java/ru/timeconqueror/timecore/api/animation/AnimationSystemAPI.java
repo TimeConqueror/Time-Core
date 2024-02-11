@@ -21,8 +21,8 @@ public class AnimationSystemAPI<T extends AnimatedObject<T>> {
         return system.getAnimationManager().startAnimation(animationStarter.getData(), layerName, companion);
     }
 
-    public <DATA> boolean startAnimation(AnimationBundle<T, DATA> animationBundle, DATA action) {
-        return startAnimation(animationBundle.getStarter(), animationBundle.getLayerName(), animationBundle.mapActionsToInstances(action));
+    public <DATA> boolean startAnimation(AnimationBundle<T, DATA> animationBundle, DATA actionData) {
+        return startAnimation(animationBundle.getStarter(), animationBundle.getLayerName(), animationBundle.mapActionsToInstances(actionData));
     }
 
     /**

@@ -5,6 +5,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.monster.RangedAttackMob;
+import ru.timeconqueror.timecore.animation.util.AnimationUtils;
 import ru.timeconqueror.timecore.api.animation.AnimatedObject;
 import ru.timeconqueror.timecore.api.animation.AnimationBundle;
 
@@ -33,7 +34,9 @@ public class AnimatedRangedAttackGoal<T extends Mob & AnimatedObject<T>> extends
         this.animationBundle = animationBundle;
         this.setFlags(EnumSet.of(Flag.MOVE, Flag.LOOK));
 
-        this.attackInterval = animationBundle.getStarter().getData().getElapsedLengthTillFirstBoundary();
+        this.attackInterval = AnimationUtils.millisToTicks(
+                animationBundle.getStarter().getData().getElapsedLengthTillFirstBoundary()
+        );
     }
 
     /**

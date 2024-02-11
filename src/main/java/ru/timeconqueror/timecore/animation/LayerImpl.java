@@ -49,7 +49,7 @@ public class LayerImpl implements Layer, AnimationController {
         while (true) {
             AbstractAnimationTicker currentTicker = getCurrentTicker();
 
-            eventListeners.forEach(listener -> listener.onAnimationUpdate(currentTicker, clockTime));
+            eventListeners.forEach(listener -> listener.onAnimationUpdate(this.name, currentTicker, clockTime));
             currentTicker.update(this, clockTime);
 
             AbstractAnimationTicker newTicker = getCurrentTicker();
@@ -92,11 +92,11 @@ public class LayerImpl implements Layer, AnimationController {
     }
 
     public void setCurrentTicker(AbstractAnimationTicker ticker) {
-        eventListeners.forEach(listener -> listener.onAnimationStopped(getCurrentTicker()));
+        eventListeners.forEach(listener -> listener.onAnimationStopped(this.name, getCurrentTicker()));
 
         this.currentTicker = ticker;
 
-        eventListeners.forEach(listener -> listener.onAnimationStarted(getCurrentTicker()));
+        eventListeners.forEach(listener -> listener.onAnimationStarted(this.name, getCurrentTicker()));
     }
 
     @Override
