@@ -157,7 +157,7 @@ dependencies {
         }
     }
 
-    implementation 'thedarkcolour:kotlinforforge:4.4.0'
+    implementation 'thedarkcolour:kotlinforforge:4.10.0'
     shade('gg.moonflower:molang-compiler:3.0.4-customized.7') {
         exclude group: "org.ow2.asm", module: "asm-tree"
     }

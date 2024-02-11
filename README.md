@@ -54,7 +54,7 @@ See [Mappificator Project](https://github.com/alcatrazEscapee/Mappificator) in o
 generate the mappings, using the command below, while you are in the root folder of that project.
 
 ```
-py src/mappificator.py -p -v 1 --mc-version 1.20.1 --providers yarn parchment --yarn-version 9 --parchment-version 2023.09.03-1.20.1
+py src/mappificator.py -p -v 2 --mc-version 1.20.1 --providers yarn parchment --yarn-version 10
 ```
 
 # Credits

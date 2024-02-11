@@ -24,7 +24,6 @@ import net.minecraftforge.common.util.Lazy;
 import org.jetbrains.annotations.NotNull;
 import ru.timeconqueror.timecore.animation.AnimationData;
 import ru.timeconqueror.timecore.animation.AnimationSystem;
-import ru.timeconqueror.timecore.animation.action.AnimationEventListener;
 import ru.timeconqueror.timecore.animation.component.LoopMode;
 import ru.timeconqueror.timecore.animation.entityai.AnimatedRangedAttackGoal;
 import ru.timeconqueror.timecore.animation.predefined.EntityPredefinedAnimations;
@@ -70,13 +69,9 @@ public class FloroEntity extends Monster implements RangedAttackMob, AnimatedObj
                 }
         );
 
-        if (level.isClientSide) {
-            animationSystem.getAnimationManager().getLayer(LAYER_SHOWING).addAnimationEventListener(new AnimationEventListener() {
-                @Override
-                public void onAnimationStarted(AnimationTicker ticker) {
-                    System.out.println("Started: " + ticker);
-                }
-            });
+        if (!level.isClientSide) {
+//            animationSystem.getAnimationManager().getLayer(LAYER_SHOWING)
+//                    .addAnimationEventListener(new AnimationDebugEventListener(animationSystem.getClock(), false));
         }
     }
 
@@ -121,7 +116,7 @@ public class FloroEntity extends Monster implements RangedAttackMob, AnimatedObj
         var rangedAttackBundle = AnimationBundle.<FloroEntity, AnimatedRangedAttackGoal.ActionData>builder()
                 .starter(EntityAnimations.floroShoot.starter())
                 .layerName(LAYER_ATTACK)
-                .action(Actions.everyCycleAtPercents(0.5F, AnimatedRangedAttackGoal.STANDARD_RUNNER))
+                .action("SHOOT", Actions.everyCycleAtPercents(0.5F, AnimatedRangedAttackGoal.STANDARD_RUNNER))
                 .build();
 
         goalSelector.addGoal(5, new AnimatedRangedAttackGoal<>(this, rangedAttackBundle, 1.0F, 16.0F));//mutex 3
@@ -240,7 +235,7 @@ public class FloroEntity extends Monster implements RangedAttackMob, AnimatedObj
             getAnimationSystemApi().startAnimation(AnimationBundle.<FloroEntity, Void>builder()
                             .starter(REVEALING_ACTION_STARTER.get())
                             .layerName(LAYER_SHOWING)
-                            .action(Actions.onBoundaryEnd((floroEntity, data) -> floroEntity.setHidden(false)))
+                            .action("REVEAL", Actions.onBoundaryEnd((floroEntity, data) -> floroEntity.setHidden(false)))
                             .build(),
                     null);
         }
@@ -284,7 +279,7 @@ public class FloroEntity extends Monster implements RangedAttackMob, AnimatedObj
             getAnimationSystemApi().startAnimation(AnimationBundle.<FloroEntity, Void>builder()
                             .starter(EntityAnimations.floroReveal.starter().reversed().withLoopMode(LoopMode.HOLD_ON_LAST_FRAME))
                             .layerName(LAYER_SHOWING)
-                            .action(Actions.onBoundaryEnd((floroEntity, data) -> floroEntity.setHidden(true)))
+                            .action("HIDE", Actions.onBoundaryEnd((floroEntity, data) -> floroEntity.setHidden(true)))
                             .build(),
                     null);
         }
