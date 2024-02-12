@@ -17,7 +17,7 @@ public class Molang {
     public static float resolve(MolangEnvironment env, MolangExpression exp) {
         return switch (getErrorResolving()) {
             case CRASH_ON_ERROR -> env.resolve(exp);
-            case STUB_AND_PRINT_STACKTRACE_ON_ERROR -> env.safeResolve(exp);
+            case STUB_AND_LOG_ON_ERROR -> env.safeResolve(exp);
             case SUPPRESS_ERROR -> {
                 try {
                     //noinspection OverrideOnly
@@ -30,7 +30,7 @@ public class Molang {
     }
 
     public enum OnErrorBehaviour {
-        CRASH_ON_ERROR, STUB_AND_PRINT_STACKTRACE_ON_ERROR, SUPPRESS_ERROR
+        CRASH_ON_ERROR, STUB_AND_LOG_ON_ERROR, SUPPRESS_ERROR
     }
 
     public static class Query {

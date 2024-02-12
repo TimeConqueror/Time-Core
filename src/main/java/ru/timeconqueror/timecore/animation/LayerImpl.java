@@ -1,6 +1,5 @@
 package ru.timeconqueror.timecore.animation;
 
-import gg.moonflower.molangcompiler.api.MolangEnvironment;
 import lombok.Getter;
 import ru.timeconqueror.timecore.animation.action.AnimationEventListener;
 import ru.timeconqueror.timecore.animation.network.AnimationState;
@@ -12,7 +11,8 @@ import ru.timeconqueror.timecore.api.animation.BlendType;
 import ru.timeconqueror.timecore.api.animation.Layer;
 import ru.timeconqueror.timecore.api.animation.builders.LayerDefinition;
 import ru.timeconqueror.timecore.api.client.render.model.ITimeModel;
-import ru.timeconqueror.timecore.molang.CustomMolangRuntime;
+import ru.timeconqueror.timecore.molang.MolangRuntimeProperties;
+import ru.timeconqueror.timecore.molang.TCMolangRuntime;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +25,7 @@ public class LayerImpl implements Layer, AnimationController {
     @Getter
     private final float weight;
     @Getter
-    private final MolangEnvironment environment;
+    private final TCMolangRuntime environment;
     private final List<AnimationEventListener> eventListeners;
     @Getter
     private AbstractAnimationTicker currentTicker = EmptyAnimationTicker.INSTANCE;
@@ -39,8 +39,8 @@ public class LayerImpl implements Layer, AnimationController {
         this.eventListeners = new ArrayList<>();
     }
 
-    private CustomMolangRuntime createMolangEnvironment(BaseAnimationManager animationManager) {
-        CustomMolangRuntime runtime = new CustomMolangRuntime();
+    private TCMolangRuntime createMolangEnvironment(BaseAnimationManager animationManager) {
+        TCMolangRuntime runtime = new TCMolangRuntime();
         animationManager.getSharedMolangObjects().forEach(runtime::loadLibrary);
         return runtime;
     }
@@ -59,7 +59,8 @@ public class LayerImpl implements Layer, AnimationController {
         }
     }
 
-    public void apply(ITimeModel model, long clockTime) {
+    public void apply(ITimeModel model, MolangRuntimeProperties runtimeProperties, long clockTime) {
+        environment.setRuntimeProperties(runtimeProperties);
         getCurrentTicker().apply(model, getBlendType(), getWeight(), getEnvironment(), clockTime);
     }
 

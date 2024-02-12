@@ -11,6 +11,7 @@ import ru.timeconqueror.timecore.api.animation.Clock;
 import ru.timeconqueror.timecore.api.animation.builders.LayerDefinition;
 import ru.timeconqueror.timecore.api.client.render.model.ITimeModel;
 import ru.timeconqueror.timecore.api.util.holder.Pair;
+import ru.timeconqueror.timecore.molang.MolangRuntimeProperties;
 import ru.timeconqueror.timecore.molang.SharedMolangObject;
 
 import java.util.LinkedHashMap;
@@ -74,10 +75,11 @@ public abstract class BaseAnimationManager implements AnimationManager {
     @Override
     public void applyAnimations(ITimeModel model) {
         long clockTime = clock.getMillis();
+        MolangRuntimeProperties runtimeProperties = new MolangRuntimeProperties(clockTime);
         for (LayerImpl layer : layerMap.values()) {
             layer.update(clockTime);
             if (model != null) {
-                layer.apply(model, clockTime);
+                layer.apply(model, runtimeProperties, clockTime);
             }
         }
     }
