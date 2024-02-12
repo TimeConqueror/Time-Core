@@ -359,9 +359,9 @@
               "q.anim_time"
             ],
             "0.5" : [
-              "q.anim_time * 4",
-              "q.anim_time * 4",
-              "q.anim_time * 4"
+              "q.anim_time",
+              "q.anim_time",
+              "q.anim_time"
             ],
             "1.0" : [
               "q.anim_time",

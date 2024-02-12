@@ -5,27 +5,32 @@ import ru.timeconqueror.timecore.animation.AnimationSystem;
 import ru.timeconqueror.timecore.animation.renderer.AnimatedLivingEntityRenderer;
 
 /**
- * //FIXME WRONG docu
  * An interface for entities to provide animation stuff.
  * You also need to use {@link AnimatedLivingEntityRenderer} for animations to work.
  * <br>
  * Example of implementing:
  * <blockquote><pre>
- *  public class EntityFloro extends MonsterEntity implements AnimatedObject<EntityFloro> {
+ *  public class EntityFloro extends Monster implements AnimatedObject<EntityFloro> {
  *     private final ActionController<EntityFloro> actionController;
  *
  *     public EntityFloro(EntityType<? extends MonsterEntity> type, World worldIn) {
  *         super(type, worldIn);
  *
- *         actionController = new ActionControllerBuilder<EntityFloro>(
- *                 new AnimationManagerBuilder(true)
- *                         .addWalkingAnimationHandling(new AnimationStarter(TEntities.FLORO_WALK).setSpeed(2.0F), "walking")
- *                         .addLayer("attack", 1, BlendType.ADDING, 0.9F)
- *         ).forEntity(this, world);
+ *         EntityPredefinedAnimations predefined = EntityPredefinedAnimations.builder()
+ *                 .walkingAnimation(new PredefinedAnimation(LAYER_WALKING, EntityAnimations.floroWalk.starter().withSpeed(3F)))
+ *                 .idleAnimation(new PredefinedAnimation(LAYER_WALKING, EntityAnimations.floroIdle.starter()))
+ *                 .build();
+ *
+ *         animationSystem = AnimationSystems.forEntity(this, predefined, builder -> {
+ *                     builder.addLayer(LAYER_SHOWING, BlendType.OVERWRITE, 1);
+ *                     builder.addLayer(LAYER_WALKING, BlendType.ADD, 1);
+ *                     builder.addLayer(LAYER_ATTACK, BlendType.ADD, 1);
+ *                 }
+ *         );
  *     }
  *
- *     public @NotNull ActionController<EntityFloro> getActionController() {
- *         return actionController;
+ *     public @NotNull AnimationSystem<FloroEntity> getSystem() {
+ *         return animationSystem;
  *     }
  * }
  * </pre></blockquote>
