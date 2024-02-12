@@ -28,7 +28,7 @@ public abstract class AnimatedEntityRenderer<T extends Entity & AnimatedObject<T
     public void render(T entity, float entityYaw, float partialTicks, PoseStack matrixStack, MultiBufferSource buffer, int packedLight) {
         getTimeModel().reset();
 
-        entity.getSystem().getAnimationManager().applyAnimations(model);
+        entity.getSystem().getAnimationManager().applyAnimations(model, partialTicks);
 
         puppeteer.processModel(entity, model, partialTicks);
 

@@ -2,6 +2,7 @@ package ru.timeconqueror.timecore.animation;
 
 import lombok.Getter;
 import lombok.experimental.Accessors;
+import ru.timeconqueror.timecore.animation.clock.TickBasedClock;
 import ru.timeconqueror.timecore.animation.network.NetworkDispatcherInstance;
 import ru.timeconqueror.timecore.api.animation.*;
 
@@ -30,9 +31,14 @@ public class AnimationSystem<T extends AnimatedObject<T>> {
 
     public void onTick(boolean clientSide) {
         predefinedAnimationManager.onTick(this, owner);
+
+        if (clock instanceof TickBasedClock tickBasedClock) {
+            tickBasedClock.tick();
+        }
+
         if (!clientSide) {
             // simulate ticking
-            animationManager.applyAnimations(null);
+            animationManager.applyAnimations(null, 0);
         }
     }
 }

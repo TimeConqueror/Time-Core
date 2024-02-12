@@ -73,8 +73,8 @@ public abstract class BaseAnimationManager implements AnimationManager {
     }
 
     @Override
-    public void applyAnimations(ITimeModel model) {
-        long clockTime = clock.getMillis();
+    public void applyAnimations(ITimeModel model, float partialTick) {
+        long clockTime = clock.getMillis(partialTick);
         MolangRuntimeProperties runtimeProperties = new MolangRuntimeProperties(clockTime);
         for (LayerImpl layer : layerMap.values()) {
             layer.update(clockTime);

@@ -4,5 +4,9 @@ public interface Clock {
     /**
      * Return current time in milliseconds.
      */
-    long getMillis();
+    default long getMillis() {
+        return getMillis(0);
+    }
+
+    long getMillis(float partialTick);
 }

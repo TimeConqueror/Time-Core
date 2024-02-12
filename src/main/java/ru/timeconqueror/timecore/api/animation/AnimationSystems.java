@@ -7,8 +7,7 @@ import org.jetbrains.annotations.Nullable;
 import ru.timeconqueror.timecore.animation.AnimationSystem;
 import ru.timeconqueror.timecore.animation.BaseAnimationManager;
 import ru.timeconqueror.timecore.animation.builders.AnimationManagerBuilderImpl;
-import ru.timeconqueror.timecore.animation.clock.LevelTickClock;
-import ru.timeconqueror.timecore.animation.clock.SystemMillisClock;
+import ru.timeconqueror.timecore.animation.clock.TickBasedClock;
 import ru.timeconqueror.timecore.animation.network.BlockEntityNetworkDispatcher;
 import ru.timeconqueror.timecore.animation.network.EntityNetworkDispatcher;
 import ru.timeconqueror.timecore.animation.network.NetworkDispatcher;
@@ -21,7 +20,6 @@ import ru.timeconqueror.timecore.molang.SharedMolangObject;
 
 import java.util.Objects;
 import java.util.function.Consumer;
-import java.util.function.Supplier;
 
 public class AnimationSystems {
     public static <T extends Entity & AnimatedObject<T>> AnimationSystem<T> forEntity(
@@ -36,7 +34,7 @@ public class AnimationSystems {
 
         return custom(entity,
                 new EntityNetworkDispatcher<>(),
-                entity::level,
+                entity.level(),
                 predefinedManager,
                 animationManagerTuner);
     }
@@ -47,7 +45,7 @@ public class AnimationSystems {
     ) {
         return custom(blockEntity,
                 new BlockEntityNetworkDispatcher<>(),
-                () -> Objects.requireNonNull(blockEntity.getLevel()),
+                Objects.requireNonNull(blockEntity.getLevel()),
                 EmptyPredefinedAnimationManager.empty(),
                 animationManagerTuner);
     }
@@ -55,11 +53,10 @@ public class AnimationSystems {
     public static <T extends AnimatedObject<T>> AnimationSystem<T> custom(
             T object,
             NetworkDispatcher<T> networkDispatcher,
-            Supplier<Level> levelSupplier,
+            Level level,
             PredefinedAnimationManager<T> predefinedAnimationManager,
             Consumer<? super AnimationManagerBuilderImpl> animationManagerTuner
     ) {
-        var level = levelSupplier.get();
         var clientSide = level.isClientSide();
 
         AnimationManagerBuilderImpl animationManagerBuilder = new AnimationManagerBuilderImpl();
@@ -70,12 +67,7 @@ public class AnimationSystems {
 
         NetworkDispatcherInstance<T> networkDispatcherInstance = new NetworkDispatcherInstance<>(networkDispatcher, object);
 
-        Clock clock;
-        if (clientSide) {
-            clock = SystemMillisClock.INSTANCE;//TODO FIXME
-        } else {
-            clock = new LevelTickClock(levelSupplier);
-        }
+        Clock clock = new TickBasedClock();
 
         BaseAnimationManager animationManager = animationManagerBuilder.build(clientSide, clock, sharedObjects, networkDispatcherInstance);
 

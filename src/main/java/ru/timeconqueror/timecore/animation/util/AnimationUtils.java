@@ -13,6 +13,10 @@ public class AnimationUtils {
         return ticks * 50;
     }
 
+    public static long ticksToMillis(double ticks) {
+        return Math.round(ticks * 50);
+    }
+
     public static void applyRotation(TimeModelPart piece, BlendType blendType, float weight, Vector3f rotationIn) {
         rotationIn.mul(weight);
 

@@ -6,7 +6,7 @@ public class HandClock implements Clock {
     private long currentMillis;
 
     @Override
-    public long getMillis() {
+    public long getMillis(float partialTick) {
         return currentMillis;
     }
 

@@ -13,6 +13,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import ru.timeconqueror.timecore.api.util.ITickableBlockEntity;
 
 import javax.annotation.Nullable;
 
@@ -40,6 +41,6 @@ public class HeatCubeBlock extends BaseEntityBlock {
 
     @Nullable
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level_, BlockState state_, BlockEntityType<T> blockEntityType_) {
-        return !level_.isClientSide ? null : createTickerHelper(blockEntityType_, ATileRegistry.HEAT_CUBE, (level, pos, state, blockEntity_) -> blockEntity_.clientTick(level_, pos, state));
+        return ITickableBlockEntity.makeTicker(blockEntityType_, ATileRegistry.HEAT_CUBE);
     }
 }

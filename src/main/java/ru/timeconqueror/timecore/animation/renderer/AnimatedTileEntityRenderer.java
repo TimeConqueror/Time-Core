@@ -23,7 +23,7 @@ public abstract class AnimatedTileEntityRenderer<T extends BlockEntity & Animate
     public void render(T tileEntityIn, float partialTicks, PoseStack matrixStackIn, MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn) {
         getTimeModel().reset();
 
-        tileEntityIn.getSystem().getAnimationManager().applyAnimations(getTimeModel());
+        tileEntityIn.getSystem().getAnimationManager().applyAnimations(getTimeModel(), partialTicks);
         puppeteer.processModel(tileEntityIn, model, partialTicks);
 
         ResourceLocation texture = getTexture(tileEntityIn);

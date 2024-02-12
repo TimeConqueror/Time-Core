@@ -36,12 +36,13 @@ public interface AnimationManager {
 	 * On server: called on every tick and with null model as a param,
 	 * since no operations with model shouldn't be done on server (because no model exists on server side).
 	 *
-	 * @param model model to perform calculations on it.
-	 *              <p>
-	 *              on client: model of the bound entity;<p>
-	 *              on server: null
+	 * @param model        model to perform calculations on it.
+	 *                     <p>
+	 *                     on client: model of the bound entity;<p>
+	 *                     on server: null
+	 * @param partialTick
 	 */
-	void applyAnimations(ITimeModel model);
+	void applyAnimations(ITimeModel model, float partialTick);
 
     boolean startAnimation(AnimationData animationData, String layerName, AnimationCompanionData companion);
 

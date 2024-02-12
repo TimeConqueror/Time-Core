@@ -12,8 +12,9 @@ import ru.timeconqueror.timecore.api.animation.AnimatedObject;
 import ru.timeconqueror.timecore.api.animation.AnimationConstants;
 import ru.timeconqueror.timecore.api.animation.AnimationStarter;
 import ru.timeconqueror.timecore.api.animation.AnimationSystems;
+import ru.timeconqueror.timecore.api.util.ITickableBlockEntity;
 
-public class TileHeatCube extends BlockEntity implements AnimatedObject<TileHeatCube> {
+public class TileHeatCube extends BlockEntity implements AnimatedObject<TileHeatCube>, ITickableBlockEntity {
     private AnimationSystem<TileHeatCube> animationSystem;
 
     public TileHeatCube(BlockPos worldPosition_, BlockState blockState_) {
@@ -31,7 +32,12 @@ public class TileHeatCube extends BlockEntity implements AnimatedObject<TileHeat
         return animationSystem;
     }
 
-    public void clientTick(Level level_, BlockPos pos_, BlockState state_) {
-        getAnimationSystemApi().startAnimation(AnimationStarter.of(TileAnimations.heatCubeIdle).ignorable(true), AnimationConstants.MAIN_LAYER_NAME);
+    @Override
+    public void tick(Level level) {
+        getSystem().onTick(level.isClientSide);
+
+        if (level.isClientSide) {
+            getAnimationSystemApi().startAnimation(AnimationStarter.of(TileAnimations.heatCubeIdle).ignorable(true), AnimationConstants.MAIN_LAYER_NAME);
+        }
     }
 }
