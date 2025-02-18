@@ -1,5 +1,6 @@
 package examples.visual_tests.animation.entity.client;
 
+import examples.visual_tests.animation.entity.client.render.RenderDebugBeacons;
 import examples.visual_tests.animation.entity.client.render.RenderTowerGuardian;
 import examples.visual_tests.animation.entity.registry.AnimTestEntityRegistry;
 import net.minecraftforge.api.distmarker.Dist;
@@ -22,5 +23,6 @@ public class AnimationTestEntityRenderers {
     @OnlyIn(Dist.CLIENT)
     public static void registerRenders(EntityRenderersEvent.RegisterRenderers event) {
         event.registerEntityRenderer(AnimTestEntityRegistry.TOWER_GUARDIAN, RenderTowerGuardian::new);
+        event.registerEntityRenderer(AnimTestEntityRegistry.DEBUG_BEACONS, RenderDebugBeacons::new);
     }
 }

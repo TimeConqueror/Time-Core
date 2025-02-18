@@ -3,11 +3,7 @@ package ru.timeconqueror.timecore.api.util.client;
 import com.mojang.blaze3d.vertex.*;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
-import net.minecraft.core.Vec3i;
 import net.minecraft.world.phys.AABB;
-import net.minecraft.world.phys.Vec3;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.lwjgl.opengl.GL11;
@@ -574,27 +570,6 @@ public class DrawHelper {
         drawBatchedFunc.accept(buffer);
 
         BufferUploader.drawWithShader(buffer.end());
-    }
-
-    /**
-     * Draws line, which starts from provided vector and goes up to 16 blocks.
-     */
-    public static void drawDebugBeacon(MultiBufferSource bufferIn, PoseStack stack, Vector3f vec, int argb) {
-        DrawHelper.buildLine(bufferIn.getBuffer(RenderType.lines()), stack, vec.x(), vec.y(), vec.z(), vec.x(), vec.y() + 16, vec.z(), argb);
-    }
-
-    /**
-     * Draws line, which starts from provided vector and goes up to 16 blocks.
-     */
-    public static void drawDebugBeacon(MultiBufferSource bufferIn, PoseStack stack, Vec3 vec, int argb) {
-        DrawHelper.buildLine(bufferIn.getBuffer(RenderType.lines()), stack, (float) vec.x(), (float) vec.y(), (float) vec.z(), (float) vec.x(), (float) vec.y() + 16, (float) vec.z(), argb);
-    }
-
-    /**
-     * Draws line, which starts from provided vector and goes up to 16 blocks.
-     */
-    public static void drawDebugBeacon(MultiBufferSource bufferIn, PoseStack stack, Vec3i vec, int argb) {
-        DrawHelper.buildLine(bufferIn.getBuffer(RenderType.lines()), stack, vec.getX(), vec.getY(), vec.getZ(), vec.getX(), vec.getY() + 16, vec.getZ(), argb);
     }
 
     public static class TexturedRect {

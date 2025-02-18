@@ -46,6 +46,10 @@ public class VecUtils {
         return new Vector3f(vector3i.getX(), vector3i.getY(), vector3i.getZ());
     }
 
+    public static Vector3f vec3f(double x, double y, double z) {
+        return new Vector3f((float) x, (float) y, (float) z);
+    }
+
     public static Vec3 add(Vec3 vector3d, Vector3f vector3f) {
         return vector3d.add(vector3f.x(), vector3f.y(), vector3f.z());
     }
