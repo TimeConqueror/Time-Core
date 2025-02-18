@@ -4,6 +4,7 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 import ru.timeconqueror.timecore.animation.component.LoopMode;
 import ru.timeconqueror.timecore.api.animation.Animation;
+import ru.timeconqueror.timecore.api.animation.AnimationScript;
 import ru.timeconqueror.timecore.api.animation.AnimationStarter;
 import ru.timeconqueror.timecore.api.util.MathUtils;
 
@@ -51,6 +52,12 @@ public class AnimationStarterImpl implements AnimationStarter {
     }
 
     @Override
+    public AnimationStarter withNoTransitionTime() {
+        withTransitionTime(0);
+        return this;
+    }
+
+    @Override
     public AnimationStarter withSpeed(float speedFactor) {
         data.speed = Math.max(speedFactor, 0);
         return this;
@@ -90,6 +97,11 @@ public class AnimationStarterImpl implements AnimationStarter {
     @Override
     public AnimationData getData() {
         return data;
+    }
+
+    @Override
+    public AnimationScript.Builder toScriptBuilder() {
+        return AnimationScript.builder(this);
     }
 
     @Override

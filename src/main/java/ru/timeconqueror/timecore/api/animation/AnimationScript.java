@@ -24,6 +24,10 @@ public interface AnimationScript {
         return builder(starter.getData());
     }
 
+    static Builder builder(Animation animation) {
+        return builder(animation.starter());
+    }
+
     static Builder builder(AnimationData animationData) {
         return new Builder(animationData);
     }
@@ -52,6 +56,14 @@ public interface AnimationScript {
         public Builder withNext(@Nullable Builder nextScriptBuilder) {
             this.nextScriptBuilder = nextScriptBuilder;
             return this;
+        }
+
+        public Builder withNext(AnimationStarter starter) {
+            return withNext(builder(starter));
+        }
+
+        public Builder withNext(Animation animation) {
+            return withNext(animation.starter());
         }
 
         public Builder withInplaceAction(BakedAction<?> action) {

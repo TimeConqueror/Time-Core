@@ -45,6 +45,8 @@ public interface AnimationStarter {
      */
     AnimationStarter withTransitionTime(int transitionTime);
 
+    AnimationStarter withNoTransitionTime();
+
     /**
      * Sets the factor that will speed up or slow down the animation.
      * Default: 1F.
@@ -85,4 +87,10 @@ public interface AnimationStarter {
     AnimationStarter withLoopMode(@Nullable LoopMode loopMode);
 
     AnimationData getData();
+
+    /*
+     * ######## Helper methods ########
+     */
+
+    AnimationScript.Builder toScriptBuilder();
 }
