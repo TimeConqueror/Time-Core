@@ -55,4 +55,6 @@ public interface AnimationSystem<T extends AnimatedObject<T>> {
     PredefinedAnimationManager<T> getPredefinedAnimationManager();
 
     PredefinedActionManager getPredefinedActionManager();
+
+    void sync();
 }

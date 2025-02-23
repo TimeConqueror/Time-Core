@@ -1,13 +1,14 @@
 package ru.timeconqueror.timecore.animation.internal;
 
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import ru.timeconqueror.timecore.animation.BaseAnimationManager;
 import ru.timeconqueror.timecore.api.animation.AnimatedObject;
-import ru.timeconqueror.timecore.api.animation.AnimationManager;
 import ru.timeconqueror.timecore.api.common.event.LivingTickEndEvent;
 
 //TODO add tickers for tile entities
@@ -26,9 +27,15 @@ public class DefaultAnimationSystemCallers {
     public static void onPlayerStartTracking(PlayerEvent.StartTracking event) {
         Entity target = event.getTarget();
         if (target instanceof AnimatedObject<?> animatedObj) {
-            AnimationManager animationManager = animatedObj.animationSystem().getAnimationManager();
-            var statesByLayer = ((BaseAnimationManager) animationManager).getLayerStates();
-            animatedObj.animationSystem().getNetworkDispatcher().sendSyncAnimationsPacket(statesByLayer);
+            animatedObj.animationSystem().sync();
+        }
+    }
+
+    public static void onChunkTrackingStart(ServerPlayer player, LevelChunk chunk) {
+        for (BlockEntity entity : chunk.getBlockEntities().values()) {
+            if (entity instanceof AnimatedObject<?> animatedObj) {
+                animatedObj.animationSystem().sync();
+            }
         }
     }
 }

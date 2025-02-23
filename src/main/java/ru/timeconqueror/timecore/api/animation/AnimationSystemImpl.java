@@ -2,6 +2,7 @@ package ru.timeconqueror.timecore.api.animation;
 
 import lombok.Getter;
 import ru.timeconqueror.timecore.animation.AnimationSystem;
+import ru.timeconqueror.timecore.animation.BaseAnimationManager;
 import ru.timeconqueror.timecore.animation.action.AnimationEventListener;
 import ru.timeconqueror.timecore.animation.action.BakedActionFactory;
 import ru.timeconqueror.timecore.animation.action.PredefinedActionManagerImpl;
@@ -106,5 +107,13 @@ public class AnimationSystemImpl<T extends AnimatedObject<T>> implements Animati
     @Override
     public PredefinedActionManagerImpl<T> getPredefinedActionManager() {
         return predefinedActionManagerImpl;
+    }
+
+    @Override
+    public void sync() {
+        if (!isClientSide()) {
+            var statesByLayer = ((BaseAnimationManager) animationManager).getLayerStates();
+            networkDispatcher.sendSyncAnimationsPacket(statesByLayer);
+        }
     }
 }

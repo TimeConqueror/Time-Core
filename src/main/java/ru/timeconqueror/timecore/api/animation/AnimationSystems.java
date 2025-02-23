@@ -78,6 +78,6 @@ public class AnimationSystems {
 
         BaseAnimationManager animationManager = animationManagerBuilder.build(clientSide, clock, sharedObjects, actionManagerFactory, networkDispatcherInstance, predefinedActionManagerImpl);
 
-        return new AnimationSystemImpl<>(object, !clientSide, clock, animationManager, networkDispatcherInstance, predefinedAnimationManager, predefinedActionManagerImpl);
+        return new AnimationSystemImpl<>(object, clientSide, clock, animationManager, networkDispatcherInstance, predefinedAnimationManager, predefinedActionManagerImpl);
     }
 }

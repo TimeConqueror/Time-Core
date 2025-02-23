@@ -18,8 +18,6 @@ public class DebugBeacons {
     private static void buildLine(VertexConsumer builder, PoseStack stack, Vec3 vec1, Vec3 vec2, int argb) {
         Matrix4f pose = stack.last().pose();
 
-        Vec3 normal = computeNormal(vec1, vec2);
-
         int r = DrawHelper.getRed(argb);
         int g = DrawHelper.getGreen(argb);
         int b = DrawHelper.getBlue(argb);
@@ -27,22 +25,11 @@ public class DebugBeacons {
 
         builder.vertex(pose, (float) vec1.x(), (float) vec1.y(), (float) vec1.z())
                 .color(r, g, b, a)
-                .normal((float) normal.x(), (float) normal.y(), (float) normal.z())
+                .normal((float) vec1.x(), (float) vec1.y(), (float) vec1.z())
                 .endVertex();
         builder.vertex(pose, (float) vec2.x(), (float) vec2.y(), (float) vec2.z())
                 .color(r, g, b, a)
-                .normal((float) normal.x(), (float) normal.y(), (float) normal.z())
+                .normal((float) vec1.x(), (float) vec1.y(), (float) vec1.z())
                 .endVertex();
-    }
-
-    private static Vec3 computeNormal(Vec3 point1, Vec3 point2) {
-        Vec3 direction = point2.subtract(point1).normalize();
-        Vec3 up = new Vec3(0, 1, 0);
-
-        if (Math.abs(direction.y) > 0.99) {
-            up = new Vec3(1, 0, 0);
-        }
-
-        return direction.cross(up).normalize();
     }
 }
