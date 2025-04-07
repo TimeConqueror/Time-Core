@@ -8,6 +8,8 @@ public class TimeCoreCommand {
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
         //todo port?
       //  dispatcher.register(Commands.literal("timecore").then(StructureRevealerSubCommand.register()));
+
+        dispatcher.register(Commands.literal("timecore").then(StructureIOSubCommand.register()));
     }
 
     public static void registerClient(CommandDispatcher<CommandSourceStack> dispatcher) {

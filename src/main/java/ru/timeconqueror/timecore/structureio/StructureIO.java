@@ -1,0 +1,115 @@
+package ru.timeconqueror.timecore.structureio;
+
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+import lombok.extern.log4j.Log4j2;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtIo;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlaceSettings;
+import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
+import org.jetbrains.annotations.Nullable;
+import ru.timeconqueror.timecore.api.util.BlockPosUtils;
+import ru.timeconqueror.timecore.api.util.EnvironmentUtils;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+
+@Log4j2
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+public class StructureIO {
+    public static final StructureIO INSTANCE = new StructureIO();
+
+    private final Path structureDir = EnvironmentUtils.getGameDir().resolve("structures");
+    private final Map<String, StructureTemplate> cachedTemplates = new HashMap<>();
+
+
+    public void save(ServerLevel level, BlockPos pos1, BlockPos pos2, String path, boolean includeEntities, @Nullable Block ignoredBlock) {
+        StructureTemplate template = new StructureTemplate();
+
+        var start = BlockPosUtils.makeMin(pos1, pos2);
+        var end = BlockPosUtils.makeMax(pos1, pos2);
+        var size = end.subtract(start).offset(1, 1, 1);
+        template.fillFromWorld(level, start, size, includeEntities, ignoredBlock);
+
+        CompoundTag structureTag = new CompoundTag();
+        template.save(structureTag);
+
+        saveStructureTagToFile(resolvePath(path), structureTag);
+    }
+
+    public StructureTemplate getOrLoadTemplate(Path path) {
+        Path absolutePath = path.toAbsolutePath();
+
+        String pathStr = absolutePath.toString();
+
+        StructureTemplate template = cachedTemplates.get(pathStr);
+
+        if (template == null) {
+            template = loadTemplate(path);
+            cachedTemplates.put(pathStr, template);
+        }
+
+        return template;
+    }
+
+    private StructureTemplate loadTemplate(Path structurePath) {
+        StructureTemplate template = new StructureTemplate();
+
+        loadStructureTagFromFile(structurePath)
+                .ifPresent(compoundTag -> {
+                    //noinspection deprecation
+                    template.load(BuiltInRegistries.BLOCK.asLookup(), compoundTag);
+                });
+
+        return template;
+    }
+
+    public void generate(StructureTemplate template, ServerLevel level, BlockPos start, StructurePlaceSettings structurePlaceSettings) {
+        template.placeInWorld(level, start, start, structurePlaceSettings, RandomSource.create(), Block.UPDATE_CLIENTS);
+    }
+
+    public Path resolvePath(String relPath) {
+        return structureDir.resolve(Path.of(relPath + ".dat"));
+    }
+
+    public Path getStructureDir() {
+        return structureDir;
+    }
+
+    private void saveStructureTagToFile(Path structurePath, CompoundTag structureTag) {
+        Path structureDir = structurePath.getParent();
+        if (structureDir != null) {
+            try {
+                Files.createDirectories(Files.exists(structureDir) ? structureDir.toRealPath() : structureDir);
+            } catch (IOException ioexception) {
+                log.error("Failed to create parent directory: {}", structureDir);
+                return;
+            }
+        }
+
+        try {
+            NbtIo.writeCompressed(structureTag, structurePath.toFile());
+        } catch (IOException e) {
+            log.error("Failed to write structure tag to file: {}", structurePath, e);
+        }
+    }
+
+    private Optional<CompoundTag> loadStructureTagFromFile(Path structurePath) {
+        try {
+            return Optional.of(NbtIo.readCompressed(structurePath.toFile()));
+        } catch (IOException e) {
+            log.error("Failed to read structure tag from file: {}", structurePath, e);
+        }
+
+        return Optional.empty();
+    }
+}
