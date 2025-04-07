@@ -1,5 +1,6 @@
 package ru.timeconqueror.timecore.api.client.resource;
 
+import ru.timeconqueror.timecore.api.client.resource.location.BlockModelLocation;
 import ru.timeconqueror.timecore.api.client.resource.location.ModelLocation;
 import ru.timeconqueror.timecore.api.client.resource.location.TextureLocation;
 
@@ -15,12 +16,20 @@ public class ItemModel extends JSONTimeResource {
     private final Map<String, TextureLocation> textureMap = new HashMap<>(1);
     private int layerCounter;
 
-    public ItemModel(StandardItemModelParents parent) {
-        this(parent.getModelLocation());
+    protected ItemModel(ModelLocation parent) {
+        this.parent = parent;
     }
 
-    public ItemModel(ModelLocation parent) {
-        this.parent = parent;
+    public static ItemModel parentedBy(StandardItemModelParents parent) {
+        return new ItemModel(parent.getModelLocation());
+    }
+
+    public static ItemModel parentedBy(ModelLocation parent) {
+        return new ItemModel(parent);
+    }
+
+    public static ItemModel parentedBy(BlockModelLocation blockLocation) {
+        return new ItemModel(blockLocation);
     }
 
     @Override

@@ -33,7 +33,7 @@ public class BakedActionFactory<T extends AnimatedObject<T>> {
             return this;
         }
 
-        public BakedActionFactoryBuilder<T> actionSingleton(BakedAction<T> action) {
+        public BakedActionFactoryBuilder<T> action(BakedAction<T> action) {
             this.actionFactory = owner -> action;
             return this;
         }

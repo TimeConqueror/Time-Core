@@ -1,29 +1,28 @@
 package ru.timeconqueror.timecore.client.render.processor;
 
+import lombok.RequiredArgsConstructor;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
 import org.joml.Vector3f;
 import ru.timeconqueror.timecore.api.client.render.model.IModelProcessor;
 import ru.timeconqueror.timecore.api.client.render.model.ITimeModel;
 import ru.timeconqueror.timecore.api.util.MathUtils;
+import ru.timeconqueror.timecore.client.render.model.PartLink;
 import ru.timeconqueror.timecore.client.render.model.TimeModelPart;
 
 /**
  * Mimics the behaviour of vanilla model when the head bone should be rotated in the direction of view
  */
+@RequiredArgsConstructor
 public class LookAtViewDirectionProcessor implements IModelProcessor<LivingEntity> {
-    private final String headBoneName;
-
-    public LookAtViewDirectionProcessor(String headBoneName) {
-        this.headBoneName = headBoneName;
-    }
+    private final PartLink partLink;
 
     @Override
     public void process(LivingEntity entity, ITimeModel model, float partialTick) {
         boolean falling = entity.getFallFlyingTicks() > 4;
         boolean swimming = entity.isVisuallySwimming();
 
-        TimeModelPart head = model.getPart(headBoneName);
+        TimeModelPart head = partLink.getPart(model);
         Vector3f headRot = head.getRotation();
 
         float swimAmount = entity.getSwimAmount(partialTick);

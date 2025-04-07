@@ -100,7 +100,7 @@ public class TimeModel extends Model implements ITimeModel {
         private void buildPartMap() {
             ImmutableMap.Builder<String, TimeModelPart> builder = ImmutableMap.builder();
 
-            // root itself is not placed to part map, because it is made by TimeCore itself and has i$root name
+            // root itself is not placed to part map, because it is made by TimeCore itself and has $root name
             for (Map.Entry<String, TimeModelPart> e : root.getChildren().entrySet()) {
                 addPartToMap(builder, e.getKey(), e.getValue());
             }

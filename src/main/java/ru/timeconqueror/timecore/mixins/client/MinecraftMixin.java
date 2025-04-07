@@ -2,13 +2,10 @@ package ru.timeconqueror.timecore.mixins.client;
 
 import net.minecraft.client.Minecraft;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.ModifyVariable;
-import ru.timeconqueror.timecore.TimeCore;
-import ru.timeconqueror.timecore.internal.common.config.MainConfig;
 
 @Mixin(Minecraft.class)
 public abstract class MinecraftMixin {
+
 //    @SuppressWarnings("InvalidInjectorMethodSignature")
 //    @ModifyVariable(method = "doLoadLevel",
 //            at = @At(

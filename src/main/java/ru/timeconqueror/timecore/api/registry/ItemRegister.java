@@ -235,7 +235,7 @@ public class ItemRegister extends VanillaRegister<Item> {
          * Creates and registers simple item model without the need of json file (via code) for bound item with dependency on block model.
          */
         public ItemRegisterChain<I> modelFromBlockParent(BlockModelLocation parentBlockModelLocation) {
-            clientSideOnly(() -> model(new ItemModel(parentBlockModelLocation)));
+            clientSideOnly(() -> model(ItemModel.parentedBy(parentBlockModelLocation)));
             return this;
         }
 
@@ -261,7 +261,7 @@ public class ItemRegister extends VanillaRegister<Item> {
          *                      Vanilla uses it in, for example, spawn egg model where the layers are represented by base texture and overlay (spots).
          */
         public ItemRegisterChain<I> model(ModelLocation parent, TextureLocation... textureLayers) {
-            clientSideOnly(() -> model(new ItemModel(parent).addTextureLayers(textureLayers)));
+            clientSideOnly(() -> model(ItemModel.parentedBy(parent).addTextureLayers(textureLayers)));
 
             return this;
         }

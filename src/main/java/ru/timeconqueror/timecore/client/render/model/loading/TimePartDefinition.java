@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TimePartDefinition {
-    public static final String INTERNAL_ROOT_NAME = "i$root";
+    public static final String INTERNAL_ROOT_NAME = "$root";
 
     private final List<TimeCubeDefinition> cubes;
     private final List<TimePartDefinition> children = new ArrayList<>();

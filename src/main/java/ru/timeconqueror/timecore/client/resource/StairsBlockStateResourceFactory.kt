@@ -1,10 +1,10 @@
-package ru.timeconqueror.timecore.api.client.resource.blockstates
+package ru.timeconqueror.timecore.client.resource
 
 import ru.timeconqueror.timecore.api.client.resource.BlockStateResource
 import ru.timeconqueror.timecore.api.client.resource.location.BlockModelLocation
 import ru.timeconqueror.timecore.api.util.json.*
 
-object StairsBlockStateFactory {
+object StairsBlockStateResourceFactory {
     @JvmStatic
     fun create(stairs: BlockModelLocation, innerStairs: BlockModelLocation, outerStairs: BlockModelLocation): BlockStateResource =
         json {

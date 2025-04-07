@@ -57,6 +57,10 @@ public class EnvironmentUtils {
         return FMLPaths.CONFIGDIR.get();
     }
 
+    public static Path getGameDir() {
+        return FMLPaths.GAMEDIR.get();
+    }
+
     /**
      * Enables all log messages with provided markers.
      */
