@@ -2,6 +2,7 @@ package ru.timeconqueror.timecore.animation.network;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.network.PacketDistributor;
 import ru.timeconqueror.timecore.animation.network.codec.LevelObjectCodec;
 import ru.timeconqueror.timecore.api.animation.AnimatedObject;
@@ -20,16 +21,16 @@ public class NetworkDispatcherInstance<T extends AnimatedObject<T>> {
     @Getter
     private final T animatedObject;
 
-    public void sendSetAnimationPacket(AnimationScript animationScript, String layerName) {
+    public void sendSetAnimationPacketToAllTracking(AnimationScript animationScript, String layerName) {
         InternalPacketManager.INSTANCE.send(getPacketTarget(), new S2CStartAnimationMsg(getCodecSupplier(), layerName, animationScript));
     }
 
-    public void sendStopAnimationPacket(String layerName, int transitionTime) {
+    public void sendStopAnimationPacketToAllTracking(String layerName, int transitionTime) {
         InternalPacketManager.INSTANCE.send(getPacketTarget(), new S2CStopAnimationMsg(getCodecSupplier(), layerName, transitionTime));
     }
 
-    public void sendSyncAnimationsPacket(List<Pair<String, AnimationState>> statesByLayer) {
-        InternalPacketManager.INSTANCE.send(getPacketTarget(), new S2CSyncAnimationsMsg(getCodecSupplier(), statesByLayer));
+    public void sendSyncAnimationPacketToPlayer(ServerPlayer player, List<Pair<String, AnimationState>> statesByLayer) {
+        InternalPacketManager.INSTANCE.send(playerAsTarget(player), new S2CSyncAnimationsMsg(getCodecSupplier(), statesByLayer));
     }
 
     protected LevelObjectCodec<?> getCodecSupplier() {
@@ -38,5 +39,9 @@ public class NetworkDispatcherInstance<T extends AnimatedObject<T>> {
 
     protected PacketDistributor.PacketTarget getPacketTarget() {
         return networkDispatcher.getPacketTarget(animatedObject);
+    }
+
+    private PacketDistributor.PacketTarget playerAsTarget(ServerPlayer player) {
+        return PacketDistributor.PLAYER.with(() -> player);
     }
 }

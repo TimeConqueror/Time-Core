@@ -5,10 +5,10 @@ import ru.timeconqueror.timecore.animation.network.NetworkDispatcherInstance;
 import ru.timeconqueror.timecore.api.animation.AnimatedObject;
 import ru.timeconqueror.timecore.api.animation.AnimationScript;
 import ru.timeconqueror.timecore.api.animation.Clock;
-import ru.timeconqueror.timecore.api.animation.builders.LayerDefinition;
+import ru.timeconqueror.timecore.api.animation.LayerDefinition;
 import ru.timeconqueror.timecore.molang.SharedMolangObject;
 
-import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.function.Supplier;
 
 public class ServerAnimationManager<T extends AnimatedObject<T>> extends BaseAnimationManager {
@@ -23,7 +23,7 @@ public class ServerAnimationManager<T extends AnimatedObject<T>> extends BaseAni
     }
 
     @Override
-    public void init(LinkedHashMap<String, LayerDefinition> layers) {
+    public void init(List<LayerDefinition> layers) {
         super.init(layers);
     }
 
@@ -31,7 +31,7 @@ public class ServerAnimationManager<T extends AnimatedObject<T>> extends BaseAni
     public boolean startAnimationScript(AnimationScript animationScript, String layerName) {
         var set = super.startAnimationScript(animationScript, layerName);
         if (set) {
-            networkDispatcher.sendSetAnimationPacket(animationScript, layerName);
+            networkDispatcher.sendSetAnimationPacketToAllTracking(animationScript, layerName);
         }
         return set;
     }
@@ -40,6 +40,6 @@ public class ServerAnimationManager<T extends AnimatedObject<T>> extends BaseAni
     public void stopAnimation(String layerName, int transitionTime) {
         super.stopAnimation(layerName, transitionTime);
 
-        networkDispatcher.sendStopAnimationPacket(layerName, transitionTime);
+        networkDispatcher.sendStopAnimationPacketToAllTracking(layerName, transitionTime);
     }
 }

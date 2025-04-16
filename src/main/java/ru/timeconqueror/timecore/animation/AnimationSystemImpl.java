@@ -1,13 +1,13 @@
-package ru.timeconqueror.timecore.api.animation;
+package ru.timeconqueror.timecore.animation;
 
 import lombok.Getter;
-import ru.timeconqueror.timecore.animation.AnimationSystem;
-import ru.timeconqueror.timecore.animation.BaseAnimationManager;
+import net.minecraft.server.level.ServerPlayer;
 import ru.timeconqueror.timecore.animation.action.AnimationEventListener;
 import ru.timeconqueror.timecore.animation.action.BakedActionFactory;
 import ru.timeconqueror.timecore.animation.action.PredefinedActionManagerImpl;
 import ru.timeconqueror.timecore.animation.clock.TickBasedClock;
 import ru.timeconqueror.timecore.animation.network.NetworkDispatcherInstance;
+import ru.timeconqueror.timecore.api.animation.*;
 
 @Getter
 public class AnimationSystemImpl<T extends AnimatedObject<T>> implements AnimationSystem<T> {
@@ -110,10 +110,8 @@ public class AnimationSystemImpl<T extends AnimatedObject<T>> implements Animati
     }
 
     @Override
-    public void sync() {
-        if (!isClientSide()) {
-            var statesByLayer = ((BaseAnimationManager) animationManager).getLayerStates();
-            networkDispatcher.sendSyncAnimationsPacket(statesByLayer);
-        }
+    public void syncForPlayer(ServerPlayer player) {
+        var statesByLayer = ((BaseAnimationManager) animationManager).getLayerStates();
+        networkDispatcher.sendSyncAnimationPacketToPlayer(player, statesByLayer);
     }
 }

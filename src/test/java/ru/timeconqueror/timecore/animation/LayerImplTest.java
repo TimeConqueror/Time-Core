@@ -11,7 +11,7 @@ import ru.timeconqueror.timecore.animation.watcher.AnimationTickerImpl;
 import ru.timeconqueror.timecore.api.animation.Animation;
 import ru.timeconqueror.timecore.api.animation.AnimationScript;
 import ru.timeconqueror.timecore.api.animation.BlendType;
-import ru.timeconqueror.timecore.api.animation.builders.LayerDefinition;
+import ru.timeconqueror.timecore.api.animation.LayerDefinition;
 import ru.timeconqueror.timecore.molang.SharedMolangObject;
 
 import java.util.Map;

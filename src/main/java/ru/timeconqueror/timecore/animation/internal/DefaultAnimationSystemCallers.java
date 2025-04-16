@@ -25,16 +25,18 @@ public class DefaultAnimationSystemCallers {
 
     @SubscribeEvent
     public static void onPlayerStartTracking(PlayerEvent.StartTracking event) {
+        if (!(event.getEntity() instanceof ServerPlayer serverPlayer)) return;
+
         Entity target = event.getTarget();
         if (target instanceof AnimatedObject<?> animatedObj) {
-            animatedObj.animationSystem().sync();
+            animatedObj.animationSystem().syncForPlayer(serverPlayer);
         }
     }
 
     public static void onChunkTrackingStart(ServerPlayer player, LevelChunk chunk) {
         for (BlockEntity entity : chunk.getBlockEntities().values()) {
             if (entity instanceof AnimatedObject<?> animatedObj) {
-                animatedObj.animationSystem().sync();
+                animatedObj.animationSystem().syncForPlayer(player);
             }
         }
     }

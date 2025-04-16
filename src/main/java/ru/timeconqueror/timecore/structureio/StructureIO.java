@@ -14,25 +14,27 @@ import net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlac
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
 import org.jetbrains.annotations.Nullable;
 import ru.timeconqueror.timecore.api.util.BlockPosUtils;
-import ru.timeconqueror.timecore.api.util.EnvironmentUtils;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+//FIXME add error printing upon file not found or any other io exception on load template
 @Log4j2
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class StructureIO {
     public static final StructureIO INSTANCE = new StructureIO();
 
-    private final Path structureDir = EnvironmentUtils.getGameDir().resolve("structures");
     private final Map<String, StructureTemplate> cachedTemplates = new HashMap<>();
 
 
-    public void save(ServerLevel level, BlockPos pos1, BlockPos pos2, String path, boolean includeEntities, @Nullable Block ignoredBlock) {
+    public void save(ServerLevel level, BlockPos pos1, BlockPos pos2, Path path, boolean includeEntities, @Nullable Block ignoredBlock) {
         StructureTemplate template = new StructureTemplate();
 
         var start = BlockPosUtils.makeMin(pos1, pos2);
@@ -43,28 +45,34 @@ public class StructureIO {
         CompoundTag structureTag = new CompoundTag();
         template.save(structureTag);
 
-        saveStructureTagToFile(resolvePath(path), structureTag);
+        saveStructureTagToFile(path, structureTag);
     }
 
-    public StructureTemplate getOrLoadTemplate(Path path) {
-        Path absolutePath = path.toAbsolutePath();
-
-        String pathStr = absolutePath.toString();
+    public StructureTemplate getOrLoadTemplateFromFile(File file) {
+        String pathStr = file.getAbsoluteFile().toString();
 
         StructureTemplate template = cachedTemplates.get(pathStr);
 
         if (template == null) {
-            template = loadTemplate(path);
+            template = loadTemplate(file);
             cachedTemplates.put(pathStr, template);
         }
 
         return template;
     }
 
-    private StructureTemplate loadTemplate(Path structurePath) {
+    public StructureTemplate loadTemplate(File file) {
+        try (var is = new FileInputStream(file)) {
+            return loadTemplate(is);
+        } catch (IOException ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+
+    public StructureTemplate loadTemplate(InputStream stream) {
         StructureTemplate template = new StructureTemplate();
 
-        loadStructureTagFromFile(structurePath)
+        loadStructureTagFromStream(stream)
                 .ifPresent(compoundTag -> {
                     //noinspection deprecation
                     template.load(BuiltInRegistries.BLOCK.asLookup(), compoundTag);
@@ -75,14 +83,6 @@ public class StructureIO {
 
     public void generate(StructureTemplate template, ServerLevel level, BlockPos start, StructurePlaceSettings structurePlaceSettings) {
         template.placeInWorld(level, start, start, structurePlaceSettings, RandomSource.create(), Block.UPDATE_CLIENTS);
-    }
-
-    public Path resolvePath(String relPath) {
-        return structureDir.resolve(Path.of(relPath + ".dat"));
-    }
-
-    public Path getStructureDir() {
-        return structureDir;
     }
 
     private void saveStructureTagToFile(Path structurePath, CompoundTag structureTag) {
@@ -103,11 +103,11 @@ public class StructureIO {
         }
     }
 
-    private Optional<CompoundTag> loadStructureTagFromFile(Path structurePath) {
+    private Optional<CompoundTag> loadStructureTagFromStream(InputStream stream) {
         try {
-            return Optional.of(NbtIo.readCompressed(structurePath.toFile()));
+            return Optional.of(NbtIo.readCompressed(stream));
         } catch (IOException e) {
-            log.error("Failed to read structure tag from file: {}", structurePath, e);
+            log.error("Failed to read structure tag from stream", e);
         }
 
         return Optional.empty();

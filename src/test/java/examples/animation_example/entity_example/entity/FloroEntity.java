@@ -64,12 +64,11 @@ public class FloroEntity extends Monster implements RangedAttackMob, AnimatedObj
                 .idleAnimation(new PredefinedAnimation(LAYER_WALKING, EntityAnimations.floroIdle.starter()))
                 .build();
 
-        animationSystem = AnimationSystems.forEntity(this, predefined, builder -> {
-                    builder.addLayer(LAYER_SHOWING, BlendType.OVERWRITE, 1);
-                    builder.addLayer(LAYER_WALKING, BlendType.ADD, 1);
-                    builder.addLayer(LAYER_ATTACK, BlendType.ADD, 1);
-                }
-        );
+        animationSystem = AnimationSystemBuilder.forEntity(this, predefined)
+                .withAnimationLayer(new LayerDefinition(LAYER_SHOWING, BlendType.OVERWRITE, 1))
+                .withAnimationLayer(new LayerDefinition(LAYER_WALKING, BlendType.ADD, 1))
+                .withAnimationLayer(new LayerDefinition(LAYER_ATTACK, BlendType.ADD, 1))
+                .build();
 
         if (!level.isClientSide) {
 //            animationSystem.getAnimationManager().getLayer(LAYER_SHOWING)

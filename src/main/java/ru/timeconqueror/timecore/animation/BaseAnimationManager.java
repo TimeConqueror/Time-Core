@@ -10,7 +10,7 @@ import ru.timeconqueror.timecore.animation.network.AnimationState;
 import ru.timeconqueror.timecore.api.animation.AnimationManager;
 import ru.timeconqueror.timecore.api.animation.AnimationScript;
 import ru.timeconqueror.timecore.api.animation.Clock;
-import ru.timeconqueror.timecore.api.animation.builders.LayerDefinition;
+import ru.timeconqueror.timecore.api.animation.LayerDefinition;
 import ru.timeconqueror.timecore.api.client.render.model.ITimeModel;
 import ru.timeconqueror.timecore.api.util.holder.Pair;
 import ru.timeconqueror.timecore.molang.SharedMolangObject;
@@ -32,8 +32,8 @@ public abstract class BaseAnimationManager implements AnimationManager {
     @Getter(AccessLevel.PROTECTED)
     private Map<String, LayerImpl> layerMap;
 
-    public void init(LinkedHashMap<String, LayerDefinition> layers) {
-        layerMap = layers.values().stream()
+    public void init(List<LayerDefinition> layers) {
+        layerMap = layers.stream()
                 .map(layerDefinition -> new LayerImpl(this, layerDefinition))
                 .collect(Collectors.toMap(LayerImpl::getName, layer -> layer, (o, o2) -> o, LinkedHashMap::new));
 

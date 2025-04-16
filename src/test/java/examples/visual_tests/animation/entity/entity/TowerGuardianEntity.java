@@ -12,8 +12,9 @@ import ru.timeconqueror.timecore.animation.AnimationSystem;
 import ru.timeconqueror.timecore.animation.predefined.EntityPredefinedAnimations;
 import ru.timeconqueror.timecore.animation.predefined.PredefinedAnimation;
 import ru.timeconqueror.timecore.api.animation.AnimatedObject;
-import ru.timeconqueror.timecore.api.animation.AnimationSystems;
+import ru.timeconqueror.timecore.api.animation.AnimationSystemBuilder;
 import ru.timeconqueror.timecore.api.animation.BlendType;
+import ru.timeconqueror.timecore.api.animation.LayerDefinition;
 
 public class TowerGuardianEntity extends Monster implements AnimatedObject<TowerGuardianEntity> {
 
@@ -24,13 +25,12 @@ public class TowerGuardianEntity extends Monster implements AnimatedObject<Tower
     public TowerGuardianEntity(EntityType<? extends TowerGuardianEntity> type, Level world) {
         super(type, world);
 
-        animationSystem = AnimationSystems.forEntity(this,
-                EntityPredefinedAnimations.builder()
-                        .walkingAnimation(new PredefinedAnimation(LAYER_WALKING, AnimTestEntityAnimations.towerGuardianWalk.starter()))
-                        .build(),
-                builder ->
-                        builder.addLayer(LAYER_WALKING, BlendType.OVERWRITE, 1F)
-        );
+        animationSystem = AnimationSystemBuilder.forEntity(this,
+                        EntityPredefinedAnimations.builder()
+                                .walkingAnimation(new PredefinedAnimation(LAYER_WALKING, AnimTestEntityAnimations.towerGuardianWalk.starter()))
+                                .build())
+                .withAnimationLayer(new LayerDefinition(LAYER_WALKING, BlendType.OVERWRITE, 1))
+                .build();
     }
 
     @Override

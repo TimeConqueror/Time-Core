@@ -10,7 +10,7 @@ import ru.timeconqueror.timecore.animation.watcher.TransitionTicker;
 import ru.timeconqueror.timecore.api.animation.AnimationScript;
 import ru.timeconqueror.timecore.api.animation.BlendType;
 import ru.timeconqueror.timecore.api.animation.Layer;
-import ru.timeconqueror.timecore.api.animation.builders.LayerDefinition;
+import ru.timeconqueror.timecore.api.animation.LayerDefinition;
 import ru.timeconqueror.timecore.api.client.render.model.ITimeModel;
 import ru.timeconqueror.timecore.molang.TCMolangRuntime;
 

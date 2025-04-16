@@ -10,7 +10,7 @@ import ru.timeconqueror.timecore.animation.AnimationSystem;
 import ru.timeconqueror.timecore.api.animation.AnimatedObject;
 import ru.timeconqueror.timecore.api.animation.AnimationConstants;
 import ru.timeconqueror.timecore.api.animation.AnimationStarter;
-import ru.timeconqueror.timecore.api.animation.AnimationSystems;
+import ru.timeconqueror.timecore.api.animation.AnimationSystemBuilder;
 import ru.timeconqueror.timecore.api.util.ITickableBlockEntity;
 
 public class BlockEntityHeatCube extends BlockEntity implements AnimatedObject<BlockEntityHeatCube>, ITickableBlockEntity {
@@ -21,9 +21,17 @@ public class BlockEntityHeatCube extends BlockEntity implements AnimatedObject<B
     }
 
     @Override
-    public void onLoad() {
-        animationSystem = AnimationSystems.forBlockEntity(this, animationManagerBuilder -> {
-        });
+    public void setLevel(Level world_) {
+        super.setLevel(world_);
+        loadAnimationSystem();
+    }
+
+    /**
+     * Initialization of animation system to be called at {@link #setLevel(Level)} or while constructing ItemStack Renderer
+     */
+    public void loadAnimationSystem() {
+        animationSystem = AnimationSystemBuilder.forBlockEntity(this)
+                .build();
     }
 
     @Override
