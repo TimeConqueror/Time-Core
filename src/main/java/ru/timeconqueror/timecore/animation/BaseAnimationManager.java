@@ -35,7 +35,9 @@ public abstract class BaseAnimationManager implements AnimationManager {
     public void init(List<LayerDefinition> layers) {
         layerMap = layers.stream()
                 .map(layerDefinition -> new LayerImpl(this, layerDefinition))
-                .collect(Collectors.toMap(LayerImpl::getName, layer -> layer, (o, o2) -> o, LinkedHashMap::new));
+                .collect(Collectors.toMap(LayerImpl::getName, layer -> layer, (o, o2) -> {
+                    throw new RuntimeException("Duplicate layer definition names: " + o + ", " + o2);
+                }, LinkedHashMap::new));
 
         for (LayerImpl layer : this.getLayerMap().values()) {
             layer.addAnimationEventListener(actionManagerFactory.get());

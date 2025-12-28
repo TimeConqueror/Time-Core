@@ -15,11 +15,12 @@ import org.jetbrains.annotations.Nullable;
 import ru.timeconqueror.timecore.common.capability.listener.EntityCapSyncOnStartTrackListener;
 import ru.timeconqueror.timecore.common.capability.listener.PlayerCapSyncOnJoinListener;
 import ru.timeconqueror.timecore.common.capability.listener.PlayerCapTransferOnCloneListener;
-import ru.timeconqueror.timecore.common.capability.owner.CapabilityOwner;
+import ru.timeconqueror.timecore.common.capability.owner.CapabilityOwnerType;
+import ru.timeconqueror.timecore.common.capability.owner.attach.CapabilityFactory;
 import ru.timeconqueror.timecore.common.capability.owner.attach.CoffeeCapability;
 import ru.timeconqueror.timecore.common.capability.owner.attach.CoffeeCapabilityAttacher;
-import ru.timeconqueror.timecore.common.capability.owner.attach.getter.CoffeeCapabilityGetter;
-import ru.timeconqueror.timecore.common.capability.owner.attach.getter.StaticCoffeeCapabilityGetter;
+import ru.timeconqueror.timecore.common.capability.owner.attach.getter.CapabilityProviderAdapter;
+import ru.timeconqueror.timecore.common.capability.owner.attach.getter.DirectionIndependentCapabilityProvider;
 import ru.timeconqueror.timecore.common.capability.provider.IEnergyStorageProvider;
 import ru.timeconqueror.timecore.common.capability.provider.IFluidHandlerProvider;
 import ru.timeconqueror.timecore.common.capability.provider.IItemHandlerProvider;
@@ -31,11 +32,10 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 public class CapabilityManager {
-
     private final ArrayList<CoffeeCapability<? extends ICapabilityProvider, ? extends CoffeeCapabilityInstance<?>>> attachableCapabilities = new ArrayList<>();
 
-    public <T extends ICapabilityProvider, C extends CoffeeCapabilityInstance<T>> void registerDynamicCoffeeAttacher(CapabilityOwner<T> owner, Capability<C> capability, Predicate<T> ownerFilter, Supplier<CoffeeCapabilityGetter<T, C>> getters) {
-        registerDynamicCapabilityAttacher(owner, capability, ownerFilter, getters);
+    public <T extends ICapabilityProvider, C extends CoffeeCapabilityInstance<T>> void registerDirectionDependentCoffeeAttacher(CapabilityOwnerType<T> owner, Capability<C> capability, Predicate<T> ownerFilter, Supplier<CapabilityProviderAdapter<T, C>> providerSupplier) {
+        registerDirectionDependentCapabilityAttacher(owner, capability, ownerFilter, providerSupplier);
         attachableCapabilities.add(new CoffeeCapability<>(owner, capability));
     }
 
@@ -43,31 +43,32 @@ public class CapabilityManager {
      * Adds the capability, which is based on provided direction.
      * So the getter can return different capabilities based on direction, as it works for ItemHandler in tile entities for example.
      */
-    public <T extends ICapabilityProvider, C> void registerDynamicCapabilityAttacher(CapabilityOwner<T> owner, Capability<C> capability, Predicate<T> ownerFilter, Supplier<CoffeeCapabilityGetter<T, C>> getters) {
-        owner.getAttachers().add(new CoffeeCapabilityAttacher<>(capability, ownerFilter, getters));
+    public <T extends ICapabilityProvider, C> void registerDirectionDependentCapabilityAttacher(CapabilityOwnerType<T> owner, Capability<C> capability, Predicate<T> ownerFilter, Supplier<CapabilityProviderAdapter<T, C>> providerSupplier) {
+        owner.getAttachers().add(new CoffeeCapabilityAttacher<>(capability, ownerFilter, providerSupplier));
     }
 
-    public <T extends ICapabilityProvider, C extends CoffeeCapabilityInstance<T>> void registerStaticCoffeeCapabilityAttacher(CapabilityOwner<T> owner, Capability<C> capability, Predicate<T> ownerFilter, Function<T, C> capFactory) {
-        registerStaticCapabilityAttacher(owner, capability, ownerFilter, capFactory);
+    public <T extends ICapabilityProvider, C extends CoffeeCapabilityInstance<T>> void registerDirectionIndependentCoffeeCapabilityAttacher(CapabilityOwnerType<T> owner, Capability<C> capability, Predicate<T> ownerFilter, CapabilityFactory<T, C> capFactory) {
+        registerDirectionIndependentCapabilityAttacher(owner, capability, ownerFilter, capFactory);
         attachableCapabilities.add(new CoffeeCapability<>(owner, capability));
     }
 
     /**
      * Adds the capability, which is single and permanent for the provided target.
      */
-    public <T extends ICapabilityProvider, C> void registerStaticCapabilityAttacher(CapabilityOwner<T> owner, Capability<C> capability, Predicate<T> ownerFilter, Function<T, C> capFactory) {
-        owner.getAttachers().add(new CoffeeCapabilityAttacher<>(capability, ownerFilter, () -> new StaticCoffeeCapabilityGetter<>(capFactory)));
+    public <T extends ICapabilityProvider, C> void registerDirectionIndependentCapabilityAttacher(CapabilityOwnerType<T> owner, Capability<C> capability, Predicate<T> ownerFilter, CapabilityFactory<T, C> capFactory) {
+        Function<T, C> factory = provider -> capFactory.apply(owner, provider);
+        owner.getAttachers().add(new CoffeeCapabilityAttacher<>(capability, ownerFilter, () -> new DirectionIndependentCapabilityProvider<>(factory)));
     }
 
     public void addDefaultAttachers() {
-        registerDynamicCapabilityAttacher(CapabilityOwner.BLOCK_ENTITY, ForgeCapabilities.ITEM_HANDLER, tile -> tile instanceof IItemHandlerProvider,
-                ((CoffeeCapabilityGetter<BlockEntity, IItemHandler>) (target, facing) -> ((IItemHandlerProvider) target).getItemHandler(facing)).supply());
+        registerDirectionDependentCapabilityAttacher(CapabilityOwnerType.BLOCK_ENTITY, ForgeCapabilities.ITEM_HANDLER, tile -> tile instanceof IItemHandlerProvider,
+                ((CapabilityProviderAdapter<BlockEntity, IItemHandler>) (target, facing) -> ((IItemHandlerProvider) target).getItemHandler(facing)).supply());
 
-        registerDynamicCapabilityAttacher(CapabilityOwner.BLOCK_ENTITY, ForgeCapabilities.FLUID_HANDLER, tile -> tile instanceof IFluidHandlerProvider,
-                ((CoffeeCapabilityGetter<BlockEntity, IFluidHandler>) (target, facing) -> ((IFluidHandlerProvider) target).getFluidHandler(facing)).supply());
+        registerDirectionDependentCapabilityAttacher(CapabilityOwnerType.BLOCK_ENTITY, ForgeCapabilities.FLUID_HANDLER, tile -> tile instanceof IFluidHandlerProvider,
+                ((CapabilityProviderAdapter<BlockEntity, IFluidHandler>) (target, facing) -> ((IFluidHandlerProvider) target).getFluidHandler(facing)).supply());
 
-        registerDynamicCapabilityAttacher(CapabilityOwner.BLOCK_ENTITY, ForgeCapabilities.ENERGY, tile -> tile instanceof IEnergyStorageProvider,
-                ((CoffeeCapabilityGetter<BlockEntity, IEnergyStorage>) (target, facing) -> ((IEnergyStorageProvider) target).getEnergyStorage(facing)).supply());
+        registerDirectionDependentCapabilityAttacher(CapabilityOwnerType.BLOCK_ENTITY, ForgeCapabilities.ENERGY, tile -> tile instanceof IEnergyStorageProvider,
+                ((CapabilityProviderAdapter<BlockEntity, IEnergyStorage>) (target, facing) -> ((IEnergyStorageProvider) target).getEnergyStorage(facing)).supply());
     }
 
     /**

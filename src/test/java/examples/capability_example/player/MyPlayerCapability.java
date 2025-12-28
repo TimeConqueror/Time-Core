@@ -10,8 +10,7 @@ import net.minecraftforge.network.simple.SimpleChannel;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ru.timeconqueror.timecore.common.capability.CoffeeCapabilityInstance;
-import ru.timeconqueror.timecore.common.capability.owner.CapabilityOwner;
-import ru.timeconqueror.timecore.common.capability.owner.serializer.CapabilityOwnerCodec;
+import ru.timeconqueror.timecore.common.capability.owner.CapabilityOwnerType;
 import ru.timeconqueror.timecore.common.capability.property.CoffeeProperty;
 import ru.timeconqueror.timecore.common.capability.property.serializer.IntPropertySerializer;
 
@@ -20,14 +19,9 @@ public class MyPlayerCapability extends CoffeeCapabilityInstance<Entity> {
 
     private final Player player;
 
-    public MyPlayerCapability(Player player) {
+    public MyPlayerCapability(CapabilityOwnerType<Entity> owner, Player player) {
+        super(owner);
         this.player = player;
-    }
-
-    @NotNull
-    @Override
-    public CapabilityOwnerCodec<Entity> getOwnerSerializer() {
-        return CapabilityOwner.ENTITY.getSerializer();
     }
 
     @NotNull
@@ -37,9 +31,9 @@ public class MyPlayerCapability extends CoffeeCapabilityInstance<Entity> {
     }
 
     @Override
-    public void sendChangesToClient(@NotNull SimpleChannel channel, @NotNull Object data) {
+    public void sendChangesToClient(@NotNull SimpleChannel channel, @NotNull Object message) {
         if (player instanceof ServerPlayer serverPlayer) {
-            channel.send(PacketDistributor.PLAYER.with(() -> serverPlayer), data);
+            channel.send(PacketDistributor.PLAYER.with(() -> serverPlayer), message);
         }
     }
 

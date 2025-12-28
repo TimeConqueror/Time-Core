@@ -1,5 +1,6 @@
 package ru.timeconqueror.timecore.common.capability.owner;
 
+import lombok.Getter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.Entity;
@@ -8,14 +9,15 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import org.jetbrains.annotations.Nullable;
 import ru.timeconqueror.timecore.common.capability.owner.attach.CoffeeCapabilityAttacher;
 import ru.timeconqueror.timecore.common.capability.owner.serializer.CapabilityOwnerCodec;
 
 import java.util.ArrayList;
 
-public class CapabilityOwner<T extends ICapabilityProvider> {
+public class CapabilityOwnerType<T extends ICapabilityProvider> {
 
-    public static final CapabilityOwner<BlockEntity> BLOCK_ENTITY = new CapabilityOwner<>(new CapabilityOwnerCodec<>() {
+    public static final CapabilityOwnerType<BlockEntity> BLOCK_ENTITY = new CapabilityOwnerType<>(new CapabilityOwnerCodec<>() {
         @Override
         public void serialize(Level world, BlockEntity owner, CompoundTag nbt) {
             nbt.putInt("x", owner.getBlockPos().getX());
@@ -28,9 +30,9 @@ public class CapabilityOwner<T extends ICapabilityProvider> {
             BlockPos pos = new BlockPos(nbt.getInt("x"), nbt.getInt("y"), nbt.getInt("z"));
             return world.getBlockEntity(pos);
         }
-    });
+    }, BlockEntity::setChanged);
 
-    public static final CapabilityOwner<Entity> ENTITY = new CapabilityOwner<>(new CapabilityOwnerCodec<>() {
+    public static final CapabilityOwnerType<Entity> ENTITY = new CapabilityOwnerType<>(new CapabilityOwnerCodec<>() {
         @Override
         public void serialize(Level world, Entity owner, CompoundTag nbt) {
             nbt.putInt("id", owner.getId());
@@ -40,9 +42,11 @@ public class CapabilityOwner<T extends ICapabilityProvider> {
         public Entity deserialize(Level world, CompoundTag nbt) {
             return world.getEntity(nbt.getInt("id"));
         }
+    }, owner -> {
+        //TODO should really be empty?
     });
 
-    public static final CapabilityOwner<Level> LEVEL = new CapabilityOwner<>(new CapabilityOwnerCodec<>() {
+    public static final CapabilityOwnerType<Level> LEVEL = new CapabilityOwnerType<>(new CapabilityOwnerCodec<>() {
 
         @Override
         public void serialize(Level world, Level owner, CompoundTag nbt) {
@@ -53,9 +57,11 @@ public class CapabilityOwner<T extends ICapabilityProvider> {
             return world;
         }
 
+    }, owner -> {
+        //TODO should really be empty?
     });
 
-    public static final CapabilityOwner<LevelChunk> CHUNK = new CapabilityOwner<>(new CapabilityOwnerCodec<>() {
+    public static final CapabilityOwnerType<LevelChunk> CHUNK = new CapabilityOwnerType<>(new CapabilityOwnerCodec<>() {
         @Override
         public void serialize(Level world, LevelChunk owner, CompoundTag nbt) {
             nbt.putInt("x", owner.getPos().x);
@@ -66,22 +72,29 @@ public class CapabilityOwner<T extends ICapabilityProvider> {
         public LevelChunk deserialize(Level world, CompoundTag nbt) {
             return world.getChunk(nbt.getInt("x"), nbt.getInt("z"));
         }
+    }, owner -> owner.setUnsaved(true));
+
+    public static final CapabilityOwnerType<ItemStack> ITEM_STACK = new CapabilityOwnerType<>(null, owner -> {
     });
 
-    public static final CapabilityOwner<ItemStack> ITEM_STACK = new CapabilityOwner<>(null);
-
+    @Getter
     private final ArrayList<CoffeeCapabilityAttacher<T, ?>> attachers = new ArrayList<>();
+    @Getter
     private final CapabilityOwnerCodec<T> serializer;
+    private final SaveFunc<T> saveFunc;
 
-    public CapabilityOwner(CapabilityOwnerCodec<T> serializer) {
+    public CapabilityOwnerType(CapabilityOwnerCodec<T> serializer, @Nullable SaveFunc<T> saveFunc) {
         this.serializer = serializer;
+        this.saveFunc = saveFunc;
     }
 
-    public ArrayList<CoffeeCapabilityAttacher<T, ?>> getAttachers() {
-        return attachers;
+    public void save(T owner) {
+        if (saveFunc != null) {
+            saveFunc.save(owner);
+        }
     }
 
-    public CapabilityOwnerCodec<T> getSerializer() {
-        return serializer;
+    public interface SaveFunc<T> {
+        void save(T owner);
     }
 }

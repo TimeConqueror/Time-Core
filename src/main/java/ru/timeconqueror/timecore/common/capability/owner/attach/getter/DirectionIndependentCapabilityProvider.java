@@ -4,12 +4,12 @@ import net.minecraft.core.Direction;
 
 import java.util.function.Function;
 
-public class StaticCoffeeCapabilityGetter<T, C> implements CoffeeCapabilityGetter<T, C> {
+public class DirectionIndependentCapabilityProvider<T, C> implements CapabilityProviderAdapter<T, C> {
 
     private final Function<T, C> factory;
     private C cap = null;
 
-    public StaticCoffeeCapabilityGetter(Function<T, C> factory) {
+    public DirectionIndependentCapabilityProvider(Function<T, C> factory) {
         this.factory = factory;
     }
 

@@ -29,7 +29,7 @@ sealed class CoffeeCapabilityDataPacket(
             clientSide: Boolean
         ): CoffeeCapabilityDataPacket {
             return create(clientSide, cap.getCapability().name, CompoundTag().apply {
-                cap.getOwnerSerializer().serialize(world, owner, this)
+                cap.ownerType.serializer.serialize(world, owner, this)
             }, capabilityData)
         }
 
@@ -49,13 +49,13 @@ sealed class CoffeeCapabilityDataPacket(
         fun <T : ICapabilityProvider> create(
             world: Level,
             owner: T,
-            cap: CoffeeCapabilityInstance<T>,
+            capInstance: CoffeeCapabilityInstance<T>,
             clientSide: Boolean,
             syncPredicate: Predicate<CoffeeProperty<*>>
         ): CoffeeCapabilityDataPacket? {
             val nbt = CompoundTag()
-            return if (cap.serialize(syncPredicate, nbt, clientSide, SerializationType.SYNC)) {
-                create(world, owner, cap, nbt, clientSide)
+            return if (capInstance.serialize(syncPredicate, nbt, clientSide, SerializationType.SYNC)) {
+                create(world, owner, capInstance, nbt, clientSide)
             } else null
         }
 

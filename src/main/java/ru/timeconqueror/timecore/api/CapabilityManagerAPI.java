@@ -15,8 +15,9 @@ import ru.timeconqueror.timecore.TimeCore;
 import ru.timeconqueror.timecore.common.capability.CapabilityManager;
 import ru.timeconqueror.timecore.common.capability.CoffeeCapabilityInstance;
 import ru.timeconqueror.timecore.common.capability.listener.EntityCapSyncOnStartTrackListener;
-import ru.timeconqueror.timecore.common.capability.owner.CapabilityOwner;
-import ru.timeconqueror.timecore.common.capability.owner.attach.getter.CoffeeCapabilityGetter;
+import ru.timeconqueror.timecore.common.capability.owner.CapabilityOwnerType;
+import ru.timeconqueror.timecore.common.capability.owner.attach.CapabilityFactory;
+import ru.timeconqueror.timecore.common.capability.owner.attach.getter.CapabilityProviderAdapter;
 
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -35,11 +36,11 @@ public class CapabilityManagerAPI {
      * @param capability  registered capability
      * @param ownerFilter allows to filter the objects, to which you can attach capability. <br>
      *                    E.g. Attach capability to all entities who are players: <pre>{@code () -> entity instanceof Player}</pre>
-     * @param getters     determine which capability object should return depending on its type and {@link Direction}.
+     * @param providerSupplier     determine which capability object should return depending on its type and {@link Direction}.
      * @see CapabilityManager#addDefaultAttachers()
      */
-    public static <T extends ICapabilityProvider, C extends CoffeeCapabilityInstance<T>> void registerDynamicCoffeeAttacher(CapabilityOwner<T> owner, Capability<C> capability, Predicate<T> ownerFilter, Supplier<CoffeeCapabilityGetter<T, C>> getters) {
-        TimeCore.INSTANCE.getCapabilityManager().registerDynamicCoffeeAttacher(owner, capability, ownerFilter, getters);
+    public static <T extends ICapabilityProvider, C extends CoffeeCapabilityInstance<T>> void registerDirectionDependentCoffeeAttacher(CapabilityOwnerType<T> owner, Capability<C> capability, Predicate<T> ownerFilter, Supplier<CapabilityProviderAdapter<T, C>> providerSupplier) {
+        TimeCore.INSTANCE.getCapabilityManager().registerDirectionDependentCoffeeAttacher(owner, capability, ownerFilter, providerSupplier);
     }
 
     /**
@@ -53,11 +54,11 @@ public class CapabilityManagerAPI {
      * @param capability  registered capability
      * @param ownerFilter allows to filter the objects, to which you can attach capability. <br>
      *                    E.g. Attach capability to all entities who are players: <pre>{@code () -> entity instanceof Player}</pre>
-     * @param getters     determine which capability object should return depending on its type and {@link Direction}.
+     * @param providerSupplier     determine which capability object should return depending on its type and {@link Direction}.
      * @see CapabilityManager#addDefaultAttachers()
      */
-    public static <T extends ICapabilityProvider, C> void registerDynamicAttacher(CapabilityOwner<T> owner, Capability<C> capability, Predicate<T> ownerFilter, Supplier<CoffeeCapabilityGetter<T, C>> getters) {
-        TimeCore.INSTANCE.getCapabilityManager().registerDynamicCapabilityAttacher(owner, capability, ownerFilter, getters);
+    public static <T extends ICapabilityProvider, C> void registerDirectionDependentAttacher(CapabilityOwnerType<T> owner, Capability<C> capability, Predicate<T> ownerFilter, Supplier<CapabilityProviderAdapter<T, C>> providerSupplier) {
+        TimeCore.INSTANCE.getCapabilityManager().registerDirectionDependentCapabilityAttacher(owner, capability, ownerFilter, providerSupplier);
     }
 
     /**
@@ -74,8 +75,8 @@ public class CapabilityManagerAPI {
      * @param capFactory  method, which controls how the capability should be created upon owner creation.
      * @see CapabilityManager#addDefaultAttachers()
      */
-    public static <T extends ICapabilityProvider, C extends CoffeeCapabilityInstance<T>> void registerStaticCoffeeAttacher(CapabilityOwner<T> owner, Capability<C> capability, Predicate<T> ownerFilter, Function<T, C> capFactory) {
-        TimeCore.INSTANCE.getCapabilityManager().registerStaticCoffeeCapabilityAttacher(owner, capability, ownerFilter, capFactory);
+    public static <T extends ICapabilityProvider, C extends CoffeeCapabilityInstance<T>> void registerDirectionIndependentCoffeeAttacher(CapabilityOwnerType<T> owner, Capability<C> capability, Predicate<T> ownerFilter, CapabilityFactory<T, C> capFactory) {
+        TimeCore.INSTANCE.getCapabilityManager().registerDirectionIndependentCoffeeCapabilityAttacher(owner, capability, ownerFilter, capFactory);
     }
 
     /**
@@ -92,8 +93,8 @@ public class CapabilityManagerAPI {
      * @param capFactory  method, which controls how the capability should be created upon owner creation.
      * @see CapabilityManager#addDefaultAttachers()
      */
-    public static <T extends ICapabilityProvider, C> void registerStaticAttacher(CapabilityOwner<T> owner, Capability<C> capability, Predicate<T> ownerFilter, Function<T, C> capFactory) {
-        TimeCore.INSTANCE.getCapabilityManager().registerStaticCapabilityAttacher(owner, capability, ownerFilter, capFactory);
+    public static <T extends ICapabilityProvider, C> void registerDirectionIndependentAttacher(CapabilityOwnerType<T> owner, Capability<C> capability, Predicate<T> ownerFilter, CapabilityFactory<T, C> capFactory) {
+        TimeCore.INSTANCE.getCapabilityManager().registerDirectionIndependentCapabilityAttacher(owner, capability, ownerFilter, capFactory);
     }
 
     /**

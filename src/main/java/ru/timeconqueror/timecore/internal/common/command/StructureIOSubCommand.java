@@ -12,8 +12,9 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlaceSettings;
-import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
+import net.minecraft.world.phys.Vec3;
 import ru.timeconqueror.timecore.api.util.EnvironmentUtils;
+import ru.timeconqueror.timecore.structureio.ExtendedStructureTemplate;
 import ru.timeconqueror.timecore.structureio.StructureIO;
 
 import java.nio.file.Path;
@@ -27,9 +28,12 @@ public class StructureIOSubCommand {
     }
 
     private static int save(CommandSourceStack commandSource, BlockPos from, BlockPos to, String relPath, boolean includeEntities) {
+        Vec3 sourceVec = commandSource.getPosition();
+        BlockPos sourcePos = BlockPos.containing(sourceVec);
+
         ServerLevel level = commandSource.getLevel();
         Path fullPath = resolvePath(relPath);
-        STRUCTURE_IO.save(level, from, to, fullPath, includeEntities, Blocks.AIR);
+        STRUCTURE_IO.save(level, from, to, fullPath, includeEntities, Blocks.AIR, sourcePos);
 
         commandSource.sendSuccess(() -> Component.literal("Structure saved to" + fullPath), false);
 
@@ -47,7 +51,7 @@ public class StructureIOSubCommand {
             path = Path.of(pathStr);
         }
 
-        StructureTemplate template = STRUCTURE_IO.getOrLoadTemplateFromFile(path.toFile());
+        ExtendedStructureTemplate template = STRUCTURE_IO.getOrLoadTemplateFromFile(path.toFile());
         STRUCTURE_IO.generate(template, level, at, new StructurePlaceSettings());
 
         return Command.SINGLE_SUCCESS;

@@ -8,7 +8,7 @@ import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.common.util.LazyOptional;
 import org.jetbrains.annotations.NotNull;
-import ru.timeconqueror.timecore.common.capability.owner.attach.getter.CoffeeCapabilityGetter;
+import ru.timeconqueror.timecore.common.capability.owner.attach.getter.CapabilityProviderAdapter;
 
 import javax.annotation.Nullable;
 import java.util.HashMap;
@@ -17,25 +17,25 @@ import java.util.Map;
 public class CoffeeCapabilityProvider<T> implements ICapabilityProvider, INBTSerializable<CompoundTag> {
 
     private final T target;
-    private final HashMap<String, CoffeeCapabilityGetter<T, ?>> getters = new HashMap<>();
+    private final HashMap<String, CapabilityProviderAdapter<T, ?>> providers = new HashMap<>();
 
     public CoffeeCapabilityProvider(T target) {
         this.target = target;
     }
 
-    public <C> void addCapability(Capability<C> capability, CoffeeCapabilityGetter<T, C> getter) {
-        getters.put(capability.getName(), getter);
+    public <C> void addCapability(Capability<C> capability, CapabilityProviderAdapter<T, C> provider) {
+        providers.put(capability.getName(), provider);
         // for init
-        getter.getCapability(target, null);
+        provider.getCapability(target, null);
     }
 
     @Override
     @NotNull
     public <C> LazyOptional<C> getCapability(@NotNull Capability<C> capability, @Nullable Direction side) {
-        CoffeeCapabilityGetter<T, ?> getter = getters.get(capability.getName());
+        CapabilityProviderAdapter<T, ?> provider = providers.get(capability.getName());
 
-        if (getter != null) {
-            C cap = (C) getter.getCapability(target, side);
+        if (provider != null) {
+            C cap = (C) provider.getCapability(target, side);
 
             if (cap != null) {
                 return LazyOptional.of(() -> cap);
@@ -49,7 +49,7 @@ public class CoffeeCapabilityProvider<T> implements ICapabilityProvider, INBTSer
     public CompoundTag serializeNBT() {
         CompoundTag root = new CompoundTag();
 
-        for (Map.Entry<String, CoffeeCapabilityGetter<T, ?>> entry : getters.entrySet()) {
+        for (Map.Entry<String, CapabilityProviderAdapter<T, ?>> entry : providers.entrySet()) {
             Object cap = entry.getValue().getCapability(target, null);
 
             if (cap instanceof INBTSerializable) {
@@ -62,7 +62,7 @@ public class CoffeeCapabilityProvider<T> implements ICapabilityProvider, INBTSer
 
     @Override
     public void deserializeNBT(CompoundTag nbt) {
-        for (Map.Entry<String, CoffeeCapabilityGetter<T, ?>> entry : getters.entrySet()) {
+        for (Map.Entry<String, CapabilityProviderAdapter<T, ?>> entry : providers.entrySet()) {
             Object cap = entry.getValue().getCapability(target, null);
 
             if (cap instanceof INBTSerializable && nbt.contains(entry.getKey())) {

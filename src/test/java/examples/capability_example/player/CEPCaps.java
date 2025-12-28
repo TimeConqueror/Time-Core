@@ -9,7 +9,7 @@ import ru.timeconqueror.timecore.TimeCore;
 import ru.timeconqueror.timecore.api.CapabilityManagerAPI;
 import ru.timeconqueror.timecore.api.registry.CapabilityRegister;
 import ru.timeconqueror.timecore.api.registry.util.AutoRegistrable;
-import ru.timeconqueror.timecore.common.capability.owner.CapabilityOwner;
+import ru.timeconqueror.timecore.common.capability.owner.CapabilityOwnerType;
 
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
 public class CEPCaps {
@@ -20,6 +20,6 @@ public class CEPCaps {
 
     @SubscribeEvent
     public static void onCommonSetup(FMLCommonSetupEvent event) {
-        event.enqueueWork(() -> CapabilityManagerAPI.registerStaticCoffeeAttacher(CapabilityOwner.ENTITY, MY_CAPABILITY, entity -> entity instanceof Player, entity -> new MyPlayerCapability(((Player) entity))));
+        event.enqueueWork(() -> CapabilityManagerAPI.registerDirectionIndependentCoffeeAttacher(CapabilityOwnerType.ENTITY, MY_CAPABILITY, entity -> entity instanceof Player, (owner, entity) -> new MyPlayerCapability(owner, ((Player) entity))));
     }
 }

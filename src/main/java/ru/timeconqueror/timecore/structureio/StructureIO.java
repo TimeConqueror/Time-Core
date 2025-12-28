@@ -31,10 +31,9 @@ import java.util.Optional;
 public class StructureIO {
     public static final StructureIO INSTANCE = new StructureIO();
 
-    private final Map<String, StructureTemplate> cachedTemplates = new HashMap<>();
+    private final Map<String, ExtendedStructureTemplate> cachedTemplates = new HashMap<>();
 
-
-    public void save(ServerLevel level, BlockPos pos1, BlockPos pos2, Path path, boolean includeEntities, @Nullable Block ignoredBlock) {
+    public void save(ServerLevel level, BlockPos pos1, BlockPos pos2, Path path, boolean includeEntities, @Nullable Block ignoredBlock, BlockPos sourcePosition) {
         StructureTemplate template = new StructureTemplate();
 
         var start = BlockPosUtils.makeMin(pos1, pos2);
@@ -45,40 +44,52 @@ public class StructureIO {
         CompoundTag structureTag = new CompoundTag();
         template.save(structureTag);
 
+        BlockPos genOffset = sourcePosition.subtract(start);
+        structureTag.putLong("lg_offset", genOffset.asLong());
+
         saveStructureTagToFile(path, structureTag);
     }
 
-    public StructureTemplate getOrLoadTemplateFromFile(File file) {
+    public ExtendedStructureTemplate getOrLoadTemplateFromFile(File file) {
         String pathStr = file.getAbsoluteFile().toString();
 
-        StructureTemplate template = cachedTemplates.get(pathStr);
+        ExtendedStructureTemplate template = cachedTemplates.get(pathStr);
 
         if (template == null) {
-            template = loadTemplate(file);
-            cachedTemplates.put(pathStr, template);
+            template = loadTemplate(file)
+                    .map(loadedTemplate -> {
+                        cachedTemplates.put(pathStr, loadedTemplate);
+                        return loadedTemplate;
+                    })
+                    .orElse(ExtendedStructureTemplate.DUMMY);
         }
 
         return template;
     }
 
-    public StructureTemplate loadTemplate(File file) {
+    public Optional<ExtendedStructureTemplate> loadTemplate(File file) {
         try (var is = new FileInputStream(file)) {
             return loadTemplate(is);
         } catch (IOException ex) {
-            throw new RuntimeException(ex);
+            log.error("Failed to read structure tag from stream", ex);
+            return Optional.empty();
         }
     }
 
-    public StructureTemplate loadTemplate(InputStream stream) {
-        StructureTemplate template = new StructureTemplate();
-
-        loadStructureTagFromStream(stream)
-                .ifPresent(compoundTag -> {
+    public Optional<ExtendedStructureTemplate> loadTemplate(InputStream stream) throws IOException {
+        return loadStructureTagFromStream(stream)
+                .map(compoundTag -> {
+                    StructureTemplate template = new StructureTemplate();
                     //noinspection deprecation
                     template.load(BuiltInRegistries.BLOCK.asLookup(), compoundTag);
+                    BlockPos genOffset = BlockPos.of(compoundTag.getLong("lg_offset"));
+                    return new ExtendedStructureTemplate(template, genOffset);
                 });
+    }
 
-        return template;
+    public void generate(ExtendedStructureTemplate template, ServerLevel level, BlockPos start, StructurePlaceSettings structurePlaceSettings) {
+        start = start.subtract(template.getGenOffset());
+        generate(template.getTemplate(), level, start, structurePlaceSettings);
     }
 
     public void generate(StructureTemplate template, ServerLevel level, BlockPos start, StructurePlaceSettings structurePlaceSettings) {
@@ -103,13 +114,7 @@ public class StructureIO {
         }
     }
 
-    private Optional<CompoundTag> loadStructureTagFromStream(InputStream stream) {
-        try {
-            return Optional.of(NbtIo.readCompressed(stream));
-        } catch (IOException e) {
-            log.error("Failed to read structure tag from stream", e);
-        }
-
-        return Optional.empty();
+    private Optional<CompoundTag> loadStructureTagFromStream(InputStream stream) throws IOException {
+        return Optional.of(NbtIo.readCompressed(stream));
     }
 }
