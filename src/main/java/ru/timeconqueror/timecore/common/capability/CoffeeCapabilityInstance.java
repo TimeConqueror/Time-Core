@@ -71,7 +71,7 @@ public abstract class CoffeeCapabilityInstance<T extends ICapabilityProvider> ex
     /**
      * Marks owner to save its data as well as this capability
      */
-    public void save(T owner) {
+    public void markForSave(T owner) {
         ownerType.save(owner);
     }
 
