@@ -38,7 +38,7 @@ public class DefaultAnimationSystemCallers {
     }
 
     @SubscribeEvent
-    public static void onChunkTrackingStart(ChunkWatchEvent event) {
+    public static void onChunkTrackingStart(ChunkWatchEvent.Sent event) {
         ServerLevel level = event.getLevel();
         ChunkPos chunkPos = event.getPos();
         LevelChunk chunk = level.getChunk(chunkPos.x, chunkPos.z);

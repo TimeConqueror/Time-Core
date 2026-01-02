@@ -4,7 +4,7 @@ plugins {
     id 'java-library'
     id 'idea'
     id 'maven-publish'
-    id 'net.neoforged.moddev' version '2.0.134'
+    id 'net.neoforged.moddev' version '2.0.137'
 //    id 'org.spongepowered.mixin' version '0.7.+'
 //    id 'org.parchmentmc.librarian.forgegradle' version '1.+'
     // Adds the Kotlin Gradle plugin
@@ -83,7 +83,14 @@ configurations {
     // This configuration should be used instead of 'runtimeOnly' to declare
     // a dependency that will be present for runtime testing but that is
     // "optional", meaning it will not be pulled by dependents of this mod.
-    runtimeClasspath.extendsFrom localRuntime
+//    runtimeClasspath.extendsFrom localRuntime
+}
+
+// Allows to add shaded libraries to IDE runs' classpath
+configurations.whenObjectAdded { config ->
+    if (config.name == "additionalRuntimeClasspath") {
+        config.extendsFrom(configurations.shade)
+    }
 }
 
 neoForge {
@@ -215,6 +222,7 @@ dependencies {
     testImplementation 'org.mockito:mockito-junit-jupiter:5.21.0'
     testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.10.2'
     testImplementation 'org.junit.jupiter:junit-jupiter-params:5.10.2'
+    testImplementation 'org.junit.platform:junit-platform-launcher:1.10.2'
 }
 
 // This block of code expands all declared replace properties in the specified resource targets.
@@ -224,12 +232,14 @@ var generateModMetadata = tasks.register("generateModMetadata", ProcessResources
             minecraft_version      : minecraft_version,
             minecraft_version_range: minecraft_version_range,
             neo_version            : neo_version,
+            loader_version_range   : loader_version_range,
             mod_id                 : mod_id,
             mod_name               : mod_name,
             mod_license            : mod_license,
             mod_version            : mod_version,
             mod_authors            : mod_authors,
-            mod_description        : mod_description
+            mod_description        : mod_description,
+            kff_version_range      : kff_version_range,
     ]
     inputs.properties replaceProperties
     expand replaceProperties

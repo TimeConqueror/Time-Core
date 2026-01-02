@@ -24,7 +24,7 @@ public class PayloadHelper {
     }
 
     public static <T extends CustomPacketPayload> CustomPacketPayload.Type<T> makeType(String modId, Class<T> clazz) {
-        return new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath(modId, SimpleName.of(clazz)));
+        return new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath(modId, SimpleName.snakeCasedOf(clazz)));
     }
 
     public static <BUF, PACKET> StreamCodec<BUF, PACKET> simpleStreamCodec(BiConsumer<PACKET, BUF> encoder, Function<BUF, PACKET> decoder) {
