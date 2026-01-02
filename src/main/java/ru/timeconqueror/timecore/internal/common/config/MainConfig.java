@@ -1,6 +1,6 @@
 package ru.timeconqueror.timecore.internal.common.config;
 
-import net.minecraftforge.fml.config.ModConfig;
+import net.neoforged.fml.config.ModConfig;
 import ru.timeconqueror.timecore.TimeCore;
 import ru.timeconqueror.timecore.api.common.config.Config;
 import ru.timeconqueror.timecore.api.common.config.IQuickConfigValue;
@@ -10,6 +10,7 @@ public class MainConfig extends Config {
     public static final MainConfig INSTANCE = new MainConfig();
     public IQuickConfigValue<Boolean> devFeaturesEnabled;
     public IQuickConfigValue<Boolean> suppressExperimentalWarning;
+    public IQuickConfigValue<Boolean> hideTimeCoreResourcePack;
 
     public MainConfig() {
         super(ModConfig.Type.COMMON, TimeCore.MODID, null);
@@ -26,9 +27,18 @@ public class MainConfig extends Config {
                 builder.comment("If true, suppresses annoying experimental warning, when you're trying to load world with experimental world settings, like new biomes, etc.")
                         .define("suppress_experimental_stuff_warning", true)
         );
+
+        hideTimeCoreResourcePack = builder.optimized(
+                builder.comment("Hides the built-in resourcepack added by TimeCore from the resourcepack list")
+                        .define("hide_timecore_resource_pack", false)
+        );
     }
 
     public boolean areDevFeaturesEnabled() {
         return devFeaturesEnabled.get();
+    }
+
+    public boolean hideTimeCoreResourcePack() {
+        return hideTimeCoreResourcePack.get();
     }
 }

@@ -93,7 +93,7 @@ public class TimeModelCube {
         return new TimeVertex(pos, u, v);
     }
 
-    public void compile(PoseStack.Pose pose, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
+    public void compile(PoseStack.Pose pose, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, int color) {
         Matrix4f matrix4f = pose.pose();
         Matrix3f matrix3f = pose.normal();
 
@@ -105,7 +105,7 @@ public class TimeModelCube {
                 float y = vertex.getPos().y() / 16.0F;
                 float z = vertex.getPos().z() / 16.0F;
                 Vector4f pos = matrix4f.transform(new Vector4f(x, y, z, 1.0F));
-                vertexConsumer.vertex(pos.x(), pos.y(), pos.z(), red, green, blue, alpha, vertex.getU(), vertex.getV(), packedOverlay, packedLight, normal.x(), normal.y(), normal.z());
+                vertexConsumer.addVertex(pos.x(), pos.y(), pos.z(), color, vertex.getU(), vertex.getV(), packedOverlay, packedLight, normal.x(), normal.y(), normal.z());
             }
         }
     }

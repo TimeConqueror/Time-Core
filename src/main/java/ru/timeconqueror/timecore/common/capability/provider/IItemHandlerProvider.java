@@ -1,7 +1,7 @@
 package ru.timeconqueror.timecore.common.capability.provider;
 
 import net.minecraft.core.Direction;
-import net.minecraftforge.items.IItemHandler;
+import net.neoforged.neoforge.items.IItemHandler;
 
 import javax.annotation.Nullable;
 

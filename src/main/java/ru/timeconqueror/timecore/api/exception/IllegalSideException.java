@@ -1,6 +1,7 @@
 package ru.timeconqueror.timecore.api.exception;
 
-import net.minecraftforge.fml.LogicalSide;
+
+import net.neoforged.fml.LogicalSide;
 
 public class IllegalSideException extends RuntimeException {
     private final LogicalSide side;

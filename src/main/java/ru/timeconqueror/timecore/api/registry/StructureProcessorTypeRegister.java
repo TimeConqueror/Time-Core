@@ -1,6 +1,7 @@
 package ru.timeconqueror.timecore.api.registry;
 
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProcessor;
@@ -11,7 +12,7 @@ public class StructureProcessorTypeRegister extends SimpleVanillaRegister<Struct
         super(Registries.STRUCTURE_PROCESSOR, modId);
     }
 
-    public <P extends StructureProcessor> StructureProcessorType<P> register(String name, Codec<P> codec) {
+    public <P extends StructureProcessor> StructureProcessorType<P> register(String name, MapCodec<P> codec) {
         StructureProcessorType<P> type = () -> codec;
         registerEntry(name, () -> type);
 

@@ -1,13 +1,14 @@
 package ru.timeconqueror.timecore.api.devtools.gen.advancement
 
 import net.minecraft.advancements.Advancement
+import net.minecraft.advancements.AdvancementHolder
 import net.minecraft.resources.ResourceLocation
-import net.minecraftforge.common.data.ExistingFileHelper
+import net.neoforged.neoforge.common.data.ExistingFileHelper
 import java.util.function.Consumer
 
 fun saverAwareAdvancementProvider(
     modId: String,
-    saveFunc: Consumer<Advancement>,
+    saveFunc: Consumer<AdvancementHolder>,
     fileHelper: ExistingFileHelper,
     block: SaverAwareAdvancementBuilderContext.() -> Unit
 ) {
@@ -17,14 +18,14 @@ fun saverAwareAdvancementProvider(
 
 class SaverAwareAdvancementBuilderContext(
     private val modId: String,
-    private val saveFunc: (Advancement) -> Unit,
+    private val saveFunc: (AdvancementHolder) -> Unit,
     private val fileHelper: ExistingFileHelper
 ) {
-    fun make(id: String, block: Advancement.Builder.() -> Unit): Advancement {
-        return make(ResourceLocation(modId, id), block)
+    fun make(id: String, block: Advancement.Builder.() -> Unit): AdvancementHolder {
+        return make(ResourceLocation.fromNamespaceAndPath(modId, id), block)
     }
 
-    fun make(id: ResourceLocation, block: Advancement.Builder.() -> Unit): Advancement {
+    fun make(id: ResourceLocation, block: Advancement.Builder.() -> Unit): AdvancementHolder {
         val builder = Advancement.Builder.advancement()
         block(builder)
         builder.save(saveFunc, id, fileHelper)

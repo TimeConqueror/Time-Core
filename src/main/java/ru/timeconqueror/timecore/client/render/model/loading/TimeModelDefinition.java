@@ -1,8 +1,8 @@
 package ru.timeconqueror.timecore.client.render.model.loading;
 
 import net.minecraft.client.model.geom.builders.MaterialDefinition;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import ru.timeconqueror.timecore.client.render.model.TimeModelPart;
 import ru.timeconqueror.timecore.mixins.accessor.client.MaterialDefinitionAccessor;
 

@@ -5,12 +5,11 @@ import com.google.common.collect.Lists;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.eventbus.api.EventPriority;
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
-import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.minecraftforge.registries.IForgeRegistry;
-import net.minecraftforge.registries.RegisterEvent;
+import net.neoforged.bus.api.EventPriority;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
+import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.neoforged.neoforge.registries.RegisterEvent;
 import ru.timeconqueror.timecore.api.devtools.gen.lang.LangGeneratorFacade;
 import ru.timeconqueror.timecore.api.registry.base.TaskHolder;
 import ru.timeconqueror.timecore.api.registry.util.Promised;
@@ -40,15 +39,11 @@ public abstract class VanillaRegister<T> extends TimeRegister {
         this(registry.key(), modId);
     }
 
-    public VanillaRegister(IForgeRegistry<T> registry, String modId) {
-        this(registry.getRegistryKey(), modId);
-    }
-
     @SuppressWarnings("unchecked")
     protected <I extends T> Promised<I> registerEntry(String name, Supplier<I> entrySup) {
         Preconditions.checkNotNull(entries, "Cannot register new entries after RegistryEvent.Register has been fired.");
 
-        ResourceLocation registryName = new ResourceLocation(getModId(), name);
+        ResourceLocation registryName = ResourceLocation.fromNamespaceAndPath(getModId(), name);
         InsertablePromised<I> promised = new InsertablePromised<>(registryName);
         if (entries.put((InsertablePromised<T>) promised, entrySup::get) != null) {
             throw new IllegalArgumentException("Attempted to register " + name + " twice for registry " + registryKey.registry());

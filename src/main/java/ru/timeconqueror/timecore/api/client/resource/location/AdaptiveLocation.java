@@ -24,7 +24,7 @@ public abstract class AdaptiveLocation {
     abstract String getPrefix();
 
     public ResourceLocation fullLocation() {
-        return new ResourceLocation(getNamespace(), getFullPath());
+        return ResourceLocation.fromNamespaceAndPath(getNamespace(), getFullPath());
     }
 
     /**

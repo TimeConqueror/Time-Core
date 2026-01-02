@@ -1,10 +1,8 @@
 package ru.timeconqueror.timecore.api.common.event;
 
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraftforge.event.entity.living.LivingEvent;
-import net.minecraftforge.eventbus.api.Cancelable;
-import net.minecraftforge.fml.LogicalSide;
-import net.minecraftforge.fml.common.Mod;
+import net.neoforged.fml.LogicalSide;
+import net.neoforged.neoforge.event.entity.living.LivingEvent;
 
 /**
  * Called at the end of {@link LivingEntity#tick()}.

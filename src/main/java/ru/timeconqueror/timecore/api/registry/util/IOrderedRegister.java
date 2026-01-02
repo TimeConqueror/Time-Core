@@ -1,6 +1,6 @@
 package ru.timeconqueror.timecore.api.registry.util;
 
-import net.minecraftforge.fml.event.IModBusEvent;
+import net.neoforged.fml.event.IModBusEvent;
 import ru.timeconqueror.timecore.api.registry.TimeRegister;
 
 import java.util.List;

@@ -1,25 +1,29 @@
 package ru.timeconqueror.timecore.animation.internal;
 
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.chunk.LevelChunk;
-import net.minecraftforge.event.entity.player.PlayerEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.event.entity.player.PlayerEvent;
+import net.neoforged.neoforge.event.level.ChunkWatchEvent;
+import net.neoforged.neoforge.event.tick.EntityTickEvent;
 import ru.timeconqueror.timecore.api.animation.AnimatedObject;
 import ru.timeconqueror.timecore.api.common.event.LivingTickEndEvent;
 
 //TODO add tickers for tile entities
-@Mod.EventBusSubscriber
+@EventBusSubscriber
 public class DefaultAnimationSystemCallers {
-    public static void onEntityTickEnd(LivingTickEndEvent event) {
-        LivingEntity living = event.getEntity();
+    @SubscribeEvent
+    public static void onEntityTickEnd(EntityTickEvent.Post event) {
+        Entity entity = event.getEntity();
 
-        if (living instanceof AnimatedObject<?> animated) {
+        if (entity instanceof AnimatedObject<?> animated) {
             //needed for animation ticking on server side.
-            animated.animationSystem().onTick(living.level().isClientSide);
+            animated.animationSystem().onTick(entity.level().isClientSide);
         }
     }
 
@@ -33,10 +37,14 @@ public class DefaultAnimationSystemCallers {
         }
     }
 
-    public static void onChunkTrackingStart(ServerPlayer player, LevelChunk chunk) {
+    @SubscribeEvent
+    public static void onChunkTrackingStart(ChunkWatchEvent event) {
+        ServerLevel level = event.getLevel();
+        ChunkPos chunkPos = event.getPos();
+        LevelChunk chunk = level.getChunk(chunkPos.x, chunkPos.z);
         for (BlockEntity entity : chunk.getBlockEntities().values()) {
             if (entity instanceof AnimatedObject<?> animatedObj) {
-                animatedObj.animationSystem().syncForPlayer(player);
+                animatedObj.animationSystem().syncForPlayer(event.getPlayer());
             }
         }
     }

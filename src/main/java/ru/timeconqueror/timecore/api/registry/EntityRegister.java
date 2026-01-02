@@ -1,16 +1,17 @@
 package ru.timeconqueror.timecore.api.registry;
 
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.levelgen.Heightmap;
-import net.minecraftforge.common.ForgeSpawnEggItem;
-import net.minecraftforge.data.event.GatherDataEvent;
-import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.neoforge.common.DeferredSpawnEggItem;
+import net.neoforged.neoforge.data.event.GatherDataEvent;
+import net.neoforged.neoforge.event.entity.EntityAttributeCreationEvent;
+import net.neoforged.neoforge.event.entity.RegisterSpawnPlacementsEvent;
 import org.jetbrains.annotations.Nullable;
 import ru.timeconqueror.timecore.api.TimeCoreAPI;
 import ru.timeconqueror.timecore.api.client.resource.location.ItemModelLocation;
@@ -68,9 +69,10 @@ import java.util.function.Supplier;
 public class EntityRegister extends VanillaRegister<EntityType<?>> {
     private final ItemRegister itemRegister;
     private final TaskHolder<Consumer<EntityAttributeCreationEvent>> entityAttributesEventRuns = TaskHolder.make(EntityAttributeCreationEvent.class);
+    private final TaskHolder<Consumer<RegisterSpawnPlacementsEvent>> registerSpawnPlacementEvents = TaskHolder.make(EntityAttributeCreationEvent.class);
 
     public EntityRegister(String modid) {
-        super(ForgeRegistries.ENTITY_TYPES, modid);
+        super(Registries.ENTITY_TYPE, modid);
         itemRegister = new ItemRegister(modid);
     }
 
@@ -145,11 +147,16 @@ public class EntityRegister extends VanillaRegister<EntityType<?>> {
         entityAttributesEventRuns.doForEachAndRemove(consumer -> consumer.accept(event));
     }
 
+    private void onEntityRegisterSpawnPlacement(RegisterSpawnPlacementsEvent event) {
+        registerSpawnPlacementEvents.doForEachAndRemove(consumer -> consumer.accept(event));
+    }
+
     @Override
     public void regToBus(IEventBus modEventBus) {
         super.regToBus(modEventBus);
         itemRegister.regToBus(modEventBus);
         modEventBus.addListener(this::onEntityAttributeCreationEvent);
+        modEventBus.addListener(this::onEntityRegisterSpawnPlacement);
     }
 
     public class EntityRegisterChain<T extends Entity> extends RegisterChain<EntityType<T>> {
@@ -195,14 +202,14 @@ public class EntityRegister extends VanillaRegister<EntityType<?>> {
         /**
          * Sets up settings for spawning mob in world naturally
          */
-        public MobRegisterChain<T> spawnSettings(SpawnPlacements.Type spawnType, Heightmap.Types heightMapType, SpawnPlacements.SpawnPredicate<T> spawnPredicate) {
-            runOnCommonSetup(() -> SpawnPlacements.register(asPromised().get(), spawnType, heightMapType, spawnPredicate));
+        public MobRegisterChain<T> spawnSettings(SpawnPlacementType placementType, Heightmap.Types heightMapType, SpawnPlacements.SpawnPredicate<T> spawnPredicate, RegisterSpawnPlacementsEvent.Operation operation) {
+            registerSpawnPlacementEvents.add(event -> event.register(asPromised().get(), placementType, heightMapType, spawnPredicate, operation));
 
             return this;
         }
 
         /**
-         * Registers simple spawn egg ({@link ForgeSpawnEggItem}) with name {@code spawn_$entityName} with default properties.
+         * Registers simple spawn egg ({@link DeferredSpawnEggItem}) with name {@code spawn_$entityName} with default properties.
          * Automatically adds default json model for it.
          *
          * @param primaryArgb   primary color
@@ -214,7 +221,7 @@ public class EntityRegister extends VanillaRegister<EntityType<?>> {
         }
 
         /**
-         * Registers simple spawn egg ({@link ForgeSpawnEggItem}) with name {@code spawn_$entityName}.
+         * Registers simple spawn egg ({@link DeferredSpawnEggItem}) with name {@code spawn_$entityName}.
          * Automatically adds default json model for it.
          *
          * @param primaryArgb   primary color
@@ -227,7 +234,7 @@ public class EntityRegister extends VanillaRegister<EntityType<?>> {
         }
 
         /**
-         * Registers simple spawn egg ({@link ForgeSpawnEggItem}) with provided name.
+         * Registers simple spawn egg ({@link DeferredSpawnEggItem}) with provided name.
          * Automatically adds default json model for it.
          *
          * @param primaryArgb   primary color
@@ -237,8 +244,8 @@ public class EntityRegister extends VanillaRegister<EntityType<?>> {
          */
         public MobRegisterChain<T> spawnEgg(String name, int primaryArgb, int secondaryArgb, @Nullable ResourceKey<CreativeModeTab> tab, Item.Properties properties) {
             //FIXME Forge, wtf, it's not threadsafe!
-            ItemRegister.ItemRegisterChain<ForgeSpawnEggItem> chain = itemRegister
-                    .register(name, () -> new ForgeSpawnEggItem(asPromised(), primaryArgb, secondaryArgb, properties))
+            ItemRegister.ItemRegisterChain<DeferredSpawnEggItem> chain = itemRegister
+                    .register(name, () -> new DeferredSpawnEggItem(asPromised(), primaryArgb, secondaryArgb, properties))
                     .model(new ItemModelLocation("minecraft", "template_spawn_egg"));
 
             if (tab != null) {

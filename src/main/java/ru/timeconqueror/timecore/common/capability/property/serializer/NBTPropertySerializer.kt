@@ -1,10 +1,10 @@
 package ru.timeconqueror.timecore.common.capability.property.serializer
 
 import net.minecraft.nbt.CompoundTag
-import net.minecraftforge.common.util.INBTSerializable
+import ru.timeconqueror.timecore.api.util.INBTSimpleSerializable
 
 
-open class NBTPropertySerializer<T : INBTSerializable<CompoundTag>>(val factory: () -> T) : IPropertySerializer<T> {
+open class NBTPropertySerializer<T : INBTSimpleSerializable<CompoundTag>>(val factory: () -> T) : IPropertySerializer<T> {
 
     override fun serialize(name: String, value: T, nbt: CompoundTag) {
         nbt.put(name, value.serializeNBT())
@@ -16,7 +16,7 @@ open class NBTPropertySerializer<T : INBTSerializable<CompoundTag>>(val factory:
         return value
     }
 
-    open class Nullable<T : INBTSerializable<CompoundTag>>(factory: () -> T) : NullPropertySerializer<T>(
+    open class Nullable<T : INBTSimpleSerializable<CompoundTag>>(factory: () -> T) : NullPropertySerializer<T>(
         NBTPropertySerializer(factory)
     )
 }

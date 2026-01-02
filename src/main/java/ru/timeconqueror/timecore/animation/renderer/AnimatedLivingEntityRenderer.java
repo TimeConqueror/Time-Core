@@ -26,8 +26,8 @@ public abstract class AnimatedLivingEntityRenderer<T extends LivingEntity & Anim
     }
 
     @Override
-    protected void setupRotations(T entityLiving, PoseStack matrixStackIn, float ageInTicks, float rotationYaw, float partialTicks) {
-        super.setupRotations(entityLiving, matrixStackIn, ageInTicks, rotationYaw, partialTicks);
+    protected void setupRotations(T entityLiving, PoseStack matrixStackIn, float ageInTicks, float rotationYaw, float partialTicks, float scale) {
+        super.setupRotations(entityLiving, matrixStackIn, ageInTicks, rotationYaw, partialTicks, scale);
         matrixStackIn.scale(-1.0F, -1.0F, 1.0F); // to mirror models to a normal state
         puppeteer.processModel(entityLiving, getModel(), partialTicks);
     }

@@ -19,6 +19,6 @@ public class RenderTowerGuardian extends AnimatedLivingEntityRenderer<TowerGuard
 
     @Override
     public ResourceLocation getTextureLocation(TowerGuardianEntity entity) {
-        return new ResourceLocation(TimeCore.MODID, "textures/entity/tower_guardian.png");
+        return ResourceLocation.fromNamespaceAndPath(TimeCore.MODID, "textures/entity/tower_guardian.png");
     }
 }

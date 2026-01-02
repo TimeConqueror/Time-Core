@@ -16,7 +16,7 @@ public class DefaultSections {
     public static final Supplier<LangSection<Block>> BLOCKS = () -> new LangSection<>("Blocks", Block::getDescriptionId);
     public static final Supplier<LangSection<Item>> ITEMS = () -> new LangSection<>("Items", Item::getDescriptionId);
     public static final Supplier<LangSection<ArmorItem>> ARMOR = () -> new LangSection<ArmorItem>("Armor", Item::getDescriptionId)
-            .setSortingComparator(Comparator.<Map.Entry<ArmorItem, String>, String>comparing(mapEntry -> mapEntry.getKey().getMaterial().getName())
+            .setSortingComparator(Comparator.<Map.Entry<ArmorItem, String>, String>comparing(mapEntry -> mapEntry.getKey().getMaterial().getRegisteredName())
                     .thenComparingInt((mapEntry) -> {
                         EquipmentSlot armorType = mapEntry.getKey().getEquipmentSlot();
                         if (armorType == EquipmentSlot.HEAD) return 1;

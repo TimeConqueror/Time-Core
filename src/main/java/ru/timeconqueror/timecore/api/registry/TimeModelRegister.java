@@ -1,8 +1,8 @@
 package ru.timeconqueror.timecore.api.registry;
 
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import ru.timeconqueror.timecore.api.registry.base.TaskHolder;
 import ru.timeconqueror.timecore.client.render.model.InFileLocation;
 import ru.timeconqueror.timecore.internal.client.handlers.ClientLoadingHandler;
@@ -21,7 +21,7 @@ public class TimeModelRegister extends TimeRegister {
     }
 
     public InFileLocation register(String path, String modelName) {
-        InFileLocation tml = new InFileLocation(new ResourceLocation(getModId(), path), modelName);
+        InFileLocation tml = new InFileLocation(ResourceLocation.fromNamespaceAndPath(getModId(), path), modelName);
         locations.add(tml);
 
         return tml;

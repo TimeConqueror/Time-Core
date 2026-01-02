@@ -96,17 +96,17 @@ public class DrawHelper {
      */
     private static void buildTexturedRect(VertexConsumer vertexBuilder, PoseStack matrixStack, float x0, float y0, float width, float height, float zLevel, float textureX, float textureY, float textureWidth, float textureHeight, float textureDivideFactor) {
         Matrix4f pose = matrixStack.last().pose();
-        vertexBuilder.vertex(pose, x0, y0, zLevel).uv(textureX * textureDivideFactor, textureY * textureDivideFactor).endVertex();
-        vertexBuilder.vertex(pose, x0, y0 + height, zLevel).uv(textureX * textureDivideFactor, (textureY + textureHeight) * textureDivideFactor).endVertex();
-        vertexBuilder.vertex(pose, x0 + width, y0 + height, zLevel).uv((textureX + textureWidth) * textureDivideFactor, (textureY + textureHeight) * textureDivideFactor).endVertex();
-        vertexBuilder.vertex(pose, x0 + width, y0, zLevel).uv((textureX + textureWidth) * textureDivideFactor, textureY * textureDivideFactor).endVertex();
+        vertexBuilder.addVertex(pose, x0, y0, zLevel).setUv(textureX * textureDivideFactor, textureY * textureDivideFactor);
+        vertexBuilder.addVertex(pose, x0, y0 + height, zLevel).setUv(textureX * textureDivideFactor, (textureY + textureHeight) * textureDivideFactor);
+        vertexBuilder.addVertex(pose, x0 + width, y0 + height, zLevel).setUv((textureX + textureWidth) * textureDivideFactor, (textureY + textureHeight) * textureDivideFactor);
+        vertexBuilder.addVertex(pose, x0 + width, y0, zLevel).setUv((textureX + textureWidth) * textureDivideFactor, textureY * textureDivideFactor);
     }
 
     /**
      * Adds textured rectangle to provided buffer.
      * <p>
      * Required GL Mode: {@link GL11#GL_QUADS}
-     * Required VertexFormat: {@link DefaultVertexFormat#POSITION_COLOR_TEX}
+     * Required VertexFormat: {@link DefaultVertexFormat#POSITION_TEX_COLOR}
      * <p>
      * Term, used in parameters:
      * Parts are used to determine the actual size of {@code textureX, textureY, textureWidth, textureHeight} and coordinates relative to the entire texture.
@@ -134,7 +134,7 @@ public class DrawHelper {
      * Adds textured rectangle to provided buffer.
      * <p>
      * Required GL Mode: {@link GL11#GL_QUADS}
-     * Required VertexFormat: {@link DefaultVertexFormat#POSITION_COLOR_TEX}
+     * Required VertexFormat: {@link DefaultVertexFormat#POSITION_TEX_COLOR}
      * <p>
      * Term, used in parameters:
      * Parts are used to determine the actual size of {@code textureX, textureY, textureWidth, textureHeight} and coordinates relative to the entire texture.
@@ -165,7 +165,7 @@ public class DrawHelper {
      * Adds textured rectangle to provided buffer.
      * <p>
      * Required GL Mode: {@link GL11#GL_QUADS}
-     * Required VertexFormat: {@link DefaultVertexFormat#POSITION_COLOR_TEX}
+     * Required VertexFormat: {@link DefaultVertexFormat#POSITION_TEX_COLOR}
      * <p>
      * Term, used in parameters:
      * Parts are used to determine the actual size of {@code textureX, textureY, textureWidth, textureHeight} and coordinates relative to the entire texture.
@@ -195,10 +195,10 @@ public class DrawHelper {
         int b = getBlue(argbColor);
         int a = getAlpha(argbColor);
 
-        vertexBuilder.vertex(pose, x0, y0, zLevel).color(r, g, b, a).uv(textureX * textureDivideFactor, textureY * textureDivideFactor).endVertex();
-        vertexBuilder.vertex(pose, x0, y0 + height, zLevel).color(r, g, b, a).uv(textureX * textureDivideFactor, (textureY + textureHeight) * textureDivideFactor).endVertex();
-        vertexBuilder.vertex(pose, x0 + width, y0 + height, zLevel).color(r, g, b, a).uv((textureX + textureWidth) * textureDivideFactor, (textureY + textureHeight) * textureDivideFactor).endVertex();
-        vertexBuilder.vertex(pose, x0 + width, y0, zLevel).color(r, g, b, a).uv((textureX + textureWidth) * textureDivideFactor, textureY * textureDivideFactor).endVertex();
+        vertexBuilder.addVertex(pose, x0, y0, zLevel).setUv(textureX * textureDivideFactor, textureY * textureDivideFactor).setColor(r, g, b, a);
+        vertexBuilder.addVertex(pose, x0, y0 + height, zLevel).setUv(textureX * textureDivideFactor, (textureY + textureHeight) * textureDivideFactor).setColor(r, g, b, a);
+        vertexBuilder.addVertex(pose, x0 + width, y0 + height, zLevel).setUv((textureX + textureWidth) * textureDivideFactor, (textureY + textureHeight) * textureDivideFactor).setColor(r, g, b, a);
+        vertexBuilder.addVertex(pose, x0 + width, y0, zLevel).setUv((textureX + textureWidth) * textureDivideFactor, textureY * textureDivideFactor).setColor(r, g, b, a);
     }
 
     /**
@@ -217,10 +217,10 @@ public class DrawHelper {
     public static void buildTexturedRect(VertexConsumer builder, PoseStack matrixStack, float x0, float y0, float width, float height, float zLevel) {
         Matrix4f pose = matrixStack.last().pose();
 
-        builder.vertex(pose, x0, y0, zLevel).uv(0, 0).endVertex();
-        builder.vertex(pose, x0, y0 + height, zLevel).uv(0, 1).endVertex();
-        builder.vertex(pose, x0 + width, y0 + height, zLevel).uv(1, 1).endVertex();
-        builder.vertex(pose, x0 + width, y0, zLevel).uv(1, 0).endVertex();
+        builder.addVertex(pose, x0, y0, zLevel).setUv(0, 0);
+        builder.addVertex(pose, x0, y0 + height, zLevel).setUv(0, 1);
+        builder.addVertex(pose, x0 + width, y0 + height, zLevel).setUv(1, 1);
+        builder.addVertex(pose, x0 + width, y0, zLevel).setUv(1, 0);
     }
 
     /**
@@ -474,35 +474,35 @@ public class DrawHelper {
 
         Matrix4f matrix = matrixStack.last().pose();
 
-        builder.vertex(matrix, minX, maxY, minZ).color(red, green, blue, alpha).endVertex();//4
-        builder.vertex(matrix, maxX, maxY, minZ).color(red, green, blue, alpha).endVertex();//3
-        builder.vertex(matrix, maxX, minY, minZ).color(red, green, blue, alpha).endVertex();//2
-        builder.vertex(matrix, minX, minY, minZ).color(red, green, blue, alpha).endVertex();//1
+        builder.addVertex(matrix, minX, maxY, minZ).setColor(red, green, blue, alpha);//4
+        builder.addVertex(matrix, maxX, maxY, minZ).setColor(red, green, blue, alpha);//3
+        builder.addVertex(matrix, maxX, minY, minZ).setColor(red, green, blue, alpha);//2
+        builder.addVertex(matrix, minX, minY, minZ).setColor(red, green, blue, alpha);//1
 
-        builder.vertex(matrix, maxX, maxY, minZ).color(red, green, blue, alpha).endVertex();//3
-        builder.vertex(matrix, maxX, maxY, maxZ).color(red, green, blue, alpha).endVertex();//7
-        builder.vertex(matrix, maxX, minY, maxZ).color(red, green, blue, alpha).endVertex();//6
-        builder.vertex(matrix, maxX, minY, minZ).color(red, green, blue, alpha).endVertex();//2
+        builder.addVertex(matrix, maxX, maxY, minZ).setColor(red, green, blue, alpha);//3
+        builder.addVertex(matrix, maxX, maxY, maxZ).setColor(red, green, blue, alpha);//7
+        builder.addVertex(matrix, maxX, minY, maxZ).setColor(red, green, blue, alpha);//6
+        builder.addVertex(matrix, maxX, minY, minZ).setColor(red, green, blue, alpha);//2
 
-        builder.vertex(matrix, minX, maxY, minZ).color(red, green, blue, alpha).endVertex();//4
-        builder.vertex(matrix, minX, minY, minZ).color(red, green, blue, alpha).endVertex();//1
-        builder.vertex(matrix, minX, minY, maxZ).color(red, green, blue, alpha).endVertex();//5
-        builder.vertex(matrix, minX, maxY, maxZ).color(red, green, blue, alpha).endVertex();//8
+        builder.addVertex(matrix, minX, maxY, minZ).setColor(red, green, blue, alpha);//4
+        builder.addVertex(matrix, minX, minY, minZ).setColor(red, green, blue, alpha);//1
+        builder.addVertex(matrix, minX, minY, maxZ).setColor(red, green, blue, alpha);//5
+        builder.addVertex(matrix, minX, maxY, maxZ).setColor(red, green, blue, alpha);//8
 
-        builder.vertex(matrix, minX, minY, maxZ).color(red, green, blue, alpha).endVertex();//5
-        builder.vertex(matrix, minX, minY, minZ).color(red, green, blue, alpha).endVertex();//1
-        builder.vertex(matrix, maxX, minY, minZ).color(red, green, blue, alpha).endVertex();//2
-        builder.vertex(matrix, maxX, minY, maxZ).color(red, green, blue, alpha).endVertex();//6
+        builder.addVertex(matrix, minX, minY, maxZ).setColor(red, green, blue, alpha);//5
+        builder.addVertex(matrix, minX, minY, minZ).setColor(red, green, blue, alpha);//1
+        builder.addVertex(matrix, maxX, minY, minZ).setColor(red, green, blue, alpha);//2
+        builder.addVertex(matrix, maxX, minY, maxZ).setColor(red, green, blue, alpha);//6
 
-        builder.vertex(matrix, maxX, maxY, minZ).color(red, green, blue, alpha).endVertex();//3
-        builder.vertex(matrix, minX, maxY, minZ).color(red, green, blue, alpha).endVertex();//4
-        builder.vertex(matrix, minX, maxY, maxZ).color(red, green, blue, alpha).endVertex();//8
-        builder.vertex(matrix, maxX, maxY, maxZ).color(red, green, blue, alpha).endVertex();//7
+        builder.addVertex(matrix, maxX, maxY, minZ).setColor(red, green, blue, alpha);//3
+        builder.addVertex(matrix, minX, maxY, minZ).setColor(red, green, blue, alpha);//4
+        builder.addVertex(matrix, minX, maxY, maxZ).setColor(red, green, blue, alpha);//8
+        builder.addVertex(matrix, maxX, maxY, maxZ).setColor(red, green, blue, alpha);//7
 
-        builder.vertex(matrix, minX, maxY, maxZ).color(red, green, blue, alpha).endVertex();//8
-        builder.vertex(matrix, minX, minY, maxZ).color(red, green, blue, alpha).endVertex();//5
-        builder.vertex(matrix, maxX, minY, maxZ).color(red, green, blue, alpha).endVertex();//6
-        builder.vertex(matrix, maxX, maxY, maxZ).color(red, green, blue, alpha).endVertex();//7
+        builder.addVertex(matrix, minX, maxY, maxZ).setColor(red, green, blue, alpha);//8
+        builder.addVertex(matrix, minX, minY, maxZ).setColor(red, green, blue, alpha);//5
+        builder.addVertex(matrix, maxX, minY, maxZ).setColor(red, green, blue, alpha);//6
+        builder.addVertex(matrix, maxX, maxY, maxZ).setColor(red, green, blue, alpha);//7
     }
 
     /**
@@ -559,17 +559,8 @@ public class DrawHelper {
      */
     public static void buildLine(VertexConsumer builder, PoseStack stack, float x0, float y0, float z0, float x1, float y1, float z1, int r, int g, int b, int a) {
         Matrix4f pose = stack.last().pose();
-        builder.vertex(pose, x0, y0, z0).color(r, g, b, a).endVertex();
-        builder.vertex(pose, x1, y1, z1).color(r, g, b, a).endVertex();
-    }
-
-    //TODO javadoc
-    public static void drawBatched(Consumer<BufferBuilder> setupFunc, Consumer<BufferBuilder> drawBatchedFunc) {
-        BufferBuilder buffer = Tesselator.getInstance().getBuilder();
-        setupFunc.accept(buffer);
-        drawBatchedFunc.accept(buffer);
-
-        BufferUploader.drawWithShader(buffer.end());
+        builder.addVertex(pose, x0, y0, z0).setColor(r, g, b, a);
+        builder.addVertex(pose, x1, y1, z1).setColor(r, g, b, a);
     }
 
     public static class TexturedRect {

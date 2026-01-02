@@ -8,22 +8,18 @@ import net.minecraft.client.GraphicsStatus;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderStateShard;
+import net.minecraft.client.renderer.RenderStateShard.ShaderStateShard;
+import net.minecraft.client.renderer.RenderStateShard.TextureStateShard;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.RenderType.CompositeState;
 import net.minecraft.resources.ResourceLocation;
 import ru.timeconqueror.timecore.TimeCore;
 
 import java.util.function.Consumer;
 
-public class RenderHelper extends RenderType {
+public class RenderHelper {
     private static final Consumer<CompositeState.CompositeStateBuilder> EMPTY_TUNER = builder -> {
     };
-
-    /**
-     * Creates pipeline which allows to use render types for gui render.
-     */
-    public static RenderPipeline guiRenderPipeline() {
-        return new RenderPipeline();
-    }
 
     public static Consumer<CompositeState.CompositeStateBuilder> emptyTuner() {
         return EMPTY_TUNER;
@@ -92,31 +88,5 @@ public class RenderHelper extends RenderType {
 
     public static boolean isFabulousModeEnabled() {
         return Minecraft.getInstance().options.graphicsMode().get() == GraphicsStatus.FABULOUS;
-    }
-
-    public static class RenderPipeline {
-        private final MultiBufferSource.BufferSource buffer;
-
-        private RenderPipeline() {
-            buffer = MultiBufferSource.immediate(Tesselator.getInstance().getBuilder());
-        }
-
-        public void build(RenderType renderType, Consumer<VertexConsumer> renderer) {
-            VertexConsumer vertexBuilder = this.buffer.getBuffer(renderType);
-            renderer.accept(vertexBuilder);
-        }
-
-        public void buildAndDraw(RenderType renderType, Consumer<VertexConsumer> renderer) {
-            build(renderType, renderer);
-            buffer.endBatch(renderType);
-        }
-
-        public void draw() {
-            buffer.endBatch();
-        }
-    }
-
-    protected RenderHelper(String nameIn, VertexFormat formatIn, VertexFormat.Mode drawModeIn, int bufferSizeIn, boolean useDelegateIn, boolean needsSortingIn, Runnable setupTaskIn, Runnable clearTaskIn) {
-        super(nameIn, formatIn, drawModeIn, bufferSizeIn, useDelegateIn, needsSortingIn, setupTaskIn, clearTaskIn);
     }
 }

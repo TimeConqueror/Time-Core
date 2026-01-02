@@ -35,7 +35,7 @@ public class LayerImplTest {
         var layer = new LayerImpl(baseAnimationManager, new LayerDefinition("test", BlendType.ADD, 1.0F));
         basicLayer = spy(layer);
 
-        animation = new BasicAnimation(LoopMode.DO_NOT_LOOP, new ResourceLocation("namespace", "path"), "test", ANIMATION_LENGTH, Map.of());
+        animation = new BasicAnimation(LoopMode.DO_NOT_LOOP, ResourceLocation.fromNamespaceAndPath("namespace", "path"), "test", ANIMATION_LENGTH, Map.of());
     }
 
     @Test

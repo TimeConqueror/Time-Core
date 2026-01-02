@@ -2,14 +2,14 @@ package ru.timeconqueror.timecore.internal.common.command;
 
 import com.mojang.brigadier.CommandDispatcher;
 import net.minecraft.commands.CommandSourceStack;
-import net.minecraftforge.event.RegisterCommandsEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
-import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
-import ru.timeconqueror.timecore.api.common.command.ClientCommandDispatcher;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
+import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.neoforged.neoforge.event.RegisterCommandsEvent;
 
-@Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)//TODO DeferredRegister for commands
+//TODO DeferredRegister for commands
+@EventBusSubscriber
 public class CommandRegistrar {
     @SubscribeEvent
     public static void onSetup(FMLCommonSetupEvent event) {
@@ -24,12 +24,9 @@ public class CommandRegistrar {
 //        TimeCoreCommand.registerClient(commandDispatcher);
     }
 
-    @Mod.EventBusSubscriber
-    public static class ForgeBusCommandRegistrar {
-        @SubscribeEvent
-        public static void onServerStart(RegisterCommandsEvent event) {
-            CommandDispatcher<CommandSourceStack> commandDispatcher = event.getDispatcher();
-            TimeCoreCommand.register(commandDispatcher);
-        }
+    @SubscribeEvent
+    public static void onServerStart(RegisterCommandsEvent event) {
+        CommandDispatcher<CommandSourceStack> commandDispatcher = event.getDispatcher();
+        TimeCoreCommand.register(commandDispatcher);
     }
 }

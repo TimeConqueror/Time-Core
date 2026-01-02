@@ -1,10 +1,10 @@
 package ru.timeconqueror.timecore.api.registry;
 
 import lombok.extern.log4j.Log4j2;
-import net.minecraftforge.eventbus.api.Event;
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
-import net.minecraftforge.fml.event.lifecycle.ParallelDispatchEvent;
+import net.neoforged.bus.api.Event;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.fml.event.lifecycle.FMLLoadCompleteEvent;
+import net.neoforged.fml.event.lifecycle.ParallelDispatchEvent;
 import org.jetbrains.annotations.Nullable;
 import ru.timeconqueror.timecore.api.util.holder.Pair;
 import ru.timeconqueror.timecore.storage.Features;

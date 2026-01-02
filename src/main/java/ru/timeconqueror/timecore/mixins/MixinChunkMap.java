@@ -13,12 +13,12 @@ import ru.timeconqueror.timecore.internal.common.TimeEventHooks;
 
 @Mixin(ChunkMap.class)
 public abstract class MixinChunkMap {
-    @Inject(method = "playerLoadedChunk",
-            at = @At(value = "INVOKE",
-                    shift = At.Shift.AFTER,
-                    target = "Lnet/minecraft/server/level/ServerPlayer;trackChunk(Lnet/minecraft/world/level/ChunkPos;Lnet/minecraft/network/protocol/Packet;)V")
-    )
-    public void onPlayerLoadedChunk(ServerPlayer player_, MutableObject<ClientboundLevelChunkWithLightPacket> cachedDataPacket_, LevelChunk chunk_, CallbackInfo ci) {
-        TimeEventHooks.onChunkTrackingStart(player_, chunk_);
-    }
+//    @Inject(method = "playerLoadedChunk",
+//            at = @At(value = "INVOKE",
+//                    shift = At.Shift.AFTER,
+//                    target = "Lnet/minecraft/server/level/ServerPlayer;trackChunk(Lnet/minecraft/world/level/ChunkPos;Lnet/minecraft/network/protocol/Packet;)V")
+//    )
+//    public void onPlayerLoadedChunk(ServerPlayer player_, MutableObject<ClientboundLevelChunkWithLightPacket> cachedDataPacket_, LevelChunk chunk_, CallbackInfo ci) {
+//        TimeEventHooks.onChunkTrackingStart(player_, chunk_);
+//    }
 }

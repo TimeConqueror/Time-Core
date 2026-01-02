@@ -58,17 +58,8 @@ public class TimeModel extends Model implements ITimeModel {
     }
 
     @Override
-    public void renderToBuffer(PoseStack poseStack, VertexConsumer buffer, int packedLight, int packedOverlay, int rgba) {
-        renderToBuffer(poseStack, buffer, packedLight, packedOverlay,
-                DrawHelper.getRed(rgba) / 255F,
-                DrawHelper.getGreen(rgba) / 255F,
-                DrawHelper.getBlue(rgba) / 255F,
-                DrawHelper.getAlpha(rgba) / 255F);
-    }
-
-    @Override
-    public void renderToBuffer(PoseStack poseStack, VertexConsumer buffer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
-        getRoot().render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+    public void renderToBuffer(PoseStack poseStack, VertexConsumer buffer, int packedLight, int packedOverlay, int color) {
+        getRoot().render(poseStack, buffer, packedLight, packedOverlay, color);
     }
 
     private class ReloadableContainer extends TimeModelSet.ReloadListener {

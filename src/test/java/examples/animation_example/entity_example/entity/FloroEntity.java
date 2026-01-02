@@ -1,5 +1,6 @@
 package examples.animation_example.entity_example.entity;
 
+import cpw.mods.util.Lazy;
 import examples.animation_example.entity_example.registry.EntityAnimations;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -20,7 +21,6 @@ import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.monster.RangedAttackMob;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.common.util.Lazy;
 import org.jetbrains.annotations.NotNull;
 import ru.timeconqueror.timecore.animation.AnimationData;
 import ru.timeconqueror.timecore.animation.AnimationSystem;
@@ -95,10 +95,10 @@ public class FloroEntity extends Monster implements RangedAttackMob, AnimatedObj
 //                        .build())
 
     @Override
-    protected void defineSynchedData() {
-        super.defineSynchedData();
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        super.defineSynchedData(builder);
 
-        this.entityData.define(HIDDEN, true);
+        builder.define(HIDDEN, true);
     }
 
     @Override
@@ -118,7 +118,8 @@ public class FloroEntity extends Monster implements RangedAttackMob, AnimatedObj
     }
 
     @Override
-    public void onAddedToWorld() {
+    public void onAddedToLevel() {
+        super.onAddedToLevel();
         if (isEffectiveAi() && isHidden()) {
             startHiddenAnimation();
         }
@@ -232,11 +233,6 @@ public class FloroEntity extends Monster implements RangedAttackMob, AnimatedObj
 
     public @NotNull AnimationSystem<FloroEntity> animationSystem() {
         return animationSystem;
-    }
-
-    @Override
-    protected float getStandingEyeHeight(Pose poseIn, EntityDimensions sizeIn) {
-        return sizeIn.height * 0.78F;
     }
 
     private class FloroRevealingGoal extends Goal {

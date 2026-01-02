@@ -28,7 +28,7 @@ tasks.named('wrapper', Wrapper).configure {
     // documentation attached on cursor hover of gradle classes and methods. However, this comes with increased
     // file size for Gradle. If you do switch this to ALL, run the Gradle wrapper task twice afterwards.
     // (Verify by checking gradle/wrapper/gradle-wrapper.properties to see if distributionUrl now points to `-all`)
-    distributionType = Wrapper.DistributionType.BIN
+    distributionType = Wrapper.DistributionType.ALL
 }
 
 def mod_version = versionGetter.get()
@@ -143,8 +143,12 @@ neoForge {
             // You can set various levels here.
             // Please read: https://stackoverflow.com/questions/2031163/when-to-use-the-different-log-levels
             logLevel = org.slf4j.event.Level.DEBUG
+
+            sourceSet = sourceSets.test
         }
     }
+
+    addModdingDependenciesTo sourceSets.test
 
     mods {
         // define mod <-> source bindings
@@ -198,7 +202,7 @@ dependencies {
         }
     }
 
-    implementation 'thedarkcolour:kotlinforforge:6.0.0'
+    implementation 'thedarkcolour:kotlinforforge-neoforge:5.10.0'
     shade('gg.moonflower:molang-compiler:3.1.0-customized.6') {
         exclude group: "org.ow2.asm", module: "asm-tree"
     }
@@ -253,8 +257,6 @@ jar {
                 "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
         ])
     }
-
-    finalizedBy('reobfJar')
 }
 
 // Create source attachment for dev jar

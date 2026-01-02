@@ -2,17 +2,17 @@ package ru.timeconqueror.timecore.api.util;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
+import com.mojang.serialization.MapCodec;
 import net.minecraft.core.Direction;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraft.world.level.block.BlockTypes;
 import ru.timeconqueror.timecore.api.reflection.ReflectionHelper;
 import ru.timeconqueror.timecore.api.util.lookups.EnumLookup;
 
 import java.util.function.Function;
 
 public class ExtraCodecs {
-    public static Codec<Block> BLOCK = ResourceLocation.CODEC.comapFlatMap(location -> throwOnNull(location, ForgeRegistries.BLOCKS::getValue, Block.class), ForgeRegistries.BLOCKS::getKey);
+    public static MapCodec<Block> BLOCK = BlockTypes.CODEC;
 
     public static Codec<Direction> DIRECTION = Codec.STRING.comapFlatMap(name -> throwOnNull(name, Direction::byName, Direction.class), Direction::getName);
     public static Codec<Direction> HORIZONTAL_DIRECTION = Codec.INT.xmap(Direction::from2DDataValue, Direction::get2DDataValue);

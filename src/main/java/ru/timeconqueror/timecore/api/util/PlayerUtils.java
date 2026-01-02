@@ -7,8 +7,8 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.ChunkPos;
-import net.minecraftforge.server.ServerLifecycleHooks;
-import ru.timeconqueror.timecore.internal.common.packet.InternalPacketManager;
+import net.neoforged.neoforge.network.PacketDistributor;
+import net.neoforged.neoforge.server.ServerLifecycleHooks;
 import ru.timeconqueror.timecore.internal.common.packet.S2CKickPlayerFromSPPacket;
 
 import java.util.List;
@@ -86,7 +86,7 @@ public class PlayerUtils {
     @Beta // not tested
     public static void kickPlayer(ServerPlayer player, Component reason) {
         if (EnvironmentUtils.isOnPhysicalClient()) {// if it's an integrated server
-            InternalPacketManager.sendToPlayer(player, new S2CKickPlayerFromSPPacket(reason)); //TODO test
+            PacketDistributor.sendToPlayer(player, new S2CKickPlayerFromSPPacket(reason)); //TODO test
         } else {
             player.connection.disconnect(reason);
         }

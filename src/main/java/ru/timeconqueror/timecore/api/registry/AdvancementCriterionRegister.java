@@ -3,19 +3,19 @@ package ru.timeconqueror.timecore.api.registry;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.advancements.CriterionTrigger;
 import net.minecraft.advancements.CriterionTriggerInstance;
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import ru.timeconqueror.timecore.api.registry.base.TaskHolder;
 
 public class AdvancementCriterionRegister extends TimeRegister {
-    private final TaskHolder<CriterionTrigger<?>> criteria = TaskHolder.make(FMLCommonSetupEvent.class);
+    private final TaskHolder<Runnable> criteriaToRegister = TaskHolder.make(FMLCommonSetupEvent.class);
 
     public AdvancementCriterionRegister(String modid) {
         super(modid);
     }
 
-    public <I extends CriterionTriggerInstance, T extends CriterionTrigger<I>> T register(T criterion) {
-        criteria.add(criterion);
+    public <I extends CriterionTriggerInstance, T extends CriterionTrigger<I>> T register(String name, T criterion) {
+        criteriaToRegister.add(() -> CriteriaTriggers.register(getModId() + ":" + name, criterion));
         return criterion;
     }
 
@@ -26,6 +26,6 @@ public class AdvancementCriterionRegister extends TimeRegister {
     }
 
     private void onSetup(FMLCommonSetupEvent event) {
-        enqueueWork(event, () -> criteria.doForEachAndRemove(CriteriaTriggers::register));
+        enqueueWork(event, () -> criteriaToRegister.doForEachAndRemove(Runnable::run));
     }
 }

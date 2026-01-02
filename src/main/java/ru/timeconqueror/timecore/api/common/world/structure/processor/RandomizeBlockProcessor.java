@@ -1,10 +1,12 @@
 package ru.timeconqueror.timecore.api.common.world.structure.processor;
 
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.BlockTypes;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlaceSettings;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProcessor;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProcessorType;
@@ -16,10 +18,10 @@ import ru.timeconqueror.timecore.api.util.MathUtils;
 import ru.timeconqueror.timecore.api.util.RandHelper;
 
 public class RandomizeBlockProcessor extends StructureProcessor {
-    public static final Codec<RandomizeBlockProcessor> CODEC = RecordCodecBuilder.create(instance ->
+    public static final MapCodec<RandomizeBlockProcessor> CODEC = RecordCodecBuilder.mapCodec(instance ->
             instance
-                    .group(ExtraCodecs.BLOCK.fieldOf("to_replace").forGetter(p -> p.toReplace),
-                            ExtraCodecs.BLOCK.fieldOf("by").forGetter(p -> p.replacement))
+                    .group(BlockTypes.CODEC.fieldOf("to_replace").forGetter(p -> p.toReplace),
+                            BlockTypes.CODEC.fieldOf("by").forGetter(p -> p.replacement))
                     .apply(instance, RandomizeBlockProcessor::new)
     );
 

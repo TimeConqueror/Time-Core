@@ -56,7 +56,7 @@ class AnimationScriptImplTest {
 
     private Animation mockAndSetupAnimation(String id) {
         Animation animation = mock(Animation.class);
-        doReturn(new ResourceLocation(id)).when(animation).getId();
+        doReturn(ResourceLocation.parse(id)).when(animation).getId();
         return AnimationRegistry.registerAnimation(animation);
     }
 }

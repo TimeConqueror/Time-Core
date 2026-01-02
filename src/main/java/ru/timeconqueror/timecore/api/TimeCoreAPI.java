@@ -1,10 +1,10 @@
 package ru.timeconqueror.timecore.api;
 
-import net.minecraftforge.fml.ModContainer;
-import net.minecraftforge.fml.ModLoadingContext;
-import net.minecraftforge.fml.ModLoadingStage;
-import net.minecraftforge.forgespi.language.IModInfo;
-import net.minecraftforge.forgespi.language.ModFileScanData;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.fml.ModContainer;
+import net.neoforged.fml.ModLoadingContext;
+import net.neoforged.neoforgespi.language.IModInfo;
+import net.neoforged.neoforgespi.language.ModFileScanData;
 import ru.timeconqueror.timecore.internal.loading.ModInitializer;
 
 public class TimeCoreAPI {
@@ -19,13 +19,14 @@ public class TimeCoreAPI {
     public static void setup(Object modInstance) {
         ModLoadingContext modLoadingCtx = ModLoadingContext.get();
         ModContainer container = modLoadingCtx.getActiveContainer();
+        IEventBus eventBus = container.getEventBus();
 
-        if (container.getModId().equals("minecraft") || container.getCurrentState() != ModLoadingStage.CONSTRUCT) {
-            throw new IllegalStateException("This method should be called only in mod constructor!");
+        if(eventBus == null) {
+            throw new IllegalStateException("Mod %s is not the common one, because it doesn't have mod event bus to be used".formatted(container.getModId()));
         }
 
         IModInfo modInfo = container.getModInfo();
         ModFileScanData scanResult = modInfo.getOwningFile().getFile().getScanResult();
-        ModInitializer.run(container, scanResult, modInstance);
+        ModInitializer.run(eventBus, container, scanResult, modInstance);
     }
 }

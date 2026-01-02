@@ -1,6 +1,6 @@
 package ru.timeconqueror.timecore.api.common.config;
 
-import net.minecraftforge.fml.event.config.ModConfigEvent;
+import net.neoforged.fml.event.config.ModConfigEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -34,7 +34,7 @@ public abstract class ConfigSection implements ILoadListener {
      * <p>
      * Example:
      * <blockquote><pre>
-     * public ForgeConfigSpec.IntValue DETONATION_TIME;
+     * public ModConfigSpec.IntValue DETONATION_TIME;
      * public ConfigSectionImpl STAGE_1;
      *
      * &#64;Override

@@ -1,7 +1,8 @@
 package ru.timeconqueror.timecore.api.common.config;
 
-import net.minecraftforge.common.ForgeConfigSpec;
-import net.minecraftforge.fml.ModLoadingContext;
+
+import net.neoforged.fml.ModLoadingContext;
+import net.neoforged.neoforge.common.ModConfigSpec;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -18,7 +19,7 @@ import java.util.function.Supplier;
  * Improved builder which automatically adds lang keys, comments while building config properties.
  * Also it has a support of auto extendable lang prefixes.
  */
-public class ImprovedConfigBuilder extends ForgeConfigSpec.Builder {
+public class ImprovedConfigBuilder extends ModConfigSpec.Builder {
 
     private final String modid;
     /**
@@ -55,7 +56,7 @@ public class ImprovedConfigBuilder extends ForgeConfigSpec.Builder {
         pushWithLang(section.getKey());
     }
 
-    public <T> IQuickConfigValue<T> optimized(ForgeConfigSpec.ConfigValue<T> configValue) {
+    public <T> IQuickConfigValue<T> optimized(ModConfigSpec.ConfigValue<T> configValue) {
         IQuickConfigValue<T> quick = QuickConfigValue.fromConfigValue(configValue);
 
         rootSection.addLoadListener(quick);
@@ -63,7 +64,7 @@ public class ImprovedConfigBuilder extends ForgeConfigSpec.Builder {
         return quick;
     }
 
-    public <T, M> IQuickConfigValue<M> optimized(ForgeConfigSpec.ConfigValue<T> configValue, Function<T, M> forwardMapper, Function<M, T> backwardMapper) {
+    public <T, M> IQuickConfigValue<M> optimized(ModConfigSpec.ConfigValue<T> configValue, Function<T, M> forwardMapper, Function<M, T> backwardMapper) {
         IQuickConfigValue<M> quick = QuickConfigValue.fromConverter(() -> forwardMapper.apply(configValue.get()), m -> configValue.set(backwardMapper.apply(m)));
 
         rootSection.addLoadListener(quick);
@@ -73,10 +74,10 @@ public class ImprovedConfigBuilder extends ForgeConfigSpec.Builder {
 
     /**
      * Just adds extra functionality to the base define method.
-     * It isn't necessary to use it, you'd better look at {@link ForgeConfigSpec.Builder} define methods.
+     * It isn't necessary to use it, you'd better look at {@link ModConfigSpec.Builder} define methods.
      */
     @Override
-    public <T> ForgeConfigSpec.ConfigValue<T> define(List<String> path, ForgeConfigSpec.ValueSpec value, Supplier<T> defaultSupplier) {
+    public <T> ModConfigSpec.ConfigValue<T> define(List<String> path, ModConfigSpec.ValueSpec value, Supplier<T> defaultSupplier) {
         if (defValueToComment) {
             Object defaultVal = value.getDefault();
             if (defaultVal instanceof Enum) {
@@ -160,7 +161,7 @@ public class ImprovedConfigBuilder extends ForgeConfigSpec.Builder {
      *
      * @see #addAndSetupSection(ConfigSection)
      */
-    public ForgeConfigSpec.Builder pushWithLang(@NotNull String path) {
+    public ModConfigSpec.Builder pushWithLang(@NotNull String path) {
         pushI18nPrefix(path);
         return super.push(path);
     }
@@ -171,7 +172,7 @@ public class ImprovedConfigBuilder extends ForgeConfigSpec.Builder {
      * @param i18nPrefix prefix that will be added to lang key to be set in config property during its creation.
      * @see #addAndSetupSection(ConfigSection)
      */
-    public ForgeConfigSpec.Builder pushWithLang(String path, @NotNull String i18nPrefix) {
+    public ModConfigSpec.Builder pushWithLang(String path, @NotNull String i18nPrefix) {
         pushI18nPrefix(i18nPrefix);
         return super.push(path);
     }
@@ -199,7 +200,7 @@ public class ImprovedConfigBuilder extends ForgeConfigSpec.Builder {
      * <font color=yellow>For internal use, shouldn't be called. Overriding is fine.</font>
      */
     @Override
-    public ForgeConfigSpec build() {
+    public ModConfigSpec build() {
         return super.build();
     }
 }

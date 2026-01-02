@@ -6,6 +6,7 @@ import lombok.extern.log4j.Log4j2;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtAccounter;
 import net.minecraft.nbt.NbtIo;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
@@ -108,13 +109,13 @@ public class StructureIO {
         }
 
         try {
-            NbtIo.writeCompressed(structureTag, structurePath.toFile());
+            NbtIo.writeCompressed(structureTag, structurePath);
         } catch (IOException e) {
             log.error("Failed to write structure tag to file: {}", structurePath, e);
         }
     }
 
     private Optional<CompoundTag> loadStructureTagFromStream(InputStream stream) throws IOException {
-        return Optional.of(NbtIo.readCompressed(stream));
+        return Optional.of(NbtIo.readCompressed(stream, NbtAccounter.unlimitedHeap()));
     }
 }

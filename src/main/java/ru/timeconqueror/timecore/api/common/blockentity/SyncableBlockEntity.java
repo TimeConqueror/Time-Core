@@ -1,6 +1,7 @@
 package ru.timeconqueror.timecore.api.common.blockentity;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
@@ -24,53 +25,53 @@ public abstract class SyncableBlockEntity extends SimpleBlockEntity {
     }
 
     /**
-     * For saving/sending data use {@link #writeNBT(CompoundTag, SerializationType)}
+     * For saving/sending data use {@link #writeNBT(CompoundTag, SerializationType, HolderLookup.Provider)}
      */
     @NotNull
     @Override
-    public final void saveAdditional(@NotNull CompoundTag compound) {
-        writeNBT(compound, SerializationType.SAVE);
+    public final void saveAdditional(@NotNull CompoundTag compound, HolderLookup.Provider provider) {
+        writeNBT(compound, SerializationType.SAVE, provider);
     }
 
     /**
-     * For saving/sending data use {@link #readNBT(CompoundTag, SerializationType)}
+     * For saving/sending data use {@link #readNBT(CompoundTag, SerializationType, HolderLookup.Provider)}
      */
     @Override
-    public final void load(CompoundTag compound) {
+    public final void loadAdditional(CompoundTag compound, HolderLookup.Provider registries) {
         //If read from client side
         if (compound.contains("client_flag")) {
-            readNBT(compound, SerializationType.SYNC);
+            readNBT(compound, SerializationType.SYNC, registries);
         } else {
-            readNBT(compound, SerializationType.SAVE);
+            readNBT(compound, SerializationType.SAVE, registries);
         }
     }
 
     @OverridingMethodsMustInvokeSuper
-    protected void writeNBT(CompoundTag nbt, SerializationType type) {
-        super.saveAdditional(nbt);
+    protected void writeNBT(CompoundTag nbt, SerializationType type, HolderLookup.Provider registries) {
+        super.saveAdditional(nbt, registries);
     }
 
     @OverridingMethodsMustInvokeSuper
-    protected void readNBT(CompoundTag nbt, SerializationType type) {
-        super.load(nbt);
+    protected void readNBT(CompoundTag nbt, SerializationType type, HolderLookup.Provider registries) {
+        super.loadAdditional(nbt, registries);
     }
 
     @Nonnull
     @Override
-    public final CompoundTag getUpdateTag() {
+    public final CompoundTag getUpdateTag(HolderLookup.Provider registries) {
         CompoundTag compound = new CompoundTag();
 
-        writeNBT(compound, SerializationType.SYNC);
+        writeNBT(compound, SerializationType.SYNC, registries);
 
         compound.putByte("client_flag", (byte) 0);
         return compound;
     }
 
     @Override
-    public final void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt) {
+    public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt, HolderLookup.Provider registries) {
         CompoundTag compound = pkt.getTag();
 
-        readNBT(compound, SerializationType.SYNC);
+        readNBT(compound, SerializationType.SYNC, registries);
     }
 
     @Override

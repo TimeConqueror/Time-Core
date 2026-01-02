@@ -63,7 +63,7 @@ public class JsonAnimationParser {
             name = name.toLowerCase(Locale.ROOT);
 
             AnimationDefinition animationDefinition = GSON.fromJson(animationJson, AnimationDefinition.class);
-            BasicAnimation baked = animationDefinition.bake(new ResourceLocation(fileLocation.getNamespace(), fileLocation.getPath() + "/" + name), name);
+            BasicAnimation baked = animationDefinition.bake(ResourceLocation.fromNamespaceAndPath(fileLocation.getNamespace(), fileLocation.getPath() + "/" + name), name);
 
             animationMap.put(name, baked);
         }

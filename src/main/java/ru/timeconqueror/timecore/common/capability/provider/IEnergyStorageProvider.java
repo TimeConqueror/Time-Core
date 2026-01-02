@@ -1,7 +1,7 @@
 package ru.timeconqueror.timecore.common.capability.provider;
 
 import net.minecraft.core.Direction;
-import net.minecraftforge.energy.IEnergyStorage;
+import net.neoforged.neoforge.energy.IEnergyStorage;
 
 import javax.annotation.Nullable;
 

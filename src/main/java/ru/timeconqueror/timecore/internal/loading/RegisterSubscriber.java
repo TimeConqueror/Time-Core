@@ -2,7 +2,7 @@ package ru.timeconqueror.timecore.internal.loading;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
-import net.minecraftforge.eventbus.api.IEventBus;
+import net.neoforged.bus.api.IEventBus;
 import ru.timeconqueror.timecore.api.registry.TimeRegister;
 import ru.timeconqueror.timecore.api.registry.util.IOrderedRegister;
 

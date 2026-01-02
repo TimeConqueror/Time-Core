@@ -1,6 +1,6 @@
 package ru.timeconqueror.timecore.util;
 
-import net.minecraftforge.forgespi.language.ModFileScanData.AnnotationData;
+import net.neoforged.neoforgespi.language.ModFileScanData.AnnotationData;
 import org.objectweb.asm.Type;
 
 import java.util.Set;

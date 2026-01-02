@@ -1,16 +1,17 @@
 package ru.timeconqueror.timecore.api.registry;
 
-import net.minecraftforge.common.ForgeConfigSpec;
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.fml.ModLoadingContext;
-import net.minecraftforge.fml.event.config.ModConfigEvent;
-import net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent;
-import net.minecraftforge.fml.loading.FMLPaths;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.fml.ModLoadingContext;
+import net.neoforged.fml.event.config.ModConfigEvent;
+import net.neoforged.fml.event.lifecycle.FMLConstructModEvent;
+import net.neoforged.fml.loading.FMLPaths;
+import net.neoforged.neoforge.common.ModConfigSpec;
 import ru.timeconqueror.timecore.api.TimeCoreAPI;
 import ru.timeconqueror.timecore.api.common.config.Config;
 import ru.timeconqueror.timecore.api.common.config.ImprovedConfigBuilder;
 import ru.timeconqueror.timecore.api.registry.base.TaskHolder;
 import ru.timeconqueror.timecore.api.registry.util.AutoRegistrable;
+import ru.timeconqueror.timecore.api.util.EnvironmentUtils;
 import ru.timeconqueror.timecore.internal.common.config.TimeCoreConfigManager;
 
 import java.io.File;
@@ -72,15 +73,15 @@ public class ConfigRegister extends TimeRegister {
      */
     public void register(Config config) {
         String configPath = format(config.getRelativePath());
-        createParentDirs(FMLPaths.CONFIGDIR.get().resolve(configPath));
+        createParentDirs(EnvironmentUtils.getConfigDir().resolve(configPath));
 
         ImprovedConfigBuilder configBuilder = new ImprovedConfigBuilder(config);
         config.setup(configBuilder);
-        ForgeConfigSpec spec = configBuilder.build();
+        ModConfigSpec spec = configBuilder.build();
 
         CONFIG_LIST.add(config);
 
-        runnables.add(() -> ModLoadingContext.get().registerConfig(config.getType(), spec, configPath));
+        runnables.add(() -> ModLoadingContext.get().getActiveContainer().registerConfig(config.getType(), spec, configPath));
     }
 
 

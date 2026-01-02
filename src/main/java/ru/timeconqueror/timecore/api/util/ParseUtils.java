@@ -53,7 +53,7 @@ public class ParseUtils {
 
     public static DataResult<ResourceLocation> parseResourceLocation(String location) {
         try {
-            return DataResult.success(new ResourceLocation(location));
+            return DataResult.success(ResourceLocation.tryParse(location));
         } catch (ResourceLocationException e) {
             return DataResult.error(e::getMessage);
         }

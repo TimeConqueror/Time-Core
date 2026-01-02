@@ -3,17 +3,17 @@ package examples.visual_tests.animation.entity.client;
 import examples.visual_tests.animation.entity.client.render.RenderDebugBeacons;
 import examples.visual_tests.animation.entity.client.render.RenderTowerGuardian;
 import examples.visual_tests.animation.entity.registry.AnimTestEntityRegistry;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.event.EntityRenderersEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import ru.timeconqueror.timecore.TimeCore;
 import ru.timeconqueror.timecore.api.registry.TimeModelRegister;
 import ru.timeconqueror.timecore.api.registry.util.AutoRegistrable;
 import ru.timeconqueror.timecore.client.render.model.InFileLocation;
 
-@Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber
 public class AnimationTestEntityRenderers {
     @AutoRegistrable
     private static final TimeModelRegister REGISTER = new TimeModelRegister(TimeCore.MODID);

@@ -41,7 +41,7 @@ public class TimeModelPart extends ModelPart implements ITimeModelPart {
     }
 
     @Override
-    public void render(PoseStack poseStack, VertexConsumer bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha) {
+    public void render(PoseStack poseStack, VertexConsumer bufferIn, int packedLightIn, int packedOverlayIn, int color) {
         transformValid = true;
 
         if (this.visible) {
@@ -51,10 +51,10 @@ public class TimeModelPart extends ModelPart implements ITimeModelPart {
 
             lastTransform = poseStack.last();
 
-            this.compile(poseStack.last(), bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
+            compile(poseStack.last(), bufferIn, packedLightIn, packedOverlayIn, color);
 
             for (TimeModelPart part : this.children.values()) {
-                part.render(poseStack, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
+                part.render(poseStack, bufferIn, packedLightIn, packedOverlayIn, color);
             }
 
             poseStack.popPose();
@@ -75,9 +75,9 @@ public class TimeModelPart extends ModelPart implements ITimeModelPart {
         }
     }
 
-    private void compile(PoseStack.Pose pose, VertexConsumer bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha) {
+    private void compile(PoseStack.Pose pose, VertexConsumer bufferIn, int packedLightIn, int packedOverlayIn, int color) {
         for (TimeModelCube cube : cubes) {
-            cube.compile(pose, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
+            cube.compile(pose, bufferIn, packedLightIn, packedOverlayIn, color);
         }
     }
 

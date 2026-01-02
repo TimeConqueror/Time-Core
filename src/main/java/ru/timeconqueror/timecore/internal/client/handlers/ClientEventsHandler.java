@@ -6,13 +6,13 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
-import net.minecraftforge.client.event.InputEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.client.event.InputEvent;
 import org.lwjgl.glfw.GLFW;
 import ru.timeconqueror.timecore.internal.client.TKeyBinds;
 
-@Mod.EventBusSubscriber
+@EventBusSubscriber
 public class ClientEventsHandler {
     @SubscribeEvent
     public static void handleRawMouse(InputEvent.MouseButton.Pre event) {

@@ -3,8 +3,10 @@ package ru.timeconqueror.timecore.api.devtools.gen.loottable;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.loot.BlockLootSubProvider;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.flag.FeatureFlagSet;
 import net.minecraft.world.flag.FeatureFlags;
@@ -27,27 +29,27 @@ public abstract class TimeBlockLootSubProvider extends BlockLootSubProvider {
     @Setter
     private boolean errorUponMissingLootTable = true;
 
-    public TimeBlockLootSubProvider(String modId, Set<Item> explosionImmuneItems) {
-        super(explosionImmuneItems, FeatureFlags.REGISTRY.allFlags());
+    public TimeBlockLootSubProvider(String modId, Set<Item> explosionImmuneItems, HolderLookup.Provider registries) {
+        super(explosionImmuneItems, FeatureFlags.REGISTRY.allFlags(), registries);
         this.modId = modId;
     }
 
-    protected TimeBlockLootSubProvider(String modId, Set<Item> explosionImmuneItems, FeatureFlagSet requiredFeatures) {
-        super(explosionImmuneItems, requiredFeatures);
+    protected TimeBlockLootSubProvider(String modId, Set<Item> explosionImmuneItems, FeatureFlagSet requiredFeatures, HolderLookup.Provider registries) {
+        super(explosionImmuneItems, requiredFeatures, registries);
         this.modId = modId;
     }
 
-    protected TimeBlockLootSubProvider(String modId, Set<Item> explosionImmuneItems, FeatureFlagSet requiredFeatures, Map<ResourceLocation, LootTable.Builder> lootTables) {
-        super(explosionImmuneItems, requiredFeatures, lootTables);
+    protected TimeBlockLootSubProvider(String modId, Set<Item> explosionImmuneItems, FeatureFlagSet requiredFeatures, Map<ResourceKey<LootTable>, LootTable.Builder> lootTables, HolderLookup.Provider registries) {
+        super(explosionImmuneItems, requiredFeatures, lootTables, registries);
         this.modId = modId;
     }
 
     @Override
-    public void generate(BiConsumer<ResourceLocation, LootTable.Builder> biConsumer_) {
+    public void generate(BiConsumer<ResourceKey<LootTable>, LootTable.Builder> biConsumer_) {
         // almost copy-pasted from BlockLootSubProvider#generate(BiConsumer)
 
         this.generate();
-        Set<ResourceLocation> set = new HashSet<>();
+        Set<ResourceKey<LootTable>> set = new HashSet<>();
 
         for (Block block : getKnownBlocks()) {
             ResourceLocation key = BuiltInRegistries.BLOCK.getKey(block);
@@ -56,7 +58,7 @@ public abstract class TimeBlockLootSubProvider extends BlockLootSubProvider {
             }
 
             if (block.isEnabled(this.enabledFeatures)) {
-                ResourceLocation resourcelocation = block.getLootTable();
+                ResourceKey<LootTable> resourcelocation = block.getLootTable();
                 if (resourcelocation != BuiltInLootTables.EMPTY && set.add(resourcelocation)) {
                     LootTable.Builder loottable$builder = this.map.remove(resourcelocation);
                     if (loottable$builder == null) {

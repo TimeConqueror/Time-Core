@@ -2,7 +2,7 @@ package ru.timeconqueror.timecore.molang;
 
 import gg.moonflower.molangcompiler.api.MolangCompiler;
 import lombok.extern.log4j.Log4j2;
-import net.minecraftforge.forgespi.language.ModFileScanData;
+import net.neoforged.neoforgespi.language.ModFileScanData;
 import org.objectweb.asm.Type;
 import ru.timeconqueror.molang.custom.QueryDomain;
 import ru.timeconqueror.timecore.api.Markers;

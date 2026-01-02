@@ -5,15 +5,14 @@ import com.google.common.collect.Multimap;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.eventbus.api.EventPriority;
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.ModContainer;
-import net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.forgespi.language.ModFileScanData;
-import net.minecraftforge.registries.IForgeRegistry;
-import net.minecraftforge.registries.RegisterEvent;
+import net.neoforged.bus.api.EventPriority;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.ModContainer;
+import net.neoforged.fml.ModLoadingContext;
+import net.neoforged.fml.event.lifecycle.FMLConstructModEvent;
+import net.neoforged.neoforge.registries.RegisterEvent;
+import net.neoforged.neoforgespi.language.ModFileScanData;
 import org.jetbrains.annotations.Nullable;
 import org.objectweb.asm.Type;
 import ru.timeconqueror.timecore.TimeCore;
@@ -28,7 +27,7 @@ import ru.timeconqueror.timecore.api.registry.VanillaRegister;
 import ru.timeconqueror.timecore.api.registry.util.AutoRegistrable;
 import ru.timeconqueror.timecore.api.registry.util.AutoRegistrable.Entries;
 import ru.timeconqueror.timecore.api.registry.util.AutoRegistrable.Init;
-import ru.timeconqueror.timecore.common.KotlinAutomaticEventSubscriber;
+import ru.timeconqueror.timecore.api.util.Utils;
 import ru.timeconqueror.timecore.molang.MolangLoader;
 import ru.timeconqueror.timecore.util.AnnoScanningHelper;
 
@@ -42,26 +41,15 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
-import static net.minecraftforge.fml.Logging.LOADING;
-
 public class ModInitializer {
     private static final Type TIME_AUTO_REG_TYPE = Type.getType(AutoRegistrable.class);
     private static final Type TIME_AUTO_REG_INIT_TYPE = Type.getType(Init.class);
     private static final Type TIME_AUTO_ENTRIES_TYPE = Type.getType(Entries.class);
 
-    public static synchronized void run(ModContainer modContainer, ModFileScanData scanResults, Object mod) {
+    public static synchronized void run(IEventBus modEventBus, ModContainer modContainer, ModFileScanData scanResults, Object mod) {
         TimeCore.LOGGER.debug("Setting up TimeCore components for {}", modContainer.getModId());
 
-        IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
-        modEventBus.addListener(EventPriority.HIGHEST, (FMLConstructModEvent event) -> {
-            if (!modContainer.matches(mod)) {
-                throw new IllegalArgumentException(String.format("Object being provided as mod (%s) doesn't match the one (%s) in the container.", mod.getClass(), modContainer.getMod().getClass()));
-            }
-        });
-
         String modId = modContainer.getModId();
-
-        runKotlinAutomaticEventSubscriber(modId, modContainer, scanResults, mod.getClass());
 
         setupAutoRegistries(scanResults, modContainer, modEventBus);
 
@@ -69,13 +57,7 @@ public class ModInitializer {
         MolangLoader.handleQueryDomainAnnotations(scanResults);
     }
 
-    private static void runKotlinAutomaticEventSubscriber(String modId, ModContainer modContainer, ModFileScanData scanResults, Class<?> modClass) {
-        TimeCore.LOGGER.debug(LOADING, "Injecting Automatic event subscribers for {}", modId);
-        KotlinAutomaticEventSubscriber.inject(modContainer, scanResults, modClass.getClassLoader());
-        TimeCore.LOGGER.debug(LOADING, "Completed Automatic event subscribers for {}", modId);
-    }
-
-    private static void setupAutoRegistries(ModFileScanData scanResults, ModContainer mod, IEventBus eventBus) {
+    private static void setupAutoRegistries(ModFileScanData scanResults, ModContainer mod, IEventBus modEventBus) {
         Multimap<ResourceKey<?>, Stream<ParentableField>> holderFillers = ArrayListMultimap.create();
         List<TimeRegister> registers = new ArrayList<>();
         List<Runnable> initMethods = new ArrayList<>();
@@ -92,7 +74,7 @@ public class ModInitializer {
                         if (type.equals(TIME_AUTO_REG_TYPE)) {
                             processAutoRegistrable(containerClass, annotationData, registers::add);
                         } else if (type.equals(TIME_AUTO_REG_INIT_TYPE)) {
-                            processTimeAutoRegInitMethod(containerClass, annotationData, initMethods::add);
+                            processTimeAutoRegInitMethod(containerClass, annotationData, initMethods::add, modEventBus);
                         } else {
                             processEntries(containerClass, annotationData, holderFillers::put);
                         }
@@ -101,8 +83,8 @@ public class ModInitializer {
                     }
                 });
 
-        FMLJavaModLoadingContext.get().getModEventBus().register(new EntryFiller(mod.getModId(), holderFillers));
-        RegisterSubscriber.regToBus(registers, eventBus);
+        modEventBus.register(new EntryFiller(mod.getModId(), holderFillers));
+        RegisterSubscriber.regToBus(registers, modEventBus);
         processInitMethods(initMethods);
     }
 
@@ -110,11 +92,11 @@ public class ModInitializer {
         String registryKeyName = "value";
         String registryKeyStr = AnnoScanningHelper.getData(annotationData, registryKeyName);
 
-        if (!ResourceLocation.isValidResourceLocation(registryKeyStr)) {
+        if (!Utils.isValidResourceLocation(registryKeyStr)) {
             throw new IllegalArgumentException(String.format("Class %s is annotated with invalid %s: '%s'", containerClass.getSimpleName(), registryKeyName, registryKeyStr));
         }
 
-        ResourceLocation regKeyLoc = new ResourceLocation(registryKeyStr);
+        ResourceLocation regKeyLoc = ResourceLocation.parse(registryKeyStr);
         ResourceKey<?> regKey = ResourceKey.createRegistryKey(regKeyLoc);
 
         Stream<ParentableField> fields;
@@ -166,7 +148,7 @@ public class ModInitializer {
         }
     }
 
-    private static void processTimeAutoRegInitMethod(Class<?> containerClass, ModFileScanData.AnnotationData annotationData, Consumer<Runnable> preConstructMethodRegistrator) throws ClassNotFoundException {
+    private static void processTimeAutoRegInitMethod(Class<?> containerClass, ModFileScanData.AnnotationData annotationData, Consumer<Runnable> preConstructMethodRegistrator, IEventBus modEventBus) throws ClassNotFoundException {
         String methodSignature = annotationData.memberName();
 
         ClassHandler handler = ClassHandlers.findHandler(containerClass);
@@ -183,7 +165,7 @@ public class ModInitializer {
         if (nativeMethod.getParameterCount() == 0) {
             preConstructMethodRegistrator.accept(() -> handler.invokeStaticMethod(initMethod));
         } else if (nativeMethod.getParameterCount() == 1 && FMLConstructModEvent.class.isAssignableFrom(nativeMethod.getParameterTypes()[0])) {
-            FMLJavaModLoadingContext.get().getModEventBus().addListener(EventPriority.HIGHEST, (FMLConstructModEvent event) -> handler.invokeStaticMethod(initMethod, event));
+            modEventBus.addListener(EventPriority.HIGHEST, (FMLConstructModEvent event) -> handler.invokeStaticMethod(initMethod, event));
         } else {
             throw new UnsupportedOperationException(Init.class.getSimpleName() + " can be used only on methods with " + FMLConstructModEvent.class.getName() + " parameter or without any parameters. Error is in: " + initMethod);
         }
@@ -210,24 +192,13 @@ public class ModInitializer {
                     .forEach(parentableField -> {
                         Field field = parentableField.self();
                         String name = field.getName().toLowerCase();
-                        ResourceLocation registryName = new ResourceLocation(modId, name);
+                        ResourceLocation registryName = ResourceLocation.fromNamespaceAndPath(modId, name);
 
-                        Object value = null;
                         boolean error = false;
-                        IForgeRegistry<Object> forgeRegistry = e.getForgeRegistry();
-                        Registry<Object> vanillaRegistry = e.getVanillaRegistry();
-                        if (forgeRegistry != null) {
-                            value = forgeRegistry.getValue(registryName);
-
-                            if (value == forgeRegistry.getValue(forgeRegistry.getDefaultKey())) {
-                                error = true;
-                            }
-                        } else if (vanillaRegistry != null) {
-                            value = vanillaRegistry.get(registryName);
-
-                            if (value == null) {
-                                error = true;
-                            }
+                        Registry<?> registry = e.getRegistry();
+                        Object value = registry.get(registryName);
+                        if (value == null) {
+                            error = true;
                         }
 
                         if (error) {

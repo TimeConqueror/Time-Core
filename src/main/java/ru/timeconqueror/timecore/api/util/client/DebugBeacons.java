@@ -18,18 +18,11 @@ public class DebugBeacons {
     private static void buildLine(VertexConsumer builder, PoseStack stack, Vec3 vec1, Vec3 vec2, int argb) {
         Matrix4f pose = stack.last().pose();
 
-        int r = DrawHelper.getRed(argb);
-        int g = DrawHelper.getGreen(argb);
-        int b = DrawHelper.getBlue(argb);
-        int a = DrawHelper.getAlpha(argb);
-
-        builder.vertex(pose, (float) vec1.x(), (float) vec1.y(), (float) vec1.z())
-                .color(r, g, b, a)
-                .normal((float) vec1.x(), (float) vec1.y(), (float) vec1.z())
-                .endVertex();
-        builder.vertex(pose, (float) vec2.x(), (float) vec2.y(), (float) vec2.z())
-                .color(r, g, b, a)
-                .normal((float) vec1.x(), (float) vec1.y(), (float) vec1.z())
-                .endVertex();
+        builder.addVertex(pose, (float) vec1.x(), (float) vec1.y(), (float) vec1.z())
+                .setColor(argb)
+                .setNormal((float) vec1.x(), (float) vec1.y(), (float) vec1.z());
+        builder.addVertex(pose, (float) vec2.x(), (float) vec2.y(), (float) vec2.z())
+                .setColor(argb)
+                .setNormal((float) vec1.x(), (float) vec1.y(), (float) vec1.z());
     }
 }

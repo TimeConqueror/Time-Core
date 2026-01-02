@@ -4,13 +4,14 @@ import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.fml.loading.FMLEnvironment;
-import net.minecraftforge.fml.loading.FMLLoader;
-import net.minecraftforge.fml.loading.FMLPaths;
-import net.minecraftforge.registries.ForgeRegistry;
-import net.minecraftforge.registries.RegistryManager;
-import net.minecraftforge.server.ServerLifecycleHooks;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.fml.loading.FMLEnvironment;
+import net.neoforged.fml.loading.FMLLoader;
+import net.neoforged.fml.loading.FMLPaths;
+import net.neoforged.fml.loading.targets.CommonLaunchHandler;
+import net.neoforged.neoforge.registries.NeoForgeRegistries;
+import net.neoforged.neoforge.registries.RegistryManager;
+import net.neoforged.neoforge.server.ServerLifecycleHooks;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.core.Filter;
@@ -19,6 +20,8 @@ import org.apache.logging.log4j.core.filter.MarkerFilter;
 import org.apache.logging.log4j.message.Message;
 import org.apache.logging.log4j.message.ParameterizedMessage;
 import ru.timeconqueror.timecore.TimeCore;
+import ru.timeconqueror.timecore.api.reflection.ReflectionHelper;
+import ru.timeconqueror.timecore.api.reflection.UnlockedField;
 import ru.timeconqueror.timecore.mixins.accessor.MinecraftServerAccessor;
 
 import java.nio.file.Path;
@@ -27,6 +30,8 @@ import java.util.Arrays;
 import java.util.List;
 
 public class EnvironmentUtils {
+    private static final UnlockedField<FMLLoader, CommonLaunchHandler> FML_LOADER_COMMON_LAUNCH_HANDLER_FIELD = ReflectionHelper.findField(FMLLoader.class, "commonLaunchHandler");
+
     public static boolean isOnPhysicalClient() {
         return FMLEnvironment.dist == Dist.CLIENT;
     }
@@ -39,8 +44,9 @@ public class EnvironmentUtils {
         return !FMLEnvironment.production;
     }
 
+    //TODO check while porting to 1.21.1
     public static boolean isInDataMode() {
-        return FMLLoader.getLaunchHandler().isData();
+        return FML_LOADER_COMMON_LAUNCH_HANDLER_FIELD.get(null).isData();
     }
 
     public static Path getWorldSaveDir() {
@@ -145,15 +151,7 @@ public class EnvironmentUtils {
         return new ParameterizedMessage(message, arguments);
     }
 
-    public static <E> ForgeRegistry<E> getForgeRegistry(ResourceLocation registryName) {
-        return RegistryManager.ACTIVE.getRegistry(registryName);
-    }
-
     public static Registry<?> getVanillaRegistry(ResourceLocation registryName) {
         return BuiltInRegistries.REGISTRY.get(registryName);
-    }
-
-    public static boolean registryExists(ResourceLocation registryName) {
-        return getForgeRegistry(registryName) != null || getVanillaRegistry(registryName) != null;
     }
 }

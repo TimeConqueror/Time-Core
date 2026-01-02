@@ -4,9 +4,7 @@
   "compatibilityLevel": "JAVA_21",
   "mixins": [
     "MixinChunkMap",
-    "MixinLivingEntity",
     "NoiseChunkGeneratorMixin",
-    "accessor.CapabilityManagerAccessor",
     "accessor.ChunkGeneratorAccessor",
     "accessor.ChunkMapAccessor",
     "accessor.GatherDataEventAccessor",

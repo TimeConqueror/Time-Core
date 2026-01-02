@@ -1,6 +1,6 @@
 package ru.timeconqueror.timecore.internal.common.config;
 
-import net.minecraftforge.common.ForgeConfigSpec.ValueSpec;
+import net.neoforged.neoforge.common.ModConfigSpec.ValueSpec;
 import ru.timeconqueror.timecore.api.reflection.ReflectionHelper;
 import ru.timeconqueror.timecore.api.reflection.UnlockedField;
 

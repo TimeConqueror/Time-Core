@@ -1,7 +1,7 @@
 package ru.timeconqueror.timecore.internal.common.config;
 
-import net.minecraftforge.common.ForgeConfigSpec;
-import net.minecraftforge.fml.event.config.ModConfigEvent;
+import net.neoforged.fml.event.config.ModConfigEvent;
+import net.neoforged.neoforge.common.ModConfigSpec;
 import ru.timeconqueror.timecore.api.common.config.IConfigValDelegate;
 import ru.timeconqueror.timecore.api.common.config.IQuickConfigValue;
 
@@ -17,7 +17,7 @@ public class QuickConfigValue<T> implements IQuickConfigValue<T> {
         this.valueDelegate = valueDelegate;
     }
 
-    public static <T> IQuickConfigValue<T> fromConfigValue(ForgeConfigSpec.ConfigValue<T> configValue) {
+    public static <T> IQuickConfigValue<T> fromConfigValue(ModConfigSpec.ConfigValue<T> configValue) {
         return new QuickConfigValue<>(new ConfigValDelegate<>(configValue));
     }
 
@@ -47,9 +47,9 @@ public class QuickConfigValue<T> implements IQuickConfigValue<T> {
     }
 
     public static class ConfigValDelegate<T> implements IConfigValDelegate<T> {
-        private final ForgeConfigSpec.ConfigValue<T> configValue;
+        private final ModConfigSpec.ConfigValue<T> configValue;
 
-        public ConfigValDelegate(ForgeConfigSpec.ConfigValue<T> configValue) {
+        public ConfigValDelegate(ModConfigSpec.ConfigValue<T> configValue) {
             this.configValue = configValue;
         }
 

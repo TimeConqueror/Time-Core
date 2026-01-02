@@ -1,7 +1,7 @@
 package ru.timeconqueror.timecore.api.registry.util;
 
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.fml.event.lifecycle.FMLConstructModEvent;
 import ru.timeconqueror.timecore.api.registry.TimeRegister;
 
 import java.lang.annotation.ElementType;

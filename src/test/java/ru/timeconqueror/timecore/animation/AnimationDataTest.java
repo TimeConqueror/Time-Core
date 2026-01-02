@@ -29,7 +29,7 @@ class AnimationDataTest {
     @BeforeEach
     public void setup() {
         animation = mock(Animation.class);
-        doReturn(new ResourceLocation("test")).when(animation).getId();
+        doReturn(ResourceLocation.parse("test")).when(animation).getId();
         AnimationRegistry.registerAnimation(animation);
     }
 

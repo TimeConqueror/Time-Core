@@ -2,8 +2,8 @@ package ru.timeconqueror.timecore.api.devtools.gen.advancement;
 
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.DataProvider;
-import net.minecraftforge.common.data.ForgeAdvancementProvider;
-import net.minecraftforge.data.event.GatherDataEvent;
+import net.neoforged.neoforge.common.data.AdvancementProvider;
+import net.neoforged.neoforge.data.event.GatherDataEvent;
 
 import java.util.List;
 
@@ -13,8 +13,8 @@ public class DataGeneration {
      *
      * @see AdvancementProviderExtKt
      */
-    public static DataProvider.Factory<ForgeAdvancementProvider> advancementProvider(GatherDataEvent event, ForgeAdvancementProvider.AdvancementGenerator... generators) {
-        return output_ -> new ForgeAdvancementProvider(output_, event.getLookupProvider(), event.getExistingFileHelper(), List.of(generators));
+    public static DataProvider.Factory<AdvancementProvider> advancementProvider(GatherDataEvent event, AdvancementProvider.AdvancementGenerator... generators) {
+        return output_ -> new AdvancementProvider(output_, event.getLookupProvider(), event.getExistingFileHelper(), List.of(generators));
     }
 
     /**

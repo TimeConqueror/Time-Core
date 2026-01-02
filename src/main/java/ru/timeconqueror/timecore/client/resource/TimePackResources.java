@@ -1,6 +1,7 @@
 package ru.timeconqueror.timecore.client.resource;
 
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.PackLocationInfo;
 import net.minecraft.server.packs.PackResources;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.metadata.MetadataSectionSerializer;
@@ -16,10 +17,11 @@ import java.util.Set;
 
 @ParametersAreNonnullByDefault
 public class TimePackResources implements PackResources {
-    private final String packId;
+    private final PackLocationInfo location;
 
-    public TimePackResources(String packId) {
-        this.packId = packId;
+
+    public TimePackResources(PackLocationInfo location) {
+        this.location = location;
     }
 
     @Nullable
@@ -58,9 +60,8 @@ public class TimePackResources implements PackResources {
     }
 
     @Override
-    @NotNull
-    public String packId() {
-        return packId;
+    public PackLocationInfo location() {
+        return location;
     }
 
     @Override

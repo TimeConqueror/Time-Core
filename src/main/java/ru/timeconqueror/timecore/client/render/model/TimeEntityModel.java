@@ -31,17 +31,8 @@ public class TimeEntityModel<T extends Entity> extends EntityModel<T> implements
     }
 
     @Override
-    public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int light, int overlay, int rgbaColor) {
-        renderToBuffer(poseStack, vertexConsumer, light, overlay,
-                DrawHelper.getRed(rgbaColor) / 255F,
-                DrawHelper.getGreen(rgbaColor) / 255F,
-                DrawHelper.getBlue(rgbaColor) / 255F,
-                DrawHelper.getAlpha(rgbaColor) / 255F);
-    }
-
-    @Override
-    public void renderToBuffer(PoseStack matrixStackIn, VertexConsumer bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha) {
-        model.renderToBuffer(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
+    public void renderToBuffer(PoseStack matrixStackIn, VertexConsumer bufferIn, int packedLightIn, int packedOverlayIn, int rgba) {
+        model.renderToBuffer(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, rgba);
     }
 
     @Override

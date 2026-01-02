@@ -7,10 +7,10 @@ import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
-import net.minecraftforge.data.event.GatherDataEvent;
-import net.minecraftforge.eventbus.api.EventPriority;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.neoforged.bus.api.EventPriority;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.data.event.GatherDataEvent;
 import ru.timeconqueror.timecore.api.util.EnvironmentUtils;
 import ru.timeconqueror.timecore.mixins.accessor.GatherDataEventAccessor;
 import ru.timeconqueror.timecore.storage.Storage;
@@ -44,7 +44,7 @@ import java.util.LinkedHashMap;
  * </blockquote>
  */
 @Log4j2
-@Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber
 public class LangGeneratorFacade {
     private final LangJsonGenerator generator = new LangJsonGenerator();
     private final HashMap<String, LangSection<?>> sections = new LinkedHashMap<>();

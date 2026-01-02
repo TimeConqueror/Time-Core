@@ -1,11 +1,13 @@
 package examples.animation_example.block_example.block;
 
+import com.mojang.serialization.MapCodec;
 import examples.animation_example.block_example.registry.ABlockEntityRegistry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.LecternBlock;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
@@ -18,10 +20,17 @@ import ru.timeconqueror.timecore.api.util.ITickableBlockEntity;
 import javax.annotation.Nullable;
 
 public class HeatCubeBlock extends BaseEntityBlock {
+    public static final MapCodec<HeatCubeBlock> CODEC = simpleCodec(HeatCubeBlock::new);
+
     private static final VoxelShape SHAPE = Block.box(2, 0, 2, 14, 12, 14);
 
     public HeatCubeBlock(Properties properties) {
         super(properties);
+    }
+
+    @Override
+    protected MapCodec<? extends BaseEntityBlock> codec() {
+        return CODEC;
     }
 
     @Override

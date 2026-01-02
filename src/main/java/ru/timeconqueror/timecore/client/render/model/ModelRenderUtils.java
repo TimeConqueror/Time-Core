@@ -15,7 +15,7 @@ public class ModelRenderUtils {
         matrixStack.translate(0.5F, 0, 0.5F);
 
         matrixStack.scale(-1, -1, 1);
-        model.renderToBuffer(matrixStack, buffer.getBuffer(model.renderType(texture)), combinedLightIn, combinedOverlayIn, 1, 1, 1, 1);
+        model.renderToBuffer(matrixStack, buffer.getBuffer(model.renderType(texture)), combinedLightIn, combinedOverlayIn, 0xFFFFFFFF);
 
         matrixStack.popPose();
     }
