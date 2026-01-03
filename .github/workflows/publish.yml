@@ -1,9 +1,9 @@
-name: Publish
+name: Build
 
-on: [ push ]
+on: [push]
 
 jobs:
-  publish:
+  build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -24,6 +24,13 @@ jobs:
 
       - name: Make Gradle wrapper executable
         run: chmod +x ./gradlew
+
+      - name: Get current version
+        id: get_version
+        run: |
+          VERSION=$(./gradlew printVersion -q)
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "Published version: $VERSION"
 
       - name: Publish
         run: |
@@ -55,5 +62,5 @@ jobs:
         if: steps.check_changes.outputs.changes_exist == 'true'
         run: |
           git add .
-          git commit -m "Auto-increment build number [skip ci]"
+          git commit -m "Increment build number (published version: ${{ steps.get_version.outputs.version }}) [skip ci]"
           git push origin HEAD:${{ github.ref_name }}
