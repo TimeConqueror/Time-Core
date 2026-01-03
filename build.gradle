@@ -16,7 +16,7 @@ plugins {
     id "io.freefair.lombok" version "9.1.0"
     id("com.gradleup.shadow") version "9.3.0"
 
-    id("ru.timeconqueror.version-handler") version "1.0.19"
+    id("ru.timeconqueror.version-handler") version "1.0.20"
 }
 
 //apply plugin: 'org.spongepowered.mixin'
