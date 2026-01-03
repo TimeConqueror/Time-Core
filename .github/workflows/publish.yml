@@ -25,7 +25,7 @@ jobs:
       - name: Prepare Gradle
         run: chmod +x ./gradlew
 
-      - name: Get current version (false start)
+      - name: Get current version (false start to download gradle)
         run: ./gradlew printVersion -q
 
       - name: Get current version
@@ -65,5 +65,5 @@ jobs:
         if: steps.check_changes.outputs.changes_exist == 'true'
         run: |
           git add .
-          git commit -m "Increment build number (published version: ${{ steps.get_version.outputs.version }}) [skip ci]"
+          git commit -m "[Version published: ${{ steps.get_version.outputs.version }}]. Increment build number [skip ci]"
           git push origin HEAD:${{ github.ref_name }}
