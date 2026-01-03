@@ -53,18 +53,6 @@ class SimpleNameTest {
         assertEquals("outer/inner_class", convertClassNameToSnake("Outer$inner_class"));
     }
 
-//    @Test
-//    public void testSnakeCaseOf() {
-//        String s = SimpleName.snakeCasedOf(SimpleNameTest.class);
-//        Assertions.assertEquals("simple_name_test", s);
-//    }
-//
-//    @Test
-//    public void testSnakeCaseOfInnerClass() {
-//        String s = SimpleName.snakeCasedOf(Inner.class);
-//        Assertions.assertEquals("simple_name_test/inner_class", s);
-//    }
-
     public static class Inner {
         public static class TwiceInner {
 

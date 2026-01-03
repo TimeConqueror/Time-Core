@@ -16,6 +16,7 @@ public class CodecUtils {
     public static final NbtOps NBT_OPS = NbtOps.INSTANCE;
     public static final JsonOps JSON_OPS = JsonOps.INSTANCE;
 
+
     public static <T, SERIALIZED> T decodeSoftly(Codec<T> codec, DynamicOps<SERIALIZED> ops, SERIALIZED input, T defaultVal) {
         return codec.decode(ops, input).result().map(Pair::getFirst).orElse(defaultVal);
     }

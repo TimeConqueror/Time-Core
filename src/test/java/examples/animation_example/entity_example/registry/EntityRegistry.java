@@ -6,6 +6,7 @@ import examples.animation_example.entity_example.entity.FloroMudEntity;
 import net.minecraft.client.renderer.entity.ThrownItemRenderer;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
+import net.minecraft.world.item.CreativeModeTabs;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -32,9 +33,9 @@ public class EntityRegistry {
                                 .setTrackingRange(80)
                                 .setShouldReceiveVelocityUpdates(true)
                                 .sized(1, 2)
-                                .eyeHeight(0.78F)
+                                .eyeHeight(1.56F)
                 )
-          //      .spawnEgg(0xFF00FF00, 0xFF000000, CreativeModeTabs.TOOLS_AND_UTILITIES)
+                .spawnEgg(0xFF00FF00, 0xFF000000, CreativeModeTabs.SPAWN_EGGS)
                 .attributes(() -> FloroEntity.createAttributes().build());
 
         REGISTER.register("floro_proj",

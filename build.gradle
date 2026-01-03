@@ -14,13 +14,17 @@ plugins {
     id 'org.jetbrains.kotlin.plugin.lombok' version '2.2.20'
 
     id "io.freefair.lombok" version "9.1.0"
-    id 'com.github.johnrengelman.shadow' version "8.1.1"
+    id("com.gradleup.shadow") version "9.3.0"
+
+    id("ru.timeconqueror.version-handler") version "1.0.19"
 }
 
 //apply plugin: 'org.spongepowered.mixin'
 
-apply from: 'gradle/scripts/configs.gradle'
-apply from: 'gradle/scripts/version_handler.gradle'
+versionConfig {
+    buildPropsFile.set(file("build.properties"))
+    versionPrefix.set(minecraft_version + '-')
+}
 
 tasks.named('wrapper', Wrapper).configure {
     // Define wrapper values here so as to not have to always do so when updating gradlew.properties.
@@ -31,8 +35,6 @@ tasks.named('wrapper', Wrapper).configure {
     distributionType = Wrapper.DistributionType.ALL
 }
 
-def mod_version = versionGetter.get()
-version = minecraft_version + '-' + mod_version
 group = mod_group_id
 
 base {
@@ -236,7 +238,7 @@ var generateModMetadata = tasks.register("generateModMetadata", ProcessResources
             mod_id                 : mod_id,
             mod_name               : mod_name,
             mod_license            : mod_license,
-            mod_version            : mod_version,
+            mod_version            : version,
             mod_authors            : mod_authors,
             mod_description        : mod_description,
             kff_version_range      : kff_version_range,
@@ -282,8 +284,9 @@ shadowJar {
 }
 tasks.build.dependsOn shadowJar
 
-
-def inProjectMaven = "${project.projectDir.absolutePath.replace("\\", "/")}/maven"
+def deps = configurations.implementation.dependencies.findAll {
+    it.name == 'kotlinforforge' || it.name == 'molang-compiler'
+}
 
 publishing {
     publications {
@@ -293,40 +296,26 @@ publishing {
             artifact sourcesJar
 
             pom.withXml {
-                project.configurations.named('implementation') {
-                    def dependenciesNode = asNode().appendNode('dependencies')
-                    for (final def dep in dependencies) {
-                        if (dep.name == 'kotlinforforge' || dep.name == 'molang-compiler') {
-                            def dependencyNode = dependenciesNode.appendNode('dependency')
-                            dependencyNode.appendNode('groupId', dep.group)
-                            dependencyNode.appendNode('artifactId', dep.name)
-                            dependencyNode.appendNode('version', dep.version)
-                        }
-                    }
+                def dependenciesNode = asNode().appendNode('dependencies')
+                deps.each { dep ->
+                    def dependencyNode = dependenciesNode.appendNode('dependency')
+                    dependencyNode.appendNode('groupId', dep.group)
+                    dependencyNode.appendNode('artifactId', dep.name)
+                    dependencyNode.appendNode('version', dep.version)
                 }
             }
         }
     }
     repositories {
         maven {
-            url inProjectMaven
-        }
-        if (secretProps != null) {
-            maven {
-                url "https://repo.repsy.io/mvn/${secretProps.repsy.user}/${secretProps.repsy.repo_name}"
-                credentials {
-                    username secretProps.repsy.login
-                    password secretProps.repsy.password
-                }
+            url "https://repo.repsy.io/mvn/${project.findProperty('repsy.user')}/${project.findProperty('repsy.repo_name')}"
+            credentials {
+                username project.findProperty('repsy.login')
+                password project.findProperty('repsy.password')
             }
         }
     }
 }
-
-task printVersion {
-    println("Compiled version: $version")
-}
-publish.finalizedBy(printVersion)
 
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation

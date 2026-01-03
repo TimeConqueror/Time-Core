@@ -1,0 +1,59 @@
+name: Publish
+
+on: [ push ]
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Make Gradle wrapper executable
+        run: chmod +x ./gradlew
+
+      - name: Publish
+        run: |
+          ./gradlew publish \
+            -Prepsy.user="${{ secrets.REPSY_USER }}" \
+            -Prepsy.repo_name="${{ secrets.REPSY_REPO_NAME }}" \
+            -Prepsy.login="${{ secrets.REPSY_LOGIN }}" \
+            -Prepsy.password="${{ secrets.REPSY_PASSWORD }}"
+
+      - name: Increment build number
+        run: ./gradlew incrementBuildNumber
+
+      - name: Configure Git
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+
+      - name: Check for changes
+        id: check_changes
+        run: |
+          git status --porcelain
+          if [[ -n $(git status --porcelain) ]]; then
+            echo "changes_exist=true" >> $GITHUB_OUTPUT
+          else
+            echo "changes_exist=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Commit and push changes
+        if: steps.check_changes.outputs.changes_exist == 'true'
+        run: |
+          git add .
+          git commit -m "Auto-increment build number [skip ci]"
+          git push origin HEAD:${{ github.ref_name }}
