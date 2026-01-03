@@ -25,6 +25,9 @@ jobs:
       - name: Make Gradle wrapper executable
         run: chmod +x ./gradlew
 
+      - name: Init Gradle
+        run: ./gradlew
+
       - name: Get current version
         id: get_version
         run: |
