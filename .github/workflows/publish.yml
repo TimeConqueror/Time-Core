@@ -22,11 +22,11 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
 
-      - name: Make Gradle wrapper executable
+      - name: Prepare Gradle
         run: chmod +x ./gradlew
 
-      - name: Init Gradle
-        run: ./gradlew
+      - name: Get current version (false start)
+        run: ./gradlew printVersion -q
 
       - name: Get current version
         id: get_version
