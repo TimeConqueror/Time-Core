@@ -9,6 +9,10 @@ public class BlockStateResources {
         return StairsBlockStateResourceFactory.create(stairs, innerStairs, outerStairs);
     }
 
+    public static BlockStateResource slab(BlockModelLocation modelBottom, BlockModelLocation modelDouble, BlockModelLocation modelTop) {
+        return KtBlockStateResourceFactory.slab(modelBottom, modelDouble, modelTop);
+    }
+
     public static BlockStateResource singleVariantWithSingleModel(BlockModelLocation model) {
         return KtBlockStateResourceFactory.singleVariantWithSingleModel(model);
     }

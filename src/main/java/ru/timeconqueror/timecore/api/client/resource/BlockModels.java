@@ -92,6 +92,22 @@ public class BlockModels {
         return InternalBlockModels.INSTANCE.stairsOuter(bottom, top, side);
     }
 
+    public static BlockModel slabBottomModel(TextureLocation bottom, TextureLocation top, TextureLocation side) {
+        return InternalBlockModels.INSTANCE.slabBottom(bottom, top, side);
+    }
+
+    public static BlockModel slabBottomModel(TextureLocation allSides) {
+        return slabBottomModel(allSides, allSides, allSides);
+    }
+
+    public static BlockModel slabTopModel(TextureLocation bottom, TextureLocation top, TextureLocation side) {
+        return InternalBlockModels.INSTANCE.slabTop(bottom, top, side);
+    }
+
+    public static BlockModel slabTopModel(TextureLocation allSides) {
+        return InternalBlockModels.INSTANCE.slabTop(allSides, allSides, allSides);
+    }
+
     public static BlockModel particlesOnly(TextureLocation particleTexture) {
         return InternalBlockModels.INSTANCE.particlesOnly(particleTexture);
     }

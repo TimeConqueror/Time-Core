@@ -108,6 +108,31 @@ object InternalBlockModels {
             }
         })
 
+    /**
+     * @see BlockModels.slabBottomModel
+     */
+    fun slabBottom(bottom: TextureLocation, top: TextureLocation, side: TextureLocation) =
+        slab("block/slab", bottom, top, side)
+
+    /**
+     * @see BlockModels.slabTopModel
+     */
+    fun slabTop(bottom: TextureLocation, top: TextureLocation, side: TextureLocation) =
+        slab("block/slab_top", bottom, top, side)
+
+    private fun slab(parent: String, bottom: TextureLocation, top: TextureLocation, side: TextureLocation) =
+        BlockModel(json {
+            "parent" set parent
+            "textures" {
+                "bottom" set bottom
+                "top" set top
+                "side" set side
+            }
+        })
+
+    /**
+     * @see BlockModels.particlesOnly
+     */
     fun particlesOnly(particleTexture: TextureLocation) =
         BlockModel(json {
             "textures" {
