@@ -8,9 +8,10 @@ import net.minecraft.world.item.CreativeModeTabs;
 import ru.timeconqueror.timecore.TimeCore;
 import ru.timeconqueror.timecore.api.registry.EntityRegister;
 import ru.timeconqueror.timecore.api.registry.util.AutoRegistrable;
+import ru.timeconqueror.timecore.api.registry.util.RegistryKeys;
 import ru.timeconqueror.timecore.api.util.Hacks;
 
-@AutoRegistrable.Entries("entity_type")
+@AutoRegistrable.Entries(RegistryKeys.ENTITY_TYPES)
 public class AnimTestEntityRegistry {
     @AutoRegistrable
     private static final EntityRegister REGISTER = new EntityRegister(TimeCore.MODID);

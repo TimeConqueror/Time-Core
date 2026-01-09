@@ -5,9 +5,10 @@ import ru.timeconqueror.timecore.TimeCore;
 import ru.timeconqueror.timecore.api.client.resource.location.TextureLocation;
 import ru.timeconqueror.timecore.api.registry.ItemRegister;
 import ru.timeconqueror.timecore.api.registry.util.AutoRegistrable;
+import ru.timeconqueror.timecore.api.registry.util.RegistryKeys;
 import ru.timeconqueror.timecore.api.util.Hacks;
 
-@AutoRegistrable.Entries("item")
+@AutoRegistrable.Entries(RegistryKeys.ITEMS)
 public class ItemRegistryExample {
     public static Item TEST_DIAMOND = Hacks.promise();
 

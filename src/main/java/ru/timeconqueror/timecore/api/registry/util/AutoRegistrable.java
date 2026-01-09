@@ -1,5 +1,6 @@
 package ru.timeconqueror.timecore.api.registry.util;
 
+import net.minecraft.core.registries.Registries;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent;
 import ru.timeconqueror.timecore.api.registry.TimeRegister;
@@ -33,7 +34,11 @@ public @interface AutoRegistrable {
     @Target({ElementType.TYPE})
     @Retention(RetentionPolicy.RUNTIME)
     @interface Entries {
-        //TODO javadoc
+        /**
+         * Define here a name of registry, whose entries should be inserted.
+         * Class {@link RegistryKeys} contains known registry names.
+         * Check {@link Registries} for names which are not included in {@link RegistryKeys}.
+         */
         String value();
     }
 

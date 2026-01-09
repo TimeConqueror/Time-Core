@@ -213,34 +213,45 @@ public class ModInitializer {
                         ResourceLocation registryName = new ResourceLocation(modId, name);
 
                         Object value = null;
-                        boolean error = false;
+                        boolean errorNotRegistered = false;
                         IForgeRegistry<Object> forgeRegistry = e.getForgeRegistry();
                         Registry<Object> vanillaRegistry = e.getVanillaRegistry();
                         if (forgeRegistry != null) {
                             value = forgeRegistry.getValue(registryName);
 
                             if (value == forgeRegistry.getValue(forgeRegistry.getDefaultKey())) {
-                                error = true;
+                                errorNotRegistered = true;
                             }
                         } else if (vanillaRegistry != null) {
                             value = vanillaRegistry.get(registryName);
 
                             if (value == null) {
-                                error = true;
+                                errorNotRegistered = true;
                             }
                         }
 
-                        if (error) {
+                        if (errorNotRegistered) {
                             throw new IllegalStateException(String.format("Can't find value with registry name '%s' to set field %s", registryName, ReflectionHelper.getFieldQualifiedName(field)));
                         }
 
-                        try {
-                            field.setAccessible(true);
-                            field.set(parentableField.getParent(), value);
-                        } catch (IllegalAccessException ex) {
-                            throw new RuntimeException(ex);
-                        }
+                        setField(parentableField, value);
                     });
+        }
+
+        private void setField(ParentableField parentableField, Object value) {
+            Field field = parentableField.self();
+
+            Class<?> fieldClass = field.getType();
+            if (!fieldClass.isInstance(value)) {
+                throw new IllegalArgumentException("Invalid type: %s cannot be assigned to field %s with type %s".formatted(value.getClass(), ReflectionHelper.getFieldQualifiedName(field), fieldClass));
+            }
+
+            try {
+                field.setAccessible(true);
+                field.set(parentableField.getParent(), value);
+            } catch (IllegalAccessException ex) {
+                throw new RuntimeException(ex);
+            }
         }
     }
 

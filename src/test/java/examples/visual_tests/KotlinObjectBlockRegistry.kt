@@ -9,9 +9,10 @@ import ru.timeconqueror.timecore.api.registry.BlockRegister
 import ru.timeconqueror.timecore.api.registry.util.AutoRegistrable
 import ru.timeconqueror.timecore.api.registry.util.AutoRegistrable.Init
 import ru.timeconqueror.timecore.api.registry.util.BlockPropsFactory
+import ru.timeconqueror.timecore.api.registry.util.RegistryKeys
 import ru.timeconqueror.timecore.api.registry.util.invoke
 
-@AutoRegistrable.Entries("block")
+@AutoRegistrable.Entries(RegistryKeys.BLOCKS)
 object KotlinObjectBlockRegistry {
     @AutoRegistrable
     private val REGISTER = BlockRegister(TimeCore.MODID)

@@ -2,7 +2,6 @@ package ru.timeconqueror.timecore.animation.loading;
 
 import com.google.gson.*;
 import lombok.AllArgsConstructor;
-import org.jetbrains.annotations.UnmodifiableView;
 import ru.timeconqueror.timecore.animation.component.AnimationBone;
 import ru.timeconqueror.timecore.animation.component.IKeyFrame;
 import ru.timeconqueror.timecore.api.animation.Channel;
@@ -36,7 +35,6 @@ public class AnimationBoneDefinition {
             return new AnimationBoneDefinition(rotationFrames, positionFrames, scaleFrames);
         }
 
-        @UnmodifiableView
         private List<IKeyFrame> parseKeyFrameArr(JsonObject json, String optionName, Channel channel, JsonDeserializationContext ctx) {
             if (json.has(optionName)) {
                 List<IKeyFrame> keyFrames = KeyFrameListDeserializer.DESERIALIZERS.get(channel)

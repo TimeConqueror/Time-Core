@@ -10,10 +10,11 @@ import ru.timeconqueror.timecore.api.client.resource.location.TextureLocation;
 import ru.timeconqueror.timecore.api.registry.BlockRegister;
 import ru.timeconqueror.timecore.api.registry.util.AutoRegistrable;
 import ru.timeconqueror.timecore.api.registry.util.BlockPropsFactory;
+import ru.timeconqueror.timecore.api.registry.util.RegistryKeys;
 
 import static ru.timeconqueror.timecore.api.util.Hacks.promise;
 
-@AutoRegistrable.Entries("block")
+@AutoRegistrable.Entries(RegistryKeys.BLOCKS)
 public class BlockRegistryExample {
     public static Block TEST_SAND = promise();
     public static Block TEST_DIRT = promise();

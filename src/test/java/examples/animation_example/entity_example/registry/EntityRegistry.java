@@ -14,10 +14,11 @@ import net.minecraftforge.fml.common.Mod;
 import ru.timeconqueror.timecore.TimeCore;
 import ru.timeconqueror.timecore.api.registry.EntityRegister;
 import ru.timeconqueror.timecore.api.registry.util.AutoRegistrable;
+import ru.timeconqueror.timecore.api.registry.util.RegistryKeys;
 import ru.timeconqueror.timecore.api.util.Hacks;
 
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
-@AutoRegistrable.Entries("entity_type")
+@AutoRegistrable.Entries(RegistryKeys.ENTITY_TYPES)
 public class EntityRegistry {
     @AutoRegistrable
     private static final EntityRegister REGISTER = new EntityRegister(TimeCore.MODID);

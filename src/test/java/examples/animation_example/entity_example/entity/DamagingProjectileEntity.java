@@ -11,14 +11,12 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraftforge.network.NetworkHooks;
-import org.jetbrains.annotations.ApiStatus;
 
 import java.util.Objects;
 
 public class DamagingProjectileEntity extends ThrowableProjectile {
     public float damage;
 
-    @ApiStatus.Internal
     public DamagingProjectileEntity(EntityType<? extends DamagingProjectileEntity> type, Level world) {
         super(type, world);
     }

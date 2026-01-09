@@ -9,14 +9,13 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import org.jetbrains.annotations.ApiStatus;
 
 @OnlyIn(
         value = Dist.CLIENT,
         _interface = ItemSupplier.class
 )
 public class FloroMudEntity extends DamagingProjectileEntity implements ItemSupplier {
-    @ApiStatus.Internal
+
     public FloroMudEntity(EntityType<FloroMudEntity> type, Level world) {
         super(type, world);
     }

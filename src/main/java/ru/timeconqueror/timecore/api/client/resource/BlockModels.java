@@ -68,12 +68,24 @@ public class BlockModels {
         return InternalBlockModels.INSTANCE.cross(textureCross);
     }
 
+    public static BlockModel stairsModel(TextureLocation allSides) {
+        return InternalBlockModels.INSTANCE.stairs(allSides, allSides, allSides);
+    }
+
     public static BlockModel stairsModel(TextureLocation bottom, TextureLocation top, TextureLocation side) {
         return InternalBlockModels.INSTANCE.stairs(bottom, top, side);
     }
 
     public static BlockModel stairsInnerModel(TextureLocation bottom, TextureLocation top, TextureLocation side) {
         return InternalBlockModels.INSTANCE.stairsInner(bottom, top, side);
+    }
+
+    public static BlockModel stairsInnerModel(TextureLocation allSides) {
+        return InternalBlockModels.INSTANCE.stairsInner(allSides, allSides, allSides);
+    }
+
+    public static BlockModel stairsOuterModel(TextureLocation allSides) {
+        return InternalBlockModels.INSTANCE.stairsOuter(allSides, allSides, allSides);
     }
 
     public static BlockModel stairsOuterModel(TextureLocation bottom, TextureLocation top, TextureLocation side) {

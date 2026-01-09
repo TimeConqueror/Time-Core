@@ -7,10 +7,11 @@ import ru.timeconqueror.timecore.TimeCore;
 import ru.timeconqueror.timecore.api.registry.BlockRegister;
 import ru.timeconqueror.timecore.api.registry.util.AutoRegistrable;
 import ru.timeconqueror.timecore.api.registry.util.BlockPropsFactory;
+import ru.timeconqueror.timecore.api.registry.util.RegistryKeys;
 
 import static ru.timeconqueror.timecore.api.util.Hacks.promise;
 
-@AutoRegistrable.Entries("block")
+@AutoRegistrable.Entries(RegistryKeys.BLOCKS)
 public class ABlockRegistry {
     public static HeatCubeBlock HEAT_CUBE = promise();
 
