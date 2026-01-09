@@ -6,7 +6,6 @@ plugins {
     id 'maven-publish'
     id 'net.neoforged.moddev' version '2.0.137'
 //    id 'org.spongepowered.mixin' version '0.7.+'
-//    id 'org.parchmentmc.librarian.forgegradle' version '1.+'
     // Adds the Kotlin Gradle plugin
     id 'org.jetbrains.kotlin.jvm' version '2.2.20'
     // OPTIONAL Kotlin Serialization plugin
@@ -23,7 +22,6 @@ plugins {
 
 versionConfig {
     buildPropsFile.set(file("build.properties"))
-    versionPrefix.set(minecraft_version + '-')
 }
 
 tasks.named('wrapper', Wrapper).configure {
