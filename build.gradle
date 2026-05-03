@@ -36,7 +36,7 @@ tasks.named('wrapper', Wrapper).configure {
 group = mod_group_id
 
 base {
-    archivesName = mod_id
+    archivesName = mod_name
 }
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(21)
@@ -289,7 +289,7 @@ def deps = configurations.implementation.dependencies.findAll {
 publishing {
     publications {
         register('mavenJava', MavenPublication) {
-//            artifactId archivesName
+            artifactId mod_name
             artifact shadowJar
             artifact sourcesJar
 

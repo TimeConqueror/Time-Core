@@ -1,12 +1,10 @@
 package ru.timeconqueror.timecore.common.capability.property;
 
 import org.jetbrains.annotations.NotNull;
-import ru.timeconqueror.timecore.common.capability.property.serializer.IPropertySerializer;
 
 import java.util.*;
-import java.util.function.Supplier;
 
-public class CoffeeObservableList<T> implements List<T>, IChangable {
+public class CoffeeObservableList<T> implements List<T>, MutableProperty {
     private boolean changed;
     private final List<T> list;
 
@@ -163,7 +161,7 @@ public class CoffeeObservableList<T> implements List<T>, IChangable {
     }
 
     @Override
-    public boolean getChanged() {
+    public boolean isChanged() {
         return changed;
     }
 
