@@ -57,7 +57,7 @@ public abstract class ModelProvider implements DataProvider {
 
     public ResourceLocation addModel(String path, JSONTimeResource resource) {
         Preconditions.checkNotNull(path, "Path must not be null");
-        ResourceLocation outputLoc = extendWithFolder(path.contains(":") ? ResourceLocation.withDefaultNamespace(path) : ResourceLocation.fromNamespaceAndPath(modid, path));
+        ResourceLocation outputLoc = extendWithFolder(path.contains(":") ? ResourceLocation.parse(path) : ResourceLocation.fromNamespaceAndPath(modid, path));
         if (generatedModels.containsKey(outputLoc)) {
             log.warn("Model with path {} already exists, skipping...", outputLoc);
         }

@@ -1,9 +1,7 @@
-package ru.timeconqueror.timecore.common.capability.property.container;
+package ru.timeconqueror.timecore.common.capability.property;
 
 import net.minecraft.nbt.CompoundTag;
 import ru.timeconqueror.timecore.api.common.blockentity.SerializationType;
-import ru.timeconqueror.timecore.common.capability.property.CoffeeObservableList;
-import ru.timeconqueror.timecore.common.capability.property.CoffeeProperty;
 import ru.timeconqueror.timecore.common.capability.property.serializer.*;
 
 import java.util.ArrayList;
@@ -13,9 +11,9 @@ import java.util.Map;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
-public class PropertyContainer {
+public class CoffeePropertyContainer {
     private final List<CoffeeProperty<?>> properties = new ArrayList<>();
-    private final Map<String, PropertyContainer> containers = new HashMap<>();
+    private final Map<String, CoffeePropertyContainer> containers = new HashMap<>();
 
     protected <V> CoffeeProperty<V> prop(String name, V value, IPropertySerializer<V> serializer) {
         CoffeeProperty<V> prop = new CoffeeProperty<>(name, value, serializer);
@@ -77,7 +75,7 @@ public class PropertyContainer {
         return prop(name, value, StringPropertySerializer.NULLABLE);
     }
 
-    protected <T extends PropertyContainer> T container(String name, T value) {
+    protected <T extends CoffeePropertyContainer> T container(String name, T value) {
         if (containers.put(name, value) != null) {
             throw new IllegalArgumentException("The container with name '" + name + "' has been already registered!");
         }
@@ -95,9 +93,9 @@ public class PropertyContainer {
                 hasChanges = true;
             }
         }
-        for (Map.Entry<String, PropertyContainer> entry : containers.entrySet()) {
+        for (Map.Entry<String, CoffeePropertyContainer> entry : containers.entrySet()) {
             String name = entry.getKey();
-            PropertyContainer container = entry.getValue();
+            CoffeePropertyContainer container = entry.getValue();
             CompoundTag containerNBT = new CompoundTag();
             if (container.serialize(serializePredicate, containerNBT, clientSide, type)) {
                 nbt.put(name, containerNBT);
@@ -111,9 +109,9 @@ public class PropertyContainer {
         for (CoffeeProperty<?> property : properties) {
             property.deserialize(nbt);
         }
-        for (Map.Entry<String, PropertyContainer> entry : containers.entrySet()) {
+        for (Map.Entry<String, CoffeePropertyContainer> entry : containers.entrySet()) {
             String name = entry.getKey();
-            PropertyContainer container = entry.getValue();
+            CoffeePropertyContainer container = entry.getValue();
             if (nbt.contains(name)) {
                 container.deserialize(nbt.getCompound(name));
             }
@@ -124,9 +122,9 @@ public class PropertyContainer {
         for (CoffeeProperty<?> property : properties) {
             property.deserialize(nbt, sentFromClient);
         }
-        for (Map.Entry<String, PropertyContainer> entry : containers.entrySet()) {
+        for (Map.Entry<String, CoffeePropertyContainer> entry : containers.entrySet()) {
             String name = entry.getKey();
-            PropertyContainer container = entry.getValue();
+            CoffeePropertyContainer container = entry.getValue();
             if (nbt.contains(name)) {
                 container.deserialize(nbt.getCompound(name), sentFromClient);
             }

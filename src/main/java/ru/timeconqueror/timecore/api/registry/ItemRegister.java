@@ -7,7 +7,6 @@ import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.bus.api.IEventBus;
-import net.neoforged.fml.event.lifecycle.FMLConstructModEvent;
 import net.neoforged.neoforge.data.event.GatherDataEvent;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.registries.RegisterEvent;
@@ -22,7 +21,6 @@ import ru.timeconqueror.timecore.api.devtools.gen.lang.LangGeneratorFacade;
 import ru.timeconqueror.timecore.api.registry.util.AutoRegistrable;
 import ru.timeconqueror.timecore.api.registry.util.Promised;
 import ru.timeconqueror.timecore.api.util.EnvironmentUtils;
-import ru.timeconqueror.timecore.api.util.Hacks;
 import ru.timeconqueror.timecore.api.util.holder.Temporal;
 import ru.timeconqueror.timecore.storage.LoadingOnlyStorage;
 
@@ -173,7 +171,7 @@ public class ItemRegister extends VanillaRegister<Item> {
          * Creates and registers simple item model without the need of json file (via code) for bound item with one provided texture and "item/generated" parent model.
          */
         public ItemRegisterChain<I> defaultModel(TextureLocation texture) {
-            clientSideOnly(() -> model(StandardItemModelParents.DEFAULT, texture));
+            clientSideOnly(() -> model(StandardItemModelParents.GENERATED, texture));
             return this;
         }
 
