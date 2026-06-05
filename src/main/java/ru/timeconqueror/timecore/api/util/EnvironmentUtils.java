@@ -2,12 +2,16 @@ package ru.timeconqueror.timecore.api.util;
 
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.level.block.Block;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.fml.loading.FMLLoader;
 import net.minecraftforge.fml.loading.FMLPaths;
+import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.ForgeRegistry;
 import net.minecraftforge.registries.RegistryManager;
 import net.minecraftforge.server.ServerLifecycleHooks;
@@ -153,7 +157,20 @@ public class EnvironmentUtils {
         return BuiltInRegistries.REGISTRY.get(registryName);
     }
 
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    public static <T> Registry<T> getRegistry(ResourceKey<Registry<T>> registryKey) {
+        return (Registry<T>) BuiltInRegistries.REGISTRY.get((ResourceKey)registryKey);
+    }
+
     public static boolean registryExists(ResourceLocation registryName) {
         return getForgeRegistry(registryName) != null || getVanillaRegistry(registryName) != null;
+    }
+
+    public static ResourceLocation getKey(Block block) {
+        return ForgeRegistries.BLOCKS.getKey(block);
+    }
+
+    public static ResourceLocation getKey(Item item) {
+        return ForgeRegistries.ITEMS.getKey(item);
     }
 }

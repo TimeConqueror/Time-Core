@@ -27,6 +27,7 @@ import ru.timeconqueror.timecore.api.registry.ItemRegister.ItemRegisterChain;
 import ru.timeconqueror.timecore.api.registry.util.AutoRegistrable;
 import ru.timeconqueror.timecore.api.registry.util.ItemPropsFactory;
 import ru.timeconqueror.timecore.api.registry.util.Promised;
+import ru.timeconqueror.timecore.api.util.Empty;
 import ru.timeconqueror.timecore.api.util.EnvironmentUtils;
 import ru.timeconqueror.timecore.api.util.Hacks;
 import ru.timeconqueror.timecore.api.util.holder.Temporal;
@@ -177,42 +178,53 @@ public class BlockRegister extends VanillaRegister<Block> {
         }
 
         /**
-         * Registers the default item block for this block. (which will place the block upon clicking)
+         * Registers item block for this block. (which will place the block upon clicking)
          * It will be with the same registry location as block has.
          * It will also generate default item model automatically based on the block one.
          *
          * @param tab creative tab in which item will be placed. Can be null, which means that item will be placed nowhere.
          */
-        public BlockRegisterChain<B> defaultBlockItem(@Nullable ResourceKey<CreativeModeTab> tab) {
-            return defaultBlockItem(tab, itemRegistrator -> itemRegistrator.modelFromBlockParent(new BlockModelLocation(getModId(), getName())));
+        public BlockRegisterChain<B> blockItemDefaultModel(@Nullable ResourceKey<CreativeModeTab> tab) {
+            return blockItem(tab, itemRegistrator -> itemRegistrator.modelFromBlockParent(new BlockModelLocation(getModId(), getName())));
         }
 
         /**
-         * Registers the default item block for this block. (which will place the block upon clicking)
+         * Registers item block for this block. (which will place the block upon clicking)
          * It will be with the same registry location as block has.
          * It will also generate default item model automatically based on the block one.
          *
          * @param tab                creative tab in which item will be placed. Can be null, which means that item will be placed nowhere.
          * @param blockModelLocation parent block model location for auto-generated item model based on block one.
          */
-        public BlockRegisterChain<B> defaultBlockItem(@Nullable ResourceKey<CreativeModeTab> tab, BlockModelLocation blockModelLocation) {
-            return defaultBlockItem(tab, itemRegistrator -> itemRegistrator.modelFromBlockParent(blockModelLocation));
+        public BlockRegisterChain<B> blockItemDefaultModel(@Nullable ResourceKey<CreativeModeTab> tab, BlockModelLocation blockModelLocation) {
+            return blockItem(tab, itemRegistrator -> itemRegistrator.modelFromBlockParent(blockModelLocation));
         }
 
         /**
-         * Registers the default item block for this block. (which will place the block upon clicking)
+         * Registers item block for this block. (which will place the block upon clicking)
+         * It will be with the same registry location as block has.
+         * This method doesn't generate item model automatically, so if you want to generate it, do it by yourselves in {@code itemSettings} consumer.
+         *
+         * @param tab creative tab in which item will be placed. Can be null, which means that item will be placed nowhere.
+         */
+        public BlockRegisterChain<B> blockItem(@Nullable ResourceKey<CreativeModeTab> tab) {
+            return blockItem(tab, new Item.Properties(), Empty.consumer());
+        }
+
+        /**
+         * Registers item block for this block. (which will place the block upon clicking)
          * It will be with the same registry location as block has.
          * This method doesn't generate item model automatically, so if you want to generate it, do it by yourselves in {@code itemSettings} consumer.
          *
          * @param tab          creative tab in which item will be placed. Can be null, which means that item will be placed nowhere.
          * @param itemSettings extra stuff, that you can do for that item, like generating item model.
          */
-        public BlockRegisterChain<B> defaultBlockItem(@Nullable ResourceKey<CreativeModeTab> tab, Consumer<ItemRegisterChain<BlockItem>> itemSettings) {
-            return defaultBlockItem(tab, new Item.Properties(), itemSettings);
+        public BlockRegisterChain<B> blockItem(@Nullable ResourceKey<CreativeModeTab> tab, Consumer<ItemRegisterChain<BlockItem>> itemSettings) {
+            return blockItem(tab, new Item.Properties(), itemSettings);
         }
 
         /**
-         * Registers the default item block for this block. (which will place the block upon clicking)
+         * Registers default item block for this block. (which will place the block upon clicking)
          * It will be with the same registry location as block has.
          * This method doesn't generate item model automatically, so if you want to generate it, do it by yourselves in {@code itemSettings} consumer.
          *
@@ -220,7 +232,7 @@ public class BlockRegister extends VanillaRegister<Block> {
          * @param props        properties, that will be inserted in the item. Can also be created with {@link ItemPropsFactory}
          * @param itemSettings extra stuff, that you can do for that item, like generating item model.
          */
-        public BlockRegisterChain<B> defaultBlockItem(@Nullable ResourceKey<CreativeModeTab> tab, Item.Properties props, Consumer<ItemRegisterChain<BlockItem>> itemSettings) {
+        public BlockRegisterChain<B> blockItem(@Nullable ResourceKey<CreativeModeTab> tab, Item.Properties props, Consumer<ItemRegisterChain<BlockItem>> itemSettings) {
             return item(() -> new BlockItem(asPromised().get(), props), chain -> {
                 if (tab != null) {
                     chain.tab(tab);
@@ -231,7 +243,7 @@ public class BlockRegister extends VanillaRegister<Block> {
         }
 
         /**
-         * Registers the item for this block.
+         * Registers item for this block.
          * It will be with the same registry location as block has.
          *
          * @param itemSupplier item factory, should return new item instance every time it's called.

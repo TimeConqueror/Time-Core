@@ -258,12 +258,12 @@ publishing {
         maven {
             url inProjectMaven
         }
-        if (secretProps != null) {
+        repositories {
             maven {
-                url "https://repo.repsy.io/mvn/${secretProps.repsy.user}/${secretProps.repsy.repo_name}"
+                url "https://repo.repsy.io/mvn/${project.findProperty('repsy.user')}/${project.findProperty('repsy.repo_name')}"
                 credentials {
-                    username secretProps.repsy.login
-                    password secretProps.repsy.password
+                    username project.findProperty('repsy.login')
+                    password project.findProperty('repsy.password')
                 }
             }
         }

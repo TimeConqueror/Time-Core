@@ -54,39 +54,43 @@ public abstract class ModelProvider implements DataProvider {
 
     protected abstract void registerAll();
 
-    public ResourceLocation addModel(String path, JSONTimeResource resource) {
+    public ResourceLocation regModel(String path, JSONTimeResource resource) {
         Preconditions.checkNotNull(path, "Path must not be null");
         ResourceLocation outputLoc = extendWithFolder(path.contains(":") ? new ResourceLocation(path) : new ResourceLocation(modid, path));
         if (generatedModels.containsKey(outputLoc)) {
-            log.warn("Model with path {} already exists, skipping...", outputLoc);
+            throw new IllegalArgumentException("Model with path %s already exists".formatted(outputLoc));
         }
 
         generatedModels.putIfAbsent(outputLoc, resource);
         return outputLoc;
     }
 
-    public BlockModelLocation addBlockModel(String path, BlockModel resource) {
-        ResourceLocation location = addModel(path, resource);
+    public BlockModelLocation regBlockModel(String path, BlockModel resource) {
+        ResourceLocation location = regModel(path, resource);
         return new BlockModelLocation(location.getNamespace(), location.getPath());
     }
 
-    public BlockModelLocation addBlockModel(Block block, BlockModel resource) {
-        return addBlockModel(getId(block).toString(), resource);
+    public BlockModelLocation regBlockModel(Block block, BlockModel resource) {
+        return regBlockModel(getId(block).toString(), resource);
     }
 
-    public ItemModelLocation addItemModel(String path, ItemModel resource) {
-        ResourceLocation location = addModel(path, resource);
+    public ItemModelLocation regItemModel(String path, ItemModel resource) {
+        ResourceLocation location = regModel(path, resource);
         return new ItemModelLocation(location.getNamespace(), location.getPath());
     }
 
-    public ItemModelLocation addItemModel(Item item, ItemModel resource) {
-        return addItemModel(getId(item).toString(), resource);
+    public ItemModelLocation regItemModel(Item item, ItemModel resource) {
+        return regItemModel(getId(item).toString(), resource);
     }
 
-    public ItemModelLocation addItemModelParentedByBlock(Block block) {
+    public ItemModelLocation regItemModelParentedByBlock(Block block) {
         Item item = block.asItem();
         ResourceLocation id = getId(block);
-        return addItemModel(item, ItemModel.parentedBy(new BlockModelLocation(id)));
+        return regItemModel(item, ItemModel.parentedBy(new BlockModelLocation(id)));
+    }
+
+    public ItemModelLocation regItemModelParentedByBlock(Block block, BlockModelLocation location) {
+        return regItemModel(block.asItem(), ItemModel.parentedBy(location));
     }
 
     public TextureLocation getDefaultTextureLocation(Block block) {

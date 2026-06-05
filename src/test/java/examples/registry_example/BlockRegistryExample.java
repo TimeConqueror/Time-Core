@@ -30,7 +30,7 @@ public class BlockRegistryExample {
             BlockPropsFactory propsCreator = new BlockPropsFactory(Block.Properties::of);
 
             REGISTER.register("test_sand", () -> new Block(propsCreator.create()))
-                    .defaultBlockItem(CreativeModeTabs.TOOLS_AND_UTILITIES)
+                    .blockItemDefaultModel(CreativeModeTabs.TOOLS_AND_UTILITIES)
                     .also(chain -> {
                         BlockModelLocation modelLocation = new BlockModelLocation(chain.getModId(), "block/test_sand");
                         chain
@@ -42,11 +42,11 @@ public class BlockRegistryExample {
                     .oneVarStateAndCubeAllModel(new TextureLocation("minecraft", "block/dirt"));
 
             REGISTER.register("test_emerald_ore", () -> new Block(propsCreator.create()))
-                    .defaultBlockItem(CreativeModeTabs.TOOLS_AND_UTILITIES)
+                    .blockItemDefaultModel(CreativeModeTabs.TOOLS_AND_UTILITIES)
                     .oneVarStateAndCubeAllModel(new TextureLocation("minecraft", "block/emerald_ore"));
 
             REGISTER.register("test_block_with_tile", () -> new DummyBlockWithEntity(propsCreator.create()))
-                    .defaultBlockItem(CreativeModeTabs.TOOLS_AND_UTILITIES)
+                    .blockItemDefaultModel(CreativeModeTabs.TOOLS_AND_UTILITIES)
                     .oneVarStateAndCubeAllModel(new TextureLocation("minecraft", "block/furnace"));
         }
     }

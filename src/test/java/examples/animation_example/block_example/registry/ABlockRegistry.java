@@ -24,7 +24,7 @@ public class ABlockRegistry {
             BlockPropsFactory propsCreator = new BlockPropsFactory(Block.Properties::of);
 
             REGISTER.register("heat_cube", () -> new HeatCubeBlock(propsCreator.create()))
-                    .defaultBlockItem(CreativeModeTabs.TOOLS_AND_UTILITIES);
+                    .blockItemDefaultModel(CreativeModeTabs.TOOLS_AND_UTILITIES);
         }
     }
 }
