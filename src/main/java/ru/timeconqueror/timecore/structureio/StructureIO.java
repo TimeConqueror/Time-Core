@@ -30,6 +30,10 @@ import java.util.Optional;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class StructureIO {
     public static final StructureIO INSTANCE = new StructureIO();
+    /**
+     * Offset from anchor position
+     */
+    public static final String PLACEMENT_OFFSET_KEY = "placement_offset";
 
     private final Map<String, ExtendedStructureTemplate> cachedTemplates = new HashMap<>();
 
@@ -44,8 +48,8 @@ public class StructureIO {
         CompoundTag structureTag = new CompoundTag();
         template.save(structureTag);
 
-        BlockPos genOffset = sourcePosition.subtract(start);
-        structureTag.putLong("lg_offset", genOffset.asLong());
+        BlockPos placementOffset = sourcePosition.subtract(start);
+        structureTag.putLong(PLACEMENT_OFFSET_KEY, placementOffset.asLong());
 
         saveStructureTagToFile(path, structureTag);
     }
@@ -82,7 +86,7 @@ public class StructureIO {
                     StructureTemplate template = new StructureTemplate();
                     //noinspection deprecation
                     template.load(BuiltInRegistries.BLOCK.asLookup(), compoundTag);
-                    BlockPos genOffset = BlockPos.of(compoundTag.getLong("lg_offset"));
+                    BlockPos genOffset = BlockPos.of(compoundTag.getLong(PLACEMENT_OFFSET_KEY));
                     return new ExtendedStructureTemplate(template, genOffset);
                 });
     }
