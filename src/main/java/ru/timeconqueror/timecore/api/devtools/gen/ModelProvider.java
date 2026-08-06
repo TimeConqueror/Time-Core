@@ -32,9 +32,6 @@ import java.util.concurrent.CompletableFuture;
 public abstract class ModelProvider implements DataProvider {
     private final Logger log = LogManager.getLogger();
 
-    public static final String BLOCK_FOLDER = "block";
-    public static final String ITEM_FOLDER = "item";
-
     protected static final ResourceType TEXTURE = new ResourceType(PackType.CLIENT_RESOURCES, ".png", "textures");
     protected static final ResourceType MODEL = new ResourceType(PackType.CLIENT_RESOURCES, ".json", "models");
     protected static final ResourceType MODEL_WITH_EXTENSION = new ResourceType(PackType.CLIENT_RESOURCES, "", "models");
@@ -42,31 +39,29 @@ public abstract class ModelProvider implements DataProvider {
     private static final Gson GSON = (new GsonBuilder()).setPrettyPrinting().create();
     protected final PackOutput output;
     protected final String modid;
-    protected final String folder;
     @VisibleForTesting
     public final Map<ResourceLocation, JSONTimeResource> generatedModels = new HashMap<>();
 
-    public ModelProvider(PackOutput output, String modid, String folder) {
+    public ModelProvider(PackOutput output, String modid) {
         this.output = output;
         this.modid = modid;
-        this.folder = folder;
     }
 
     protected abstract void registerAll();
 
-    public ResourceLocation regModel(String path, JSONTimeResource resource) {
+    public ResourceLocation regModel(ModelType type, String path, JSONTimeResource resource) {
         Preconditions.checkNotNull(path, "Path must not be null");
-        ResourceLocation outputLoc = extendWithFolder(path.contains(":") ? new ResourceLocation(path) : new ResourceLocation(modid, path));
+        ResourceLocation outputLoc = extendWithFolder(path.contains(":") ? new ResourceLocation(path) : new ResourceLocation(modid, path), type);
         if (generatedModels.containsKey(outputLoc)) {
             throw new IllegalArgumentException("Model with path %s already exists".formatted(outputLoc));
         }
 
-        generatedModels.putIfAbsent(outputLoc, resource);
+        generatedModels.put(outputLoc, resource);
         return outputLoc;
     }
 
     public BlockModelLocation regBlockModel(String path, BlockModel resource) {
-        ResourceLocation location = regModel(path, resource);
+        ResourceLocation location = regModel(ModelType.BLOCK, path, resource);
         return new BlockModelLocation(location.getNamespace(), location.getPath());
     }
 
@@ -75,7 +70,7 @@ public abstract class ModelProvider implements DataProvider {
     }
 
     public ItemModelLocation regItemModel(String path, ItemModel resource) {
-        ResourceLocation location = regModel(path, resource);
+        ResourceLocation location = regModel(ModelType.ITEM, path, resource);
         return new ItemModelLocation(location.getNamespace(), location.getPath());
     }
 
@@ -93,9 +88,16 @@ public abstract class ModelProvider implements DataProvider {
         return regItemModel(block.asItem(), ItemModel.parentedBy(location));
     }
 
+    private ResourceLocation extendWithFolder(ResourceLocation rl, ModelType type) {
+        if (rl.getPath().contains("/")) {
+            return rl;
+        }
+        return new ResourceLocation(rl.getNamespace(), type.folderName() + "/" + rl.getPath());
+    }
+
     public TextureLocation getDefaultTextureLocation(Block block) {
         ResourceLocation id = getId(block);
-        return new TextureLocation(id.getNamespace(), ModelProvider.BLOCK_FOLDER + "/" + id.getPath());
+        return new TextureLocation(id.getNamespace(), ModelType.BLOCK.folderName() + "/" + id.getPath());
     }
 
     public BlockModelLocation getDefaultModelLocation(Block block) {
@@ -111,13 +113,6 @@ public abstract class ModelProvider implements DataProvider {
     public ResourceLocation getId(Item item) {
         //noinspection deprecation
         return BuiltInRegistries.ITEM.getKey(item);
-    }
-
-    private ResourceLocation extendWithFolder(ResourceLocation rl) {
-        if (rl.getPath().contains("/")) {
-            return rl;
-        }
-        return new ResourceLocation(rl.getNamespace(), folder + "/" + rl.getPath());
     }
 
     protected void clear() {

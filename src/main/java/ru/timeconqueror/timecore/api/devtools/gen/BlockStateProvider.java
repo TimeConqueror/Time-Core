@@ -29,13 +29,13 @@ public abstract class BlockStateProvider implements DataProvider {
 
     private final PackOutput output;
     @Getter
-    private final String modid;
-    private final ModelProvider blockModelProvider;
+    private final String modId;
+    private final ModelProvider modelProvider;
 
-    public BlockStateProvider(PackOutput output, String modid) {
+    public BlockStateProvider(PackOutput output, String modId) {
         this.output = output;
-        this.modid = modid;
-        this.blockModelProvider = new ModelProvider(output, modid, ModelProvider.BLOCK_FOLDER) {
+        this.modId = modId;
+        this.modelProvider = new ModelProvider(output, modId) {
             @Override
             protected void registerAll() {
 
@@ -43,16 +43,16 @@ public abstract class BlockStateProvider implements DataProvider {
 
             @Override
             public String getName() {
-                return BlockStateProvider.this.getName() + ": " + "Internal Block Model Provider";
+                return BlockStateProvider.this.getName() + ": " + "Internal Model Provider";
             }
         };
     }
 
-    public ModelProvider blockModels() {
-        return blockModelProvider;
+    public ModelProvider modelProvider() {
+        return modelProvider;
     }
 
-    protected void addBlockState(Block block, BlockStateResource resource) {
+    protected void regBlockState(Block block, BlockStateResource resource) {
         if (registeredStates.containsKey(block)) {
             log.warn("BlockState resource for block {} already exists, skipping...", block);
             return;
@@ -64,12 +64,12 @@ public abstract class BlockStateProvider implements DataProvider {
     @Override
     public CompletableFuture<?> run(CachedOutput cache) {
         registeredStates.clear();
-        blockModelProvider.clear();
+        modelProvider.clear();
         registerAll();
 
         CompletableFuture<?>[] futures = new CompletableFuture<?>[1 + this.registeredStates.size()];
         int i = 0;
-        futures[i++] = blockModelProvider.generateAll(cache);
+        futures[i++] = modelProvider.generateAll(cache);
         for (Map.Entry<Block, BlockStateResource> entry : registeredStates.entrySet()) {
             futures[i++] = saveBlockState(cache, GSON.fromJson(entry.getValue().toJson(), JsonObject.class), entry.getKey());
         }
