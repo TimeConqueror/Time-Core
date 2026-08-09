@@ -7,6 +7,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jetbrains.annotations.Nullable;
 import ru.timeconqueror.timecore.animation.*;
+import ru.timeconqueror.timecore.animation.action.ActionManagerImpl;
 import ru.timeconqueror.timecore.animation.action.LayerActionManager;
 import ru.timeconqueror.timecore.animation.action.PredefinedActionManagerImpl;
 import ru.timeconqueror.timecore.animation.clock.TickBasedClock;
@@ -86,19 +87,18 @@ public class AnimationSystemBuilder<T extends AnimatedObject<T>> {
         PredefinedActionManagerImpl<T> predefinedActionManagerImpl = new PredefinedActionManagerImpl<>(object, clientSide);
         NetworkDispatcherInstance<T> networkDispatcherInstance = new NetworkDispatcherInstance<>(networkDispatcher, object);
 
-        Supplier<LayerActionManager> actionManagerFactory = () -> new LayerActionManager(object, predefinedActionManagerImpl);
+        BaseAnimationManager animationManager = makeAnimationManager(clientSide, clock, sharedObjects, networkDispatcherInstance, predefinedActionManagerImpl);
+        ActionManagerImpl actionManager = ActionManagerImpl.create(animationManager.getLayers(), () -> new LayerActionManager(object, predefinedActionManagerImpl));
 
-        BaseAnimationManager animationManager = makeAnimationManager(clientSide, clock, sharedObjects, actionManagerFactory, networkDispatcherInstance, predefinedActionManagerImpl);
-
-        return new AnimationSystemImpl<>(object, clientSide, clock, animationManager, networkDispatcherInstance, predefinedAnimationManager, predefinedActionManagerImpl);
+        return new AnimationSystemImpl<>(object, clientSide, clock, animationManager, networkDispatcherInstance, predefinedAnimationManager, predefinedActionManagerImpl, actionManager);
     }
 
-    private <T extends AnimatedObject<T>> BaseAnimationManager makeAnimationManager(boolean clientSide, Clock clock, SharedMolangObject sharedMolangObject, Supplier<LayerActionManager> actionManagerFactory, NetworkDispatcherInstance<T> networkDispatcherInstance, PredefinedActionManagerImpl<T> predefinedActionManagerImpl) {
+    private <T extends AnimatedObject<T>> BaseAnimationManager makeAnimationManager(boolean clientSide, Clock clock, SharedMolangObject sharedMolangObject, NetworkDispatcherInstance<T> networkDispatcherInstance, PredefinedActionManagerImpl<T> predefinedActionManagerImpl) {
         BaseAnimationManager manager;
         if (!clientSide) {
-            manager = new ServerAnimationManager<>(clock, actionManagerFactory, sharedMolangObject, networkDispatcherInstance);
+            manager = new ServerAnimationManager<>(clock, sharedMolangObject, networkDispatcherInstance);
         } else {
-            manager = new ClientAnimationManager(clock, actionManagerFactory, sharedMolangObject);
+            manager = new ClientAnimationManager(clock, sharedMolangObject);
         }
 
         if (this.layers.isEmpty()) {

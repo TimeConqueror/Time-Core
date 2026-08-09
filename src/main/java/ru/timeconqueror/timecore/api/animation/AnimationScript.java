@@ -1,5 +1,6 @@
 package ru.timeconqueror.timecore.api.animation;
 
+import lombok.Getter;
 import org.jetbrains.annotations.Nullable;
 import ru.timeconqueror.timecore.animation.AnimationCompanionData;
 import ru.timeconqueror.timecore.animation.AnimationData;
@@ -35,8 +36,10 @@ public interface AnimationScript {
     class Builder {
         private final AnimationData animationData;
         @Nullable
+        @Getter
         private List<String> predefinedActions;
         @Nullable
+        @Getter
         private List<BakedAction<?>> inplaceActions;
         @Nullable
         private Builder nextScriptBuilder;

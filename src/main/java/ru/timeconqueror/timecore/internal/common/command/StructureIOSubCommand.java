@@ -35,7 +35,7 @@ public class StructureIOSubCommand {
         Path fullPath = resolvePath(relPath);
         STRUCTURE_IO.save(level, from, to, fullPath, includeEntities, Blocks.AIR, sourcePos);
 
-        commandSource.sendSuccess(() -> Component.literal("Structure saved to" + fullPath), false);
+        commandSource.sendSuccess(() -> Component.literal("Structure saved to " + fullPath), false);
 
         return Command.SINGLE_SUCCESS;
     }

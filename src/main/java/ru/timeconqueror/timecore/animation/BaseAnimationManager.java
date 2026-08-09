@@ -15,17 +15,13 @@ import ru.timeconqueror.timecore.api.client.render.model.ITimeModel;
 import ru.timeconqueror.timecore.api.util.holder.Pair;
 import ru.timeconqueror.timecore.molang.SharedMolangObject;
 
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 public abstract class BaseAnimationManager implements AnimationManager {
     private final Clock clock;
-    private final Supplier<LayerActionManager> actionManagerFactory;
 
     @Getter
     private final SharedMolangObject sharedMolangObjects;
@@ -38,10 +34,6 @@ public abstract class BaseAnimationManager implements AnimationManager {
                 .collect(Collectors.toMap(LayerImpl::getName, layer -> layer, (o, o2) -> {
                     throw new RuntimeException("Duplicate layer definition names: " + o + ", " + o2);
                 }, LinkedHashMap::new));
-
-        for (LayerImpl layer : this.getLayerMap().values()) {
-            layer.addAnimationEventListener(actionManagerFactory.get());
-        }
     }
 
     @Override
@@ -60,6 +52,10 @@ public abstract class BaseAnimationManager implements AnimationManager {
     @Override
     public Set<String> getLayerNames() {
         return layerMap.keySet();
+    }
+
+    public Collection<LayerImpl> getLayers() {
+        return layerMap.values();
     }
 
     @Override

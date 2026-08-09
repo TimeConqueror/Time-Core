@@ -1,5 +1,6 @@
 package ru.timeconqueror.timecore.animation.action;
 
+import lombok.Getter;
 import lombok.extern.log4j.Log4j2;
 import org.jetbrains.annotations.Nullable;
 import ru.timeconqueror.timecore.animation.AnimationCompanionData;
@@ -12,17 +13,15 @@ import ru.timeconqueror.timecore.api.animation.action.BakedAction;
 import ru.timeconqueror.timecore.api.util.CollectionUtils;
 import ru.timeconqueror.timecore.api.util.Empty;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Log4j2
 public class LayerActionManager implements AnimationEventListener {
-    public static boolean loggerEnabled = true;
     private final AnimatedObject<?> owner;
     private final PredefinedActionManagerImpl<?> predefinedActionManagerImpl;
-    @Nullable
-    private List<LayerActionManager.ActionTicker> currentActions = null;
+    @Getter
+    private final ActiveActions activeActions = new ActiveActions();
 
     public LayerActionManager(AnimatedObject<?> owner, PredefinedActionManagerImpl<?> predefinedActionManagerImpl) {
         this.owner = owner;
@@ -35,7 +34,7 @@ public class LayerActionManager implements AnimationEventListener {
             AnimationScript animationScript = impl.getAnimationScript();
             var companionData = animationScript.getCompanionData();
             if (companionData != AnimationCompanionData.EMPTY) {
-                currentActions = new ArrayList<>();
+                List<ActionTicker> currentActions = new ArrayList<>();
 
                 if (!companionData.getInplaceActions().isEmpty()) {
                     currentActions.addAll(CollectionUtils.mapList(companionData.getInplaceActions(), ActionTicker::new));
@@ -46,11 +45,13 @@ public class LayerActionManager implements AnimationEventListener {
                             .map(predefinedActionManagerImpl::tryCreateAction)
                             .filter(Objects::nonNull)
                             .map(ActionTicker::new)
-                            .forEach(actionTicker -> currentActions.add(actionTicker));
+                            .forEach(currentActions::add);
                 }
 
-                if (loggerEnabled) {
-                    log.debug("Added actions on layer '{}': {}", layerName, getCurrentActionIds());
+                activeActions.setCurrentActions(currentActions);
+
+                if (ActionManager.loggerEnabled) {
+                    log.debug("Added actions on layer '{}': {}", layerName, activeActions.getIds());
                 }
             }
         }
@@ -59,25 +60,21 @@ public class LayerActionManager implements AnimationEventListener {
     @Override
     public void onAnimationStopped(String layerName, AnimationTicker ticker, long clockTime) {
         onAnimationTick(layerName, ticker, clockTime);
-        if (ticker instanceof AnimationTickerImpl && currentActions != null) {
-            if (loggerEnabled) {
-                log.debug("Stopped actions on layer '{}': {}", layerName, getCurrentActionIds());
+        if (ticker instanceof AnimationTickerImpl && !activeActions.isEmpty()) {
+            if (ActionManager.loggerEnabled) {
+                log.debug("Stopped actions on layer '{}': {}", layerName, activeActions.getIds());
             }
-            currentActions = null;
+            activeActions.clear();
         }
     }
 
     @Override
     public void onAnimationTick(String layerName, AnimationTicker ticker, long clockTime) {
-        if (ticker instanceof AnimationTickerImpl && currentActions != null) {
-            for (ActionTicker currentAction : currentActions) {
+        if (ticker instanceof AnimationTickerImpl && !activeActions.isEmpty()) {
+            for (ActionTicker currentAction : activeActions.get()) {
                 currentAction.onUpdate(ticker, owner, clockTime);
             }
         }
-    }
-
-    private List<String> getCurrentActionIds() {
-        return currentActions != null ? CollectionUtils.mapList(currentActions, actionTicker -> actionTicker.bakedAction.getId()) : Empty.list();
     }
 
     public static class ActionTicker {
@@ -92,6 +89,36 @@ public class LayerActionManager implements AnimationEventListener {
         public void onUpdate(AnimationTicker ticker, AnimatedObject<?> owner, long clockTime) {
             ActionContext ctx = new ActionContext(ticker, owner, clockTime, lastAnimationCycleIndex);
             lastAnimationCycleIndex = bakedAction.onUpdate(ctx);
+        }
+    }
+
+    public static class ActiveActions {
+        @Nullable
+        private List<ActionTicker> actions = null;
+        private Set<String> ids = null;
+
+        public void setCurrentActions(List<ActionTicker> actions) {
+            this.actions = actions;
+            this.ids = actions.stream()
+                    .map(actionTicker -> actionTicker.bakedAction.getId())
+                    .collect(Collectors.toSet());
+        }
+
+        public void clear() {
+            this.actions = null;
+            this.ids = null;
+        }
+
+        public List<ActionTicker> get() {
+            return !isEmpty() ? actions : Empty.list();
+        }
+
+        public Set<String> getIds() {
+            return !isEmpty() ? ids : Empty.set();
+        }
+
+        public boolean isEmpty() {
+            return actions == null;
         }
     }
 }

@@ -2,12 +2,13 @@ package ru.timeconqueror.timecore.animation;
 
 import lombok.Getter;
 import net.minecraft.server.level.ServerPlayer;
-import ru.timeconqueror.timecore.animation.action.AnimationEventListener;
-import ru.timeconqueror.timecore.animation.action.BakedActionFactory;
-import ru.timeconqueror.timecore.animation.action.PredefinedActionManagerImpl;
+import ru.timeconqueror.timecore.animation.action.*;
 import ru.timeconqueror.timecore.animation.clock.TickBasedClock;
 import ru.timeconqueror.timecore.animation.network.NetworkDispatcherInstance;
 import ru.timeconqueror.timecore.api.animation.*;
+import ru.timeconqueror.timecore.api.animation.action.BakedAction;
+
+import java.util.List;
 
 @Getter
 public class AnimationSystemImpl<T extends AnimatedObject<T>> implements AnimationSystem<T> {
@@ -21,6 +22,7 @@ public class AnimationSystemImpl<T extends AnimatedObject<T>> implements Animati
     private final Clock clock;
     private final PredefinedAnimationManager<T> predefinedAnimationManager;
     private final PredefinedActionManagerImpl<T> predefinedActionManagerImpl;
+    private final ActionManagerImpl actionManager;
 
     public AnimationSystemImpl(T owner,
                                boolean clientSide,
@@ -28,7 +30,8 @@ public class AnimationSystemImpl<T extends AnimatedObject<T>> implements Animati
                                AnimationManager animationManager,
                                NetworkDispatcherInstance<T> networkDispatcher,
                                PredefinedAnimationManager<T> predefinedAnimationManager,
-                               PredefinedActionManagerImpl<T> predefinedActionManagerImpl) {
+                               PredefinedActionManagerImpl<T> predefinedActionManagerImpl,
+                               ActionManagerImpl actionManager) {
         this.owner = owner;
         this.clientSide = clientSide;
         this.clock = clock;
@@ -36,6 +39,7 @@ public class AnimationSystemImpl<T extends AnimatedObject<T>> implements Animati
         this.networkDispatcher = networkDispatcher;
         this.predefinedAnimationManager = predefinedAnimationManager;
         this.predefinedActionManagerImpl = predefinedActionManagerImpl;
+        this.actionManager = actionManager;
     }
 
     @Override
@@ -51,6 +55,24 @@ public class AnimationSystemImpl<T extends AnimatedObject<T>> implements Animati
 
     @Override
     public boolean startAnimationScript(AnimationScript.Builder animationScriptBuilder, String layerName) {
+        List<BakedAction<?>> inplaceActions = animationScriptBuilder.getInplaceActions();
+        if(inplaceActions != null) {
+            for (BakedAction<?> inplaceAction : inplaceActions) {
+                if (!actionManager.canBeStartedNow(inplaceAction.getId())) {
+                    return false;
+                }
+            }
+        }
+
+        List<String> predefinedActions = animationScriptBuilder.getPredefinedActions();
+        if(predefinedActions != null) {
+            for (String predefinedAction : predefinedActions) {
+                if(!actionManager.canBeStartedNow(predefinedAction)) {
+                    return false;
+                }
+            }
+        }
+
         return getAnimationManager().startAnimationScript(animationScriptBuilder.build(predefinedActionManagerImpl), layerName);
     }
 

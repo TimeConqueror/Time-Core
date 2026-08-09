@@ -1,6 +1,7 @@
 package ru.timeconqueror.timecore.animation;
 
 import net.minecraft.server.level.ServerPlayer;
+import ru.timeconqueror.timecore.animation.action.ActionManager;
 import ru.timeconqueror.timecore.animation.action.AnimationEventListener;
 import ru.timeconqueror.timecore.animation.action.BakedActionFactory;
 import ru.timeconqueror.timecore.animation.network.NetworkDispatcherInstance;
@@ -56,6 +57,8 @@ public interface AnimationSystem<T extends AnimatedObject<T>> {
     PredefinedAnimationManager<T> getPredefinedAnimationManager();
 
     PredefinedActionManager getPredefinedActionManager();
+
+    ActionManager getActionManager();
 
     void syncForPlayer(ServerPlayer player);
 }

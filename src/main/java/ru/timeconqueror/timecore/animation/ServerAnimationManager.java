@@ -15,16 +15,10 @@ public class ServerAnimationManager<T extends AnimatedObject<T>> extends BaseAni
     private final NetworkDispatcherInstance<T> networkDispatcher;
 
     public ServerAnimationManager(Clock clock,
-                                  Supplier<LayerActionManager> actionManagerFactory,
                                   SharedMolangObject sharedMolangObject,
                                   NetworkDispatcherInstance<T> networkDispatcher) {
-        super(clock, actionManagerFactory, sharedMolangObject);
+        super(clock, sharedMolangObject);
         this.networkDispatcher = networkDispatcher;
-    }
-
-    @Override
-    public void init(List<LayerDefinition> layers) {
-        super.init(layers);
     }
 
     @Override
