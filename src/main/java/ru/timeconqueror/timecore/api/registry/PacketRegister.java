@@ -141,7 +141,7 @@ public class PacketRegister extends RunnableStoringRegister {
                     try {
                         packetHandler.encode(msg, buffer);
                     } catch (Exception e) {
-                        log.error("Can't encode packet " + msg.getClass() + " with packet handler" + packetHandler.getClass(), e);
+                        log.error("Can't encode packet {} with packet handler{}", msg.getClass(), packetHandler.getClass(), e);
                         throw new RuntimeException("Can't encode packet: " + e.getMessage(), e);
                     }
                 })
@@ -149,13 +149,17 @@ public class PacketRegister extends RunnableStoringRegister {
                     try {
                         return packetHandler.decode(buffer);
                     } catch (Exception e) {
-                        log.error("Can't decode packet with packet handler " + packetHandler.getClass(), e);
+                        log.error("Can't decode packet with packet handler {}", packetHandler.getClass(), e);
                         throw new RuntimeException("Can't decode packet: " + e.getMessage(), e);
                     }
                 })
                 .consumerMainThread((msg, contextSupplier) -> {
-                    NetworkEvent.Context ctx = contextSupplier.get();
-                    packetHandler.handle(msg, ctx);
+                    try {
+                        NetworkEvent.Context ctx = contextSupplier.get();
+                        packetHandler.handle(msg, ctx);
+                    } catch (Exception e) {
+                        log.error("Caught exception while handling packet {}", msg.getClass(), e);
+                    }
                 })
                 .add());
     }
