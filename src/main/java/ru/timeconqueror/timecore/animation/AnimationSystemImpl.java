@@ -1,6 +1,7 @@
 package ru.timeconqueror.timecore.animation;
 
 import lombok.Getter;
+import lombok.extern.log4j.Log4j2;
 import net.minecraft.server.level.ServerPlayer;
 import ru.timeconqueror.timecore.animation.action.*;
 import ru.timeconqueror.timecore.animation.clock.TickBasedClock;
@@ -10,6 +11,7 @@ import ru.timeconqueror.timecore.api.animation.action.BakedAction;
 
 import java.util.List;
 
+@Log4j2
 @Getter
 public class AnimationSystemImpl<T extends AnimatedObject<T>> implements AnimationSystem<T> {
     private final T owner;
@@ -59,6 +61,9 @@ public class AnimationSystemImpl<T extends AnimatedObject<T>> implements Animati
         if(inplaceActions != null) {
             for (BakedAction<?> inplaceAction : inplaceActions) {
                 if (!actionManager.canBeStartedNow(inplaceAction.getId())) {
+                    if(ActionManager.loggerEnabled) {
+                        log.debug("Animation with inplace action {} was rejected to start on layer {}", inplaceAction.getId(), layerName);
+                    }
                     return false;
                 }
             }
@@ -68,6 +73,9 @@ public class AnimationSystemImpl<T extends AnimatedObject<T>> implements Animati
         if(predefinedActions != null) {
             for (String predefinedAction : predefinedActions) {
                 if(!actionManager.canBeStartedNow(predefinedAction)) {
+                    if(ActionManager.loggerEnabled) {
+                        log.debug("Animation with predefined action {} was rejected to start on layer {}", predefinedAction, layerName);
+                    }
                     return false;
                 }
             }

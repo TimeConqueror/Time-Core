@@ -6,10 +6,10 @@ import java.util.Set;
  * Forbids simultaneous playing of specific actions.
  * Does not check if next animation scripts in sequence has that actions.
  */
-public class SimultaneousActionRule implements ActionRule {
+public class ForbidSimultaneousActionRule implements ActionRule {
     private final Set<String> simultaneousForbiddenList;
 
-    public SimultaneousActionRule(Set<String> simultaneousForbiddenList) {
+    public ForbidSimultaneousActionRule(Set<String> simultaneousForbiddenList) {
         this.simultaneousForbiddenList = simultaneousForbiddenList;
     }
 
