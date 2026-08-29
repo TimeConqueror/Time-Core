@@ -5,7 +5,6 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import ru.timeconqueror.timecore.TimeCore;
-import ru.timeconqueror.timecore.animation.action.LayerActionManager;
 import ru.timeconqueror.timecore.animation.network.AnimationState;
 import ru.timeconqueror.timecore.api.animation.AnimationManager;
 import ru.timeconqueror.timecore.api.animation.AnimationScript;
@@ -16,7 +15,6 @@ import ru.timeconqueror.timecore.api.util.holder.Pair;
 import ru.timeconqueror.timecore.molang.SharedMolangObject;
 
 import java.util.*;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -107,7 +105,7 @@ public abstract class BaseAnimationManager implements AnimationManager {
         }
     }
 
-    public List<Pair<String, AnimationState>> getLayerStates() {
+    protected List<Pair<String, AnimationState>> getLayerStates() {
         long clockTime = clock.getMillis();
         return getLayerMap()
                 .entrySet()

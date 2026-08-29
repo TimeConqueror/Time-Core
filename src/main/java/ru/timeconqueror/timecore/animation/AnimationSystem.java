@@ -38,7 +38,7 @@ public interface AnimationSystem<T extends AnimatedObject<T>> {
 
     void registerPredefinedAction(String id, BakedActionFactory<T> bakedActionFactory);
 
-    void onTick(boolean clientSide);
+    void onTick();
 
     /**
      * GETTERS
@@ -60,5 +60,5 @@ public interface AnimationSystem<T extends AnimatedObject<T>> {
 
     ActionManager getActionManager();
 
-    void syncForPlayer(ServerPlayer player);
+    void sync(ServerPlayer player);
 }

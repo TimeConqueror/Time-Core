@@ -119,7 +119,7 @@ public class AnimationSystemImpl<T extends AnimatedObject<T>> implements Animati
     }
 
     @Override
-    public void onTick(boolean clientSide) {
+    public void onTick() {
         predefinedAnimationManager.onTick(this, owner);
 
         if (clock instanceof TickBasedClock tickBasedClock) {
@@ -128,7 +128,7 @@ public class AnimationSystemImpl<T extends AnimatedObject<T>> implements Animati
 
         animationManager.tick();
 
-        if (!clientSide) {
+        if (!isClientSide()) {
             // simulate ticking
             animationManager.applyAnimations(null, 0);
         }
@@ -140,8 +140,9 @@ public class AnimationSystemImpl<T extends AnimatedObject<T>> implements Animati
     }
 
     @Override
-    public void syncForPlayer(ServerPlayer player) {
-        var statesByLayer = ((BaseAnimationManager) animationManager).getLayerStates();
-        networkDispatcher.sendSyncAnimationPacketToPlayer(player, statesByLayer);
+    public void sync(ServerPlayer player) {
+        if (!isClientSide() && animationManager instanceof ServerAnimationManager<?>) {
+            ((ServerAnimationManager<?>) animationManager).syncAnimations(player);
+        }
     }
 }

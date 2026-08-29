@@ -41,7 +41,7 @@ public class BlockEntityHeatCube extends BlockEntity implements AnimatedObject<B
 
     @Override
     public void tick(Level level) {
-        animationSystem().onTick(level.isClientSide);
+        animationSystem().onTick();
 
         if (level.isClientSide) {
             animationSystem.startAnimation(AnimationStarter.of(BlockEntityAnimations.heatCubeIdle).ignorable(true), AnimationConstants.MAIN_LAYER_NAME);

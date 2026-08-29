@@ -22,22 +22,26 @@ public class NetworkDispatcherInstance<T extends AnimatedObject<T>> {
     private final T animatedObject;
 
     public void sendSetAnimationPacketToAllTracking(AnimationScript animationScript, String layerName) {
-        InternalPacketManager.INSTANCE.send(getPacketTarget(), new S2CStartAnimationMsg(getCodecSupplier(), layerName, animationScript));
+        InternalPacketManager.INSTANCE.send(allTrackingTarget(), new S2CStartAnimationMsg(getCodecSupplier(), layerName, animationScript));
     }
 
     public void sendStopAnimationPacketToAllTracking(String layerName, int transitionTime) {
-        InternalPacketManager.INSTANCE.send(getPacketTarget(), new S2CStopAnimationMsg(getCodecSupplier(), layerName, transitionTime));
+        InternalPacketManager.INSTANCE.send(allTrackingTarget(), new S2CStopAnimationMsg(getCodecSupplier(), layerName, transitionTime));
     }
 
-    public void sendSyncAnimationPacketToPlayer(ServerPlayer player, List<Pair<String, AnimationState>> statesByLayer) {
+    public void sendSyncAnimationsPacketToPlayer(ServerPlayer player, List<Pair<String, AnimationState>> statesByLayer) {
         InternalPacketManager.INSTANCE.send(playerAsTarget(player), new S2CSyncAnimationsMsg(getCodecSupplier(), statesByLayer));
+    }
+
+    public void sendSyncAnimationsPacketToAllTracking(List<Pair<String, AnimationState>> statesByLayer) {
+        InternalPacketManager.INSTANCE.send(allTrackingTarget(), new S2CSyncAnimationsMsg(getCodecSupplier(), statesByLayer));
     }
 
     protected LevelObjectCodec<?> getCodecSupplier() {
         return networkDispatcher.getCodec(animatedObject);
     }
 
-    protected PacketDistributor.PacketTarget getPacketTarget() {
+    protected PacketDistributor.PacketTarget allTrackingTarget() {
         return networkDispatcher.getPacketTarget(animatedObject);
     }
 

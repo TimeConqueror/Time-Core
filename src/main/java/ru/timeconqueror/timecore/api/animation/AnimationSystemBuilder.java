@@ -22,17 +22,17 @@ import ru.timeconqueror.timecore.molang.SharedMolangObject;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Supplier;
 
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public class AnimationSystemBuilder<T extends AnimatedObject<T>> {
     private final T object;
-    private final Boolean clientSide;
+    private final boolean clientSide;
     private final NetworkDispatcher<T> networkDispatcher;
     private final PredefinedAnimationManager<T> predefinedAnimationManager;
+    private final boolean syncAnimationsOnFirstTick;
 
+    private final List<LayerDefinition> layers = new ArrayList<>(1);
     private Clock clock = new TickBasedClock();
-    private List<LayerDefinition> layers = new ArrayList<>(1);
 
     public static <T extends Entity & AnimatedObject<T>> AnimationSystemBuilder<T> forEntity(
             T entity,
@@ -47,7 +47,8 @@ public class AnimationSystemBuilder<T extends AnimatedObject<T>> {
         return create(entity,
                 new EntityNetworkDispatcher<>(),
                 level == null || level.isClientSide(),
-                predefinedManager);
+                predefinedManager,
+                false);
     }
 
     public static <T extends BlockEntity & AnimatedObject<T>> AnimationSystemBuilder<T> forBlockEntity(T blockEntity) {
@@ -56,14 +57,16 @@ public class AnimationSystemBuilder<T extends AnimatedObject<T>> {
         return create(blockEntity,
                 new BlockEntityNetworkDispatcher<>(),
                 level == null /* for guis */ || level.isClientSide(),
-                EmptyPredefinedAnimationManager.empty());
+                EmptyPredefinedAnimationManager.empty(),
+                true);
     }
 
     public static <T extends AnimatedObject<T>> AnimationSystemBuilder<T> create(T object,
                                                                                  NetworkDispatcher<T> networkDispatcher,
                                                                                  boolean clientSide,
-                                                                                 PredefinedAnimationManager<T> predefinedAnimationManager) {
-        return new AnimationSystemBuilder<>(object, clientSide, networkDispatcher, predefinedAnimationManager);
+                                                                                 PredefinedAnimationManager<T> predefinedAnimationManager,
+                                                                                 boolean syncAnimationsOnFirstTick) {
+        return new AnimationSystemBuilder<>(object, clientSide, networkDispatcher, predefinedAnimationManager, syncAnimationsOnFirstTick);
     }
 
     public AnimationSystemBuilder<T> withAnimationLayer(LayerDefinition layer) {
@@ -87,16 +90,23 @@ public class AnimationSystemBuilder<T extends AnimatedObject<T>> {
         PredefinedActionManagerImpl<T> predefinedActionManagerImpl = new PredefinedActionManagerImpl<>(object, clientSide);
         NetworkDispatcherInstance<T> networkDispatcherInstance = new NetworkDispatcherInstance<>(networkDispatcher, object);
 
-        BaseAnimationManager animationManager = makeAnimationManager(clientSide, clock, sharedObjects, networkDispatcherInstance, predefinedActionManagerImpl);
+        BaseAnimationManager animationManager = makeAnimationManager(clientSide, clock, sharedObjects, networkDispatcherInstance);
         ActionManagerImpl actionManager = ActionManagerImpl.create(animationManager.getLayers(), () -> new LayerActionManager(object, predefinedActionManagerImpl));
 
-        return new AnimationSystemImpl<>(object, clientSide, clock, animationManager, networkDispatcherInstance, predefinedAnimationManager, predefinedActionManagerImpl, actionManager);
+        return new AnimationSystemImpl<>(object,
+                clientSide,
+                clock,
+                animationManager,
+                networkDispatcherInstance,
+                predefinedAnimationManager,
+                predefinedActionManagerImpl,
+                actionManager);
     }
 
-    private <T extends AnimatedObject<T>> BaseAnimationManager makeAnimationManager(boolean clientSide, Clock clock, SharedMolangObject sharedMolangObject, NetworkDispatcherInstance<T> networkDispatcherInstance, PredefinedActionManagerImpl<T> predefinedActionManagerImpl) {
+    private BaseAnimationManager makeAnimationManager(boolean clientSide, Clock clock, SharedMolangObject sharedMolangObject, NetworkDispatcherInstance<T> networkDispatcherInstance) {
         BaseAnimationManager manager;
         if (!clientSide) {
-            manager = new ServerAnimationManager<>(clock, sharedMolangObject, networkDispatcherInstance);
+            manager = new ServerAnimationManager<>(clock, sharedMolangObject, networkDispatcherInstance, syncAnimationsOnFirstTick);
         } else {
             manager = new ClientAnimationManager(clock, sharedMolangObject);
         }

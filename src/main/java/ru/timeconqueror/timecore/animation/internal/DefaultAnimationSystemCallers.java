@@ -19,7 +19,7 @@ public class DefaultAnimationSystemCallers {
 
         if (living instanceof AnimatedObject<?> animated) {
             //needed for animation ticking on server side.
-            animated.animationSystem().onTick(living.level().isClientSide);
+            animated.animationSystem().onTick();
         }
     }
 
@@ -29,14 +29,14 @@ public class DefaultAnimationSystemCallers {
 
         Entity target = event.getTarget();
         if (target instanceof AnimatedObject<?> animatedObj) {
-            animatedObj.animationSystem().syncForPlayer(serverPlayer);
+            animatedObj.animationSystem().sync(serverPlayer);
         }
     }
 
     public static void onChunkTrackingStart(ServerPlayer player, LevelChunk chunk) {
         for (BlockEntity entity : chunk.getBlockEntities().values()) {
             if (entity instanceof AnimatedObject<?> animatedObj) {
-                animatedObj.animationSystem().syncForPlayer(player);
+                animatedObj.animationSystem().sync(player);
             }
         }
     }

@@ -1,6 +1,7 @@
 package ru.timeconqueror.timecore.internal.common.packet.animation;
 
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
@@ -8,6 +9,7 @@ import ru.timeconqueror.timecore.animation.network.codec.LevelObjectCodec;
 import ru.timeconqueror.timecore.api.animation.AnimatedObject;
 import ru.timeconqueror.timecore.api.common.packet.ITimePacketHandler;
 
+@Slf4j
 @AllArgsConstructor
 public abstract class S2CAnimationMsg {
     protected final LevelObjectCodec<?> ownerCodec;
@@ -38,7 +40,9 @@ public abstract class S2CAnimationMsg {
         public void handle(T packet, NetworkEvent.Context ctx) {
             AnimatedObject<?> animatedObject = (AnimatedObject<?>) packet.ownerCodec.construct(getWorld(ctx));
 
-            onPacket(packet, animatedObject, ctx);
+            if (animatedObject != null) {
+                onPacket(packet, animatedObject, ctx);
+            }
         }
     }
 
